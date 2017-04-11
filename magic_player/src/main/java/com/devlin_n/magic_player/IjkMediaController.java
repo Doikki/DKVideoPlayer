@@ -1,32 +1,97 @@
 package com.devlin_n.magic_player;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.OrientationEventListener;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Formatter;
 import java.util.Locale;
 
 /**
+ * 控制器
  * Created by Devlin_n on 2017/4/7.
  */
 
-public class IjkMediaController extends BaseIjkMediaController implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+public class IjkMediaController extends FrameLayout implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+    private static final int ALERT_WINDOW_PERMISSION_CODE = 1;
+    private static final String TAG = "IjkMediaController";
     private StringBuilder mFormatBuilder;
     private Formatter mFormatter;
     protected TextView totalTime, currTime;
+    protected MediaPlayerControlInterface mediaPlayer;
+    protected ImageView startButton;
+    protected ImageView fullScreenButton;
+    protected LinearLayout bottomContainer, topContainer;
+    protected View controllerView;
+    protected SeekBar videoProgress;
+    protected ImageView floatScreen;
+    protected ImageView backButton;
+    protected TextView lock;
     private boolean mShowing;
     private int sDefaultTimeout = 3000;
     private boolean isLive;
+    private boolean isLocked;
 
+    private OrientationEventListener orientationEventListener = new OrientationEventListener(getContext()) {
+
+        private int tag = 0;
+
+        @Override
+        public void onOrientationChanged(int orientation) {
+            Log.d(TAG, "onOrientationChanged: " + orientation);
+            if (orientation >= 330) {
+                if (tag == 1) return;
+                if ((tag == 2 || tag == 3) && !mediaPlayer.isFullScreen()) {
+                    tag = 1;
+                    return;
+                }
+                tag = 1;
+                WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                mediaPlayer.stopFullScreen();
+            } else if (orientation >= 250 && orientation <= 270) {
+                if (tag == 2) return;
+                if (tag == 1 && mediaPlayer.isFullScreen()) {
+                    tag = 2;
+                    return;
+                }
+                tag = 2;
+                if (!mediaPlayer.isFullScreen()) {
+                    mediaPlayer.startFullScreen();
+                }
+                WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            } else if (orientation >= 70 && orientation <= 90) {
+                if (tag == 3) return;
+                if (tag == 1 && mediaPlayer.isFullScreen()) {
+                    tag = 3;
+                    return;
+                }
+                tag = 3;
+                if (!mediaPlayer.isFullScreen()) {
+                    mediaPlayer.startFullScreen();
+                }
+                WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+            }
+            updateFullScreen();
+        }
+    };
 
     public IjkMediaController(@NonNull Context context) {
         super(context);
@@ -39,7 +104,7 @@ public class IjkMediaController extends BaseIjkMediaController implements View.O
     }
 
     protected void initView(Context context) {
-        super.initView(context);
+        controllerView = LayoutInflater.from(context).inflate(R.layout.layout_media_controller, this);
         mFormatBuilder = new StringBuilder();
         mFormatter = new Formatter(mFormatBuilder, Locale.getDefault());
         startButton = (ImageView) controllerView.findViewById(R.id.play);
@@ -57,11 +122,9 @@ public class IjkMediaController extends BaseIjkMediaController implements View.O
         backButton = (ImageView) controllerView.findViewById(R.id.back);
         backButton.setVisibility(INVISIBLE);
         backButton.setOnClickListener(this);
-    }
-
-    @Override
-    protected int getControllerViewLayout() {
-        return R.layout.layout_media_controller;
+        lock = (TextView) controllerView.findViewById(R.id.lock);
+        lock.setOnClickListener(this);
+        orientationEventListener.enable();
     }
 
     @Override
@@ -70,26 +133,94 @@ public class IjkMediaController extends BaseIjkMediaController implements View.O
         if (i == R.id.play) {
             startPlayLogic();
         } else if (i == R.id.float_screen) {
-            startFloatScreen();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                sdk23Permission();
+            } else {
+                startFloatScreen();
+            }
         } else if (i == R.id.fullscreen || i == R.id.back) {
-            startFullScreen();
+            doStartStopFullScreen();
+        } else if (i == R.id.lock) {
+            doLockUnlock();
         }
     }
 
-    @Override
+    private void doLockUnlock() {
+        if (isLocked) {
+            topContainer.setVisibility(VISIBLE);
+            bottomContainer.setVisibility(VISIBLE);
+            orientationEventListener.enable();
+            lock.setText("锁定");
+            isLocked = false;
+        } else {
+            topContainer.setVisibility(INVISIBLE);
+            bottomContainer.setVisibility(INVISIBLE);
+            orientationEventListener.disable();
+            lock.setText("解锁");
+            isLocked = true;
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void sdk23Permission() {
+        if (!Settings.canDrawOverlays(WindowUtil.getAppCompActivity(getContext()))) {
+            Toast.makeText(WindowUtil.getAppCompActivity(getContext()), R.string.float_window_warning, Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + WindowUtil.getAppCompActivity(getContext()).getPackageName()));
+            WindowUtil.getAppCompActivity(getContext()).startActivityForResult(intent, ALERT_WINDOW_PERMISSION_CODE);
+        } else {
+            startFloatScreen();
+        }
+    }
+
     protected void updateFullScreen() {
 
         if (mediaPlayer.isFullScreen()) {
             fullScreenButton.setImageResource(R.drawable.ic_stop_fullscreen);
             backButton.setVisibility(VISIBLE);
+            lock.setVisibility(VISIBLE);
         } else {
             fullScreenButton.setImageResource(R.drawable.ic_start_fullscreen);
             backButton.setVisibility(INVISIBLE);
+            lock.setVisibility(INVISIBLE);
         }
+    }
+
+    public boolean lockBack() {
+        return isLocked;
     }
 
     public void setLive(boolean live) {
         isLive = live;
+    }
+
+    public void startPlay() {
+        startPlayLogic();
+    }
+
+    protected void startPlayLogic() {
+        if (mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+            startButton.setImageResource(R.drawable.ic_play);
+        } else {
+            mediaPlayer.start();
+            startButton.setImageResource(R.drawable.ic_pause);
+        }
+    }
+
+    protected void startFloatScreen() {
+        mediaPlayer.startFloatScreen();
+    }
+
+    protected void doStartStopFullScreen() {
+        if (mediaPlayer.isFullScreen()) {
+            WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            mediaPlayer.stopFullScreen();
+        } else {
+            WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            mediaPlayer.startFullScreen();
+        }
+        updateFullScreen();
     }
 
     @Override
@@ -108,7 +239,6 @@ public class IjkMediaController extends BaseIjkMediaController implements View.O
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        Log.d(TAG, "onProgressChanged: " + progress);
         if (!fromUser) {
             return;
         }
@@ -119,7 +249,6 @@ public class IjkMediaController extends BaseIjkMediaController implements View.O
             currTime.setText(stringForTime((int) newPosition));
     }
 
-    @Override
     public void hide() {
         if (mShowing) {
             removeCallbacks(mShowProgress);
@@ -155,7 +284,6 @@ public class IjkMediaController extends BaseIjkMediaController implements View.O
         show(sDefaultTimeout);
     }
 
-    @Override
     protected void reset() {
         startButton.setImageResource(R.drawable.ic_play);
         videoProgress.setProgress(0);
@@ -224,22 +352,48 @@ public class IjkMediaController extends BaseIjkMediaController implements View.O
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (isLocked) return false;
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 show(0); // show until hide is called
-                Log.d(TAG, "onTouch: ACTION_DOWN");
                 break;
             case MotionEvent.ACTION_UP:
                 show(sDefaultTimeout); // start timeout
-                Log.d(TAG, "onTouch: ACTION_UP");
                 break;
             case MotionEvent.ACTION_CANCEL:
                 hide();
-                Log.d(TAG, "onTouch: ACTION_CANCEL");
                 break;
             default:
                 break;
         }
         return true;
+    }
+
+    protected interface MediaPlayerControlInterface {
+        void start();
+
+        void pause();
+
+        int getDuration();
+
+        int getCurrentPosition();
+
+        void seekTo(int pos);
+
+        boolean isPlaying();
+
+        int getBufferPercentage();
+
+        void startFloatScreen();
+
+        void startFullScreen();
+
+        void stopFullScreen();
+
+        boolean isFullScreen();
+    }
+
+    public void setMediaPlayer(MediaPlayerControlInterface mediaPlayer) {
+        this.mediaPlayer = mediaPlayer;
     }
 }

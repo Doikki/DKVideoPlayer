@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">magic_player</string>
+    <string name="float_window_warning">当前无权限使用悬浮窗，请授权！</string>
 </resources>

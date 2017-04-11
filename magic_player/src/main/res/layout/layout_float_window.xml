@@ -3,7 +3,7 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <SurfaceView
+    <com.devlin_n.magic_player.MySurfaceView
         android:id="@+id/float_sv"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

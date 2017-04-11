@@ -91,5 +91,15 @@
             android:background="@android:color/transparent"
             android:src="@drawable/ic_start_fullscreen" />
     </LinearLayout>
+    <TextView
+        android:id="@+id/lock"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_margin="20dp"
+        android:background="@android:color/holo_blue_bright"
+        android:text="锁定"
+        android:gravity="center"
+        android:visibility="invisible"
+        android:layout_gravity="center|end"/>
 
 </FrameLayout>
