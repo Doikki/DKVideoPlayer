@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.devlin_n.magic_player.IjkVideoView
+        android:id="@+id/ijk_video_view"
+        android:layout_width="match_parent"
+        android:layout_height="270dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="我们交情不深，因为同选了一门选修课，才一周一会。课间无聊，也会时常有一搭没一搭地聊点私事。
+
+　　毕业后我们鲜少联系，直到有一天，我接到他的电话，他让我猜猜他在哪儿。
+
+　　还没等我开口，他就一声坏笑着抢白了我的话：“啊哈，就知道到你猜不到，我在贝加尔湖畔！”
+
+　　然后他就自顾自地说起，大学的时候，网络上有个帖子流传很广，说人一辈子一定要坐一次通往俄罗斯的铁路。那时选修老师正唾沫横飞地讲着糖代谢，我一脸兴奋地拿给他看，结果老师写满黑板的糖代谢示意图他没记住，反倒记住了这一路山峦、草原、白桦林、贝加尔湖，就心心念念地想来一趟。"/>
+</LinearLayout>
