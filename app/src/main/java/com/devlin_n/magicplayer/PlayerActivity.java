@@ -30,9 +30,13 @@ public class PlayerActivity extends AppCompatActivity {
         ijkVideoView = (IjkVideoView) findViewById(R.id.ijk_video_view);
         int widthPixels = getResources().getDisplayMetrics().widthPixels;
         ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 16 * 9));
+//        List<VideoModel> videoModels = new ArrayList<>();
+//        videoModels.add(new VideoModel("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high","美味1",IjkVideoView.VOD));
+//        videoModels.add(new VideoModel("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high","美味2",IjkVideoView.VOD));
+//        videoModels.add(new VideoModel("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high","美味3",IjkVideoView.VOD));
+//        ijkVideoView.setVideos(videoModels);
         ijkVideoView.setUrl("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high");
-        ijkMediaController = new IjkMediaController(this);
-        ijkVideoView.setMediaController(ijkMediaController);
+        ijkVideoView.setMediaController(IjkVideoView.VOD);
     }
 
 
@@ -57,7 +61,7 @@ public class PlayerActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (!ijkMediaController.lockBack() && !ijkVideoView.backFromFullScreen()) {
+        if (!ijkVideoView.backFromFullScreen()) {
             super.onBackPressed();
         }
     }

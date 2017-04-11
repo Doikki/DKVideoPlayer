@@ -6,16 +6,16 @@
     android:background="@android:color/black"
     android:orientation="vertical">
 
-    <com.devlin_n.magic_player.MySurfaceView
-        android:id="@+id/sv_1"
+    <FrameLayout
+        android:id="@+id/surface_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center" />
+        android:layout_height="match_parent"/>
 
     <ProgressBar
         android:id="@+id/buffering"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_gravity="center"
+        android:indeterminateDrawable="@drawable/progress_loading"
         android:visibility="gone" />
 </FrameLayout>

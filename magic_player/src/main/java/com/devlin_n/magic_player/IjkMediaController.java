@@ -44,7 +44,8 @@ public class IjkMediaController extends FrameLayout implements View.OnClickListe
     protected SeekBar videoProgress;
     protected ImageView floatScreen;
     protected ImageView backButton;
-    protected TextView lock;
+    protected ImageView lock;
+    protected TextView title;
     private boolean mShowing;
     private int sDefaultTimeout = 3000;
     private boolean isLive;
@@ -57,7 +58,7 @@ public class IjkMediaController extends FrameLayout implements View.OnClickListe
         @Override
         public void onOrientationChanged(int orientation) {
             Log.d(TAG, "onOrientationChanged: " + orientation);
-            if (orientation >= 330) {
+            if (orientation >= 340) {
                 if (tag == 1) return;
                 if ((tag == 2 || tag == 3) && !mediaPlayer.isFullScreen()) {
                     tag = 1;
@@ -66,7 +67,7 @@ public class IjkMediaController extends FrameLayout implements View.OnClickListe
                 tag = 1;
                 WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                 mediaPlayer.stopFullScreen();
-            } else if (orientation >= 250 && orientation <= 270) {
+            } else if (orientation >= 260 && orientation <= 280) {
                 if (tag == 2) return;
                 if (tag == 1 && mediaPlayer.isFullScreen()) {
                     tag = 2;
@@ -122,8 +123,9 @@ public class IjkMediaController extends FrameLayout implements View.OnClickListe
         backButton = (ImageView) controllerView.findViewById(R.id.back);
         backButton.setVisibility(INVISIBLE);
         backButton.setOnClickListener(this);
-        lock = (TextView) controllerView.findViewById(R.id.lock);
+        lock = (ImageView) controllerView.findViewById(R.id.lock);
         lock.setOnClickListener(this);
+        title = (TextView) controllerView.findViewById(R.id.title);
         orientationEventListener.enable();
     }
 
@@ -147,17 +149,15 @@ public class IjkMediaController extends FrameLayout implements View.OnClickListe
 
     private void doLockUnlock() {
         if (isLocked) {
-            topContainer.setVisibility(VISIBLE);
-            bottomContainer.setVisibility(VISIBLE);
-            orientationEventListener.enable();
-            lock.setText("锁定");
             isLocked = false;
+            show();
+            orientationEventListener.enable();
+            lock.setImageResource(R.drawable.ic_unlock);
         } else {
-            topContainer.setVisibility(INVISIBLE);
-            bottomContainer.setVisibility(INVISIBLE);
-            orientationEventListener.disable();
-            lock.setText("解锁");
             isLocked = true;
+            hide();
+            orientationEventListener.disable();
+            lock.setImageResource(R.drawable.ic_lock);
         }
     }
 
@@ -178,7 +178,9 @@ public class IjkMediaController extends FrameLayout implements View.OnClickListe
         if (mediaPlayer.isFullScreen()) {
             fullScreenButton.setImageResource(R.drawable.ic_stop_fullscreen);
             backButton.setVisibility(VISIBLE);
-            lock.setVisibility(VISIBLE);
+            if(!isShowing()) {
+                lock.setVisibility(INVISIBLE);
+            }
         } else {
             fullScreenButton.setImageResource(R.drawable.ic_start_fullscreen);
             backButton.setVisibility(INVISIBLE);
@@ -250,28 +252,28 @@ public class IjkMediaController extends FrameLayout implements View.OnClickListe
     }
 
     public void hide() {
-        if (mShowing) {
-            removeCallbacks(mShowProgress);
-            bottomContainer.setVisibility(GONE);
-            topContainer.setVisibility(GONE);
-            startButton.setVisibility(GONE);
-            mShowing = false;
-        }
+//            removeCallbacks(mShowProgress);
+        bottomContainer.setVisibility(GONE);
+        topContainer.setVisibility(GONE);
+        lock.setVisibility(GONE);
+        mShowing = false;
     }
 
     private void show(int timeout) {
-        if (!mShowing) {
+        if (mediaPlayer.isFullScreen()) lock.setVisibility(VISIBLE);
+        if (isLocked) {
+            bottomContainer.setVisibility(INVISIBLE);
+            topContainer.setVisibility(INVISIBLE);
+        } else {
             setProgress();
             bottomContainer.setVisibility(VISIBLE);
             topContainer.setVisibility(VISIBLE);
-            startButton.setVisibility(VISIBLE);
             if (isLive) {
                 videoProgress.setVisibility(INVISIBLE);
                 totalTime.setVisibility(INVISIBLE);
             }
-            mShowing = true;
         }
-
+        mShowing = true;
         post(mShowProgress);
 
         if (timeout != 0) {
@@ -287,7 +289,7 @@ public class IjkMediaController extends FrameLayout implements View.OnClickListe
     protected void reset() {
         startButton.setImageResource(R.drawable.ic_play);
         videoProgress.setProgress(0);
-        show(0);
+        show();
     }
 
     public boolean isShowing() {
@@ -346,15 +348,21 @@ public class IjkMediaController extends FrameLayout implements View.OnClickListe
             totalTime.setText(stringForTime(duration));
         if (currTime != null)
             currTime.setText(stringForTime(position));
+        if (title != null)
+            title.setText(mediaPlayer.getTitle());
 
         return position;
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (isLocked) return false;
+//        if (isLocked) return false;
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                if (isShowing()) {
+                    hide();
+                    return false;
+                }
                 show(0); // show until hide is called
                 break;
             case MotionEvent.ACTION_UP:
@@ -391,6 +399,8 @@ public class IjkMediaController extends FrameLayout implements View.OnClickListe
         void stopFullScreen();
 
         boolean isFullScreen();
+
+        String getTitle();
     }
 
     public void setMediaPlayer(MediaPlayerControlInterface mediaPlayer) {

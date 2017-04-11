@@ -31,7 +31,7 @@
             android:layout_height="40dp"
             android:layout_gravity="center"
             android:padding="10dp"
-            android:src="@drawable/ic_small_screen" />
+            android:src="@drawable/ic_pip" />
 
     </LinearLayout>
 
@@ -91,14 +91,12 @@
             android:background="@android:color/transparent"
             android:src="@drawable/ic_start_fullscreen" />
     </LinearLayout>
-    <TextView
+    <ImageView
         android:id="@+id/lock"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_margin="20dp"
-        android:background="@android:color/holo_blue_bright"
-        android:text="锁定"
-        android:gravity="center"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:layout_margin="30dp"
+        android:src="@drawable/ic_unlock"
         android:visibility="invisible"
         android:layout_gravity="center|end"/>
 
