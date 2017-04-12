@@ -31,6 +31,7 @@
             android:layout_height="40dp"
             android:layout_gravity="center"
             android:padding="10dp"
+            android:visibility="invisible"
             android:src="@drawable/ic_pip" />
 
     </LinearLayout>
@@ -69,8 +70,8 @@
             android:layout_weight="1"
             android:background="@null"
             android:max="1000"
-            android:maxHeight="3dp"
-            android:minHeight="3dp"
+            android:maxHeight="2dp"
+            android:minHeight="2dp"
             android:progressDrawable="@drawable/seekbar_progress"
             android:thumb="@drawable/seekbar_thumb" />
 

@@ -18,6 +18,7 @@ import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import java.io.IOException;
 import java.util.List;
@@ -36,11 +37,11 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
 
     private static final String TAG = IjkVideoView.class.getSimpleName();
     private IjkMediaPlayer mMediaPlayer;
-    private IjkMediaController mMediaController;
+    private BaseMediaController mMediaController;
     private View videoView;
     private boolean isPlayed;
     private MySurfaceView surfaceView;
-    private FrameLayout surfaceContainer;
+    private RelativeLayout surfaceContainer;
     private int bufferPercentage;
     private ProgressBar bufferProgress;
     private WindowManager wm;
@@ -71,6 +72,8 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     }
 
     private void init() {
+
+
         if (isOpenFloatWindow) {
             MyWindowManager.cleanManager();
             isOpenFloatWindow = false;
@@ -78,7 +81,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         videoView = LayoutInflater.from(getContext()).inflate(R.layout.layout_video_view, this);
 //        surfaceView = (MySurfaceView) videoView.findViewById(R.id.sv_1);
         bufferProgress = (ProgressBar) videoView.findViewById(R.id.buffering);
-        surfaceContainer = (FrameLayout) videoView.findViewById(R.id.surface_container);
+        surfaceContainer = (RelativeLayout) videoView.findViewById(R.id.surface_container);
         getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -119,6 +122,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     private void addSurfaceView() {
         surfaceContainer.removeAllViews();
         surfaceView = new MySurfaceView(getContext());
+        surfaceView.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
         SurfaceHolder surfaceHolder = surfaceView.getHolder();
         surfaceHolder.addCallback(this);
         surfaceHolder.setFormat(PixelFormat.RGBA_8888);
@@ -147,9 +151,16 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         openVideo();
     }
 
+
     public void setVideos(List<VideoModel> videoModels) {
         this.mVideoModels = videoModels;
         playNext();
+    }
+
+    public void setTitle(String title) {
+        if (title != null) {
+            this.mCurrentTitle = title;
+        }
     }
 
     private void playNext() {
@@ -252,7 +263,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
 //        mMediaController.hide();
         initWindow();
         floatView = LayoutInflater.from(getContext()).inflate(R.layout.layout_float_window, null);
-        MyWindowManager.floatView = floatView;
+        MyWindowManager.floatViews.add(floatView);
         MyWindowManager.ijkMediaPlayer = mMediaPlayer;
         final MySurfaceView surfaceView = (MySurfaceView) floatView.findViewById(R.id.float_sv);
         SurfaceHolder surfaceHolder = surfaceView.getHolder();
@@ -305,8 +316,9 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
         wmParams.gravity = Gravity.END | Gravity.BOTTOM; // 调整悬浮窗口至左上角
         // 设置悬浮窗口长宽数据
-        wmParams.width = 800;
-        wmParams.height = 800 * 9 / 16;
+        int width = WindowUtil.getScreenWidth(getContext()) / 2;
+        wmParams.width = width;
+        wmParams.height = width * 9 / 16;
     }
 
     @Override
@@ -342,17 +354,26 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     public void setMediaController(int type) {
         removeView(mMediaController);
         switch (type) {
-            default:
-            case VOD:
+            case VOD: {
                 IjkMediaController ijkMediaController = new IjkMediaController(getContext());
                 ijkMediaController.setMediaPlayer(this);
                 mMediaController = ijkMediaController;
                 addView(ijkMediaController);
                 mMediaController.show();
                 break;
-            case LIVE:
+            }
+            case LIVE: {
+                IjkMediaController ijkMediaController = new IjkMediaController(getContext());
+                ijkMediaController.setMediaPlayer(this);
+                ijkMediaController.setLive(true);
+                mMediaController = ijkMediaController;
+                addView(ijkMediaController);
+                mMediaController.show();
                 break;
+            }
             case AD:
+                break;
+            default:
                 break;
         }
 

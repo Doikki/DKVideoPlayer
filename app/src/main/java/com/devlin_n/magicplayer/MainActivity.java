@@ -13,7 +13,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
-    public void skipToPlayer(View view) {
-        startActivity(new Intent(this, PlayerActivity.class));
+    public void skipToVodPlayer(View view) {
+        startActivity(new Intent(this, VodPlayerActivity.class));
+    }
+
+    public void skipToLivePlayer(View view) {
+        startActivity(new Intent(this, LivePlayerActivity.class));
     }
 }

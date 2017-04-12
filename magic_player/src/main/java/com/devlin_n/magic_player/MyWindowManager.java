@@ -4,6 +4,9 @@ import android.content.Context;
 import android.view.View;
 import android.view.WindowManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 /**
@@ -14,7 +17,7 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 public class MyWindowManager {
 
     private static WindowManager mWindowManager;
-    public static View floatView;
+    public static List<View> floatViews = new ArrayList<>();
     public static IjkMediaPlayer ijkMediaPlayer;
 
 
@@ -26,10 +29,9 @@ public class MyWindowManager {
     }
 
     public static void cleanManager(){
-        mWindowManager.removeView(floatView);
+        mWindowManager.removeView(floatViews.get(0));
         ijkMediaPlayer.release();
-        floatView = null;
+        floatViews.clear();
         ijkMediaPlayer = null;
     }
-
 }

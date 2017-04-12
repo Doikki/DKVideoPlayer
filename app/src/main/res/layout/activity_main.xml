@@ -5,7 +5,12 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Player Activity"
-        android:onClick="skipToPlayer"/>
+        android:text="点播播放"
+        android:onClick="skipToVodPlayer"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="直播播放"
+        android:onClick="skipToLivePlayer"/>
 
 </LinearLayout>
