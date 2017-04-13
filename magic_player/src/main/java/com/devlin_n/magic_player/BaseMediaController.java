@@ -2,11 +2,11 @@ package com.devlin_n.magic_player;
 
 import android.content.Context;
 import android.content.pm.ActivityInfo;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -20,43 +20,53 @@ public abstract class BaseMediaController extends FrameLayout {
 
     protected View controllerView;//控制器视图
     protected MediaPlayerControlInterface mediaPlayer;//播放器
+    protected boolean mShowing;//控制器是否处于显示状态
+    protected boolean mAutoRotate;//是否旋转屏幕
 
+    /**
+     * 加速度传感器监听
+     */
     protected OrientationEventListener orientationEventListener = new OrientationEventListener(getContext()) { // 加速度传感器监听，用于自动旋转屏幕
 
-        private int tag = 0;
+        private int CurrentOrientation = 0;
+        private static final int PORTRAIT = 1;
+        private static final int LANDSCAPE = 2;
+        private static final int REVERSE_LANDSCAPE = 3;
+
 
         @Override
         public void onOrientationChanged(int orientation) {
-            boolean autoRotateOn = (android.provider.Settings.System.getInt(WindowUtil.getAppCompActivity(getContext()).getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0) == 1);
-            if (!autoRotateOn) return;
+            //根据系统设置进行自动旋转
+//            boolean autoRotateOn = (android.provider.Settings.System.getInt(WindowUtil.getAppCompActivity(getContext()).getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0) == 1);
+//            if (!autoRotateOn) return;
 
-            if (orientation >= 340) {
-                if (tag == 1) return;
-                if ((tag == 2 || tag == 3) && !mediaPlayer.isFullScreen()) {
-                    tag = 1;
+            if (orientation >= 340) { //屏幕顶部朝上
+                if (CurrentOrientation == PORTRAIT) return;
+                if ((CurrentOrientation == LANDSCAPE || CurrentOrientation == REVERSE_LANDSCAPE) && !mediaPlayer.isFullScreen()) {
+                    CurrentOrientation = PORTRAIT;
                     return;
                 }
-                tag = 1;
+                CurrentOrientation = PORTRAIT;
                 WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                 mediaPlayer.stopFullScreen();
-            } else if (orientation >= 260 && orientation <= 280) {
-                if (tag == 2) return;
-                if (tag == 1 && mediaPlayer.isFullScreen()) {
-                    tag = 2;
+            } else if (orientation >= 260 && orientation <= 280) { //屏幕左边朝上
+                if (CurrentOrientation == LANDSCAPE) return;
+                if (CurrentOrientation == PORTRAIT && mediaPlayer.isFullScreen()) {
+                    CurrentOrientation = LANDSCAPE;
                     return;
                 }
-                tag = 2;
+                CurrentOrientation = LANDSCAPE;
                 if (!mediaPlayer.isFullScreen()) {
                     mediaPlayer.startFullScreen();
                 }
                 WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            } else if (orientation >= 70 && orientation <= 90) {
-                if (tag == 3) return;
-                if (tag == 1 && mediaPlayer.isFullScreen()) {
-                    tag = 3;
+            } else if (orientation >= 70 && orientation <= 90) { //屏幕右边朝上
+                if (CurrentOrientation == REVERSE_LANDSCAPE) return;
+                if (CurrentOrientation == PORTRAIT && mediaPlayer.isFullScreen()) {
+                    CurrentOrientation = REVERSE_LANDSCAPE;
                     return;
                 }
-                tag = 3;
+                CurrentOrientation = REVERSE_LANDSCAPE;
                 if (!mediaPlayer.isFullScreen()) {
                     mediaPlayer.startFullScreen();
                 }
@@ -81,20 +91,65 @@ public abstract class BaseMediaController extends FrameLayout {
         controllerView = LayoutInflater.from(getContext()).inflate(getLayoutId(), this);
     }
 
+    /**
+     * 设置控制器布局文件，子类必须实现
+     */
     protected abstract int getLayoutId();
 
-    protected void show(){}
+    /**
+     * 显示
+     */
+    protected void show() {
+    }
 
-    protected void hide(){}
+    /**
+     * 隐藏
+     */
+    protected void hide() {
+    }
 
-    protected void reset(){}
+    /**
+     * 重置
+     */
+    protected void reset() {
+    }
 
-    protected boolean lockBack(){
+    /**
+     * 销毁
+     */
+    protected void destroy() {
+        orientationEventListener.disable();
+        orientationEventListener = null;
+    }
+
+    /**
+     * 是否需要锁定返回键
+     */
+    protected boolean lockBack() {
         return false;
     }
 
-    protected void updateFullScreen(){}
+    /**
+     * 返回控制器的显示状态
+     */
+    public boolean isShowing() {
+        return mShowing;
+    }
 
+    /**
+     * 设置是否自动旋转
+     */
+    public void setAutoRotate(boolean autoRotate) {
+        this.mAutoRotate = autoRotate;
+        if (mAutoRotate) orientationEventListener.enable();
+    }
+
+    protected void updateFullScreen() {
+    }
+
+    /**
+     * 横竖屏切换
+     */
     protected void doStartStopFullScreen() {
         if (mediaPlayer.isFullScreen()) {
             WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -106,10 +161,34 @@ public abstract class BaseMediaController extends FrameLayout {
         updateFullScreen();
     }
 
-
+    /**
+     * 启动悬浮窗口
+      */
     protected void startFloatScreen() {
         mediaPlayer.startFloatScreen();
     }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                if (isShowing()) {
+                    hide();
+                } else {
+                    show();
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                break;
+            case MotionEvent.ACTION_CANCEL:
+                hide();
+                break;
+            default:
+                break;
+        }
+        return true;
+    }
+
 
     protected interface MediaPlayerControlInterface {
         void start();

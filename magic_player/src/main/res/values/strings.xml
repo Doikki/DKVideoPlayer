@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">magic_player</string>
     <string name="float_window_warning">当前无权限使用悬浮窗，请授权！</string>
+    <string name="error_message">出了点小问题，稍后重试</string>
+    <string name="retry">重试</string>
+    <string name="continue_play">继续播放</string>
+    <string name="wifi_tip">您正在使用移动网络，继续播放将消耗流量</string>
 </resources>

@@ -10,7 +10,6 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -40,10 +39,10 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
     protected ImageView backButton;
     protected ImageView lock;
     protected TextView title;
-    private boolean mShowing;
     private int sDefaultTimeout = 3000;
     private boolean isLive;
     private boolean isLocked;
+    private boolean isDragging;
 
 
     public IjkMediaController(@NonNull Context context) {
@@ -82,7 +81,6 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
         lock = (ImageView) controllerView.findViewById(R.id.lock);
         lock.setOnClickListener(this);
         title = (TextView) controllerView.findViewById(R.id.title);
-        orientationEventListener.enable();
     }
 
     @Override
@@ -107,12 +105,12 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
         if (isLocked) {
             isLocked = false;
             show();
-            orientationEventListener.enable();
+            if (mAutoRotate) orientationEventListener.enable();
             lock.setImageResource(R.drawable.ic_unlock);
         } else {
             isLocked = true;
             hide();
-            orientationEventListener.disable();
+            if (mAutoRotate) orientationEventListener.disable();
             lock.setImageResource(R.drawable.ic_lock);
         }
     }
@@ -153,10 +151,6 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
         isLive = live;
     }
 
-    public void startPlay() {
-        startPlayLogic();
-    }
-
     protected void startPlayLogic() {
         if (mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
@@ -169,6 +163,7 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
+        isDragging = true;
         removeCallbacks(mShowProgress);
         removeCallbacks(mFadeOut);
     }
@@ -178,6 +173,7 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
         long duration = mediaPlayer.getDuration();
         long newPosition = (duration * seekBar.getProgress()) / videoProgress.getMax();
         mediaPlayer.seekTo((int) newPosition);
+        isDragging = false;
         setProgress();
         post(mShowProgress);
     }
@@ -238,10 +234,6 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
         show();
     }
 
-    public boolean isShowing() {
-        return mShowing;
-    }
-
     private final Runnable mFadeOut = new Runnable() {
         @Override
         public void run() {
@@ -275,7 +267,7 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
     }
 
     private int setProgress() {
-        if (mediaPlayer == null) {
+        if (mediaPlayer == null || isDragging) {
             return 0;
         }
         int position = mediaPlayer.getCurrentPosition();
@@ -299,26 +291,5 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
 
         Log.d(TAG, "setProgress: " + duration);
         return position;
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                if (isShowing()) {
-                    hide();
-                } else {
-                    show();
-                }
-                break;
-            case MotionEvent.ACTION_UP:
-                break;
-            case MotionEvent.ACTION_CANCEL:
-                hide();
-                break;
-            default:
-                break;
-        }
-        return true;
     }
 }

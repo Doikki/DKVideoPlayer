@@ -11,6 +11,10 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.devlin_n.magic_player.IjkVideoView;
+import com.devlin_n.magic_player.VideoModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Devlin_n on 2017/4/7.
@@ -29,15 +33,18 @@ public class VodPlayerActivity extends AppCompatActivity {
         int widthPixels = getResources().getDisplayMetrics().widthPixels;
         ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 16 * 9));
 
-//        List<VideoModel> videoModels = new ArrayList<>();
-//        videoModels.add(new VideoModel("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high","美味1",IjkVideoView.VOD));
-//        videoModels.add(new VideoModel("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high","美味2",IjkVideoView.VOD));
-//        videoModels.add(new VideoModel("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high","美味3",IjkVideoView.VOD));
-//        ijkVideoView.setVideos(videoModels);
+        List<VideoModel> videoModels = new ArrayList<>();
+        videoModels.add(new VideoModel("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high","美味1",IjkVideoView.VOD));
+        videoModels.add(new VideoModel("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high","美味2",IjkVideoView.VOD));
+        videoModels.add(new VideoModel("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high","美味3",IjkVideoView.VOD));
+        ijkVideoView.setVideos(videoModels);
 
-        ijkVideoView.setUrl("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high");
-        ijkVideoView.setTitle("这是一个标题");
-        ijkVideoView.setMediaController(IjkVideoView.VOD);
+//        ijkVideoView.setUrl("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high");
+//        ijkVideoView.setTitle("这是一个标题");
+////        ijkVideoView.setMediaController(IjkVideoView.VOD);
+//        IjkMediaController controller = new IjkMediaController(this);
+//        controller.setAutoRotate(false);
+//        ijkVideoView.setMediaController(controller);
 
 //        ijkVideoView.setUrl("http://yao.hls.cutv.com/cutvlive/AxeFRth/hls/1xqFht0_sd.m3u8");
 //        ijkVideoView.setTitle("深圳卫视");

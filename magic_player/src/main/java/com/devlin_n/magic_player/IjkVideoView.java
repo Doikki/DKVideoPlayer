@@ -1,9 +1,13 @@
 package com.devlin_n.magic_player;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
 import android.media.AudioManager;
+import android.net.ConnectivityManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -19,6 +23,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.List;
@@ -42,6 +47,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     private boolean isPlayed;
     private MySurfaceView surfaceView;
     private RelativeLayout surfaceContainer;
+    private StatusView statusView;
     private int bufferPercentage;
     private ProgressBar bufferProgress;
     private WindowManager wm;
@@ -52,13 +58,16 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     private View floatView;
     private String mCurrentUrl;
     private boolean isCallPause;
+    private NetChangeReceiver netChangeReceiver;
 
     public static final int VOD = 1;
     public static final int LIVE = 2;
     public static final int AD = 3;
     private List<VideoModel> mVideoModels;
-    private int mCurrentPosition = 0;
+    private int mCurrentVideoPosition = 0;
+    private int mCurrentPosition;
     private String mCurrentTitle = "";
+    private static boolean IS_PLAY_ON_MOBILE_NETWORK = false;
 
     public IjkVideoView(@NonNull Context context) {
         super(context);
@@ -72,14 +81,11 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     }
 
     private void init() {
-
-
         if (isOpenFloatWindow) {
             MyWindowManager.cleanManager();
             isOpenFloatWindow = false;
         }
         videoView = LayoutInflater.from(getContext()).inflate(R.layout.layout_video_view, this);
-//        surfaceView = (MySurfaceView) videoView.findViewById(R.id.sv_1);
         bufferProgress = (ProgressBar) videoView.findViewById(R.id.buffering);
         surfaceContainer = (RelativeLayout) videoView.findViewById(R.id.surface_container);
         getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -92,9 +98,26 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
                 }
             }
         });
+        registerNetReceiver();
     }
 
     private void openVideo() {
+        if (NetUtil.getNetworkType(getContext()) == 4 && !IS_PLAY_ON_MOBILE_NETWORK) {
+            if (statusView == null) {
+                statusView = new StatusView(getContext());
+            }
+            statusView.setMessage(getResources().getString(R.string.wifi_tip));
+            statusView.setButtonTextAndAction(getResources().getString(R.string.continue_play), new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    IS_PLAY_ON_MOBILE_NETWORK = true;
+                    removeView(statusView);
+                    openVideo();
+                }
+            });
+            addView(statusView);
+            return;
+        }
         if (mCurrentUrl == null || mCurrentUrl.trim().equals("")) return;
         AudioManager am = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
         am.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
@@ -164,8 +187,8 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     }
 
     private void playNext() {
-        if (mCurrentPosition >= mVideoModels.size()) return;
-        VideoModel videoModel = mVideoModels.get(mCurrentPosition);
+        if (mCurrentVideoPosition >= mVideoModels.size()) return;
+        VideoModel videoModel = mVideoModels.get(mCurrentVideoPosition);
         if (videoModel != null) {
             mCurrentUrl = videoModel.url;
             mCurrentTitle = videoModel.title;
@@ -220,6 +243,9 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
             AudioManager am = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
             am.abandonAudioFocus(null);
         }
+
+        if (mMediaController != null) mMediaController.destroy();
+        unregisterNetReceiver();
     }
 
     @Override
@@ -233,7 +259,8 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     @Override
     public int getCurrentPosition() {
         if (mMediaPlayer != null) {
-            return (int) mMediaPlayer.getCurrentPosition();
+            mCurrentPosition = (int) mMediaPlayer.getCurrentPosition();
+            return mCurrentPosition;
         }
         return 0;
     }
@@ -259,8 +286,6 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     @Override
     public void startFloatScreen() {
         if (isOpenFloatWindow) return;
-//        surfaceView.setVisibility(INVISIBLE);
-//        mMediaController.hide();
         initWindow();
         floatView = LayoutInflater.from(getContext()).inflate(R.layout.layout_float_window, null);
         MyWindowManager.floatViews.add(floatView);
@@ -358,8 +383,6 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
                 IjkMediaController ijkMediaController = new IjkMediaController(getContext());
                 ijkMediaController.setMediaPlayer(this);
                 mMediaController = ijkMediaController;
-                addView(ijkMediaController);
-                mMediaController.show();
                 break;
             }
             case LIVE: {
@@ -367,8 +390,6 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
                 ijkMediaController.setMediaPlayer(this);
                 ijkMediaController.setLive(true);
                 mMediaController = ijkMediaController;
-                addView(ijkMediaController);
-                mMediaController.show();
                 break;
             }
             case AD:
@@ -376,18 +397,37 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
             default:
                 break;
         }
+    }
 
+    public void setMediaController(BaseMediaController mediaController) {
+        if (mediaController != null) {
+            mediaController.setMediaPlayer(this);
+            mMediaController = mediaController;
+        }
     }
 
     @Override
     public boolean onError(IMediaPlayer iMediaPlayer, int i, int i1) {
-        return false;
+        bufferProgress.setVisibility(GONE);
+        if (statusView == null) {
+            statusView = new StatusView(getContext());
+        }
+        statusView.setMessage(getResources().getString(R.string.error_message));
+        statusView.setButtonTextAndAction(getResources().getString(R.string.retry), new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeView(statusView);
+                openVideo();
+            }
+        });
+        addView(statusView);
+        return true;
     }
 
     @Override
     public void onCompletion(IMediaPlayer iMediaPlayer) {
         if (mMediaController != null) mMediaController.reset();
-        mCurrentPosition++;
+        mCurrentVideoPosition++;
         if (mVideoModels != null && mVideoModels.size() > 1)
             playNext();
     }
@@ -411,6 +451,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     @Override
     public void onPrepared(IMediaPlayer iMediaPlayer) {
         bufferProgress.setVisibility(GONE);
+        if (mMediaController != null) addView(mMediaController);
         if (isCallPause) mMediaPlayer.pause();
         isPlayed = true;
     }
@@ -434,5 +475,44 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
             return true;
         }
         return false;
+    }
+
+    public class NetChangeReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (NetUtil.getNetworkType(context) == 3) {// 网络是WIFI
+                Toast.makeText(context, "WIFI", Toast.LENGTH_SHORT).show();
+            } else if (NetUtil.getNetworkType(context) == 2
+                    || NetUtil.getNetworkType(context) == 4) {// 网络是手机网络或者是以太网
+                // TODO 更新状态是暂停状态
+                Toast.makeText(context, "手机网络或者是以太网", Toast.LENGTH_SHORT).show();
+            } else if (NetUtil.getNetworkType(context) == 1) {// 网络链接断开
+                Toast.makeText(context, "网络链接断开", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(context, "网络已断开", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    /**
+     * 注册网络监听器
+     */
+    private void registerNetReceiver() {
+        if (netChangeReceiver == null) {
+            IntentFilter filter = new IntentFilter(
+                    ConnectivityManager.CONNECTIVITY_ACTION);
+            netChangeReceiver = new NetChangeReceiver();
+            WindowUtil.getAppCompActivity(getContext()).registerReceiver(netChangeReceiver, filter);
+        }
+    }
+
+    /**
+     * 销毁网络监听器
+     */
+    private void unregisterNetReceiver() {
+        if (netChangeReceiver != null) {
+            WindowUtil.getAppCompActivity(getContext()).unregisterReceiver(netChangeReceiver);
+            netChangeReceiver = null;
+        }
     }
 }
