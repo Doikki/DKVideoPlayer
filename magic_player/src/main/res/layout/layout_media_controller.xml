@@ -31,7 +31,7 @@
             android:layout_height="40dp"
             android:layout_gravity="center"
             android:padding="10dp"
-            android:visibility="invisible"
+            android:visibility="visible"
             android:src="@drawable/ic_pip" />
 
     </LinearLayout>

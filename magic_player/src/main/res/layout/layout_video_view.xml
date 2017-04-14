@@ -9,7 +9,7 @@
         android:id="@+id/surface_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"/>
+        android:gravity="center" />
 
     <ProgressBar
         android:id="@+id/buffering"

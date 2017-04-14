@@ -13,4 +13,10 @@
         android:text="直播播放"
         android:onClick="skipToLivePlayer"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="closeFloatWindow"
+        android:text="关闭悬浮窗"/>
+
 </LinearLayout>

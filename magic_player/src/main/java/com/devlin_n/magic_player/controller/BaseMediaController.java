@@ -1,4 +1,4 @@
-package com.devlin_n.magic_player;
+package com.devlin_n.magic_player.controller;
 
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -10,6 +10,8 @@ import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
 import android.widget.FrameLayout;
+
+import com.devlin_n.magic_player.util.WindowUtil;
 
 /**
  * 控制器基类
@@ -78,8 +80,7 @@ public abstract class BaseMediaController extends FrameLayout {
 
 
     public BaseMediaController(@NonNull Context context) {
-        super(context);
-        initView();
+        this(context, null);
     }
 
     public BaseMediaController(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -105,19 +106,19 @@ public abstract class BaseMediaController extends FrameLayout {
     /**
      * 隐藏
      */
-    protected void hide() {
+    public void hide() {
     }
 
     /**
      * 重置
      */
-    protected void reset() {
+    public void reset() {
     }
 
     /**
      * 销毁
      */
-    protected void destroy() {
+    public void destroy() {
         orientationEventListener.disable();
         orientationEventListener = null;
     }
@@ -125,7 +126,7 @@ public abstract class BaseMediaController extends FrameLayout {
     /**
      * 是否需要锁定返回键
      */
-    protected boolean lockBack() {
+    public boolean lockBack() {
         return false;
     }
 
@@ -144,7 +145,7 @@ public abstract class BaseMediaController extends FrameLayout {
         if (mAutoRotate) orientationEventListener.enable();
     }
 
-    protected void updateFullScreen() {
+    public void updateFullScreen() {
     }
 
     /**
@@ -190,7 +191,7 @@ public abstract class BaseMediaController extends FrameLayout {
     }
 
 
-    protected interface MediaPlayerControlInterface {
+    public interface MediaPlayerControlInterface {
         void start();
 
         void pause();

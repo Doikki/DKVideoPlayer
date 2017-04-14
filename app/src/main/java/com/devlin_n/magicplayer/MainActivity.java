@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.devlin_n.magic_player.player.BackgroundPlayService;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -19,5 +21,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void skipToLivePlayer(View view) {
         startActivity(new Intent(this, LivePlayerActivity.class));
+    }
+
+    public void closeFloatWindow(View view) {
+        Intent intent = new Intent(this, BackgroundPlayService.class);
+        intent.setAction("com.devlin_n.magic_player.backgroundService");
+        getApplicationContext().stopService(intent);
     }
 }

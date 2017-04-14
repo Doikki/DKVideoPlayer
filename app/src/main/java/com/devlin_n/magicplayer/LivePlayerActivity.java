@@ -10,7 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.devlin_n.magic_player.IjkVideoView;
+import com.devlin_n.magic_player.player.IjkVideoView;
 
 /**
  * Created by Devlin_n on 2017/4/7.
@@ -39,7 +39,7 @@ public class LivePlayerActivity extends AppCompatActivity {
 //        ijkVideoView.setTitle("这是一个标题");
 //        ijkVideoView.setMediaController(IjkVideoView.VOD);
 
-        ijkVideoView.setUrl("http://yao.hls.cutv.com/cutvlive/AxeFRth/hls/1xqFht0_sd.m3u8");
+        ijkVideoView.setUrl("http://yao.hls.cutv.com/cutvlive/AxeFRth/hls/1xlF7t0_sd.m3u8");
         ijkVideoView.setTitle("深圳卫视");
         ijkVideoView.setMediaController(IjkVideoView.LIVE);
     }

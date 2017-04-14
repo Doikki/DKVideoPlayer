@@ -9,6 +9,13 @@
     <application android:allowBackup="true" android:label="@string/app_name"
         android:supportsRtl="true">
 
+        <service android:name=".player.BackgroundPlayService">
+
+            <intent-filter>
+                <action android:name="com.devlin_n.magic_player.backgroundService"/>
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>

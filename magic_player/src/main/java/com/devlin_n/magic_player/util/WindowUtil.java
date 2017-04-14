@@ -1,4 +1,4 @@
-package com.devlin_n.magic_player;
+package com.devlin_n.magic_player.util;
 
 import android.app.Activity;
 import android.content.Context;

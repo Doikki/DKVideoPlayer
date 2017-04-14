@@ -1,4 +1,4 @@
-package com.devlin_n.magic_player;
+package com.devlin_n.magic_player.widget;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.devlin_n.magic_player.R;
 
 /**
  * 错误提示，网络提示

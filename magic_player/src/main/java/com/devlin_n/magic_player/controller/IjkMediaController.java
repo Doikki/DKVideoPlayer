@@ -1,4 +1,4 @@
-package com.devlin_n.magic_player;
+package com.devlin_n.magic_player.controller;
 
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +16,9 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.devlin_n.magic_player.R;
+import com.devlin_n.magic_player.util.WindowUtil;
 
 import java.util.Formatter;
 import java.util.Locale;
@@ -46,7 +49,7 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
 
 
     public IjkMediaController(@NonNull Context context) {
-        super(context);
+        this(context, null);
     }
 
     public IjkMediaController(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -127,7 +130,7 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
         }
     }
 
-    protected void updateFullScreen() {
+    public void updateFullScreen() {
 
         if (mediaPlayer.isFullScreen()) {
             fullScreenButton.setImageResource(R.drawable.ic_stop_fullscreen);
@@ -149,6 +152,10 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
 
     public void setLive(boolean live) {
         isLive = live;
+    }
+
+    public boolean getLive(){
+        return isLive;
     }
 
     protected void startPlayLogic() {

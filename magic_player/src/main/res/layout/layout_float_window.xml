@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/shape_float_window_background"
+    android:padding="1dp">
 
-    <com.devlin_n.magic_player.MySurfaceView
-        android:id="@+id/float_sv"
-        android:layout_width="wrap_content"
+    <com.devlin_n.magic_player.player.IjkVideoView
+        android:id="@+id/video_view"
+        android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <ImageView
@@ -15,5 +18,4 @@
         android:layout_gravity="end"
         android:layout_margin="4dp"
         android:src="@drawable/ic_close" />
-
 </FrameLayout>

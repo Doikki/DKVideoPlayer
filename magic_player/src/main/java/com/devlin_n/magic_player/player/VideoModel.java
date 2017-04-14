@@ -1,4 +1,4 @@
-package com.devlin_n.magic_player;
+package com.devlin_n.magic_player.player;
 
 /**
  * Created by Devlin_n on 2017/4/11.

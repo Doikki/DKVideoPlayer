@@ -1,4 +1,4 @@
-package com.devlin_n.magic_player;
+package com.devlin_n.magic_player.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
