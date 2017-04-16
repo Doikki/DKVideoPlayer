@@ -1,7 +1,6 @@
 package com.devlin_n.magic_player.player;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
@@ -41,10 +40,8 @@ public class BackgroundPlayService extends Service {
         url = intent.getStringExtra(KeyUtil.URL);
         position = intent.getIntExtra(KeyUtil.POSITION, 0);
         type = intent.getIntExtra(KeyUtil.TYPE, 0);
-
-        if (floatView != null && wm != null) wm.removeView(floatView);
         startPlay();
-        return super.onStartCommand(intent, flags, startId);
+        return START_NOT_STICKY;
     }
 
     @Override
@@ -54,10 +51,26 @@ public class BackgroundPlayService extends Service {
     }
 
     private void startPlay() {
-        floatView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.layout_float_window, null);
-        videoView = (IjkVideoView) floatView.findViewById(R.id.video_view);
         videoView.setVideoType(type);
         videoView.skipPositionWhenPlay(url, position);
+        wm.addView(floatView, wmParams);
+    }
+
+
+    private void initWindow() {
+        wm = WindowUtil.getWindowManager(getApplicationContext());
+        wmParams = new WindowManager.LayoutParams();
+        wmParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT; // 设置window type
+        // 设置图片格式，效果为背景透明
+        wmParams.format = PixelFormat.RGBA_8888;
+        wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+        wmParams.gravity = Gravity.END | Gravity.BOTTOM; // 调整悬浮窗口至右下角
+        // 设置悬浮窗口长宽数据
+        int width = WindowUtil.dip2px(getApplicationContext(), 250);
+        wmParams.width = width;
+        wmParams.height = width * 9 / 16;
+        floatView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.layout_float_window, null);
+        videoView = (IjkVideoView) floatView.findViewById(R.id.video_view);
         floatView.findViewById(R.id.btn_close).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,22 +104,6 @@ public class BackgroundPlayService extends Service {
                 return false;
             }
         });
-        wm.addView(floatView, wmParams);
-    }
-
-
-    private void initWindow() {
-        wm = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
-        wmParams = new WindowManager.LayoutParams();
-        wmParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT; // 设置window type
-        // 设置图片格式，效果为背景透明
-        wmParams.format = PixelFormat.RGBA_8888;
-        wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
-        wmParams.gravity = Gravity.END | Gravity.BOTTOM; // 调整悬浮窗口至右下角
-        // 设置悬浮窗口长宽数据
-        int width = (int) (WindowUtil.getScreenWidth(getApplicationContext()) / 1.5);
-        wmParams.width = width;
-        wmParams.height = width * 9 / 16;
     }
 
     @Override

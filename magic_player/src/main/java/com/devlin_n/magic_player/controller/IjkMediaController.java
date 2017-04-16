@@ -24,7 +24,7 @@ import java.util.Formatter;
 import java.util.Locale;
 
 /**
- * 控制器
+ * 直播/点播控制器
  * Created by Devlin_n on 2017/4/7.
  */
 
@@ -109,12 +109,12 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
             isLocked = false;
             show();
             if (mAutoRotate) orientationEventListener.enable();
-            lock.setImageResource(R.drawable.ic_unlock);
+            lock.setImageResource(R.drawable.ic_lock);
         } else {
             isLocked = true;
             hide();
             if (mAutoRotate) orientationEventListener.disable();
-            lock.setImageResource(R.drawable.ic_lock);
+            lock.setImageResource(R.drawable.ic_unlock);
         }
     }
 
@@ -132,10 +132,12 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
 
     public void updateFullScreen() {
 
-        if (mediaPlayer.isFullScreen()) {
+        if (mediaPlayer != null && mediaPlayer.isFullScreen()) {
             fullScreenButton.setImageResource(R.drawable.ic_stop_fullscreen);
             backButton.setVisibility(VISIBLE);
-            if (!isShowing()) {
+            if (isShowing()) {
+                lock.setVisibility(VISIBLE);
+            } else {
                 lock.setVisibility(INVISIBLE);
             }
         } else {
@@ -154,7 +156,7 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
         isLive = live;
     }
 
-    public boolean getLive(){
+    public boolean getLive() {
         return isLive;
     }
 
@@ -165,6 +167,16 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
         } else {
             mediaPlayer.start();
             startButton.setImageResource(R.drawable.ic_pause);
+        }
+    }
+
+    @Override
+    public void updatePlayButton() {
+        super.updatePlayButton();
+        if (mediaPlayer.isPlaying()) {
+            startButton.setImageResource(R.drawable.ic_pause);
+        } else {
+            startButton.setImageResource(R.drawable.ic_play);
         }
     }
 
@@ -236,7 +248,7 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
 
     @Override
     public void reset() {
-        startButton.setImageResource(R.drawable.ic_play);
+        updatePlayButton();
         videoProgress.setProgress(0);
         show();
     }

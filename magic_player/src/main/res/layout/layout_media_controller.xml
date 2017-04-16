@@ -51,7 +51,7 @@
             android:layout_height="40dp"
             android:layout_gravity="center"
             android:padding="10dp"
-            android:src="@drawable/ic_pause" />
+            android:src="@drawable/ic_play" />
 
         <TextView
             android:id="@+id/curr_time"
@@ -94,10 +94,10 @@
     </LinearLayout>
     <ImageView
         android:id="@+id/lock"
-        android:layout_width="26dp"
-        android:layout_height="26dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_margin="30dp"
-        android:src="@drawable/ic_unlock"
+        android:src="@drawable/ic_lock"
         android:visibility="invisible"
         android:layout_gravity="center|end"/>
 

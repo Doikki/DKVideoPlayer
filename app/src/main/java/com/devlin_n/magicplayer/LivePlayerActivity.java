@@ -39,8 +39,8 @@ public class LivePlayerActivity extends AppCompatActivity {
 //        ijkVideoView.setTitle("这是一个标题");
 //        ijkVideoView.setMediaController(IjkVideoView.VOD);
 
-        ijkVideoView.setUrl("http://yao.hls.cutv.com/cutvlive/AxeFRth/hls/1xlF7t0_sd.m3u8");
-        ijkVideoView.setTitle("深圳卫视");
+        ijkVideoView.setUrl("http://ivi.bupt.edu.cn/hls/jxtv.m3u8");
+        ijkVideoView.setTitle("江西卫视");
         ijkVideoView.setMediaController(IjkVideoView.LIVE);
     }
 
@@ -55,6 +55,7 @@ public class LivePlayerActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         ijkVideoView.resume();
+        ijkVideoView.stopFloatWindow();
     }
 
     @Override
@@ -81,7 +82,7 @@ public class LivePlayerActivity extends AppCompatActivity {
             if (!Settings.canDrawOverlays(this)) {
                 Toast.makeText(LivePlayerActivity.this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
             } else {
-                ijkVideoView.startFloatScreen();
+                ijkVideoView.startFloatWindow();
             }
         }
     }

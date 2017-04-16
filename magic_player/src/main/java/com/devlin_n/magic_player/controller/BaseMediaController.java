@@ -28,55 +28,7 @@ public abstract class BaseMediaController extends FrameLayout {
     /**
      * 加速度传感器监听
      */
-    protected OrientationEventListener orientationEventListener = new OrientationEventListener(getContext()) { // 加速度传感器监听，用于自动旋转屏幕
-
-        private int CurrentOrientation = 0;
-        private static final int PORTRAIT = 1;
-        private static final int LANDSCAPE = 2;
-        private static final int REVERSE_LANDSCAPE = 3;
-
-
-        @Override
-        public void onOrientationChanged(int orientation) {
-            //根据系统设置进行自动旋转
-//            boolean autoRotateOn = (android.provider.Settings.System.getInt(WindowUtil.getAppCompActivity(getContext()).getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0) == 1);
-//            if (!autoRotateOn) return;
-
-            if (orientation >= 340) { //屏幕顶部朝上
-                if (CurrentOrientation == PORTRAIT) return;
-                if ((CurrentOrientation == LANDSCAPE || CurrentOrientation == REVERSE_LANDSCAPE) && !mediaPlayer.isFullScreen()) {
-                    CurrentOrientation = PORTRAIT;
-                    return;
-                }
-                CurrentOrientation = PORTRAIT;
-                WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                mediaPlayer.stopFullScreen();
-            } else if (orientation >= 260 && orientation <= 280) { //屏幕左边朝上
-                if (CurrentOrientation == LANDSCAPE) return;
-                if (CurrentOrientation == PORTRAIT && mediaPlayer.isFullScreen()) {
-                    CurrentOrientation = LANDSCAPE;
-                    return;
-                }
-                CurrentOrientation = LANDSCAPE;
-                if (!mediaPlayer.isFullScreen()) {
-                    mediaPlayer.startFullScreen();
-                }
-                WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            } else if (orientation >= 70 && orientation <= 90) { //屏幕右边朝上
-                if (CurrentOrientation == REVERSE_LANDSCAPE) return;
-                if (CurrentOrientation == PORTRAIT && mediaPlayer.isFullScreen()) {
-                    CurrentOrientation = REVERSE_LANDSCAPE;
-                    return;
-                }
-                CurrentOrientation = REVERSE_LANDSCAPE;
-                if (!mediaPlayer.isFullScreen()) {
-                    mediaPlayer.startFullScreen();
-                }
-                WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
-            }
-            updateFullScreen();
-        }
-    };
+    protected OrientationEventListener orientationEventListener;
 
 
     public BaseMediaController(@NonNull Context context) {
@@ -90,6 +42,55 @@ public abstract class BaseMediaController extends FrameLayout {
 
     protected void initView() {
         controllerView = LayoutInflater.from(getContext()).inflate(getLayoutId(), this);
+        orientationEventListener = new OrientationEventListener(getContext()) { // 加速度传感器监听，用于自动旋转屏幕
+
+            private int CurrentOrientation = 0;
+            private static final int PORTRAIT = 1;
+            private static final int LANDSCAPE = 2;
+            private static final int REVERSE_LANDSCAPE = 3;
+
+
+            @Override
+            public void onOrientationChanged(int orientation) {
+                //根据系统设置进行自动旋转
+//            boolean autoRotateOn = (android.provider.Settings.System.getInt(WindowUtil.getAppCompActivity(getContext()).getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0) == 1);
+//            if (!autoRotateOn) return;
+
+                if (orientation >= 340) { //屏幕顶部朝上
+                    if (CurrentOrientation == PORTRAIT) return;
+                    if ((CurrentOrientation == LANDSCAPE || CurrentOrientation == REVERSE_LANDSCAPE) && !mediaPlayer.isFullScreen()) {
+                        CurrentOrientation = PORTRAIT;
+                        return;
+                    }
+                    CurrentOrientation = PORTRAIT;
+                    WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                    mediaPlayer.stopFullScreen();
+                } else if (orientation >= 260 && orientation <= 280) { //屏幕左边朝上
+                    if (CurrentOrientation == LANDSCAPE) return;
+                    if (CurrentOrientation == PORTRAIT && mediaPlayer.isFullScreen()) {
+                        CurrentOrientation = LANDSCAPE;
+                        return;
+                    }
+                    CurrentOrientation = LANDSCAPE;
+                    if (!mediaPlayer.isFullScreen()) {
+                        mediaPlayer.startFullScreen();
+                    }
+                    WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                } else if (orientation >= 70 && orientation <= 90) { //屏幕右边朝上
+                    if (CurrentOrientation == REVERSE_LANDSCAPE) return;
+                    if (CurrentOrientation == PORTRAIT && mediaPlayer.isFullScreen()) {
+                        CurrentOrientation = REVERSE_LANDSCAPE;
+                        return;
+                    }
+                    CurrentOrientation = REVERSE_LANDSCAPE;
+                    if (!mediaPlayer.isFullScreen()) {
+                        mediaPlayer.startFullScreen();
+                    }
+                    WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+                }
+                updateFullScreen();
+            }
+        };
     }
 
     /**
@@ -148,6 +149,9 @@ public abstract class BaseMediaController extends FrameLayout {
     public void updateFullScreen() {
     }
 
+    public void updatePlayButton() {
+    }
+
     /**
      * 横竖屏切换
      */
@@ -164,9 +168,9 @@ public abstract class BaseMediaController extends FrameLayout {
 
     /**
      * 启动悬浮窗口
-      */
+     */
     protected void startFloatScreen() {
-        mediaPlayer.startFloatScreen();
+        mediaPlayer.startFloatWindow();
     }
 
     @Override
@@ -206,7 +210,7 @@ public abstract class BaseMediaController extends FrameLayout {
 
         int getBufferPercentage();
 
-        void startFloatScreen();
+        void startFloatWindow();
 
         void startFullScreen();
 

@@ -10,7 +10,6 @@
         android:id="@+id/video_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
     <ImageView
         android:id="@+id/btn_close"
         android:layout_width="20dp"

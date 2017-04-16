@@ -31,12 +31,14 @@ public class VodPlayerActivity extends AppCompatActivity {
         ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 16 * 9));
 
 //        List<VideoModel> videoModels = new ArrayList<>();
-//        videoModels.add(new VideoModel("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high","美味1",IjkVideoView.VOD));
-//        videoModels.add(new VideoModel("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high","美味2",IjkVideoView.VOD));
-//        videoModels.add(new VideoModel("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high","美味3",IjkVideoView.VOD));
+//        IjkMediaController controller = new IjkMediaController(this);
+//        videoModels.add(new VideoModel("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high","美味1",controller));
+//        videoModels.add(new VideoModel("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high","美味2",controller));
+//        videoModels.add(new VideoModel("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high","美味3",controller));
 //        ijkVideoView.setVideos(videoModels);
 
         ijkVideoView.setUrl("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high");
+//        ijkVideoView.setUrl("http://ivi.bupt.edu.cn/hls/cctv1hd.m3u8");
         ijkVideoView.setTitle("这是一个标题");
 //        ijkVideoView.setMediaController(IjkVideoView.VOD);
         IjkMediaController controller = new IjkMediaController(this);
@@ -59,6 +61,7 @@ public class VodPlayerActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         ijkVideoView.resume();
+        ijkVideoView.stopFloatWindow();
     }
 
     @Override
@@ -85,7 +88,7 @@ public class VodPlayerActivity extends AppCompatActivity {
             if (!Settings.canDrawOverlays(this)) {
                 Toast.makeText(VodPlayerActivity.this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
             } else {
-                ijkVideoView.startFloatScreen();
+                ijkVideoView.startFloatWindow();
             }
         }
     }

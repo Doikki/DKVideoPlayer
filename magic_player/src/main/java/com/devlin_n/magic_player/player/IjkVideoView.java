@@ -11,7 +11,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.telephony.TelephonyManager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.View;
@@ -21,14 +20,14 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
-import com.devlin_n.magic_player.util.KeyUtil;
-import com.devlin_n.magic_player.widget.MySurfaceView;
 import com.devlin_n.magic_player.R;
-import com.devlin_n.magic_player.widget.StatusView;
-import com.devlin_n.magic_player.util.WindowUtil;
 import com.devlin_n.magic_player.controller.AdController;
 import com.devlin_n.magic_player.controller.BaseMediaController;
 import com.devlin_n.magic_player.controller.IjkMediaController;
+import com.devlin_n.magic_player.util.KeyUtil;
+import com.devlin_n.magic_player.util.WindowUtil;
+import com.devlin_n.magic_player.widget.MySurfaceView;
+import com.devlin_n.magic_player.widget.StatusView;
 
 import java.io.IOException;
 import java.util.List;
@@ -67,6 +66,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     private int mCurrentVideoType;
     private String mCurrentTitle = "";
     private static boolean IS_PLAY_ON_MOBILE_NETWORK = false;
+    private static boolean IS_START_FLOAT_WINDOW;
 
 
     private static final int STATE_ERROR = -1;
@@ -79,6 +79,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
 
     private int mCurrentState = STATE_IDLE;
     private int mTargetState = STATE_IDLE;
+    private AudioManager mAudioManager;
 
     public IjkVideoView(@NonNull Context context) {
         this(context, null);
@@ -126,8 +127,8 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
             return;
         }
         if (mCurrentUrl == null || mCurrentUrl.trim().equals("")) return;
-        AudioManager am = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
-        am.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        mAudioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
+        mAudioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
         try {
             if (mMediaPlayer != null) mMediaPlayer.release();
             mMediaPlayer = new IjkMediaPlayer();
@@ -147,7 +148,6 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
             mTargetState = STATE_ERROR;
             e.printStackTrace();
         }
-
         bufferProgress.setVisibility(VISIBLE);
         addSurfaceView();
     }
@@ -210,8 +210,9 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         if (videoModel != null) {
             mCurrentUrl = videoModel.url;
             mCurrentTitle = videoModel.title;
+            mCurrentPosition = 0;
             openVideo();
-            setMediaController(videoModel.type);
+            setMediaController(videoModel.controller);
         }
     }
 
@@ -238,7 +239,9 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     public void resume() {
         if (isInPlaybackState() && !mMediaPlayer.isPlaying()) {
             mMediaPlayer.start();
+            mCurrentState = STATE_PLAYING;
         }
+        mTargetState = STATE_PLAYING;
     }
 
     public void stopPlayback() {
@@ -248,8 +251,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
             mMediaPlayer = null;
             mCurrentState = STATE_IDLE;
             mTargetState = STATE_IDLE;
-            AudioManager am = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
-            am.abandonAudioFocus(null);
+            mAudioManager.abandonAudioFocus(onAudioFocusChangeListener);
         }
     }
 
@@ -260,8 +262,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
             mMediaPlayer = null;
             mCurrentState = STATE_IDLE;
             mTargetState = STATE_IDLE;
-            AudioManager am = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
-            am.abandonAudioFocus(null);
+            mAudioManager.abandonAudioFocus(onAudioFocusChangeListener);
         }
 
         if (mMediaController != null) mMediaController.destroy();
@@ -310,15 +311,23 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     }
 
     @Override
-    public void startFloatScreen() {
+    public void startFloatWindow() {
         Intent intent = new Intent(getContext(), BackgroundPlayService.class);
         intent.setAction("com.devlin_n.magic_player.backgroundService");
         intent.putExtra(KeyUtil.URL, mCurrentUrl);
         getCurrentPosition();
         intent.putExtra(KeyUtil.POSITION, mCurrentPosition);
         intent.putExtra(KeyUtil.TYPE, mCurrentVideoType);
-        getContext().getApplicationContext().startService(intent);
+        getContext().startService(intent);
         WindowUtil.getAppCompActivity(getContext()).finish();
+        IS_START_FLOAT_WINDOW = true;
+    }
+
+    public void stopFloatWindow() {
+        Intent intent = new Intent(getContext(), BackgroundPlayService.class);
+        intent.setAction("com.devlin_n.magic_player.backgroundService");
+        getContext().stopService(intent);
+        IS_START_FLOAT_WINDOW = false;
     }
 
 
@@ -326,6 +335,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     public void startFullScreen() {
         ViewGroup.LayoutParams layoutParams = this.getLayoutParams();
         WindowUtil.hideSupportActionBar(getContext(), true, true);
+        WindowUtil.hideNavKey(getContext());
         layoutParams.width = WindowUtil.getScreenHeight(getContext());
         layoutParams.height = WindowUtil.getScreenWidth(getContext());
         this.setLayoutParams(layoutParams);
@@ -336,6 +346,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     public void stopFullScreen() {
         ViewGroup.LayoutParams layoutParams = this.getLayoutParams();
         WindowUtil.showSupportActionBar(getContext(), true, true);
+        WindowUtil.showNavKey(getContext());
         layoutParams.width = originalWidth;
         layoutParams.height = originalHeight;
         this.setLayoutParams(layoutParams);
@@ -354,6 +365,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
 
     public void setMediaController(int type) {
         removeView(mMediaController);
+        isControllerAdded = false;
         switch (type) {
             case VOD: {
                 IjkMediaController ijkMediaController = new IjkMediaController(getContext());
@@ -379,6 +391,8 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     }
 
     public void setMediaController(BaseMediaController mediaController) {
+        removeView(mMediaController);
+        isControllerAdded = false;
         if (mediaController != null) {
             mediaController.setMediaPlayer(this);
             mMediaController = mediaController;
@@ -444,11 +458,11 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         mCurrentState = STATE_PREPARED;
         bufferProgress.setVisibility(GONE);
         if (mCurrentPosition > 0 && mCurrentVideoType == VOD) {
-            Log.d(TAG, "onPrepared: called");
             seekTo(mCurrentPosition);
         }
         if (mMediaController != null && !isControllerAdded) {
             addView(mMediaController);
+            mMediaController.updatePlayButton();
             isControllerAdded = true;
         }
         if (mTargetState == STATE_PAUSED) mMediaPlayer.pause();
@@ -465,16 +479,40 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     }
 
     public boolean backFromFullScreen() {
-        if (mMediaController.lockBack()) return true;
+        if (mMediaController != null && mMediaController.lockBack()) return true;
         if (isFullScreen) {
             stopFullScreen();
             WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            mMediaController.updateFullScreen();
+            if (mMediaController != null) mMediaController.updateFullScreen();
             return true;
         }
         return false;
     }
 
+
+    private AudioManager.OnAudioFocusChangeListener onAudioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
+        @Override
+        public void onAudioFocusChange(int focusChange) {
+            try {
+                switch (focusChange) {
+                    case AudioManager.AUDIOFOCUS_GAIN:
+//                        resume();
+                        break;
+                    case AudioManager.AUDIOFOCUS_LOSS:
+                        pause();
+                        break;
+                    case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+                        pause();
+                        break;
+                    case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+                        break;
+                }
+                if (mMediaController != null) mMediaController.updatePlayButton();
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
+        }
+    };
 
     /**
      * 判断当前网络类型-1为未知网络0为没有网络连接1网络断开或关闭2为以太网3为WiFi4为2G5为3G6为4G
