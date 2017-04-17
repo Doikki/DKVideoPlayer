@@ -2,16 +2,25 @@ package com.devlin_n.magic_player.controller;
 
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.media.AudioManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 
+import com.devlin_n.magic_player.R;
 import com.devlin_n.magic_player.util.WindowUtil;
+import com.devlin_n.magic_player.widget.CenterView;
+
+import java.util.Formatter;
+import java.util.Locale;
 
 /**
  * 控制器基类
@@ -20,10 +29,16 @@ import com.devlin_n.magic_player.util.WindowUtil;
 
 public abstract class BaseMediaController extends FrameLayout {
 
+    private static final String TAG = BaseMediaController.class.getSimpleName();
     protected View controllerView;//控制器视图
     protected MediaPlayerControlInterface mediaPlayer;//播放器
-    protected boolean mShowing;//控制器是否处于显示状态
+    protected boolean mShowing = true;//控制器是否处于显示状态
     protected boolean mAutoRotate;//是否旋转屏幕
+    protected CenterView mCenterView;
+    protected AudioManager mAudioManager;
+    private StringBuilder mFormatBuilder;
+    private Formatter mFormatter;
+    protected boolean isLocked;
 
     /**
      * 加速度传感器监听
@@ -91,6 +106,12 @@ public abstract class BaseMediaController extends FrameLayout {
                 updateFullScreen();
             }
         };
+        mCenterView = new CenterView(getContext());
+        mCenterView.setVisibility(GONE);
+        addView(mCenterView);
+        mAudioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
+        mFormatBuilder = new StringBuilder();
+        mFormatter = new Formatter(mFormatBuilder, Locale.getDefault());
     }
 
     /**
@@ -128,7 +149,7 @@ public abstract class BaseMediaController extends FrameLayout {
      * 是否需要锁定返回键
      */
     public boolean lockBack() {
-        return false;
+        return isLocked;
     }
 
     /**
@@ -173,8 +194,26 @@ public abstract class BaseMediaController extends FrameLayout {
         mediaPlayer.startFloatWindow();
     }
 
+    private float mDownX, mDownY;
+
+    protected boolean mChangeVolume = false;//是否改变音量
+
+    protected boolean mChangePosition = false;//是否改变播放进度
+
+    protected boolean mChangeBrightness = false;
+
+    protected int streamVolume;
+
+    protected float mBrightness;
+
+    protected boolean mSliding;
+
+    protected int mPosition;
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        float x = event.getX();
+        float y = event.getY();
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 if (isShowing()) {
@@ -182,8 +221,54 @@ public abstract class BaseMediaController extends FrameLayout {
                 } else {
                     show();
                 }
+                if (isLocked) return false;
+                mDownX = event.getX();
+                mDownY = event.getY();
+                mChangeBrightness = false;
+                mChangeVolume = false;
+                mChangePosition = false;
+                mSliding = false;
+                streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                mBrightness = WindowUtil.getAppCompActivity(getContext()).getWindow().getAttributes().screenBrightness;
+                break;
+            case MotionEvent.ACTION_MOVE:
+                if (isLocked) return false;
+                float deltaX = x - mDownX;
+                float deltaY = y - mDownY;
+                float absDeltaX = Math.abs(deltaX);
+                float absDeltaY = Math.abs(deltaY);
+                int mThreshold = 30;
+                if (absDeltaX < mThreshold && absDeltaY < mThreshold) return false;
+                if (!mSliding) {
+                    if (absDeltaX > absDeltaY) {
+                        mChangePosition = true;
+                        mSliding = true;
+                    } else {
+                        int screenWidth = WindowUtil.getScreenWidth(getContext());
+
+                        if (mDownX > screenWidth / 2) {
+                            mChangeBrightness = true;
+                            mSliding = true;
+                        } else {
+                            mChangeVolume = true;
+                            mSliding = true;
+                        }
+                    }
+                }
+
+                if (mChangePosition) {
+                    slideToChangePosition(deltaX);
+                } else if (mChangeVolume) {
+                    slideToChangeVolume(deltaY);
+                } else if (mChangeBrightness) {
+                    slideToChangeBrightness(deltaY);
+                }
+
                 break;
             case MotionEvent.ACTION_UP:
+                if (isLocked) return false;
+                if (mSliding) mCenterView.setVisibility(GONE);
+                if (mChangePosition) mediaPlayer.seekTo(mPosition);
                 break;
             case MotionEvent.ACTION_CANCEL:
                 hide();
@@ -192,6 +277,81 @@ public abstract class BaseMediaController extends FrameLayout {
                 break;
         }
         return true;
+    }
+
+    protected void slideToChangePosition(float deltaX) {
+        mCenterView.setVisibility(VISIBLE);
+        mCenterView.setProVisibility(View.GONE);
+        int width = getMeasuredWidth();
+        int duration = mediaPlayer.getDuration();
+        int position = (int) (deltaX * 2 / width * duration + mediaPlayer.getCurrentPosition());
+        if (position > mPosition) {
+            mCenterView.setIcon(R.drawable.ic_fast_forward);
+        } else {
+            mCenterView.setIcon(R.drawable.ic_rewind);
+        }
+        if (position > duration) position = duration;
+        if (position < 0) position = 0;
+        mPosition = position;
+        mCenterView.setTextView(stringForTime(position) + "/" + stringForTime(duration));
+    }
+
+    protected void slideToChangeBrightness(float deltaY) {
+        mCenterView.setVisibility(VISIBLE);
+        mCenterView.setProVisibility(View.VISIBLE);
+        deltaY = -deltaY;
+        Window window = WindowUtil.getAppCompActivity(getContext()).getWindow();
+        WindowManager.LayoutParams attributes = window.getAttributes();
+        mCenterView.setIcon(R.drawable.ic_brightness);
+        int height = getMeasuredHeight();
+        if (mBrightness == -1.0f) mBrightness = 0.5f;
+        float brightness = deltaY * 2 / height * 1.0f + mBrightness;
+        if (brightness < 0) {
+            brightness = 0f;
+        }
+        if (brightness > 1.0f) brightness = 1.0f;
+        int percent = (int) (brightness * 100);
+        mCenterView.setTextView(percent + "%");
+        mCenterView.setProPercent(percent);
+        attributes.screenBrightness = brightness;
+        window.setAttributes(attributes);
+        Log.d(TAG, "slideToChangeBrightness: " + deltaY);
+    }
+
+    protected void slideToChangeVolume(float deltaY) {
+        mCenterView.setVisibility(VISIBLE);
+        mCenterView.setProVisibility(View.VISIBLE);
+        deltaY = -deltaY;
+        int streamMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        int height = getMeasuredHeight();
+        int deltaV = (int) (deltaY * 2 / height * streamMaxVolume);
+        int index = streamVolume + deltaV;
+        if (index > streamMaxVolume) index = streamMaxVolume;
+        if (index < 0) {
+            mCenterView.setIcon(R.drawable.ic_volume_off);
+            index = 0;
+        } else {
+            mCenterView.setIcon(R.drawable.ic_volume_on);
+        }
+        int percent = (int) (index * 1.0 / streamMaxVolume * 100);
+        mCenterView.setTextView(percent + "%");
+        mCenterView.setProPercent(percent);
+        mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, index, 0);
+    }
+
+    protected String stringForTime(int timeMs) {
+        int totalSeconds = timeMs / 1000;
+
+        int seconds = totalSeconds % 60;
+        int minutes = (totalSeconds / 60) % 60;
+        int hours = totalSeconds / 3600;
+
+        mFormatBuilder.setLength(0);
+        if (hours > 0) {
+            return mFormatter.format("%d:%02d:%02d", hours, minutes, seconds).toString();
+        } else {
+            return mFormatter.format("%02d:%02d", minutes, seconds).toString();
+        }
     }
 
 

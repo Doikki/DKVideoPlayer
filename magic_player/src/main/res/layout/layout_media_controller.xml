@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:gravity="center_vertical"
-        android:background="#55000000">
+        android:background="@color/background_color">
         <ImageView
             android:id="@+id/back"
             android:layout_width="40dp"
@@ -41,7 +41,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="#55000000"
+        android:background="@color/background_color"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 

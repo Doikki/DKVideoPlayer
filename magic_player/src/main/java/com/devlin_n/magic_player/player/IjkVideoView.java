@@ -292,7 +292,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
 
     @Override
     public void seekTo(int pos) {
-        if (isInPlaybackState()) {
+        if (isInPlaybackState() && mCurrentVideoType != LIVE) {
             mMediaPlayer.seekTo(pos);
         }
     }

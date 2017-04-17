@@ -17,6 +17,4 @@ dependencies {
     compile "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
     compile "tv.danmaku.ijk.media:ijkplayer-java:$rootProject.ijkPlayerVersion"
     compile "tv.danmaku.ijk.media:ijkplayer-armv7a:$rootProject.ijkPlayerVersion"
-//    compile "tv.danmaku.ijk.media:ijkplayer-x86:$rootProject.ijkPlayerVersion"
-//    compile "tv.danmaku.ijk.media:ijkplayer-x86_64:$rootProject.ijkPlayerVersion"
 }

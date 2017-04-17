@@ -11,6 +11,7 @@ import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -20,9 +21,6 @@ import android.widget.Toast;
 import com.devlin_n.magic_player.R;
 import com.devlin_n.magic_player.util.WindowUtil;
 
-import java.util.Formatter;
-import java.util.Locale;
-
 /**
  * 直播/点播控制器
  * Created by Devlin_n on 2017/4/7.
@@ -31,8 +29,6 @@ import java.util.Locale;
 public class IjkMediaController extends BaseMediaController implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
     private static final int ALERT_WINDOW_PERMISSION_CODE = 1;
     private static final String TAG = "IjkMediaController";
-    private StringBuilder mFormatBuilder;
-    private Formatter mFormatter;
     protected TextView totalTime, currTime;
     protected ImageView startButton;
     protected ImageView fullScreenButton;
@@ -44,7 +40,6 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
     protected TextView title;
     private int sDefaultTimeout = 3000;
     private boolean isLive;
-    private boolean isLocked;
     private boolean isDragging;
 
 
@@ -64,8 +59,6 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
     @Override
     protected void initView() {
         super.initView();
-        mFormatBuilder = new StringBuilder();
-        mFormatter = new Formatter(mFormatBuilder, Locale.getDefault());
         startButton = (ImageView) controllerView.findViewById(R.id.play);
         floatScreen = (ImageView) controllerView.findViewById(R.id.float_screen);
         startButton.setOnClickListener(this);
@@ -111,8 +104,8 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
             if (mAutoRotate) orientationEventListener.enable();
             lock.setImageResource(R.drawable.ic_lock);
         } else {
-            isLocked = true;
             hide();
+            isLocked = true;
             if (mAutoRotate) orientationEventListener.disable();
             lock.setImageResource(R.drawable.ic_unlock);
         }
@@ -145,11 +138,6 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
             backButton.setVisibility(INVISIBLE);
             lock.setVisibility(INVISIBLE);
         }
-    }
-
-    @Override
-    public boolean lockBack() {
-        return isLocked;
     }
 
     public void setLive(boolean live) {
@@ -212,14 +200,27 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
     @Override
     public void hide() {
         removeCallbacks(mShowProgress);
-        bottomContainer.setVisibility(GONE);
-        topContainer.setVisibility(GONE);
-        lock.setVisibility(GONE);
+        removeCallbacks(mFadeOut);
+        if (isShowing()) {
+            if (!isLocked) {
+                bottomContainer.setVisibility(GONE);
+                topContainer.setVisibility(GONE);
+                topContainer.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_slide_top_out));
+                bottomContainer.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_slide_bottom_out));
+            }
+            if (mediaPlayer.isFullScreen()) {
+                lock.setVisibility(GONE);
+                lock.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_slide_right_out));
+            }
+        }
         mShowing = false;
     }
 
     private void show(int timeout) {
-        if (mediaPlayer.isFullScreen()) lock.setVisibility(VISIBLE);
+        if (mediaPlayer.isFullScreen()) {
+            lock.setVisibility(VISIBLE);
+            lock.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_slide_right_in));
+        }
         if (isLocked) {
             bottomContainer.setVisibility(INVISIBLE);
             topContainer.setVisibility(INVISIBLE);
@@ -227,6 +228,8 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
             setProgress();
             bottomContainer.setVisibility(VISIBLE);
             topContainer.setVisibility(VISIBLE);
+            topContainer.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_slide_top_in));
+            bottomContainer.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_slide_bottom_in));
             if (isLive) {
                 videoProgress.setVisibility(INVISIBLE);
                 totalTime.setVisibility(INVISIBLE);
@@ -270,21 +273,6 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
         }
     };
 
-    private String stringForTime(int timeMs) {
-        int totalSeconds = timeMs / 1000;
-
-        int seconds = totalSeconds % 60;
-        int minutes = (totalSeconds / 60) % 60;
-        int hours = totalSeconds / 3600;
-
-        mFormatBuilder.setLength(0);
-        if (hours > 0) {
-            return mFormatter.format("%d:%02d:%02d", hours, minutes, seconds).toString();
-        } else {
-            return mFormatter.format("%02d:%02d", minutes, seconds).toString();
-        }
-    }
-
     private int setProgress() {
         if (mediaPlayer == null || isDragging) {
             return 0;
@@ -310,5 +298,15 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
 
         Log.d(TAG, "setProgress: " + duration);
         return position;
+    }
+
+
+    @Override
+    protected void slideToChangePosition(float deltaX) {
+        if (!isLive) {
+            super.slideToChangePosition(deltaX);
+        } else {
+            mSliding = false;
+        }
     }
 }
