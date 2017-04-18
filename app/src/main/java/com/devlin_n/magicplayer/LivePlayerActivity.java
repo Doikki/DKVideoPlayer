@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.devlin_n.magic_player.player.IjkVideoView;
 
 /**
+ * 直播播放
  * Created by Devlin_n on 2017/4/7.
  */
 
@@ -38,9 +39,9 @@ public class LivePlayerActivity extends AppCompatActivity {
 //        ijkVideoView.setUrl("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high");
 //        ijkVideoView.setTitle("这是一个标题");
 //        ijkVideoView.setMediaController(IjkVideoView.VOD);
-
-        ijkVideoView.setUrl("http://ivi.bupt.edu.cn/hls/jxtv.m3u8");
-        ijkVideoView.setTitle("江西卫视");
+        ijkVideoView.setAutoPlay(true);
+        ijkVideoView.setUrl("rtmp://live.hkstv.hk.lxdns.com/live/hks");
+        ijkVideoView.setTitle("hks");
         ijkVideoView.setMediaController(IjkVideoView.LIVE);
     }
 

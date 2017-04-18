@@ -30,7 +30,6 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
     private static final int ALERT_WINDOW_PERMISSION_CODE = 1;
     private static final String TAG = "IjkMediaController";
     protected TextView totalTime, currTime;
-    protected ImageView startButton;
     protected ImageView fullScreenButton;
     protected LinearLayout bottomContainer, topContainer;
     protected SeekBar videoProgress;
@@ -59,9 +58,7 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
     @Override
     protected void initView() {
         super.initView();
-        startButton = (ImageView) controllerView.findViewById(R.id.play);
         floatScreen = (ImageView) controllerView.findViewById(R.id.float_screen);
-        startButton.setOnClickListener(this);
         fullScreenButton = (ImageView) controllerView.findViewById(R.id.fullscreen);
         fullScreenButton.setOnClickListener(this);
         bottomContainer = (LinearLayout) controllerView.findViewById(R.id.bottom_container);
@@ -82,9 +79,7 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
     @Override
     public void onClick(View v) {
         int i = v.getId();
-        if (i == R.id.play) {
-            startPlayLogic();
-        } else if (i == R.id.float_screen) {
+        if (i == R.id.float_screen) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 sdk23Permission();
             } else {
@@ -148,26 +143,6 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
         return isLive;
     }
 
-    protected void startPlayLogic() {
-        if (mediaPlayer.isPlaying()) {
-            mediaPlayer.pause();
-            startButton.setImageResource(R.drawable.ic_play);
-        } else {
-            mediaPlayer.start();
-            startButton.setImageResource(R.drawable.ic_pause);
-        }
-    }
-
-    @Override
-    public void updatePlayButton() {
-        super.updatePlayButton();
-        if (mediaPlayer.isPlaying()) {
-            startButton.setImageResource(R.drawable.ic_pause);
-        } else {
-            startButton.setImageResource(R.drawable.ic_play);
-        }
-    }
-
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
         isDragging = true;
@@ -183,6 +158,7 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
         isDragging = false;
         setProgress();
         post(mShowProgress);
+//        postDelayed(mFadeOut, sDefaultTimeout);
     }
 
     @Override
@@ -205,6 +181,7 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
             if (!isLocked) {
                 bottomContainer.setVisibility(GONE);
                 topContainer.setVisibility(GONE);
+                mediaPlayer.updatePlayButton(GONE);
                 topContainer.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_slide_top_out));
                 bottomContainer.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_slide_bottom_out));
             }
@@ -221,13 +198,11 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
             lock.setVisibility(VISIBLE);
             lock.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_slide_right_in));
         }
-        if (isLocked) {
-            bottomContainer.setVisibility(INVISIBLE);
-            topContainer.setVisibility(INVISIBLE);
-        } else {
+        if (!isLocked) {
             setProgress();
             bottomContainer.setVisibility(VISIBLE);
             topContainer.setVisibility(VISIBLE);
+            mediaPlayer.updatePlayButton(VISIBLE);
             topContainer.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_slide_top_in));
             bottomContainer.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_slide_bottom_in));
             if (isLive) {
@@ -251,7 +226,6 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
 
     @Override
     public void reset() {
-        updatePlayButton();
         videoProgress.setProgress(0);
         show();
     }

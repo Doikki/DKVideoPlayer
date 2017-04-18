@@ -14,6 +14,7 @@ import com.devlin_n.magic_player.controller.IjkMediaController;
 import com.devlin_n.magic_player.player.IjkVideoView;
 
 /**
+ * 点播播放
  * Created by Devlin_n on 2017/4/7.
  */
 
@@ -35,12 +36,13 @@ public class VodPlayerActivity extends AppCompatActivity {
 //        videoModels.add(new VideoModel("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high","美味1",controller));
 //        videoModels.add(new VideoModel("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high","美味2",controller));
 //        videoModels.add(new VideoModel("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high","美味3",controller));
+//        ijkVideoView.setAutoPlay(false);
 //        ijkVideoView.setVideos(videoModels);
 
-        ijkVideoView.setUrl("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high");
-//        ijkVideoView.setUrl("http://ivi.bupt.edu.cn/hls/cctv1hd.m3u8");
+        ijkVideoView.setAutoPlay(false);
         ijkVideoView.setTitle("这是一个标题");
-//        ijkVideoView.setMediaController(IjkVideoView.VOD);
+        ijkVideoView.getThumb().setImageResource(R.drawable.thumb);
+        ijkVideoView.setUrl("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high");
         IjkMediaController controller = new IjkMediaController(this);
         controller.setAutoRotate(true);
         ijkVideoView.setMediaController(controller);

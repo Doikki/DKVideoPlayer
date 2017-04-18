@@ -168,9 +168,6 @@ public abstract class BaseMediaController extends FrameLayout {
     public void updateFullScreen() {
     }
 
-    public void updatePlayButton() {
-    }
-
     /**
      * 横竖屏切换
      */
@@ -252,6 +249,7 @@ public abstract class BaseMediaController extends FrameLayout {
                             }
                         }
                         mThreshold = 0;
+                        hide();
                     }
 
                     if (mChangePosition) {
@@ -290,8 +288,9 @@ public abstract class BaseMediaController extends FrameLayout {
         mCenterView.setProVisibility(View.GONE);
         int width = getMeasuredWidth();
         int duration = mediaPlayer.getDuration();
-        int position = (int) (deltaX * 2 / width * duration + mediaPlayer.getCurrentPosition());
-        if (position > mPosition) {
+        int currentPosition = mediaPlayer.getCurrentPosition();
+        int position = (int) (deltaX * 2 / width * duration + currentPosition);
+        if (position > currentPosition) {
             mCenterView.setIcon(R.drawable.ic_fast_forward);
         } else {
             mCenterView.setIcon(R.drawable.ic_rewind);
@@ -384,6 +383,8 @@ public abstract class BaseMediaController extends FrameLayout {
         boolean isFullScreen();
 
         String getTitle();
+
+        void updatePlayButton(int visibility);
     }
 
     public void setMediaPlayer(MediaPlayerControlInterface mediaPlayer) {

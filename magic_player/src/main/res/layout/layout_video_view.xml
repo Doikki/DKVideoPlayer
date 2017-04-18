@@ -10,7 +10,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center" />
-
+    <FrameLayout
+        android:id="@+id/controller_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center" />
+    <ImageView
+        android:id="@+id/iv_thumb"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"/>
     <ProgressBar
         android:id="@+id/buffering"
         android:layout_width="30dp"
@@ -18,4 +27,11 @@
         android:layout_gravity="center"
         android:indeterminateDrawable="@drawable/progress_loading"
         android:visibility="gone" />
+    <ImageView
+        android:id="@+id/iv_play"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:padding="10dp"
+        android:src="@drawable/ic_play" />
 </FrameLayout>

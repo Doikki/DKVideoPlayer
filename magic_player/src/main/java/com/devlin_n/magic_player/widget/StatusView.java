@@ -34,6 +34,7 @@ public class StatusView extends LinearLayout {
         View root = LayoutInflater.from(getContext()).inflate(R.layout.layout_status_view, this);
         tvMessage = (TextView) root.findViewById(R.id.message);
         btnAction = (Button) root.findViewById(R.id.status_btn);
+        this.setBackgroundResource(android.R.color.black);
     }
 
     public void setMessage(String msg) {

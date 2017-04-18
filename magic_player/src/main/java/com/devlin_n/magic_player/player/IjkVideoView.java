@@ -16,7 +16,9 @@ import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
@@ -50,12 +52,16 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     private boolean isControllerAdded;
     private MySurfaceView surfaceView;
     private RelativeLayout surfaceContainer;
+    private FrameLayout controllerContainer;
     private StatusView statusView;
     private int bufferPercentage;
     private ProgressBar bufferProgress;
     private int originalWidth, originalHeight;
     private boolean isFullScreen;
     private String mCurrentUrl;
+    private boolean isAutoPlay;
+    private ImageView playButton;
+    private ImageView thumb;
 
     public static final int VOD = 1;
     public static final int LIVE = 2;
@@ -66,7 +72,6 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     private int mCurrentVideoType;
     private String mCurrentTitle = "";
     private static boolean IS_PLAY_ON_MOBILE_NETWORK = false;
-    private static boolean IS_START_FLOAT_WINDOW;
 
 
     private static final int STATE_ERROR = -1;
@@ -76,6 +81,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     private static final int STATE_PLAYING = 3;
     private static final int STATE_PAUSED = 4;
     private static final int STATE_PLAYBACK_COMPLETED = 5;
+    private static final int STATE_BUFFERING = 6;
 
     private int mCurrentState = STATE_IDLE;
     private int mTargetState = STATE_IDLE;
@@ -95,6 +101,21 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         View videoView = LayoutInflater.from(getContext()).inflate(R.layout.layout_video_view, this);
         bufferProgress = (ProgressBar) videoView.findViewById(R.id.buffering);
         surfaceContainer = (RelativeLayout) videoView.findViewById(R.id.surface_container);
+        controllerContainer = (FrameLayout) videoView.findViewById(R.id.controller_container);
+        playButton = (ImageView) videoView.findViewById(R.id.iv_play);
+        thumb = (ImageView) videoView.findViewById(R.id.iv_thumb);
+        playButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isPlaying()) {
+                    pause();
+                    playButton.setImageResource(R.drawable.ic_play);
+                } else {
+                    start();
+                    playButton.setImageResource(R.drawable.ic_pause);
+                }
+            }
+        });
         getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -110,7 +131,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     }
 
     private void openVideo() {
-        if (getNetworkType(getContext()) == 4 && !IS_PLAY_ON_MOBILE_NETWORK) {
+        if (getNetworkType(getContext()) == 3 && !IS_PLAY_ON_MOBILE_NETWORK) {
             if (statusView == null) {
                 statusView = new StatusView(getContext());
             }
@@ -121,6 +142,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
                     IS_PLAY_ON_MOBILE_NETWORK = true;
                     removeView(statusView);
                     openVideo();
+                    startPrepare();
                 }
             });
             addView(statusView);
@@ -129,27 +151,33 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         if (mCurrentUrl == null || mCurrentUrl.trim().equals("")) return;
         mAudioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
         mAudioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        mMediaPlayer = new IjkMediaPlayer();
+        mMediaPlayer.setScreenOnWhilePlaying(true);
+        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mMediaPlayer.setOnErrorListener(this);
+        mMediaPlayer.setOnCompletionListener(this);
+        mMediaPlayer.setOnInfoListener(this);
+        mMediaPlayer.setOnBufferingUpdateListener(this);
+        mMediaPlayer.setOnPreparedListener(this);
+        mMediaPlayer.setOnVideoSizeChangedListener(this);
+        if (isAutoPlay) startPrepare();
+        addSurfaceView();
+    }
+
+    private void startPrepare() {
         try {
-            if (mMediaPlayer != null) mMediaPlayer.release();
-            mMediaPlayer = new IjkMediaPlayer();
+            mMediaPlayer.reset();
             mMediaPlayer.setDataSource(mCurrentUrl);
-            mMediaPlayer.setScreenOnWhilePlaying(true);
-            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            mMediaPlayer.setOnErrorListener(this);
-            mMediaPlayer.setOnCompletionListener(this);
-            mMediaPlayer.setOnInfoListener(this);
-            mMediaPlayer.setOnBufferingUpdateListener(this);
-            mMediaPlayer.setOnPreparedListener(this);
-            mMediaPlayer.setOnVideoSizeChangedListener(this);
             mMediaPlayer.prepareAsync();
             mCurrentState = STATE_PREPARING;
+            bufferProgress.setVisibility(VISIBLE);
+            playButton.setVisibility(GONE);
+            thumb.setVisibility(GONE);
         } catch (IOException e) {
             mCurrentState = STATE_ERROR;
             mTargetState = STATE_ERROR;
             e.printStackTrace();
         }
-        bufferProgress.setVisibility(VISIBLE);
-        addSurfaceView();
     }
 
     private void addSurfaceView() {
@@ -164,7 +192,6 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        if (mMediaController != null) mMediaController.hide();
     }
 
     @Override
@@ -196,6 +223,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     public void setVideos(List<VideoModel> videoModels) {
         this.mVideoModels = videoModels;
         playNext();
+        openVideo();
     }
 
     public void setTitle(String title) {
@@ -204,25 +232,32 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         }
     }
 
+    public ImageView getThumb(){
+        return thumb;
+    }
+
     private void playNext() {
-        if (mCurrentVideoPosition >= mVideoModels.size()) return;
         VideoModel videoModel = mVideoModels.get(mCurrentVideoPosition);
         if (videoModel != null) {
             mCurrentUrl = videoModel.url;
             mCurrentTitle = videoModel.title;
             mCurrentPosition = 0;
-            openVideo();
             setMediaController(videoModel.controller);
         }
     }
 
     @Override
     public void start() {
-        if (isInPlaybackState()) {
-            mMediaPlayer.start();
-            mCurrentState = STATE_PLAYING;
+        if (mCurrentState == STATE_IDLE) {
+            startPrepare();
+        } else {
+            if (isInPlaybackState()) {
+                mMediaPlayer.start();
+                mCurrentState = STATE_PLAYING;
+            }
+            mTargetState = STATE_PLAYING;
         }
-        mTargetState = STATE_PLAYING;
+
     }
 
     @Override
@@ -237,7 +272,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     }
 
     public void resume() {
-        if (isInPlaybackState() && !mMediaPlayer.isPlaying()) {
+        if (isInPlaybackState() && !mMediaPlayer.isPlaying() && mCurrentState != STATE_PLAYBACK_COMPLETED) {
             mMediaPlayer.start();
             mCurrentState = STATE_PLAYING;
         }
@@ -313,21 +348,17 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     @Override
     public void startFloatWindow() {
         Intent intent = new Intent(getContext(), BackgroundPlayService.class);
-        intent.setAction("com.devlin_n.magic_player.backgroundService");
         intent.putExtra(KeyUtil.URL, mCurrentUrl);
         getCurrentPosition();
         intent.putExtra(KeyUtil.POSITION, mCurrentPosition);
         intent.putExtra(KeyUtil.TYPE, mCurrentVideoType);
         getContext().startService(intent);
         WindowUtil.getAppCompActivity(getContext()).finish();
-        IS_START_FLOAT_WINDOW = true;
     }
 
     public void stopFloatWindow() {
         Intent intent = new Intent(getContext(), BackgroundPlayService.class);
-        intent.setAction("com.devlin_n.magic_player.backgroundService");
         getContext().stopService(intent);
-        IS_START_FLOAT_WINDOW = false;
     }
 
 
@@ -363,8 +394,23 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         return mCurrentTitle;
     }
 
+    @Override
+    public void updatePlayButton(int visibility) {
+        if (mCurrentState == STATE_BUFFERING) {
+            playButton.setVisibility(GONE);
+        } else {
+            playButton.setVisibility(visibility);
+            if (mCurrentState == STATE_PREPARED) return;
+            if (visibility != VISIBLE) {
+                playButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_out));
+            } else {
+                playButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_in));
+            }
+        }
+    }
+
     public void setMediaController(int type) {
-        removeView(mMediaController);
+        controllerContainer.removeAllViews();
         isControllerAdded = false;
         switch (type) {
             case VOD: {
@@ -391,7 +437,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     }
 
     public void setMediaController(BaseMediaController mediaController) {
-        removeView(mMediaController);
+        controllerContainer.removeAllViews();
         isControllerAdded = false;
         if (mediaController != null) {
             mediaController.setMediaPlayer(this);
@@ -431,10 +477,15 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     public void onCompletion(IMediaPlayer iMediaPlayer) {
         mCurrentState = STATE_PLAYBACK_COMPLETED;
         mTargetState = STATE_PLAYBACK_COMPLETED;
-        if (mMediaController != null) mMediaController.reset();
+        if (mMediaController != null && mVideoModels == null) mMediaController.reset();
+        playButton.setImageResource(R.drawable.ic_play);
         mCurrentVideoPosition++;
-        if (mVideoModels != null && mVideoModels.size() > 1)
+        if (mVideoModels != null && mVideoModels.size() > 1) {
+            if (mCurrentVideoPosition >= mVideoModels.size()) return;
             playNext();
+            startPrepare();
+            addSurfaceView();
+        }
     }
 
     @Override
@@ -442,8 +493,10 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         if (what == IMediaPlayer.MEDIA_INFO_BUFFERING_START) {
             if (mMediaController != null) mMediaController.hide();
             bufferProgress.setVisibility(VISIBLE);
+            mCurrentState = STATE_BUFFERING;
         } else if (what == IMediaPlayer.MEDIA_INFO_BUFFERING_END) {
             bufferProgress.setVisibility(GONE);
+            mCurrentState = STATE_PLAYING;
         }
         return false;
     }
@@ -457,14 +510,17 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     public void onPrepared(IMediaPlayer iMediaPlayer) {
         mCurrentState = STATE_PREPARED;
         bufferProgress.setVisibility(GONE);
+        playButton.setImageResource(R.drawable.ic_pause);
+        playButton.setVisibility(GONE);
         if (mCurrentPosition > 0 && mCurrentVideoType == VOD) {
             seekTo(mCurrentPosition);
         }
         if (mMediaController != null && !isControllerAdded) {
-            addView(mMediaController);
-            mMediaController.updatePlayButton();
+            controllerContainer.addView(mMediaController);
+            mMediaController.hide();
             isControllerAdded = true;
         }
+        mCurrentState = STATE_PLAYING;
         if (mTargetState == STATE_PAUSED) mMediaPlayer.pause();
     }
 
@@ -507,12 +563,21 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
                     case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
                         break;
                 }
-                if (mMediaController != null) mMediaController.updatePlayButton();
+                playButton.setImageResource(R.drawable.ic_play);
             } catch (IllegalStateException e) {
                 e.printStackTrace();
             }
         }
     };
+
+    public void setAutoPlay(boolean autoPlay) {
+        this.isAutoPlay = autoPlay;
+        if (autoPlay) {
+            playButton.setVisibility(GONE);
+        } else {
+            playButton.setVisibility(VISIBLE);
+        }
+    }
 
     /**
      * 判断当前网络类型-1为未知网络0为没有网络连接1网络断开或关闭2为以太网3为WiFi4为2G5为3G6为4G
