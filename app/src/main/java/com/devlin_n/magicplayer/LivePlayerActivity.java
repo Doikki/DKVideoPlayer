@@ -1,7 +1,6 @@
 package com.devlin_n.magicplayer;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
@@ -10,7 +9,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.devlin_n.magic_player.controller.IjkMediaController;
 import com.devlin_n.magic_player.player.IjkVideoView;
+
+import static android.os.Build.VERSION_CODES.M;
 
 /**
  * 直播播放
@@ -30,19 +32,13 @@ public class LivePlayerActivity extends AppCompatActivity {
         int widthPixels = getResources().getDisplayMetrics().widthPixels;
         ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 4 * 3));
 
-//        List<VideoModel> videoModels = new ArrayList<>();
-//        videoModels.add(new VideoModel("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high","美味1",IjkVideoView.VOD));
-//        videoModels.add(new VideoModel("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high","美味2",IjkVideoView.VOD));
-//        videoModels.add(new VideoModel("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high","美味3",IjkVideoView.VOD));
-//        ijkVideoView.setVideos(videoModels);
-
-//        ijkVideoView.setUrl("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high");
-//        ijkVideoView.setTitle("这是一个标题");
-//        ijkVideoView.setMediaController(IjkVideoView.VOD);
         ijkVideoView.setAutoPlay(true);
-        ijkVideoView.setUrl("rtmp://live.hkstv.hk.lxdns.com/live/hks");
-        ijkVideoView.setTitle("hks");
-        ijkVideoView.setMediaController(IjkVideoView.LIVE);
+        ijkVideoView.setUrl("http://ivi.bupt.edu.cn/hls/hunanhd.m3u8");
+        ijkVideoView.setTitle("湖南卫视");
+        IjkMediaController controller = new IjkMediaController(this);
+        controller.setLive(true);
+        controller.setAutoRotate(true);
+        ijkVideoView.setMediaController(controller);
     }
 
 
@@ -76,7 +72,7 @@ public class LivePlayerActivity extends AppCompatActivity {
     /**
      * 用户返回
      */
-    @RequiresApi(api = Build.VERSION_CODES.M)
+    @RequiresApi(api = M)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == ALERT_WINDOW_PERMISSION_CODE) {

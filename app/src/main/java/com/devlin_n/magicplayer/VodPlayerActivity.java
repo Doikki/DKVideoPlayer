@@ -26,6 +26,8 @@ public class VodPlayerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
+//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         setContentView(R.layout.activity_vod_player);
         ijkVideoView = (IjkVideoView) findViewById(R.id.ijk_video_view);
         int widthPixels = getResources().getDisplayMetrics().widthPixels;

@@ -221,7 +221,7 @@ public abstract class BaseMediaController extends FrameLayout {
                     mChangeVolume = false;
                     mChangePosition = false;
                     mSliding = false;
-                    mThreshold = 50;
+                    mThreshold = 60;
                     streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
                     mBrightness = WindowUtil.getAppCompActivity(getContext()).getWindow().getAttributes().screenBrightness;
                 }
@@ -248,6 +248,7 @@ public abstract class BaseMediaController extends FrameLayout {
                                 mSliding = true;
                             }
                         }
+                        mCenterView.setVisibility(VISIBLE);
                         mThreshold = 0;
                         hide();
                     }
@@ -284,7 +285,6 @@ public abstract class BaseMediaController extends FrameLayout {
     }
 
     protected void slideToChangePosition(float deltaX) {
-        mCenterView.setVisibility(VISIBLE);
         mCenterView.setProVisibility(View.GONE);
         int width = getMeasuredWidth();
         int duration = mediaPlayer.getDuration();
@@ -302,7 +302,6 @@ public abstract class BaseMediaController extends FrameLayout {
     }
 
     protected void slideToChangeBrightness(float deltaY) {
-        mCenterView.setVisibility(VISIBLE);
         mCenterView.setProVisibility(View.VISIBLE);
         deltaY = -deltaY;
         Window window = WindowUtil.getAppCompActivity(getContext()).getWindow();
@@ -323,13 +322,12 @@ public abstract class BaseMediaController extends FrameLayout {
     }
 
     protected void slideToChangeVolume(float deltaY) {
-        mCenterView.setVisibility(VISIBLE);
         mCenterView.setProVisibility(View.VISIBLE);
         deltaY = -deltaY;
         int streamMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         int height = getMeasuredHeight();
-        int deltaV = (int) (deltaY * 2 / height * streamMaxVolume);
-        int index = streamVolume + deltaV;
+        float deltaV = deltaY * 2 / height * streamMaxVolume;
+        float index = streamVolume + deltaV;
         if (index > streamMaxVolume) index = streamMaxVolume;
         if (index < 0) {
             mCenterView.setIcon(R.drawable.ic_volume_off);
@@ -337,10 +335,10 @@ public abstract class BaseMediaController extends FrameLayout {
         } else {
             mCenterView.setIcon(R.drawable.ic_volume_on);
         }
-        int percent = (int) (index * 1.0 / streamMaxVolume * 100);
+        int percent = (int) (index / streamMaxVolume * 100);
         mCenterView.setTextView(percent + "%");
         mCenterView.setProPercent(percent);
-        mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, index, 0);
+        mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (int) index, 0);
     }
 
     protected String stringForTime(int timeMs) {

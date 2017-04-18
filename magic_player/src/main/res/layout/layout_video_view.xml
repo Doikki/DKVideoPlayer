@@ -9,12 +9,12 @@
         android:id="@+id/surface_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center" />
+        android:gravity="center"/>
     <FrameLayout
         android:id="@+id/controller_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"/>
     <ImageView
         android:id="@+id/iv_thumb"
         android:layout_width="match_parent"

@@ -125,6 +125,8 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
             backButton.setVisibility(VISIBLE);
             if (isShowing()) {
                 lock.setVisibility(VISIBLE);
+                WindowUtil.showNavKey(getContext());
+                WindowUtil.showStatusBar(getContext());
             } else {
                 lock.setVisibility(INVISIBLE);
             }
@@ -186,6 +188,8 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
                 bottomContainer.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_slide_bottom_out));
             }
             if (mediaPlayer.isFullScreen()) {
+                WindowUtil.hideStatusBar(getContext());
+                WindowUtil.hideNavKey(getContext());
                 lock.setVisibility(GONE);
                 lock.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_slide_right_out));
             }
@@ -197,6 +201,8 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
         if (mediaPlayer.isFullScreen()) {
             lock.setVisibility(VISIBLE);
             lock.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_slide_right_in));
+            WindowUtil.showStatusBar(getContext());
+            WindowUtil.showNavKey(getContext());
         }
         if (!isLocked) {
             setProgress();

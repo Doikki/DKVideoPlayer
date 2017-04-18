@@ -1,6 +1,5 @@
 package com.devlin_n.magic_player.util;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Point;
@@ -54,7 +53,7 @@ public class WindowUtil {
             Point realSize = new Point();
             display.getSize(size);
             display.getRealSize(realSize);
-            return realSize.x != size.x;
+            return realSize.x != size.x || realSize.y != size.y;
         } else {
             boolean menu = ViewConfiguration.get(context).hasPermanentMenuKey();
             boolean back = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
@@ -72,8 +71,12 @@ public class WindowUtil {
     /**
      * 获取屏幕高度
      */
-    public static int getScreenHeight(Context context) {
-        return context.getResources().getDisplayMetrics().heightPixels + getNavigationBarHeight(context);
+    public static int getScreenHeight(Context context, boolean isIncludeNav) {
+        if (isIncludeNav) {
+            return context.getResources().getDisplayMetrics().heightPixels + getNavigationBarHeight(context);
+        } else {
+            return context.getResources().getDisplayMetrics().heightPixels;
+        }
     }
 
     /**
@@ -95,9 +98,11 @@ public class WindowUtil {
                 FragmentActivity fragmentActivity = (FragmentActivity) context;
                 fragmentActivity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                         WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                fragmentActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             } else {
                 getAppCompActivity(context).getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                         WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                getAppCompActivity(context).getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             }
         }
     }
@@ -121,8 +126,10 @@ public class WindowUtil {
             if (context instanceof FragmentActivity) {
                 FragmentActivity fragmentActivity = (FragmentActivity) context;
                 fragmentActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                fragmentActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             } else {
                 getAppCompActivity(context).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                getAppCompActivity(context).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             }
         }
     }
@@ -131,25 +138,35 @@ public class WindowUtil {
      * 隐藏NavigationBar
      */
     public static void hideNavKey(Context context) {
+        int flag;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             //       设置屏幕始终在前面，不然点击鼠标，重新出现虚拟按键
-            ((Activity) context).getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav
-                            // bar
-                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN);
+            flag = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav
+                    // bar
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         } else {
-            ((Activity) context).getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav
-            );
+            flag = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION; // hide nav
         }
+        getAppCompActivity(context).getWindow().getDecorView().setSystemUiVisibility(flag);
     }
 
     /**
      * 显示NavigationBar
      */
     public static void showNavKey(Context context) {
-        ((Activity) context).getWindow().getDecorView().setSystemUiVisibility(0);
+        getAppCompActivity(context).getWindow().getDecorView().setSystemUiVisibility(0);
+    }
+
+    public static void hideStatusBar(Context context) {
+        WindowManager.LayoutParams attrs = getAppCompActivity(context).getWindow().getAttributes();
+        attrs.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
+        getAppCompActivity(context).getWindow().setAttributes(attrs);
+    }
+
+    public static void showStatusBar(Context context) {
+        WindowManager.LayoutParams attrs = getAppCompActivity(context).getWindow().getAttributes();
+        attrs.flags &= ~WindowManager.LayoutParams.FLAG_FULLSCREEN;
+        getAppCompActivity(context).getWindow().setAttributes(attrs);
     }
 
 
