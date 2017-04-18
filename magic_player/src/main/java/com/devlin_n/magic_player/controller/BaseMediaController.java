@@ -6,7 +6,6 @@ import android.media.AudioManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
@@ -44,7 +43,6 @@ public abstract class BaseMediaController extends FrameLayout {
      * 加速度传感器监听
      */
     protected OrientationEventListener orientationEventListener;
-
 
     public BaseMediaController(@NonNull Context context) {
         this(context, null);
@@ -210,65 +208,73 @@ public abstract class BaseMediaController extends FrameLayout {
 
     protected int mPosition;
 
+    private int mThreshold;
+
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();
         float y = event.getY();
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (isShowing()) {
-                    hide();
-                } else {
-                    show();
+                if (!isLocked) {
+                    mDownX = event.getX();
+                    mDownY = event.getY();
+                    mChangeBrightness = false;
+                    mChangeVolume = false;
+                    mChangePosition = false;
+                    mSliding = false;
+                    mThreshold = 50;
+                    streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                    mBrightness = WindowUtil.getAppCompActivity(getContext()).getWindow().getAttributes().screenBrightness;
                 }
-                if (isLocked) return false;
-                mDownX = event.getX();
-                mDownY = event.getY();
-                mChangeBrightness = false;
-                mChangeVolume = false;
-                mChangePosition = false;
-                mSliding = false;
-                streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-                mBrightness = WindowUtil.getAppCompActivity(getContext()).getWindow().getAttributes().screenBrightness;
                 break;
             case MotionEvent.ACTION_MOVE:
-                if (isLocked) return false;
-                float deltaX = x - mDownX;
-                float deltaY = y - mDownY;
-                float absDeltaX = Math.abs(deltaX);
-                float absDeltaY = Math.abs(deltaY);
-                int mThreshold = 30;
-                if (absDeltaX < mThreshold && absDeltaY < mThreshold) return false;
-                if (!mSliding) {
-                    if (absDeltaX > absDeltaY) {
-                        mChangePosition = true;
-                        mSliding = true;
-                    } else {
-                        int screenWidth = WindowUtil.getScreenWidth(getContext());
-
-                        if (mDownX > screenWidth / 2) {
-                            mChangeBrightness = true;
+                if (!isLocked) {
+                    float deltaX = x - mDownX;
+                    float deltaY = y - mDownY;
+                    float absDeltaX = Math.abs(deltaX);
+                    float absDeltaY = Math.abs(deltaY);
+                    if (absDeltaX < mThreshold && absDeltaY < mThreshold) return false;
+                    if (!mSliding) {
+                        if (absDeltaX > absDeltaY) {
+                            mChangePosition = true;
                             mSliding = true;
                         } else {
-                            mChangeVolume = true;
-                            mSliding = true;
+                            int screenWidth = WindowUtil.getScreenWidth(getContext());
+
+                            if (mDownX > screenWidth / 2) {
+                                mChangeBrightness = true;
+                                mSliding = true;
+                            } else {
+                                mChangeVolume = true;
+                                mSliding = true;
+                            }
                         }
+                        mThreshold = 0;
+                    }
+
+                    if (mChangePosition) {
+                        slideToChangePosition(deltaX);
+                    } else if (mChangeVolume) {
+                        slideToChangeVolume(deltaY);
+                    } else if (mChangeBrightness) {
+                        slideToChangeBrightness(deltaY);
                     }
                 }
-
-                if (mChangePosition) {
-                    slideToChangePosition(deltaX);
-                } else if (mChangeVolume) {
-                    slideToChangeVolume(deltaY);
-                } else if (mChangeBrightness) {
-                    slideToChangeBrightness(deltaY);
-                }
-
                 break;
             case MotionEvent.ACTION_UP:
-                if (isLocked) return false;
-                if (mSliding) mCenterView.setVisibility(GONE);
-                if (mChangePosition) mediaPlayer.seekTo(mPosition);
+                if (!mSliding) {
+                    if (isShowing()) {
+                        hide();
+                    } else {
+                        show();
+                    }
+                }
+                if (!isLocked) {
+                    if (mSliding) mCenterView.setVisibility(GONE);
+                    if (mChangePosition) mediaPlayer.seekTo(mPosition);
+                }
                 break;
             case MotionEvent.ACTION_CANCEL:
                 hide();
@@ -315,7 +321,6 @@ public abstract class BaseMediaController extends FrameLayout {
         mCenterView.setProPercent(percent);
         attributes.screenBrightness = brightness;
         window.setAttributes(attributes);
-        Log.d(TAG, "slideToChangeBrightness: " + deltaY);
     }
 
     protected void slideToChangeVolume(float deltaY) {
