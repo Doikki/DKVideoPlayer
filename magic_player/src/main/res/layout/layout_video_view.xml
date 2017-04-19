@@ -13,8 +13,8 @@
     <FrameLayout
         android:id="@+id/controller_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"/>
+        android:layout_height="match_parent"
+        android:layout_gravity="center"/>
     <ImageView
         android:id="@+id/iv_thumb"
         android:layout_width="match_parent"

@@ -11,6 +11,7 @@ import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -40,6 +41,7 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
     private int sDefaultTimeout = 3000;
     private boolean isLive;
     private boolean isDragging;
+    private View statusHolder;
 
 
     public IjkMediaController(@NonNull Context context) {
@@ -74,6 +76,9 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
         lock = (ImageView) controllerView.findViewById(R.id.lock);
         lock.setOnClickListener(this);
         title = (TextView) controllerView.findViewById(R.id.title);
+        statusHolder = controllerView.findViewById(R.id.status_holder);
+        statusHolder.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) WindowUtil.getStatusBarHeight(getContext())));
+        statusHolder.setVisibility(GONE);
     }
 
     @Override
@@ -123,6 +128,7 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
         if (mediaPlayer != null && mediaPlayer.isFullScreen()) {
             fullScreenButton.setImageResource(R.drawable.ic_stop_fullscreen);
             backButton.setVisibility(VISIBLE);
+            statusHolder.setVisibility(VISIBLE);
             if (isShowing()) {
                 lock.setVisibility(VISIBLE);
                 WindowUtil.showNavKey(getContext());
@@ -134,6 +140,7 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
             fullScreenButton.setImageResource(R.drawable.ic_start_fullscreen);
             backButton.setVisibility(INVISIBLE);
             lock.setVisibility(INVISIBLE);
+            statusHolder.setVisibility(GONE);
         }
     }
 

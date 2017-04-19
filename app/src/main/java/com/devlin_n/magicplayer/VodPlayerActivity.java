@@ -26,8 +26,6 @@ public class VodPlayerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
-//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         setContentView(R.layout.activity_vod_player);
         ijkVideoView = (IjkVideoView) findViewById(R.id.ijk_video_view);
         int widthPixels = getResources().getDisplayMetrics().widthPixels;
@@ -48,10 +46,6 @@ public class VodPlayerActivity extends AppCompatActivity {
         IjkMediaController controller = new IjkMediaController(this);
         controller.setAutoRotate(true);
         ijkVideoView.setMediaController(controller);
-
-//        ijkVideoView.setUrl("http://yao.hls.cutv.com/cutvlive/AxeFRth/hls/1xqFht0_sd.m3u8");
-//        ijkVideoView.setTitle("深圳卫视");
-//        ijkVideoView.setMediaController(IjkVideoView.LIVE);
     }
 
 

@@ -161,7 +161,6 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         mMediaPlayer.setOnPreparedListener(this);
         mMediaPlayer.setOnVideoSizeChangedListener(this);
         if (isAutoPlay) startPrepare();
-        addSurfaceView();
     }
 
     private void startPrepare() {
@@ -370,10 +369,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         int height = WindowUtil.getScreenWidth(getContext());
         layoutParams.width = WindowUtil.getScreenHeight(getContext(), true);
         layoutParams.height = height;
-        if (mMediaController != null) {
-            mMediaController.setLayoutParams(new LayoutParams(WindowUtil.getScreenHeight(getContext(), false),
-                    (int) (height - WindowUtil.getStatusBarHeight(getContext()))));
-        }
+        if (mMediaController != null) mMediaController.setLayoutParams(new LayoutParams(WindowUtil.getScreenHeight(getContext(), false), height));
         this.setLayoutParams(layoutParams);
         isFullScreen = true;
     }
@@ -386,7 +382,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         WindowUtil.showNavKey(getContext());
         layoutParams.width = originalWidth;
         layoutParams.height = originalHeight;
-        mMediaController.setLayoutParams(new LayoutParams(originalWidth, originalHeight));
+        if (mMediaController != null) mMediaController.setLayoutParams(new LayoutParams(originalWidth, originalHeight));
         this.setLayoutParams(layoutParams);
         isFullScreen = false;
     }
@@ -525,7 +521,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         if (mMediaController != null && !isControllerAdded) {
             if (isFullScreen) {
                 mMediaController.setLayoutParams(new LayoutParams(WindowUtil.getScreenWidth(getContext()),
-                        (int) (WindowUtil.getScreenHeight(getContext(), false) - WindowUtil.getStatusBarHeight(getContext()))));
+                        WindowUtil.getScreenHeight(getContext(), false)));
             } else {
                 mMediaController.setLayoutParams(new LayoutParams(originalWidth, originalHeight));
             }
@@ -542,6 +538,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         int videoWidth = iMediaPlayer.getVideoWidth();
         int videoHeight = iMediaPlayer.getVideoHeight();
         if (videoWidth != 0 && videoHeight != 0) {
+            addSurfaceView();
             surfaceView.setVideoSize(videoWidth, videoHeight);
             requestLayout();
         }
