@@ -24,5 +24,7 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep class android.support.v4.** { *; }
--keep class com.devlin_n.magicplayer.** { *; }
+-keep class tv.danmaku.ijk.** { *; }
+-dontwarn tv.danmaku.ijk.**
+-keep class com.devlin_n.magic_player.** { *; }
+-dontwarn com.devlin_n.magic_player.**

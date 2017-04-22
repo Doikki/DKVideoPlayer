@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="adIcon">
+        <item name="android:padding">6dp</item>
+        <item name="android:layout_width">30dp</item>
+        <item name="android:layout_height">30dp</item>
+        <item name="android:background">@drawable/shape_back_bg</item>
+        <item name="android:layout_margin">5dp</item>
+    </style>
+    <style name="adText">
+        <item name="android:background">@drawable/shape_ad_bg</item>
+        <item name="android:textSize">@dimen/controller_text_size</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">30dp</item>
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:gravity">center</item>
+    </style>
+</resources>

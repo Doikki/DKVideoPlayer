@@ -3,6 +3,6 @@
        xmlns:android="http://schemas.android.com/apk/res/android">
     <solid android:color="@color/theme_color"/>
     <size
-        android:height="12dp"
-        android:width="12dp"/>
+        android:height="@dimen/controller_seekbar_size"
+        android:width="@dimen/controller_seekbar_size"/>
 </shape>

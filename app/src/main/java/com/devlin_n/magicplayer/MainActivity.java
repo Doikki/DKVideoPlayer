@@ -25,7 +25,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void closeFloatWindow(View view) {
         Intent intent = new Intent(this, BackgroundPlayService.class);
-        intent.setAction("com.devlin_n.magic_player.backgroundService");
         getApplicationContext().stopService(intent);
+    }
+
+    public void startFullScreen(View view) {
+        startActivity(new Intent(this, FullScreenActivity.class));
     }
 }

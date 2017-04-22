@@ -8,5 +8,10 @@
         android:id="@+id/ijk_video_view"
         android:layout_width="match_parent"
         android:layout_height="400dp" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="开启画中画"
+        android:onClick="startFloatWindow"/>
 
 </LinearLayout>

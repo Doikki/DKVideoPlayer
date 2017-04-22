@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="controller_height">40dp</dimen>
+    <dimen name="controller_icon_padding">10dp</dimen>
+    <dimen name="controller_text_size">14sp</dimen>
+    <dimen name="default_spacing">10dp</dimen>
+    <dimen name="controller_seekbar_size">12dp</dimen>
+    <dimen name="controller_seekbar_max_size">2dp</dimen>
+    <dimen name="player_play_btn_size">35dp</dimen>
+</resources>

@@ -12,11 +12,16 @@
         android:layout_height="wrap_content"
         android:text="直播播放"
         android:onClick="skipToLivePlayer"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="全屏播放"
+        android:onClick="startFullScreen"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="closeFloatWindow"
-        android:text="关闭悬浮窗"/>
+        android:text="关闭画中画"/>
 
 </LinearLayout>

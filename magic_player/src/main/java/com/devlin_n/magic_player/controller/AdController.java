@@ -4,13 +4,24 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.devlin_n.magic_player.R;
 
 /**
  * 广告控制器
  * Created by Devlin_n on 2017/4/12.
  */
 
-public class AdController extends BaseMediaController{
+public class AdController extends BaseMediaController implements View.OnClickListener {
+    private static final String TAG = AdController.class.getSimpleName();
+    protected TextView adTime, adDetail;
+    protected ImageView back, voulme, fullScreen;
 
     public AdController(@NonNull Context context) {
         super(context);
@@ -22,7 +33,87 @@ public class AdController extends BaseMediaController{
 
     @Override
     protected int getLayoutId() {
+        return R.layout.layout_ad_controller;
+    }
 
-        return 0;
+    @Override
+    protected void initView() {
+        super.initView();
+        adTime = (TextView) controllerView.findViewById(R.id.ad_time);
+        adDetail = (TextView) controllerView.findViewById(R.id.ad_detail);
+        adDetail.setText("了解详情>");
+        back = (ImageView) controllerView.findViewById(R.id.back);
+        back.setVisibility(GONE);
+        voulme = (ImageView) controllerView.findViewById(R.id.iv_volume);
+        fullScreen = (ImageView) controllerView.findViewById(R.id.fullscreen);
+        adTime.setOnClickListener(this);
+        adDetail.setOnClickListener(this);
+        back.setOnClickListener(this);
+        voulme.setOnClickListener(this);
+        fullScreen.setOnClickListener(this);
+        mShowing = true;
+        post(mShowProgress);
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        if (id == R.id.back | id == R.id.fullscreen) {
+            doStartStopFullScreen();
+        } else if (id == R.id.iv_volume) {
+            doMute();
+        } else if (id == R.id.ad_detail) {
+            Toast.makeText(getContext(), "施工中~", Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.ad_time) {
+            mediaPlayer.skipToNext();
+        }
+    }
+
+    private void doMute() {
+        mediaPlayer.setMute();
+        if (mediaPlayer.isMute()) {
+            voulme.setImageResource(R.drawable.ic_volume_on);
+        } else {
+            voulme.setImageResource(R.drawable.ic_volume_off);
+        }
+    }
+
+    @Override
+    public void updateFullScreen() {
+        super.updateFullScreen();
+        if (mediaPlayer != null) {
+            if (mediaPlayer.isFullScreen()) {
+                back.setVisibility(VISIBLE);
+                fullScreen.setImageResource(R.drawable.ic_stop_fullscreen);
+            } else {
+                fullScreen.setImageResource(R.drawable.ic_start_fullscreen);
+                back.setVisibility(GONE);
+            }
+        }
+    }
+
+    @Override
+    protected int setProgress() {
+        if (mediaPlayer == null) {
+            return 0;
+        }
+        int position = mediaPlayer.getCurrentPosition();
+        int duration = mediaPlayer.getDuration();
+
+
+        if (adTime != null)
+            adTime.setText(String.valueOf((duration - position) / 1000) + " | 跳过");
+        Log.d(TAG, "setProgress: called");
+        return position;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                Toast.makeText(getContext(), "施工中~", Toast.LENGTH_SHORT).show();
+                break;
+        }
+        return false;
     }
 }

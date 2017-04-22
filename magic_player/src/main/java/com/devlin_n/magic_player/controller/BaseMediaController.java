@@ -31,7 +31,7 @@ public abstract class BaseMediaController extends FrameLayout {
     private static final String TAG = BaseMediaController.class.getSimpleName();
     protected View controllerView;//控制器视图
     protected MediaPlayerControlInterface mediaPlayer;//播放器
-    protected boolean mShowing = true;//控制器是否处于显示状态
+    protected boolean mShowing;//控制器是否处于显示状态
     protected boolean mAutoRotate;//是否旋转屏幕
     protected CenterView mCenterView;
     protected AudioManager mAudioManager;
@@ -70,6 +70,7 @@ public abstract class BaseMediaController extends FrameLayout {
 //            if (!autoRotateOn) return;
 
                 if (orientation >= 340) { //屏幕顶部朝上
+                    if (isLocked) return;
                     if (CurrentOrientation == PORTRAIT) return;
                     if ((CurrentOrientation == LANDSCAPE || CurrentOrientation == REVERSE_LANDSCAPE) && !mediaPlayer.isFullScreen()) {
                         CurrentOrientation = PORTRAIT;
@@ -120,7 +121,7 @@ public abstract class BaseMediaController extends FrameLayout {
     /**
      * 显示
      */
-    protected void show() {
+    public void show() {
     }
 
     /**
@@ -147,6 +148,7 @@ public abstract class BaseMediaController extends FrameLayout {
      * 是否需要锁定返回键
      */
     public boolean lockBack() {
+        if (isLocked) show();
         return isLocked;
     }
 
@@ -187,6 +189,27 @@ public abstract class BaseMediaController extends FrameLayout {
      */
     protected void startFloatScreen() {
         mediaPlayer.startFloatWindow();
+    }
+
+    protected Runnable mShowProgress = new Runnable() {
+        @Override
+        public void run() {
+            int pos = setProgress();
+            if (mShowing && mediaPlayer.isPlaying()) {
+                postDelayed(mShowProgress, 1000 - (pos % 1000));
+            }
+        }
+    };
+
+    protected final Runnable mFadeOut = new Runnable() {
+        @Override
+        public void run() {
+            hide();
+        }
+    };
+
+    protected int setProgress(){
+        return 0;
     }
 
     private float mDownX, mDownY;
@@ -248,9 +271,7 @@ public abstract class BaseMediaController extends FrameLayout {
                                 mSliding = true;
                             }
                         }
-                        mCenterView.setVisibility(VISIBLE);
                         mThreshold = 0;
-                        hide();
                     }
 
                     if (mChangePosition) {
@@ -285,6 +306,8 @@ public abstract class BaseMediaController extends FrameLayout {
     }
 
     protected void slideToChangePosition(float deltaX) {
+        mCenterView.setVisibility(VISIBLE);
+        hide();
         mCenterView.setProVisibility(View.GONE);
         int width = getMeasuredWidth();
         int duration = mediaPlayer.getDuration();
@@ -302,6 +325,8 @@ public abstract class BaseMediaController extends FrameLayout {
     }
 
     protected void slideToChangeBrightness(float deltaY) {
+        mCenterView.setVisibility(VISIBLE);
+        hide();
         mCenterView.setProVisibility(View.VISIBLE);
         deltaY = -deltaY;
         Window window = WindowUtil.getAppCompActivity(getContext()).getWindow();
@@ -322,6 +347,8 @@ public abstract class BaseMediaController extends FrameLayout {
     }
 
     protected void slideToChangeVolume(float deltaY) {
+        mCenterView.setVisibility(VISIBLE);
+        hide();
         mCenterView.setProVisibility(View.VISIBLE);
         deltaY = -deltaY;
         int streamMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
@@ -356,6 +383,9 @@ public abstract class BaseMediaController extends FrameLayout {
         }
     }
 
+    public void updateProgress() {
+        post(mShowProgress);
+    }
 
     public interface MediaPlayerControlInterface {
         void start();
@@ -383,6 +413,14 @@ public abstract class BaseMediaController extends FrameLayout {
         String getTitle();
 
         void updatePlayButton(int visibility);
+
+        void startFullScreenDirectly();
+
+        void skipToNext();
+
+        void setMute();
+
+        boolean isMute();
     }
 
     public void setMediaPlayer(MediaPlayerControlInterface mediaPlayer) {

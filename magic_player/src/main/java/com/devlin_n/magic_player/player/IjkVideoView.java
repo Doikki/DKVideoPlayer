@@ -62,6 +62,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     private boolean isAutoPlay;
     private ImageView playButton;
     private ImageView thumb;
+    private boolean isMute;
 
     public static final int VOD = 1;
     public static final int LIVE = 2;
@@ -279,6 +280,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
             mCurrentState = STATE_PLAYING;
         }
         mTargetState = STATE_PLAYING;
+        if (mMediaController != null) mMediaController.updateProgress();
     }
 
     public void stopPlayback() {
@@ -363,16 +365,50 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         getContext().stopService(intent);
     }
 
+    @Override
+    public void startFullScreenDirectly() {
+        WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        startFullScreen();
+    }
+
+    @Override
+    public void skipToNext() {
+        mCurrentVideoPosition++;
+        if (mVideoModels != null && mVideoModels.size() > 1) {
+            if (mCurrentVideoPosition >= mVideoModels.size()) return;
+            playNext();
+            startPrepare();
+            addSurfaceView();
+        }
+    }
+
+    @Override
+    public void setMute() {
+        if (isMute) {
+            mMediaPlayer.setVolume(1, 1);
+            isMute = false;
+        } else {
+            mMediaPlayer.setVolume(0, 0);
+            isMute = true;
+        }
+    }
+
+    @Override
+    public boolean isMute() {
+        return isMute;
+    }
 
     @Override
     public void startFullScreen() {
+        if (isFullScreen) return;
         ViewGroup.LayoutParams layoutParams = this.getLayoutParams();
         WindowUtil.hideSupportActionBar(getContext(), true, true);
         WindowUtil.hideNavKey(getContext());
         int height = WindowUtil.getScreenWidth(getContext());
         layoutParams.width = WindowUtil.getScreenHeight(getContext(), true);
         layoutParams.height = height;
-        if (mMediaController != null) mMediaController.setLayoutParams(new LayoutParams(WindowUtil.getScreenHeight(getContext(), false), height));
+        if (mMediaController != null)
+            mMediaController.setLayoutParams(new LayoutParams(WindowUtil.getScreenHeight(getContext(), false), height));
         this.setLayoutParams(layoutParams);
         isFullScreen = true;
     }
@@ -385,7 +421,8 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         WindowUtil.showNavKey(getContext());
         layoutParams.width = originalWidth;
         layoutParams.height = originalHeight;
-        if (mMediaController != null) mMediaController.setLayoutParams(new LayoutParams(originalWidth, originalHeight));
+        if (mMediaController != null)
+            mMediaController.setLayoutParams(new LayoutParams(originalWidth, originalHeight));
         this.setLayoutParams(layoutParams);
         isFullScreen = false;
     }
@@ -525,11 +562,11 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
             if (isFullScreen) {
                 mMediaController.setLayoutParams(new LayoutParams(WindowUtil.getScreenWidth(getContext()),
                         WindowUtil.getScreenHeight(getContext(), false)));
+                mMediaController.updateFullScreen();
             } else {
                 mMediaController.setLayoutParams(new LayoutParams(originalWidth, originalHeight));
             }
             controllerContainer.addView(mMediaController);
-            mMediaController.hide();
             isControllerAdded = true;
         }
         mCurrentState = STATE_PLAYING;

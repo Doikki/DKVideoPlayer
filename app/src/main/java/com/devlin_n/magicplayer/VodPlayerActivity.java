@@ -7,11 +7,17 @@ import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.devlin_n.magic_player.controller.AdController;
 import com.devlin_n.magic_player.controller.IjkMediaController;
 import com.devlin_n.magic_player.player.IjkVideoView;
+import com.devlin_n.magic_player.player.VideoModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 点播播放
@@ -31,21 +37,21 @@ public class VodPlayerActivity extends AppCompatActivity {
         int widthPixels = getResources().getDisplayMetrics().widthPixels;
         ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 16 * 9));
 
-//        List<VideoModel> videoModels = new ArrayList<>();
-//        IjkMediaController controller = new IjkMediaController(this);
-//        videoModels.add(new VideoModel("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high","美味1",controller));
-//        videoModels.add(new VideoModel("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high","美味2",controller));
-//        videoModels.add(new VideoModel("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high","美味3",controller));
-//        ijkVideoView.setAutoPlay(false);
-//        ijkVideoView.setVideos(videoModels);
-
-        ijkVideoView.setAutoPlay(false);
-        ijkVideoView.setTitle("这是一个标题");
-        ijkVideoView.getThumb().setImageResource(R.drawable.thumb);
-        ijkVideoView.setUrl("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high");
+        List<VideoModel> videoModels = new ArrayList<>();
         IjkMediaController controller = new IjkMediaController(this);
-        controller.setAutoRotate(true);
-        ijkVideoView.setMediaController(controller);
+        AdController adController = new AdController(this);
+        videoModels.add(new VideoModel("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high","广告时间",adController));
+        videoModels.add(new VideoModel("http://flv2.bn.netease.com/videolib3/1611/28/GbgsL3639/HD/movie_index.m3u8","这只是一个标题，-(゜ -゜)つロ 乾杯~",controller));
+        ijkVideoView.setAutoPlay(true);
+        ijkVideoView.setVideos(videoModels);
+
+//        ijkVideoView.setAutoPlay(false);
+//        ijkVideoView.setTitle("这是一个标题");
+//        ijkVideoView.getThumb().setImageResource(R.drawable.thumb);
+//        ijkVideoView.setUrl("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high");
+//        IjkMediaController controller = new IjkMediaController(this);
+//        controller.setAutoRotate(true);
+//        ijkVideoView.setMediaController(controller);
     }
 
 
@@ -89,5 +95,9 @@ public class VodPlayerActivity extends AppCompatActivity {
                 ijkVideoView.startFloatWindow();
             }
         }
+    }
+
+    public void startFloatWindow(View view) {
+        ijkVideoView.startFloatWindow();
     }
 }

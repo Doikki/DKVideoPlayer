@@ -22,16 +22,15 @@
         android:scaleType="centerCrop"/>
     <ProgressBar
         android:id="@+id/buffering"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="@dimen/player_play_btn_size"
+        android:layout_height="@dimen/player_play_btn_size"
         android:layout_gravity="center"
         android:indeterminateDrawable="@drawable/progress_loading"
         android:visibility="gone" />
     <ImageView
         android:id="@+id/iv_play"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="@dimen/player_play_btn_size"
+        android:layout_height="@dimen/player_play_btn_size"
         android:layout_gravity="center"
-        android:padding="10dp"
         android:src="@drawable/ic_play" />
 </FrameLayout>

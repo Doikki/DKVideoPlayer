@@ -141,8 +141,7 @@ public class WindowUtil {
         int flag;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             //       设置屏幕始终在前面，不然点击鼠标，重新出现虚拟按键
-            flag = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav
-                    // bar
+            flag = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         } else {
             flag = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION; // hide nav
@@ -157,12 +156,18 @@ public class WindowUtil {
         getAppCompActivity(context).getWindow().getDecorView().setSystemUiVisibility(0);
     }
 
+    /**
+     * 隐藏状态栏
+     */
     public static void hideStatusBar(Context context) {
         WindowManager.LayoutParams attrs = getAppCompActivity(context).getWindow().getAttributes();
         attrs.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
         getAppCompActivity(context).getWindow().setAttributes(attrs);
     }
 
+    /**
+     * 显示状态栏
+     */
     public static void showStatusBar(Context context) {
         WindowManager.LayoutParams attrs = getAppCompActivity(context).getWindow().getAttributes();
         attrs.flags &= ~WindowManager.LayoutParams.FLAG_FULLSCREEN;
@@ -184,7 +189,7 @@ public class WindowUtil {
     }
 
     /**
-     * dip转为PX
+     * dip转为px
      */
     public static int dip2px(Context context, float dipValue) {
         float fontScale = context.getResources().getDisplayMetrics().density;
