@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
@@ -265,12 +264,15 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
         int duration = mediaPlayer.getDuration();
         if (videoProgress != null) {
             if (duration > 0) {
-                // use long to avoid overflow
-                long pos = videoProgress.getMax() * position / duration;
-                videoProgress.setProgress((int) pos);
+                int pos = (int) (position * 1.0 / duration * videoProgress.getMax());
+                videoProgress.setProgress(pos);
             }
             int percent = mediaPlayer.getBufferPercentage();
-            videoProgress.setSecondaryProgress(percent * 10);
+            if (percent >= 95) { //修复第二进度不能100%问题
+                videoProgress.setSecondaryProgress(videoProgress.getMax());
+            } else {
+                videoProgress.setSecondaryProgress(percent * 10);
+            }
         }
 
         if (totalTime != null)
@@ -279,8 +281,6 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
             currTime.setText(stringForTime(position));
         if (title != null)
             title.setText(mediaPlayer.getTitle());
-
-        Log.d(TAG, "setProgress: " + duration);
         return position;
     }
 

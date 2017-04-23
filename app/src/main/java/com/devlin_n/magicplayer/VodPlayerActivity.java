@@ -27,6 +27,11 @@ import static com.devlin_n.magic_player.player.IjkVideoView.ALERT_WINDOW_PERMISS
 public class VodPlayerActivity extends AppCompatActivity {
 
     private IjkVideoView ijkVideoView;
+    private static final String URL = "http://pcvideoksyun.titan.mgtv.com/c1/2017/04/22_0/6E7799AADA98" +
+            "CD56D35E8E19329FA376_20170422_1_1_1545_mp4/115877120D18FC6708FD3804EE654F67.m3u8?t=58fd302" +
+            "a&pno=1050&sign=c81749459848c37f3e686d7e676693d0&win=600&srgid=25028&urgid=372&srgids=25028&" +
+            "nid=25028&payload=usertoken%3Dhit%3D2%5Eruip%3D236214332&rdur=21600&limitrate=0&fid=6E7799A" +
+            "ADA98CD56D35E8E19329FA376&ver=0x03&uuid=692f212ebc754fb7ad747c9ae22ade22&arange=0";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,7 +44,7 @@ public class VodPlayerActivity extends AppCompatActivity {
         ijkVideoView.getThumb().setImageResource(R.drawable.thumb);
         List<VideoModel> videoModels = new ArrayList<>();
         videoModels.add(new VideoModel("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high","广告时间",IjkVideoView.AD));
-        videoModels.add(new VideoModel("http://flv2.bn.netease.com/videolib3/1611/28/GbgsL3639/HD/movie_index.m3u8","这只是一个标题，-(゜ -゜)つロ 乾杯~",IjkVideoView.VOD));
+        videoModels.add(new VideoModel(URL,"这只是一个标题，-(゜ -゜)つロ 乾杯~",IjkVideoView.VOD));
         ijkVideoView
                 .init()
                 .autoRotate()

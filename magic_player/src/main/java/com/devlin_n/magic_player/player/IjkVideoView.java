@@ -10,6 +10,7 @@ import android.os.Build;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.OrientationEventListener;
@@ -298,7 +299,8 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
             }
             mTargetState = STATE_PLAYING;
         }
-        WindowUtil.getAppCompActivity(getContext()).getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        AppCompatActivity activity = WindowUtil.getAppCompActivity(getContext());
+        if (activity != null) activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     private boolean checkNetwork() {
@@ -331,7 +333,8 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
             }
         }
         mTargetState = STATE_PAUSED;
-        WindowUtil.getAppCompActivity(getContext()).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        AppCompatActivity activity = WindowUtil.getAppCompActivity(getContext());
+        if (activity != null) activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     public void stopPlayback() {
@@ -430,7 +433,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         getCurrentPosition();
         intent.putExtra(KeyUtil.POSITION, mCurrentPosition);
         intent.putExtra(KeyUtil.TYPE, mCurrentVideoType);
-        getContext().startService(intent);
+        getContext().getApplicationContext().startService(intent);
         WindowUtil.getAppCompActivity(getContext()).finish();
     }
 
@@ -439,7 +442,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
      */
     public void stopFloatWindow() {
         Intent intent = new Intent(getContext(), BackgroundPlayService.class);
-        getContext().stopService(intent);
+        getContext().getApplicationContext().stopService(intent);
     }
 
     /**
