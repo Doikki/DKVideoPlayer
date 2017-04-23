@@ -51,9 +51,7 @@ public class BackgroundPlayService extends Service {
     }
 
     private void startPlay() {
-        videoView.setVideoType(type);
-        videoView.setAutoPlay(true);
-        videoView.skipPositionWhenPlay(url, position);
+        videoView.init().setVideoType(type).skipPositionWhenPlay(url, position).start();
         wm.addView(floatView, wmParams);
     }
 

@@ -40,5 +40,4 @@
             style="@style/adIcon"
             android:src="@drawable/ic_start_fullscreen" />
     </LinearLayout>
-
 </FrameLayout>

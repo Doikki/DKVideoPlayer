@@ -1,13 +1,8 @@
 package com.devlin_n.magic_player.controller;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -17,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.devlin_n.magic_player.R;
 import com.devlin_n.magic_player.util.WindowUtil;
@@ -28,7 +22,6 @@ import com.devlin_n.magic_player.util.WindowUtil;
  */
 
 public class IjkMediaController extends BaseMediaController implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
-    private static final int ALERT_WINDOW_PERMISSION_CODE = 1;
     private static final String TAG = "IjkMediaController";
     protected TextView totalTime, currTime;
     protected ImageView fullScreenButton;
@@ -38,7 +31,7 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
     protected ImageView backButton;
     protected ImageView lock;
     protected TextView title;
-    private int sDefaultTimeout = 3000;
+    private int sDefaultTimeout = 4000;
     private boolean isLive;
     private boolean isDragging;
     private View statusHolder;
@@ -88,11 +81,7 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
     public void onClick(View v) {
         int i = v.getId();
         if (i == R.id.float_screen) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                sdk23Permission();
-            } else {
-                startFloatScreen();
-            }
+            mediaPlayer.startFloatWindow();
         } else if (i == R.id.fullscreen || i == R.id.back) {
             doStartStopFullScreen();
         } else if (i == R.id.lock) {
@@ -111,19 +100,10 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
             isLocked = true;
             lock.setImageResource(R.drawable.ic_unlock);
         }
+        mediaPlayer.setLock(isLocked);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    private void sdk23Permission() {
-        if (!Settings.canDrawOverlays(WindowUtil.getAppCompActivity(getContext()))) {
-            Toast.makeText(WindowUtil.getAppCompActivity(getContext()), R.string.float_window_warning, Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                    Uri.parse("package:" + WindowUtil.getAppCompActivity(getContext()).getPackageName()));
-            WindowUtil.getAppCompActivity(getContext()).startActivityForResult(intent, ALERT_WINDOW_PERMISSION_CODE);
-        } else {
-            startFloatScreen();
-        }
-    }
+
 
     @Override
     public void updateFullScreen() {
@@ -150,8 +130,8 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
         }
     }
 
+    @Override
     public void startFullScreenDirectly() {
-        mediaPlayer.startFullScreenDirectly();
         fullScreenButton.setVisibility(GONE);
         backButton.setVisibility(VISIBLE);
         statusHolder.setVisibility(VISIBLE);

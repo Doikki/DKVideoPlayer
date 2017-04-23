@@ -9,8 +9,9 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
-import com.devlin_n.magic_player.controller.IjkMediaController;
 import com.devlin_n.magic_player.player.IjkVideoView;
+
+import static com.devlin_n.magic_player.player.IjkVideoView.ALERT_WINDOW_PERMISSION_CODE;
 
 /**
  * 全屏播放
@@ -19,23 +20,21 @@ import com.devlin_n.magic_player.player.IjkVideoView;
 
 public class FullScreenActivity extends AppCompatActivity{
 
-    private static final int ALERT_WINDOW_PERMISSION_CODE = 1;
     private IjkVideoView ijkVideoView;
-    private IjkMediaController controller;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ijkVideoView = new IjkVideoView(this);
-        ijkVideoView.setAutoPlay(true);
-        ijkVideoView.setTitle("这是一个标题");
-//        ijkVideoView.getThumb().setImageResource(R.drawable.thumb);
-        ijkVideoView.setUrl("http://flv2.bn.netease.com/videolib3/1611/28/GbgsL3639/HD/movie_index.m3u8");
-        controller = new IjkMediaController(this);
-        controller.setAutoRotate(false);
-        ijkVideoView.setMediaController(controller);
         setContentView(ijkVideoView);
-        controller.startFullScreenDirectly();
+        ijkVideoView
+                .init()
+                .autoRotate()
+                .alwaysFullScreen()
+                .setTitle("这是一个标题")
+                .setUrl("http://flv2.bn.netease.com/videolib3/1611/28/GbgsL3639/HD/movie_index.m3u8")
+                .setMediaController(IjkVideoView.VOD)
+                .start();
     }
 
     @Override
@@ -47,7 +46,6 @@ public class FullScreenActivity extends AppCompatActivity{
     @Override
     protected void onResume() {
         super.onResume();
-        ijkVideoView.resume();
         ijkVideoView.stopFloatWindow();
     }
 
@@ -59,7 +57,7 @@ public class FullScreenActivity extends AppCompatActivity{
 
     @Override
     public void onBackPressed() {
-        if (!controller.lockBack()){
+        if (!ijkVideoView.onBackPressed()){
             super.onBackPressed();
         }
     }

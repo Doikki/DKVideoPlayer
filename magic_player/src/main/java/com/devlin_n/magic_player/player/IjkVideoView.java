@@ -5,28 +5,32 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
 import android.media.AudioManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.telephony.TelephonyManager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.OrientationEventListener;
 import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.devlin_n.magic_player.R;
 import com.devlin_n.magic_player.controller.AdController;
 import com.devlin_n.magic_player.controller.BaseMediaController;
 import com.devlin_n.magic_player.controller.IjkMediaController;
 import com.devlin_n.magic_player.util.KeyUtil;
+import com.devlin_n.magic_player.util.NetworkUtil;
 import com.devlin_n.magic_player.util.WindowUtil;
 import com.devlin_n.magic_player.widget.MySurfaceView;
 import com.devlin_n.magic_player.widget.StatusView;
@@ -47,34 +51,37 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         IMediaPlayer.OnBufferingUpdateListener, IMediaPlayer.OnPreparedListener, IMediaPlayer.OnVideoSizeChangedListener {
 
     private static final String TAG = IjkVideoView.class.getSimpleName();
-    private IjkMediaPlayer mMediaPlayer;
-    private BaseMediaController mMediaController;
-    private boolean isControllerAdded;
+    private IjkMediaPlayer mMediaPlayer;//ijkPlayer
+    private BaseMediaController mMediaController;//控制器
+    private boolean isControllerAdded;//师傅添加控制器
     private MySurfaceView surfaceView;
     private RelativeLayout surfaceContainer;
     private FrameLayout controllerContainer;
-    private StatusView statusView;
-    private int bufferPercentage;
-    private ProgressBar bufferProgress;
-    private int originalWidth, originalHeight;
-    private boolean isFullScreen;
-    private String mCurrentUrl;
-    private boolean isAutoPlay;
-    private ImageView playButton;
-    private ImageView thumb;
-    private boolean isMute;
+    private StatusView statusView;//显示错误信息的一个view
+    private int bufferPercentage;//缓冲百分比
+    private ProgressBar bufferProgress;//缓冲时显示的圆形进度条
+    private int originalWidth, originalHeight;//原始宽高，主要用于恢复竖屏
+    private boolean isFullScreen;//是否处于全屏状态
+    private ImageView playButton;//播放按钮
+    private ImageView thumb;//缩略图
+    private boolean isMute;//是否静音
 
-    public static final int VOD = 1;
-    public static final int LIVE = 2;
-    public static final int AD = 3;
-    private List<VideoModel> mVideoModels;
-    private int mCurrentVideoPosition = 0;
-    private int mCurrentPosition;
-    private int mCurrentVideoType;
-    private String mCurrentTitle = "";
-    private static boolean IS_PLAY_ON_MOBILE_NETWORK = false;
+    public static final int ALERT_WINDOW_PERMISSION_CODE = 1;
 
+    //三种视频类型
+    public static final int VOD = 1;//点播
+    public static final int LIVE = 2;//直播
+    public static final int AD = 3;//广告
 
+    private String mCurrentUrl;//当前播放视频的地址
+    private List<VideoModel> mVideoModels;//列表播放数据
+    private int mCurrentVideoPosition = 0;//列表播放时当前播放视频的在List中的位置
+    private int mCurrentPosition;//当前正在播放视频的位置
+    private int mCurrentVideoType;//当前正在播放视频的类型
+    private String mCurrentTitle = "";//当前正在播放视频的标题
+    private static boolean IS_PLAY_ON_MOBILE_NETWORK = false;//记录是否在移动网络下播放视频
+
+    //播放器的各种状态
     private static final int STATE_ERROR = -1;
     private static final int STATE_IDLE = 0;
     private static final int STATE_PREPARING = 1;
@@ -84,9 +91,19 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     private static final int STATE_PLAYBACK_COMPLETED = 5;
     private static final int STATE_BUFFERING = 6;
 
-    private int mCurrentState = STATE_IDLE;
-    private int mTargetState = STATE_IDLE;
-    private AudioManager mAudioManager;
+    private int mCurrentState = STATE_IDLE;//当前播放器的状态
+    private int mTargetState = STATE_IDLE;//代码执行完播放器应该达到的状态
+
+    private AudioManager mAudioManager;//系统音频管理器
+
+    /**
+     * 加速度传感器监听
+     */
+    protected OrientationEventListener orientationEventListener;
+    protected boolean mAutoRotate;//是否旋转屏幕
+    private boolean isLocked;
+    private boolean mAlwaysFullScreen;//总是全屏
+
 
     public IjkVideoView(@NonNull Context context) {
         this(context, null);
@@ -95,10 +112,13 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
 
     public IjkVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init();
+        initView();
     }
 
-    private void init() {
+    /**
+     * 初始化播放器视图
+     */
+    private void initView() {
         View videoView = LayoutInflater.from(getContext()).inflate(R.layout.layout_video_view, this);
         bufferProgress = (ProgressBar) videoView.findViewById(R.id.buffering);
         surfaceContainer = (RelativeLayout) videoView.findViewById(R.id.surface_container);
@@ -110,13 +130,12 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
             public void onClick(View v) {
                 if (isPlaying()) {
                     pause();
-                    playButton.setImageResource(R.drawable.ic_play);
                 } else {
                     start();
-                    playButton.setImageResource(R.drawable.ic_pause);
                 }
             }
         });
+        //获取播放器竖屏时的原始宽高
         getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -127,36 +146,18 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
                 }
             }
         });
-        mCurrentState = STATE_IDLE;
-        mTargetState = STATE_IDLE;
     }
 
-    private void openVideo() {
-        if (getNetworkType(getContext()) == 4 && !IS_PLAY_ON_MOBILE_NETWORK) {
-            if (statusView == null) {
-                statusView = new StatusView(getContext());
-            }
-            statusView.setMessage(getResources().getString(R.string.wifi_tip));
-            statusView.setButtonTextAndAction(getResources().getString(R.string.continue_play), new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    IS_PLAY_ON_MOBILE_NETWORK = true;
-                    removeView(statusView);
-                    openVideo();
-                    startPrepare();
-                }
-            });
-            addView(statusView);
-            return;
-        }
-        if (mCurrentUrl == null || mCurrentUrl.trim().equals("")) return;
+    /**
+     * 创建播放器实例，设置播放地址及播放器参数
+     */
+    public IjkVideoView init() {
         mAudioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
         mAudioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
         mMediaPlayer = new IjkMediaPlayer();
         mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 1);//开启硬解码
         mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 1);
         mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", 1);
-        mMediaPlayer.setScreenOnWhilePlaying(true);
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mMediaPlayer.setOnErrorListener(this);
         mMediaPlayer.setOnCompletionListener(this);
@@ -164,10 +165,16 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         mMediaPlayer.setOnBufferingUpdateListener(this);
         mMediaPlayer.setOnPreparedListener(this);
         mMediaPlayer.setOnVideoSizeChangedListener(this);
-        if (isAutoPlay) startPrepare();
+        mCurrentState = STATE_IDLE;
+        mTargetState = STATE_IDLE;
+        return this;
     }
 
+    /**
+     * 开始准备播放（直接播放）
+     */
     private void startPrepare() {
+        if (mCurrentUrl == null || mCurrentUrl.trim().equals("")) return;
         try {
             mMediaPlayer.reset();
             mMediaPlayer.setDataSource(mCurrentUrl);
@@ -181,8 +188,14 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
             mTargetState = STATE_ERROR;
             e.printStackTrace();
         }
+        if (mAlwaysFullScreen) {
+            startFullScreenDirectly();
+        }
     }
 
+    /**
+     * 添加surfaceView
+     */
     private void addSurfaceView() {
         surfaceContainer.removeAllViews();
         surfaceView = new MySurfaceView(getContext());
@@ -208,59 +221,104 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     public void surfaceDestroyed(SurfaceHolder holder) {
     }
 
-    public void setUrl(String url) {
+    /**
+     * 设置视频地址
+     */
+    public IjkVideoView setUrl(String url) {
         this.mCurrentUrl = url;
-        openVideo();
+        return this;
     }
 
-    public void skipPositionWhenPlay(String url, int position) {
+    /**
+     * 一开始播放就seek到预先设置好的位置
+     */
+    public IjkVideoView skipPositionWhenPlay(String url, int position) {
         this.mCurrentUrl = url;
         this.mCurrentPosition = position;
-        openVideo();
+        return this;
     }
 
-    public void setVideoType(int type) {
+    /**
+     * 设置视频的类型
+     */
+    public IjkVideoView setVideoType(int type) {
         mCurrentVideoType = type;
+        return this;
     }
 
-    public void setVideos(List<VideoModel> videoModels) {
+    /**
+     * 设置一个列表的视频
+     */
+    public IjkVideoView setVideos(List<VideoModel> videoModels) {
         this.mVideoModels = videoModels;
         playNext();
-        openVideo();
+        return this;
     }
 
-    public void setTitle(String title) {
+    /**
+     * 设置标题
+     */
+    public IjkVideoView setTitle(String title) {
         if (title != null) {
             this.mCurrentTitle = title;
         }
+        return this;
     }
 
+    /**
+     * 获取缩略图
+     */
     public ImageView getThumb() {
         return thumb;
     }
 
+    /**
+     * 播放下一条视频
+     */
     private void playNext() {
         VideoModel videoModel = mVideoModels.get(mCurrentVideoPosition);
         if (videoModel != null) {
             mCurrentUrl = videoModel.url;
             mCurrentTitle = videoModel.title;
             mCurrentPosition = 0;
-            setMediaController(videoModel.controller);
+            setMediaController(videoModel.type);
         }
     }
 
     @Override
     public void start() {
         if (mCurrentState == STATE_IDLE) {
+            if (checkNetwork()) return;
             startPrepare();
         } else {
             if (isInPlaybackState()) {
                 mMediaPlayer.start();
+                playButton.setImageResource(R.drawable.ic_pause);
                 mCurrentState = STATE_PLAYING;
             }
             mTargetState = STATE_PLAYING;
         }
+        WindowUtil.getAppCompActivity(getContext()).getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    }
 
+    private boolean checkNetwork() {
+        if (NetworkUtil.getNetworkType(getContext()) == NetworkUtil.NETWORK_MOBILE && !IS_PLAY_ON_MOBILE_NETWORK) {
+            if (statusView == null) {
+                statusView = new StatusView(getContext());
+            }
+            statusView.setMessage(getResources().getString(R.string.wifi_tip));
+            statusView.setButtonTextAndAction(getResources().getString(R.string.continue_play), new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    IS_PLAY_ON_MOBILE_NETWORK = true;
+                    removeView(statusView);
+                    startPrepare();
+                }
+            });
+            addView(statusView);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -268,19 +326,12 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         if (isInPlaybackState()) {
             if (mMediaPlayer.isPlaying()) {
                 mMediaPlayer.pause();
+                playButton.setImageResource(R.drawable.ic_play);
                 mCurrentState = STATE_PAUSED;
             }
         }
         mTargetState = STATE_PAUSED;
-    }
-
-    public void resume() {
-        if (isInPlaybackState() && !mMediaPlayer.isPlaying() && mCurrentState != STATE_PLAYBACK_COMPLETED) {
-            mMediaPlayer.start();
-            mCurrentState = STATE_PLAYING;
-        }
-        mTargetState = STATE_PLAYING;
-        if (mMediaController != null) mMediaController.updateProgress();
+        WindowUtil.getAppCompActivity(getContext()).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     public void stopPlayback() {
@@ -303,8 +354,10 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
             mTargetState = STATE_IDLE;
             mAudioManager.abandonAudioFocus(onAudioFocusChangeListener);
         }
-
-        if (mMediaController != null) mMediaController.destroy();
+        if (mAutoRotate) {
+            orientationEventListener.disable();
+            orientationEventListener = null;
+        }
     }
 
     private boolean isInPlaybackState() {
@@ -349,8 +402,29 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         return 0;
     }
 
+    /**
+     * 开始画中画播放，点播视频会记录播放位置
+     */
     @Override
     public void startFloatWindow() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {//Android M 以上系统需要请求权限
+            if (!Settings.canDrawOverlays(WindowUtil.getAppCompActivity(getContext()))) {
+                Toast.makeText(WindowUtil.getAppCompActivity(getContext()), R.string.float_window_warning, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:" + WindowUtil.getAppCompActivity(getContext()).getPackageName()));
+                WindowUtil.getAppCompActivity(getContext()).startActivityForResult(intent, ALERT_WINDOW_PERMISSION_CODE);
+            } else {
+                startBackgroundService();
+            }
+        } else {
+            startBackgroundService();
+        }
+    }
+
+    /**
+     * 启动画中画播放的后台服务
+     */
+    private void startBackgroundService() {
         Intent intent = new Intent(getContext(), BackgroundPlayService.class);
         intent.putExtra(KeyUtil.URL, mCurrentUrl);
         getCurrentPosition();
@@ -360,17 +434,32 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         WindowUtil.getAppCompActivity(getContext()).finish();
     }
 
+    /**
+     * 关闭画中画
+     */
     public void stopFloatWindow() {
         Intent intent = new Intent(getContext(), BackgroundPlayService.class);
         getContext().stopService(intent);
     }
 
+    /**
+     * 直接开始全屏播放
+     */
     @Override
     public void startFullScreenDirectly() {
         WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         startFullScreen();
+        if (mMediaController != null) mMediaController.startFullScreenDirectly();
     }
 
+    public IjkVideoView alwaysFullScreen() {
+        mAlwaysFullScreen = true;
+        return this;
+    }
+
+    /**
+     * 播放下一条视频，可用于跳过广告
+     */
     @Override
     public void skipToNext() {
         mCurrentVideoPosition++;
@@ -378,10 +467,12 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
             if (mCurrentVideoPosition >= mVideoModels.size()) return;
             playNext();
             startPrepare();
-            addSurfaceView();
         }
     }
 
+    /**
+     * 设置静音
+     */
     @Override
     public void setMute() {
         if (isMute) {
@@ -396,6 +487,11 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     @Override
     public boolean isMute() {
         return isMute;
+    }
+
+    @Override
+    public void setLock(boolean isLocked) {
+        this.isLocked = isLocked;
     }
 
     @Override
@@ -452,7 +548,10 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         }
     }
 
-    public void setMediaController(int type) {
+    /**
+     * 根据视频类型快速设置控制器
+     */
+    public IjkVideoView setMediaController(int type) {
         controllerContainer.removeAllViews();
         isControllerAdded = false;
         switch (type) {
@@ -472,14 +571,21 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
                 break;
             }
             case AD:
+                AdController adController = new AdController(getContext());
+                adController.setMediaPlayer(this);
+                mMediaController = adController;
                 mCurrentVideoType = AD;
                 break;
             default:
                 break;
         }
+        return this;
     }
 
-    public void setMediaController(BaseMediaController mediaController) {
+    /**
+     * 设置控制器
+     */
+    public IjkVideoView setMediaController(BaseMediaController mediaController) {
         controllerContainer.removeAllViews();
         isControllerAdded = false;
         if (mediaController != null) {
@@ -495,6 +601,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
                 mCurrentVideoType = AD;
             }
         }
+        return this;
     }
 
     @Override
@@ -509,7 +616,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
             @Override
             public void onClick(View v) {
                 removeView(statusView);
-                openVideo();
+                startPrepare();
             }
         });
         addView(statusView);
@@ -527,7 +634,6 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
             if (mCurrentVideoPosition >= mVideoModels.size()) return;
             playNext();
             startPrepare();
-            addSurfaceView();
         }
     }
 
@@ -584,8 +690,17 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         }
     }
 
-    public boolean backFromFullScreen() {
-        if (mMediaController != null && mMediaController.lockBack()) return true;
+    /**
+     * 改变返回键逻辑，用于activity
+     */
+    public boolean onBackPressed() {
+        if (mMediaController != null && isLocked) {
+            mMediaController.show();
+            return true;
+        }
+        if (mAlwaysFullScreen) {
+            return false;
+        }
         if (isFullScreen) {
             stopFullScreen();
             WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -595,7 +710,9 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         return false;
     }
 
-
+    /**
+     * 音频焦点改变监听
+     */
     private AudioManager.OnAudioFocusChangeListener onAudioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
         @Override
         public void onAudioFocusChange(int focusChange) {
@@ -620,62 +737,62 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         }
     };
 
-    public void setAutoPlay(boolean autoPlay) {
-        this.isAutoPlay = autoPlay;
-        if (autoPlay) {
-            playButton.setVisibility(GONE);
-        } else {
-            playButton.setVisibility(VISIBLE);
-        }
-    }
-
     /**
-     * 判断当前网络类型-1为未知网络0为没有网络连接1网络断开或关闭2为以太网3为WiFi4为2G5为3G6为4G
+     * 设置自动旋转
      */
-    public int getNetworkType(Context context) {
-        ConnectivityManager connectMgr = (ConnectivityManager) context
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
+    public IjkVideoView autoRotate() {
+        this.mAutoRotate = true;
+        orientationEventListener = new OrientationEventListener(getContext()) { // 加速度传感器监听，用于自动旋转屏幕
 
-        NetworkInfo networkInfo = connectMgr.getActiveNetworkInfo();
-        if (networkInfo == null) {
-            // 没有任何网络
-            return 0;
-        }
-        if (!networkInfo.isConnected()) {
-            // 网络断开或关闭
-            return 1;
-        }
-        if (networkInfo.getType() == ConnectivityManager.TYPE_ETHERNET) {
-            // 以太网网络
-            return 2;
-        } else if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
-            // wifi网络，当激活时，默认情况下，所有的数据流量将使用此连接
-            return 3;
-        } else if (networkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
-            // 移动数据连接,不能与连接共存,如果wifi打开，则自动关闭
-            switch (networkInfo.getSubtype()) {
-                case TelephonyManager.NETWORK_TYPE_GPRS:
-                case TelephonyManager.NETWORK_TYPE_EDGE:
-                case TelephonyManager.NETWORK_TYPE_CDMA:
-                case TelephonyManager.NETWORK_TYPE_1xRTT:
-                case TelephonyManager.NETWORK_TYPE_IDEN:
-                    // 2G网络
-                case TelephonyManager.NETWORK_TYPE_UMTS:
-                case TelephonyManager.NETWORK_TYPE_EVDO_0:
-                case TelephonyManager.NETWORK_TYPE_EVDO_A:
-                case TelephonyManager.NETWORK_TYPE_HSDPA:
-                case TelephonyManager.NETWORK_TYPE_HSUPA:
-                case TelephonyManager.NETWORK_TYPE_HSPA:
-                case TelephonyManager.NETWORK_TYPE_EVDO_B:
-                case TelephonyManager.NETWORK_TYPE_EHRPD:
-                case TelephonyManager.NETWORK_TYPE_HSPAP:
-                    // 3G网络
-                case TelephonyManager.NETWORK_TYPE_LTE:
-                    // 4G网络
-                    return 4;
+            private int CurrentOrientation = 0;
+            private static final int PORTRAIT = 1;
+            private static final int LANDSCAPE = 2;
+            private static final int REVERSE_LANDSCAPE = 3;
+
+
+            @Override
+            public void onOrientationChanged(int orientation) {
+                //根据系统设置进行自动旋转
+//            boolean autoRotateOn = (android.provider.Settings.System.getInt(WindowUtil.getAppCompActivity(getContext()).getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0) == 1);
+//            if (!autoRotateOn) return;
+
+                if (orientation >= 340) { //屏幕顶部朝上
+                    if (isLocked || mAlwaysFullScreen) return;
+                    if (CurrentOrientation == PORTRAIT) return;
+                    if ((CurrentOrientation == LANDSCAPE || CurrentOrientation == REVERSE_LANDSCAPE) && !isFullScreen()) {
+                        CurrentOrientation = PORTRAIT;
+                        return;
+                    }
+                    CurrentOrientation = PORTRAIT;
+                    WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                    stopFullScreen();
+                } else if (orientation >= 260 && orientation <= 280) { //屏幕左边朝上
+                    if (CurrentOrientation == LANDSCAPE) return;
+                    if (CurrentOrientation == PORTRAIT && isFullScreen()) {
+                        CurrentOrientation = LANDSCAPE;
+                        return;
+                    }
+                    CurrentOrientation = LANDSCAPE;
+                    if (!isFullScreen()) {
+                        startFullScreen();
+                    }
+                    WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                } else if (orientation >= 70 && orientation <= 90) { //屏幕右边朝上
+                    if (CurrentOrientation == REVERSE_LANDSCAPE) return;
+                    if (CurrentOrientation == PORTRAIT && isFullScreen()) {
+                        CurrentOrientation = REVERSE_LANDSCAPE;
+                        return;
+                    }
+                    CurrentOrientation = REVERSE_LANDSCAPE;
+                    if (!isFullScreen()) {
+                        startFullScreen();
+                    }
+                    WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+                }
+                if (mMediaController != null) mMediaController.updateFullScreen();
             }
-        }
-        // 未知网络
-        return -1;
+        };
+        orientationEventListener.enable();
+        return this;
     }
 }

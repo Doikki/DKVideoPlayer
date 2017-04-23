@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -21,7 +20,7 @@ import com.devlin_n.magic_player.R;
 public class AdController extends BaseMediaController implements View.OnClickListener {
     private static final String TAG = AdController.class.getSimpleName();
     protected TextView adTime, adDetail;
-    protected ImageView back, voulme, fullScreen;
+    protected ImageView back, volume, fullScreen;
 
     public AdController(@NonNull Context context) {
         super(context);
@@ -44,12 +43,12 @@ public class AdController extends BaseMediaController implements View.OnClickLis
         adDetail.setText("了解详情>");
         back = (ImageView) controllerView.findViewById(R.id.back);
         back.setVisibility(GONE);
-        voulme = (ImageView) controllerView.findViewById(R.id.iv_volume);
+        volume = (ImageView) controllerView.findViewById(R.id.iv_volume);
         fullScreen = (ImageView) controllerView.findViewById(R.id.fullscreen);
         adTime.setOnClickListener(this);
         adDetail.setOnClickListener(this);
         back.setOnClickListener(this);
-        voulme.setOnClickListener(this);
+        volume.setOnClickListener(this);
         fullScreen.setOnClickListener(this);
         mShowing = true;
         post(mShowProgress);
@@ -72,9 +71,9 @@ public class AdController extends BaseMediaController implements View.OnClickLis
     private void doMute() {
         mediaPlayer.setMute();
         if (mediaPlayer.isMute()) {
-            voulme.setImageResource(R.drawable.ic_volume_on);
+            volume.setImageResource(R.drawable.ic_volume_on);
         } else {
-            voulme.setImageResource(R.drawable.ic_volume_off);
+            volume.setImageResource(R.drawable.ic_volume_off);
         }
     }
 
@@ -102,8 +101,7 @@ public class AdController extends BaseMediaController implements View.OnClickLis
 
 
         if (adTime != null)
-            adTime.setText(String.valueOf((duration - position) / 1000) + " | 跳过");
-        Log.d(TAG, "setProgress: called");
+            adTime.setText(String.format("%s | 跳过", (duration - position) / 1000));
         return position;
     }
 

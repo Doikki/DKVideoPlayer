@@ -11,13 +11,13 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.devlin_n.magic_player.controller.AdController;
-import com.devlin_n.magic_player.controller.IjkMediaController;
 import com.devlin_n.magic_player.player.IjkVideoView;
 import com.devlin_n.magic_player.player.VideoModel;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.devlin_n.magic_player.player.IjkVideoView.ALERT_WINDOW_PERMISSION_CODE;
 
 /**
  * 点播播放
@@ -26,7 +26,6 @@ import java.util.List;
 
 public class VodPlayerActivity extends AppCompatActivity {
 
-    private static final int ALERT_WINDOW_PERMISSION_CODE = 1;
     private IjkVideoView ijkVideoView;
 
     @Override
@@ -37,21 +36,15 @@ public class VodPlayerActivity extends AppCompatActivity {
         int widthPixels = getResources().getDisplayMetrics().widthPixels;
         ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 16 * 9));
 
+        ijkVideoView.getThumb().setImageResource(R.drawable.thumb);
         List<VideoModel> videoModels = new ArrayList<>();
-        IjkMediaController controller = new IjkMediaController(this);
-        AdController adController = new AdController(this);
-        videoModels.add(new VideoModel("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high","广告时间",adController));
-        videoModels.add(new VideoModel("http://flv2.bn.netease.com/videolib3/1611/28/GbgsL3639/HD/movie_index.m3u8","这只是一个标题，-(゜ -゜)つロ 乾杯~",controller));
-        ijkVideoView.setAutoPlay(true);
-        ijkVideoView.setVideos(videoModels);
-
-//        ijkVideoView.setAutoPlay(false);
-//        ijkVideoView.setTitle("这是一个标题");
-//        ijkVideoView.getThumb().setImageResource(R.drawable.thumb);
-//        ijkVideoView.setUrl("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high");
-//        IjkMediaController controller = new IjkMediaController(this);
-//        controller.setAutoRotate(true);
-//        ijkVideoView.setMediaController(controller);
+        videoModels.add(new VideoModel("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high","广告时间",IjkVideoView.AD));
+        videoModels.add(new VideoModel("http://flv2.bn.netease.com/videolib3/1611/28/GbgsL3639/HD/movie_index.m3u8","这只是一个标题，-(゜ -゜)つロ 乾杯~",IjkVideoView.VOD));
+        ijkVideoView
+                .init()
+                .autoRotate()
+                .setVideos(videoModels);
+//                .start();
     }
 
 
@@ -64,7 +57,6 @@ public class VodPlayerActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        ijkVideoView.resume();
         ijkVideoView.stopFloatWindow();
     }
 
@@ -77,7 +69,7 @@ public class VodPlayerActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (!ijkVideoView.backFromFullScreen()) {
+        if (!ijkVideoView.onBackPressed()) {
             super.onBackPressed();
         }
     }
