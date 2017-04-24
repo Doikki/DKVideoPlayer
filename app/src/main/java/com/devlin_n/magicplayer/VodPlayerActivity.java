@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -37,6 +39,11 @@ public class VodPlayerActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vod_player);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle("点播播放");
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
         ijkVideoView = (IjkVideoView) findViewById(R.id.ijk_video_view);
         int widthPixels = getResources().getDisplayMetrics().widthPixels;
         ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 16 * 9));
@@ -52,6 +59,13 @@ public class VodPlayerActivity extends AppCompatActivity {
 //                .start();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onPause() {
@@ -62,6 +76,7 @@ public class VodPlayerActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        ijkVideoView.resume();
         ijkVideoView.stopFloatWindow();
     }
 

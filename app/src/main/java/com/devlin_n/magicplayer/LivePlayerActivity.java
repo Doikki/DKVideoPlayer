@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -23,11 +25,21 @@ import static com.devlin_n.magic_player.player.IjkVideoView.ALERT_WINDOW_PERMISS
 public class LivePlayerActivity extends AppCompatActivity {
 
     private IjkVideoView ijkVideoView;
+    private static final String URL = "http://live.hcs.cmvideo.cn:8088/wd-hunanhd-1200/index.m3u8?msi" +
+            "sdn=3000000000000&mdspid=&spid=699017&netType=5&sid=2201064496&pid=2028595851&timestamp=" +
+            "20170424095254&Channel_ID=0116_22300109-91000-20300&ProgramID=603996975&ParentNodeID=-99&" +
+            "preview=1&playseek=000000-000600&client_ip=211.159.219.164&assertID=2201064496&SecurityKey" +
+            "=20170424095254&encrypt=73bfa49aef2e1d3349dbe119642163e7";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_live_player);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle("直播播放");
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
         ijkVideoView = (IjkVideoView) findViewById(R.id.ijk_video_view);
         int widthPixels = getResources().getDisplayMetrics().widthPixels;
         ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 4 * 3));
@@ -35,12 +47,19 @@ public class LivePlayerActivity extends AppCompatActivity {
         ijkVideoView
                 .init()
                 .autoRotate()
-                .setUrl("http://live.hcs.cmvideo.cn:8088/wd-hunanhd-1200/01.m3u8?msisdn=3000000000000&mdspid=&spid=699017&netType=5&sid=2201064496&pid=2028595851&timestamp=20170423211923&Channel_ID=0116_22300109-91000-20300&ProgramID=603996975&ParentNodeID=-99&preview=1&playseek=000000-000600&client_ip=211.159.219.164&assertID=2201064496&imei=111fcd9b089c464ae49f0a4d4bd3ca6f2caffafbf60b963a7c3c2f6e67bd2138&SecurityKey=20170423211923&mtv_session=03c3ea0d3c0389540ab01598819cc401&HlsSubType=1&HlsProfileId=1&encrypt=13d73038f091f2f678a81341221c9111")
+                .setUrl(URL)
                 .setTitle("湖南卫视")
                 .setMediaController(IjkVideoView.LIVE)
                 .start();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onPause() {
@@ -51,6 +70,7 @@ public class LivePlayerActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        ijkVideoView.resume();
         ijkVideoView.stopFloatWindow();
     }
 

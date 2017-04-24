@@ -337,6 +337,18 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         if (activity != null) activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
+    public void resume() {
+        if (isInPlaybackState() && !mMediaPlayer.isPlaying() && mCurrentState != STATE_PLAYBACK_COMPLETED) {
+            mMediaPlayer.start();
+            playButton.setImageResource(R.drawable.ic_pause);
+            mCurrentState = STATE_PLAYING;
+        }
+        mTargetState = STATE_PLAYING;
+        AppCompatActivity activity = WindowUtil.getAppCompActivity(getContext());
+        if (activity != null) activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        if (mMediaController != null) mMediaController.updateProgress();
+    }
+
     public void stopPlayback() {
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
@@ -676,6 +688,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
                 mMediaController.setLayoutParams(new LayoutParams(originalWidth, originalHeight));
             }
             controllerContainer.addView(mMediaController);
+            mMediaController.updateProgress();
             isControllerAdded = true;
         }
         mCurrentState = STATE_PLAYING;

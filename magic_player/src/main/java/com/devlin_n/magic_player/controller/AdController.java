@@ -51,7 +51,6 @@ public class AdController extends BaseMediaController implements View.OnClickLis
         volume.setOnClickListener(this);
         fullScreen.setOnClickListener(this);
         mShowing = true;
-        post(mShowProgress);
     }
 
     @Override
