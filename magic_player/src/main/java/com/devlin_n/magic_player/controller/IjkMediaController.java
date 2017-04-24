@@ -154,7 +154,7 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
             playButton.setImageResource(R.drawable.ic_pause);
         }
 
-        if (isShowing()) {
+        if (isShowing() && !isLocked) {
             playButton.setVisibility(VISIBLE);
         }
 
