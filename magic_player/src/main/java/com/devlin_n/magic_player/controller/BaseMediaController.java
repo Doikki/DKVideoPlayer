@@ -30,7 +30,7 @@ public abstract class BaseMediaController extends FrameLayout {
     private static final String TAG = BaseMediaController.class.getSimpleName();
     protected View controllerView;//控制器视图
     protected MediaPlayerControlInterface mediaPlayer;//播放器
-    protected boolean mShowing;//控制器是否处于显示状态
+    protected static boolean mShowing;//控制器是否处于显示状态
     protected CenterView mCenterView;
     protected AudioManager mAudioManager;
     private StringBuilder mFormatBuilder;
@@ -85,7 +85,7 @@ public abstract class BaseMediaController extends FrameLayout {
     /**
      * 返回控制器的显示状态
      */
-    public boolean isShowing() {
+    public static boolean isShowing() {
         return mShowing;
     }
 
@@ -94,6 +94,11 @@ public abstract class BaseMediaController extends FrameLayout {
 
     public void startFullScreenDirectly() {
 
+    }
+
+    public void removeAllCallbacks(){
+        removeCallbacks(mShowProgress);
+        removeCallbacks(mFadeOut);
     }
 
     /**
