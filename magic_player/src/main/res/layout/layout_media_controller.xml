@@ -107,5 +107,11 @@
         android:visibility="invisible"
         android:background="@drawable/shape_back_bg"
         android:layout_gravity="center|start"/>
+    <ImageView
+        android:id="@+id/iv_play"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_play"
+        android:layout_gravity="center"/>
 
 </FrameLayout>

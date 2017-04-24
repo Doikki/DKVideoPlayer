@@ -13,6 +13,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.devlin_n.magic_player.R;
+import com.devlin_n.magic_player.player.IjkVideoView;
 import com.devlin_n.magic_player.util.WindowUtil;
 
 /**
@@ -30,6 +31,7 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
     protected ImageView backButton;
     protected ImageView lock;
     protected TextView title;
+    protected ImageView playButton;
     private int sDefaultTimeout = 4000;
     private boolean isLive;
     private boolean isDragging;
@@ -67,6 +69,8 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
         backButton.setOnClickListener(this);
         lock = (ImageView) controllerView.findViewById(R.id.lock);
         lock.setOnClickListener(this);
+        playButton = (ImageView) controllerView.findViewById(R.id.iv_play);
+        playButton.setOnClickListener(this);
         title = (TextView) controllerView.findViewById(R.id.title);
         statusHolder = controllerView.findViewById(R.id.status_holder);
         statusHolder.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) WindowUtil.getStatusBarHeight(getContext())));
@@ -74,6 +78,7 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
         topContainer.setVisibility(GONE);
         bottomContainer.setVisibility(GONE);
         lock.setVisibility(GONE);
+        playButton.setVisibility(GONE);
     }
 
     @Override
@@ -85,6 +90,18 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
             doStartStopFullScreen();
         } else if (i == R.id.lock) {
             doLockUnlock();
+        } else if (i == R.id.iv_play) {
+            doPauseResume();
+        }
+    }
+
+    private void doPauseResume() {
+        if (mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+            playButton.setImageResource(R.drawable.ic_play);
+        } else {
+            mediaPlayer.start();
+            playButton.setImageResource(R.drawable.ic_pause);
         }
     }
 
@@ -126,6 +143,26 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
             lock.setVisibility(INVISIBLE);
             topContainer.setVisibility(INVISIBLE);
             statusHolder.setVisibility(GONE);
+        }
+    }
+
+    @Override
+    public void updatePlayButton() {
+        super.updatePlayButton();
+        if (mediaPlayer.getCurrentState() == IjkVideoView.STATE_PREPARING) {
+            playButton.setVisibility(GONE);
+            playButton.setImageResource(R.drawable.ic_pause);
+        }
+
+        if (isShowing()) {
+            playButton.setVisibility(VISIBLE);
+        }
+
+        if (mediaPlayer.getCurrentState() == IjkVideoView.STATE_PAUSED) {
+            playButton.setImageResource(R.drawable.ic_play);
+        }
+        if (mediaPlayer.getCurrentState() == IjkVideoView.STATE_PLAYING) {
+            playButton.setImageResource(R.drawable.ic_pause);
         }
     }
 
@@ -188,8 +225,11 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
                 lock.setVisibility(GONE);
                 lock.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_out));
                 if (!isLocked) {
+                    playButton.setVisibility(GONE);
+                    if (mediaPlayer.getCurrentState() != IjkVideoView.STATE_BUFFERING) {
+                        playButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_out));
+                    }
                     bottomContainer.setVisibility(GONE);
-                    mediaPlayer.updatePlayButton(GONE);
                     bottomContainer.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_slide_bottom_out));
                     topContainer.setVisibility(GONE);
                     topContainer.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_slide_top_out));
@@ -198,8 +238,12 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
                 }
             } else {
                 bottomContainer.setVisibility(GONE);
-                mediaPlayer.updatePlayButton(GONE);
                 bottomContainer.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_slide_bottom_out));
+                playButton.setVisibility(GONE);
+                if (mediaPlayer.getCurrentState() != IjkVideoView.STATE_BUFFERING) {
+                    playButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_out));
+                }
+
             }
             mShowing = false;
         }
@@ -210,8 +254,10 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
             if (mediaPlayer.isFullScreen()) {
                 lock.setVisibility(VISIBLE);
                 if (!isLocked) {
-                    setProgress();
-                    mediaPlayer.updatePlayButton(VISIBLE);
+                    if (mediaPlayer.getCurrentState() != IjkVideoView.STATE_BUFFERING){
+                        playButton.setVisibility(VISIBLE);
+                        playButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_in));
+                    }
                     bottomContainer.setVisibility(VISIBLE);
                     bottomContainer.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_slide_bottom_in));
                     topContainer.setVisibility(VISIBLE);
@@ -224,11 +270,13 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
                     }
                 }
             } else {
-                setProgress();
-                mediaPlayer.updatePlayButton(VISIBLE);
-                topContainer.setVisibility(GONE);
+                if (mediaPlayer.getCurrentState() != IjkVideoView.STATE_BUFFERING){
+                    playButton.setVisibility(VISIBLE);
+                    playButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_in));
+                }
                 bottomContainer.setVisibility(VISIBLE);
                 bottomContainer.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_slide_bottom_in));
+                topContainer.setVisibility(GONE);
                 if (isLive) {
                     videoProgress.setVisibility(INVISIBLE);
                     totalTime.setVisibility(INVISIBLE);
@@ -252,6 +300,7 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
     @Override
     public void reset() {
         videoProgress.setProgress(0);
+        playButton.setImageResource(R.drawable.ic_play);
         show();
     }
 

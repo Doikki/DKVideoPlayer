@@ -27,10 +27,4 @@
         android:layout_gravity="center"
         android:indeterminateDrawable="@drawable/progress_loading"
         android:visibility="gone" />
-    <ImageView
-        android:id="@+id/iv_play"
-        android:layout_width="@dimen/player_play_btn_size"
-        android:layout_height="@dimen/player_play_btn_size"
-        android:layout_gravity="center"
-        android:src="@drawable/ic_play" />
 </FrameLayout>

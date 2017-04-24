@@ -14,10 +14,6 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.devlin_n.magic_player.player.IjkVideoView;
-import com.devlin_n.magic_player.player.VideoModel;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.devlin_n.magic_player.player.IjkVideoView.ALERT_WINDOW_PERMISSION_CODE;
 
@@ -45,14 +41,13 @@ public class VodPlayerActivity extends AppCompatActivity {
         ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 16 * 9));
 
         ijkVideoView.getThumb().setImageResource(R.drawable.thumb);
-        List<VideoModel> videoModels = new ArrayList<>();
-        videoModels.add(new VideoModel("http://baobab.wandoujia.com/api/v1/playUrl?vid=2614&editionType=high","广告时间",IjkVideoView.AD));
-        videoModels.add(new VideoModel(URL,"网易公开课-如何掌控你的自由时间",IjkVideoView.VOD));
         ijkVideoView
                 .init()
                 .autoRotate()
-                .setVideos(videoModels);
-//                .start();
+                .setUrl(URL)
+                .setTitle("网易公开课-如何掌控你的自由时间")
+                .setMediaController(IjkVideoView.VOD)
+                .start();
     }
 
     @Override
