@@ -40,7 +40,6 @@ public class VodPlayerActivity extends AppCompatActivity {
         int widthPixels = getResources().getDisplayMetrics().widthPixels;
         ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 16 * 9));
 
-        ijkVideoView.getThumb().setImageResource(R.drawable.thumb);
         ijkVideoView
                 .init()
                 .autoRotate()

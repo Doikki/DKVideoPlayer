@@ -20,7 +20,6 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -62,7 +61,6 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     private ProgressBar bufferProgress;//缓冲时显示的圆形进度条
     private int originalWidth, originalHeight;//原始宽高，主要用于恢复竖屏
     private boolean isFullScreen;//是否处于全屏状态
-    private ImageView thumb;//缩略图
     private boolean isMute;//是否静音
 
     public static final int ALERT_WINDOW_PERMISSION_CODE = 1;
@@ -122,13 +120,6 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         bufferProgress = (ProgressBar) videoView.findViewById(R.id.buffering);
         surfaceContainer = (RelativeLayout) videoView.findViewById(R.id.surface_container);
         controllerContainer = (FrameLayout) videoView.findViewById(R.id.controller_container);
-        thumb = (ImageView) videoView.findViewById(R.id.iv_thumb);
-        thumb.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                start();
-            }
-        });
         //获取播放器竖屏时的原始宽高
         getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -176,15 +167,11 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
             mMediaPlayer.prepareAsync();
             mCurrentState = STATE_PREPARING;
             bufferProgress.setVisibility(VISIBLE);
-            thumb.setVisibility(GONE);
             if (mMediaController != null) mMediaController.updatePlayButton();
         } catch (IOException e) {
             mCurrentState = STATE_ERROR;
             mTargetState = STATE_ERROR;
             e.printStackTrace();
-        }
-        if (mAlwaysFullScreen) {
-            startFullScreenDirectly();
         }
     }
 
@@ -258,13 +245,6 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
             this.mCurrentTitle = title;
         }
         return this;
-    }
-
-    /**
-     * 获取缩略图
-     */
-    public ImageView getThumb() {
-        return thumb;
     }
 
     /**
@@ -466,6 +446,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
 
     public IjkVideoView alwaysFullScreen() {
         mAlwaysFullScreen = true;
+        startFullScreenDirectly();
         return this;
     }
 
@@ -751,9 +732,6 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
 
             @Override
             public void onOrientationChanged(int orientation) {
-                //根据系统设置进行自动旋转
-//            boolean autoRotateOn = (android.provider.Settings.System.getInt(WindowUtil.getAppCompActivity(getContext()).getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0) == 1);
-//            if (!autoRotateOn) return;
 
                 if (orientation >= 340) { //屏幕顶部朝上
                     if (isLocked || mAlwaysFullScreen) return;

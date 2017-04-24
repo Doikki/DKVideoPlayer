@@ -22,6 +22,6 @@
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
         android:textColor="@android:color/white"
-        tools:text="重试" />
+        tools:text="继续播放" />
 
 </LinearLayout>
