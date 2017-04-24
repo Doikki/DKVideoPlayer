@@ -166,6 +166,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         mMediaPlayer.setOnBufferingUpdateListener(this);
         mMediaPlayer.setOnPreparedListener(this);
         mMediaPlayer.setOnVideoSizeChangedListener(this);
+        addSurfaceView();
         mCurrentState = STATE_IDLE;
         mTargetState = STATE_IDLE;
         return this;
@@ -300,7 +301,8 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
             mTargetState = STATE_PLAYING;
         }
         AppCompatActivity activity = WindowUtil.getAppCompActivity(getContext());
-        if (activity != null) activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        if (activity != null)
+            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     private boolean checkNetwork() {
@@ -334,7 +336,8 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         }
         mTargetState = STATE_PAUSED;
         AppCompatActivity activity = WindowUtil.getAppCompActivity(getContext());
-        if (activity != null) activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        if (activity != null)
+            activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     public void resume() {
@@ -345,7 +348,8 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         }
         mTargetState = STATE_PLAYING;
         AppCompatActivity activity = WindowUtil.getAppCompActivity(getContext());
-        if (activity != null) activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        if (activity != null)
+            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         if (mMediaController != null) mMediaController.updateProgress();
     }
 
@@ -554,7 +558,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
             playButton.setVisibility(GONE);
         } else {
             playButton.setVisibility(visibility);
-            if (mCurrentState == STATE_PREPARED) return;
+            if (mCurrentState == STATE_PREPARED || mCurrentState == STATE_BUFFERING) return;
             if (visibility != VISIBLE) {
                 playButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_out));
             } else {
@@ -655,12 +659,13 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     @Override
     public boolean onInfo(IMediaPlayer iMediaPlayer, int what, int extra) {
         if (what == IMediaPlayer.MEDIA_INFO_BUFFERING_START) {
-            if (mMediaController != null) mMediaController.hide();
             bufferProgress.setVisibility(VISIBLE);
             mCurrentState = STATE_BUFFERING;
+            if (mMediaController != null) mMediaController.hide();
         } else if (what == IMediaPlayer.MEDIA_INFO_BUFFERING_END) {
             bufferProgress.setVisibility(GONE);
             mCurrentState = STATE_PLAYING;
+            if (mMediaController != null && mMediaController.isShowing()) playButton.setVisibility(VISIBLE);
         }
         return false;
     }
@@ -700,9 +705,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         int videoWidth = iMediaPlayer.getVideoWidth();
         int videoHeight = iMediaPlayer.getVideoHeight();
         if (videoWidth != 0 && videoHeight != 0) {
-            addSurfaceView();
             surfaceView.setVideoSize(videoWidth, videoHeight);
-            requestLayout();
         }
     }
 
