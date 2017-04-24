@@ -29,7 +29,9 @@ import android.widget.Toast;
 import com.devlin_n.magic_player.R;
 import com.devlin_n.magic_player.controller.AdController;
 import com.devlin_n.magic_player.controller.BaseMediaController;
+import com.devlin_n.magic_player.controller.FullScreenController;
 import com.devlin_n.magic_player.controller.IjkMediaController;
+import com.devlin_n.magic_player.controller.NormalScreenController;
 import com.devlin_n.magic_player.util.KeyUtil;
 import com.devlin_n.magic_player.util.NetworkUtil;
 import com.devlin_n.magic_player.util.WindowUtil;
@@ -54,6 +56,8 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     private static final String TAG = IjkVideoView.class.getSimpleName();
     private IjkMediaPlayer mMediaPlayer;//ijkPlayer
     private BaseMediaController mMediaController;//控制器
+    private FullScreenController mFullScreenController;
+    private NormalScreenController mNormalScreenController;
     private boolean isControllerAdded;//师傅添加控制器
     private MySurfaceView surfaceView;
     private RelativeLayout surfaceContainer;
@@ -522,10 +526,27 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         int height = WindowUtil.getScreenWidth(getContext());
         layoutParams.width = WindowUtil.getScreenHeight(getContext(), true);
         layoutParams.height = height;
-        if (mMediaController != null)
-            mMediaController.setLayoutParams(new LayoutParams(WindowUtil.getScreenHeight(getContext(), false), height));
+        if (mFullScreenController == null) {
+            mFullScreenController = new FullScreenController(getContext());
+            mFullScreenController.setLayoutParams(new LayoutParams(WindowUtil.getScreenHeight(getContext(), false), height));
+        }
+        updateController(mFullScreenController);
         this.setLayoutParams(layoutParams);
         isFullScreen = true;
+    }
+
+    private void updateController(BaseMediaController controller) {
+        mMediaController.removeAllCallbacks();
+        mMediaController = controller;
+        mMediaController.setMediaPlayer(this);
+        if (BaseMediaController.isShowing()) {
+            mMediaController.show();
+        } else {
+            mMediaController.hide();
+        }
+        controllerContainer.removeAllViews();
+        controllerContainer.addView(mMediaController);
+        mMediaController.updateProgress();
     }
 
     @Override
@@ -536,8 +557,11 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         WindowUtil.showNavKey(getContext());
         layoutParams.width = originalWidth;
         layoutParams.height = originalHeight;
-        if (mMediaController != null)
-            mMediaController.setLayoutParams(new LayoutParams(originalWidth, originalHeight));
+        if (mNormalScreenController == null) {
+            mNormalScreenController = new NormalScreenController(getContext());
+            mNormalScreenController.setLayoutParams(new LayoutParams(originalWidth, originalHeight));
+        }
+        updateController(mNormalScreenController);
         this.setLayoutParams(layoutParams);
         isFullScreen = false;
     }
@@ -665,7 +689,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         } else if (what == IMediaPlayer.MEDIA_INFO_BUFFERING_END) {
             bufferProgress.setVisibility(GONE);
             mCurrentState = STATE_PLAYING;
-            if (mMediaController != null && mMediaController.isShowing()) playButton.setVisibility(VISIBLE);
+            if (mMediaController != null && BaseMediaController.isShowing()) playButton.setVisibility(VISIBLE);
         }
         return false;
     }
