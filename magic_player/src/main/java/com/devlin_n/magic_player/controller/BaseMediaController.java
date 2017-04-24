@@ -154,7 +154,7 @@ public abstract class BaseMediaController extends FrameLayout {
         float y = event.getY();
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (!isLocked) {
+                if (!isLocked && mediaPlayer.isFullScreen()) {
                     mDownX = event.getX();
                     mDownY = event.getY();
                     mChangeBrightness = false;
@@ -167,7 +167,7 @@ public abstract class BaseMediaController extends FrameLayout {
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
-                if (!isLocked) {
+                if (!isLocked && mediaPlayer.isFullScreen()) {
                     float deltaX = x - mDownX;
                     float deltaY = y - mDownY;
                     float absDeltaX = Math.abs(deltaX);
@@ -208,8 +208,11 @@ public abstract class BaseMediaController extends FrameLayout {
                         show();
                     }
                 }
-                if (!isLocked) {
-                    if (mSliding) mCenterView.setVisibility(GONE);
+                if (!isLocked && mediaPlayer.isFullScreen()) {
+                    if (mSliding) {
+                        mCenterView.setVisibility(GONE);
+                        mSliding = false;
+                    }
                     if (mChangePosition) mediaPlayer.seekTo(mPosition);
                 }
                 break;

@@ -25,11 +25,7 @@ import static com.devlin_n.magic_player.player.IjkVideoView.ALERT_WINDOW_PERMISS
 public class LivePlayerActivity extends AppCompatActivity {
 
     private IjkVideoView ijkVideoView;
-    private static final String URL = "http://live.hcs.cmvideo.cn:8088/wd-hunanhd-1200/index.m3u8?msi" +
-            "sdn=3000000000000&mdspid=&spid=699017&netType=5&sid=2201064496&pid=2028595851&timestamp=" +
-            "20170424095254&Channel_ID=0116_22300109-91000-20300&ProgramID=603996975&ParentNodeID=-99&" +
-            "preview=1&playseek=000000-000600&client_ip=211.159.219.164&assertID=2201064496&SecurityKey" +
-            "=20170424095254&encrypt=73bfa49aef2e1d3349dbe119642163e7";
+    private static final String URL = "http://ivi.bupt.edu.cn/hls/cctv6.m3u8";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,7 +44,7 @@ public class LivePlayerActivity extends AppCompatActivity {
                 .init()
                 .autoRotate()
                 .setUrl(URL)
-                .setTitle("湖南卫视")
+                .setTitle("CCTV6")
                 .setMediaController(IjkVideoView.LIVE)
                 .start();
     }
