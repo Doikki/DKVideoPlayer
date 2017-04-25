@@ -263,6 +263,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     @Override
     public void start() {
         if (mCurrentState == STATE_IDLE) {
+            if (mAlwaysFullScreen) startFullScreenDirectly();
             if (checkNetwork()) return;
             startPrepare();
         } else {
@@ -446,7 +447,6 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
 
     public IjkVideoView alwaysFullScreen() {
         mAlwaysFullScreen = true;
-        startFullScreenDirectly();
         return this;
     }
 
@@ -729,10 +729,9 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
             private static final int LANDSCAPE = 2;
             private static final int REVERSE_LANDSCAPE = 3;
 
-
             @Override
             public void onOrientationChanged(int orientation) {
-
+                if (!isInPlaybackState()) return;
                 if (orientation >= 340) { //屏幕顶部朝上
                     if (isLocked || mAlwaysFullScreen) return;
                     if (CurrentOrientation == PORTRAIT) return;
