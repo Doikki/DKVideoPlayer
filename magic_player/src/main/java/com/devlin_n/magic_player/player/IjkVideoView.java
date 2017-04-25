@@ -627,7 +627,6 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
             if (mMediaController != null) mMediaController.hide();
         } else if (what == IMediaPlayer.MEDIA_INFO_BUFFERING_END) {
             bufferProgress.setVisibility(GONE);
-            mCurrentState = STATE_PLAYING;
             if (mMediaController != null) mMediaController.updatePlayButton();
         }
         return false;
