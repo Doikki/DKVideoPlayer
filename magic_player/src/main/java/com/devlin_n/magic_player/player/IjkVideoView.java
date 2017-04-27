@@ -24,6 +24,8 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.danikula.videocache.CacheListener;
+import com.danikula.videocache.HttpProxyCacheServer;
 import com.devlin_n.magic_player.R;
 import com.devlin_n.magic_player.controller.AdController;
 import com.devlin_n.magic_player.controller.BaseMediaController;
@@ -34,6 +36,7 @@ import com.devlin_n.magic_player.util.WindowUtil;
 import com.devlin_n.magic_player.widget.MySurfaceView;
 import com.devlin_n.magic_player.widget.StatusView;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -47,7 +50,7 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback, IjkMediaController.MediaPlayerControlInterface,
         IMediaPlayer.OnErrorListener, IMediaPlayer.OnCompletionListener, IMediaPlayer.OnInfoListener,
-        IMediaPlayer.OnBufferingUpdateListener, IMediaPlayer.OnPreparedListener, IMediaPlayer.OnVideoSizeChangedListener {
+        IMediaPlayer.OnBufferingUpdateListener, IMediaPlayer.OnPreparedListener, IMediaPlayer.OnVideoSizeChangedListener, CacheListener {
 
     private static final String TAG = IjkVideoView.class.getSimpleName();
     private IjkMediaPlayer mMediaPlayer;//ijkPlayer
@@ -100,6 +103,7 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     protected boolean mAutoRotate;//是否旋转屏幕
     private boolean isLocked;
     private boolean mAlwaysFullScreen;//总是全屏
+    private boolean isCache;
 
 
     public IjkVideoView(@NonNull Context context) {
@@ -163,7 +167,17 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         if (mCurrentUrl == null || mCurrentUrl.trim().equals("")) return;
         try {
             mMediaPlayer.reset();
-            mMediaPlayer.setDataSource(mCurrentUrl);
+            if (isCache) {
+                HttpProxyCacheServer cacheServer = cacheServer();
+                String proxyPath = cacheServer.getProxyUrl(mCurrentUrl);
+                cacheServer.registerCacheListener(this, mCurrentUrl);
+                if (cacheServer.isCached(mCurrentUrl)) {
+                    bufferPercentage = 100;
+                }
+                mMediaPlayer.setDataSource(proxyPath);
+            } else {
+                mMediaPlayer.setDataSource(mCurrentUrl);
+            }
             mMediaPlayer.prepareAsync();
             mCurrentState = STATE_PREPARING;
             bufferProgress.setVisibility(VISIBLE);
@@ -173,6 +187,10 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
             mTargetState = STATE_ERROR;
             e.printStackTrace();
         }
+    }
+
+    private HttpProxyCacheServer cacheServer() {
+        return ProxyFactory.getProxy(getContext());
     }
 
     /**
@@ -248,6 +266,14 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     }
 
     /**
+     * 开启缓存
+     */
+    public IjkVideoView enableCache() {
+        isCache = true;
+        return this;
+    }
+
+    /**
      * 播放下一条视频
      */
     private void playNext() {
@@ -315,16 +341,16 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
     public void resume() {
         if (isInPlaybackState() && !mMediaPlayer.isPlaying() && mCurrentState != STATE_PLAYBACK_COMPLETED) {
             mMediaPlayer.start();
+            if (mMediaController != null) {
+                mMediaController.updateProgress();
+                mMediaController.updatePlayButton();
+            }
             mCurrentState = STATE_PLAYING;
         }
         mTargetState = STATE_PLAYING;
         AppCompatActivity activity = WindowUtil.getAppCompActivity(getContext());
         if (activity != null)
             activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        if (mMediaController != null) {
-            mMediaController.updateProgress();
-            mMediaController.updatePlayButton();
-        }
     }
 
     public void stopPlayback() {
@@ -351,6 +377,8 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
             orientationEventListener.disable();
             orientationEventListener = null;
         }
+
+        cacheServer().unregisterCacheListener(this);
     }
 
     private boolean isInPlaybackState() {
@@ -621,26 +649,34 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
 
     @Override
     public boolean onInfo(IMediaPlayer iMediaPlayer, int what, int extra) {
-        if (what == IMediaPlayer.MEDIA_INFO_BUFFERING_START) {
-            bufferProgress.setVisibility(VISIBLE);
-            mCurrentState = STATE_BUFFERING;
-            if (mMediaController != null) mMediaController.hide();
-        } else if (what == IMediaPlayer.MEDIA_INFO_BUFFERING_END) {
-            bufferProgress.setVisibility(GONE);
-            if (mMediaController != null) mMediaController.updatePlayButton();
+        switch (what) {
+            case IMediaPlayer.MEDIA_INFO_BUFFERING_START:
+                bufferProgress.setVisibility(VISIBLE);
+                mCurrentState = STATE_BUFFERING;
+                if (mMediaController != null) mMediaController.hide();
+                break;
+            case IMediaPlayer.MEDIA_INFO_BUFFERING_END:
+                bufferProgress.setVisibility(GONE);
+                if (mMediaController != null) mMediaController.updatePlayButton();
+                if (mTargetState == STATE_PLAYING) mCurrentState = STATE_PLAYING;
+                if (mTargetState == STATE_PAUSED) mCurrentState = STATE_PAUSED;
+                if (mTargetState == STATE_PLAYBACK_COMPLETED) mCurrentState = STATE_PLAYBACK_COMPLETED;
+                break;
+            case IjkMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START:
+            case IjkMediaPlayer.MEDIA_INFO_AUDIO_RENDERING_START:
+                bufferProgress.setVisibility(View.GONE);
         }
         return false;
     }
 
     @Override
     public void onBufferingUpdate(IMediaPlayer iMediaPlayer, int i) {
-        bufferPercentage = i;
+        if (!isCache) bufferPercentage = i;
     }
 
     @Override
     public void onPrepared(IMediaPlayer iMediaPlayer) {
         mCurrentState = STATE_PREPARED;
-        bufferProgress.setVisibility(GONE);
         if (mCurrentPosition > 0 && mCurrentVideoType == VOD) {
             seekTo(mCurrentPosition);
         }
@@ -769,5 +805,10 @@ public class IjkVideoView extends FrameLayout implements SurfaceHolder.Callback,
         };
         orientationEventListener.enable();
         return this;
+    }
+
+    @Override
+    public void onCacheAvailable(File cacheFile, String url, int percentsAvailable) {
+        if (isCache) bufferPercentage = percentsAvailable;
     }
 }

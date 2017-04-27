@@ -240,7 +240,7 @@ public abstract class BaseMediaController extends FrameLayout {
         int width = getMeasuredWidth();
         int duration = mediaPlayer.getDuration();
         int currentPosition = mediaPlayer.getCurrentPosition();
-        int position = (int) (deltaX * 2 / width * duration + currentPosition);
+        int position = (int) (deltaX / width * duration + currentPosition);
         if (position > currentPosition) {
             mCenterView.setIcon(R.drawable.ic_fast_forward);
         } else {

@@ -43,6 +43,7 @@ public class VodPlayerActivity extends AppCompatActivity {
         ijkVideoView
                 .init()
                 .autoRotate()
+                .enableCache()
                 .setUrl(URL)
                 .setTitle("网易公开课-如何掌控你的自由时间")
                 .setMediaController(IjkVideoView.VOD)
