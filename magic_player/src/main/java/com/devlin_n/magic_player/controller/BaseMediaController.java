@@ -101,6 +101,16 @@ public abstract class BaseMediaController extends FrameLayout {
         removeCallbacks(mFadeOut);
     }
 
+    protected void doPauseResume() {
+        if (mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+        } else {
+            mediaPlayer.start();
+            show();
+        }
+        updatePlayButton();
+    }
+
     /**
      * 横竖屏切换
      */

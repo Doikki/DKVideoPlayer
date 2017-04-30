@@ -9,7 +9,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.devlin_n.magic_player.player.IjkVideoView;
@@ -33,12 +32,12 @@ public class LivePlayerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_live_player);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle("直播播放");
+            actionBar.setTitle("LIVE");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         ijkVideoView = (IjkVideoView) findViewById(R.id.ijk_video_view);
-        int widthPixels = getResources().getDisplayMetrics().widthPixels;
-        ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 4 * 3));
+//        int widthPixels = getResources().getDisplayMetrics().widthPixels;
+//        ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 4 * 3));
 
         ijkVideoView
                 .init()
@@ -66,7 +65,7 @@ public class LivePlayerActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        ijkVideoView.resume();
+//        ijkVideoView.resume();
         ijkVideoView.stopFloatWindow();
     }
 
@@ -101,5 +100,21 @@ public class LivePlayerActivity extends AppCompatActivity {
 
     public void startFloatWindow(View view) {
         ijkVideoView.startFloatWindow();
+    }
+
+    public void wide(View view) {
+        ijkVideoView.setScreenType(IjkVideoView.SCREEN_TYPE_16_9);
+    }
+
+    public void tv(View view) {
+        ijkVideoView.setScreenType(IjkVideoView.SCREEN_TYPE_4_3);
+    }
+
+    public void match(View view) {
+        ijkVideoView.setScreenType(IjkVideoView.SCREEN_TYPE_MATCH_PARENT);
+    }
+
+    public void original(View view) {
+        ijkVideoView.setScreenType(IjkVideoView.SCREEN_TYPE_ORIGINAL);
     }
 }

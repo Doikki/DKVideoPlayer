@@ -5,23 +5,23 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="点播播放"
+        android:text="VOD PLAYER"
         android:onClick="skipToVodPlayer"/>
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="直播播放"
+        android:text="LIVE PLAYER"
         android:onClick="skipToLivePlayer"/>
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="全屏播放"
+        android:text="ALWAYS IN FULLSCREEN"
         android:onClick="startFullScreen"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="closeFloatWindow"
-        android:text="关闭画中画"/>
+        android:text="CLOSE PIP"/>
 
 </LinearLayout>

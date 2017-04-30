@@ -6,5 +6,5 @@
     <dimen name="default_spacing">10dp</dimen>
     <dimen name="controller_seekbar_size">12dp</dimen>
     <dimen name="controller_seekbar_max_size">2dp</dimen>
-    <dimen name="player_play_btn_size">35dp</dimen>
+    <dimen name="player_play_btn_size">50dp</dimen>
 </resources>

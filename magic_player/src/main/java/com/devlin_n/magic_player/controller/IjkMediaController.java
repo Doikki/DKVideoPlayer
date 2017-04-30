@@ -32,7 +32,7 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
     protected ImageView lock;
     protected TextView title;
     protected ImageView playButton;
-    private int sDefaultTimeout = 4000;
+    private int sDefaultTimeout = 2000;
     private boolean isLive;
     private boolean isDragging;
     private View statusHolder;
@@ -95,26 +95,16 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
         }
     }
 
-    private void doPauseResume() {
-        if (mediaPlayer.isPlaying()) {
-            mediaPlayer.pause();
-            playButton.setImageResource(R.drawable.ic_play);
-        } else {
-            mediaPlayer.start();
-            playButton.setImageResource(R.drawable.ic_pause);
-        }
-    }
-
     private void doLockUnlock() {
         if (isLocked) {
             isLocked = false;
             mShowing = false;
             show();
-            lock.setImageResource(R.drawable.ic_lock);
+            lock.setSelected(false);
         } else {
             hide();
             isLocked = true;
-            lock.setImageResource(R.drawable.ic_unlock);
+            lock.setSelected(true);
         }
         mediaPlayer.setLock(isLocked);
     }
@@ -124,7 +114,7 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
     public void updateFullScreen() {
         if (isLocked) return;
         if (mediaPlayer != null && mediaPlayer.isFullScreen()) {
-            fullScreenButton.setImageResource(R.drawable.ic_stop_fullscreen);
+            fullScreenButton.setSelected(true);
             statusHolder.setVisibility(VISIBLE);
             backButton.setVisibility(VISIBLE);
             if (isShowing()) {
@@ -137,7 +127,7 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
                 topContainer.setVisibility(INVISIBLE);
             }
         } else {
-            fullScreenButton.setImageResource(R.drawable.ic_start_fullscreen);
+            fullScreenButton.setSelected(false);
             backButton.setVisibility(INVISIBLE);
             lock.setVisibility(INVISIBLE);
             topContainer.setVisibility(INVISIBLE);
@@ -147,22 +137,26 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
 
     @Override
     public void updatePlayButton() {
-        super.updatePlayButton();
-        if (mediaPlayer.getCurrentState() == IjkVideoView.STATE_PREPARING) {
+        if (mediaPlayer.getCurrentState() == IjkVideoView.STATE_BUFFERING) {
             playButton.setVisibility(GONE);
-            playButton.setImageResource(R.drawable.ic_pause);
-        } else {
-            if (mediaPlayer.isPlaying()) {
-                playButton.setImageResource(R.drawable.ic_pause);
-            } else {
-                playButton.setImageResource(R.drawable.ic_play);
-            }
+            return;
         }
-
-        if (isShowing() && !isLocked) {
+        if (mShowing && !isLocked && mediaPlayer.getCurrentState() == IjkVideoView.STATE_BUFFERED) {
             playButton.setVisibility(VISIBLE);
+            return;
         }
 
+        playButton.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mediaPlayer.isPlaying()) {
+                    playButton.setSelected(false);
+                } else {
+                    playButton.setSelected(true);
+                    show(0);
+                }
+            }
+        });
     }
 
     @Override
@@ -199,8 +193,7 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
         long newPosition = (duration * seekBar.getProgress()) / videoProgress.getMax();
         mediaPlayer.seekTo((int) newPosition);
         isDragging = false;
-        setProgress();
-        post(mShowProgress);
+        show();
     }
 
     @Override
@@ -276,8 +269,8 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
         }
         post(mShowProgress);
 
+        removeCallbacks(mFadeOut);
         if (timeout != 0) {
-            removeCallbacks(mFadeOut);
             postDelayed(mFadeOut, timeout);
         }
     }
@@ -306,9 +299,9 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
 
     @Override
     public void reset() {
-        videoProgress.setProgress(0);
-        playButton.setImageResource(R.drawable.ic_play);
-        show();
+        currTime.setText(stringForTime(mediaPlayer.getDuration()));
+        playButton.setSelected(true);
+        show(0);
     }
 
     @Override
