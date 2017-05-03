@@ -15,7 +15,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="ALWAYS IN FULLSCREEN"
+        android:text="ALWAYS ON FULLSCREEN"
         android:onClick="startFullScreen"/>
 
     <Button

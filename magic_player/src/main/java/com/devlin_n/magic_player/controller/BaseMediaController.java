@@ -106,7 +106,6 @@ public abstract class BaseMediaController extends FrameLayout {
             mediaPlayer.pause();
         } else {
             mediaPlayer.start();
-            show();
         }
         updatePlayButton();
     }

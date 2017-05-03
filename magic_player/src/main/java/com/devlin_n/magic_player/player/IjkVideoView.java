@@ -690,6 +690,7 @@ public class IjkVideoView extends FrameLayout implements IjkMediaController.Medi
             case IjkMediaPlayer.MEDIA_INFO_AUDIO_RENDERING_START:
                 mCurrentState = STATE_PLAYING;
                 bufferProgress.setVisibility(View.GONE);
+                if (mMediaController != null) mMediaController.updatePlayButton();
                 if (mTargetState == STATE_PAUSED) pause();
                 break;
         }

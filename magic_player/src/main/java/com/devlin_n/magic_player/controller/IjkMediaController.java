@@ -153,7 +153,6 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
                     playButton.setSelected(false);
                 } else {
                     playButton.setSelected(true);
-                    show(0);
                 }
             }
         });

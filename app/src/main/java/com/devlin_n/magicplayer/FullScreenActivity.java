@@ -47,7 +47,7 @@ public class FullScreenActivity extends AppCompatActivity{
     @Override
     protected void onResume() {
         super.onResume();
-//        ijkVideoView.resume();
+        ijkVideoView.resume();
         ijkVideoView.stopFloatWindow();
     }
 

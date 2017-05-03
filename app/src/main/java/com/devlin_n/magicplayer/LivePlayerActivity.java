@@ -65,7 +65,7 @@ public class LivePlayerActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-//        ijkVideoView.resume();
+        ijkVideoView.resume();
         ijkVideoView.stopFloatWindow();
     }
 
