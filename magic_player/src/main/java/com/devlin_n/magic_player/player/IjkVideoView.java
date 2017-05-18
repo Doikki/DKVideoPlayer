@@ -835,6 +835,6 @@ public class IjkVideoView extends FrameLayout implements IjkMediaController.Medi
 
     @Override
     public void onCacheAvailable(File cacheFile, String url, int percentsAvailable) {
-        if (isCache) bufferPercentage = percentsAvailable;
+        bufferPercentage = percentsAvailable;
     }
 }
