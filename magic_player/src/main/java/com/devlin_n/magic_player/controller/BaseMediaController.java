@@ -79,6 +79,9 @@ public abstract class BaseMediaController extends FrameLayout {
     public void reset() {
     }
 
+    public void updatePlayButton() {
+    }
+
     /**
      * 返回控制器的显示状态
      */
@@ -89,8 +92,22 @@ public abstract class BaseMediaController extends FrameLayout {
     public void updateFullScreen() {
     }
 
-    public void startFullScreenDirectly(){
+    public void startFullScreenDirectly() {
 
+    }
+
+    public void removeAllCallbacks(){
+        removeCallbacks(mShowProgress);
+        removeCallbacks(mFadeOut);
+    }
+
+    protected void doPauseResume() {
+        if (mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+        } else {
+            mediaPlayer.start();
+        }
+        updatePlayButton();
     }
 
     /**
@@ -125,7 +142,7 @@ public abstract class BaseMediaController extends FrameLayout {
         }
     };
 
-    protected int setProgress(){
+    protected int setProgress() {
         return 0;
     }
 
@@ -232,7 +249,7 @@ public abstract class BaseMediaController extends FrameLayout {
         int width = getMeasuredWidth();
         int duration = mediaPlayer.getDuration();
         int currentPosition = mediaPlayer.getCurrentPosition();
-        int position = (int) (deltaX * 2 / width * duration + currentPosition);
+        int position = (int) (deltaX / width * duration + currentPosition);
         if (position > currentPosition) {
             mCenterView.setIcon(R.drawable.ic_fast_forward);
         } else {
@@ -332,8 +349,6 @@ public abstract class BaseMediaController extends FrameLayout {
 
         String getTitle();
 
-        void updatePlayButton(int visibility);
-
         void startFullScreenDirectly();
 
         void skipToNext();
@@ -343,6 +358,8 @@ public abstract class BaseMediaController extends FrameLayout {
         boolean isMute();
 
         void setLock(boolean isLocked);
+
+        int getCurrentState();
     }
 
     public void setMediaPlayer(MediaPlayerControlInterface mediaPlayer) {

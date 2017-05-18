@@ -20,7 +20,7 @@ import com.devlin_n.magic_player.R;
 public class AdController extends BaseMediaController implements View.OnClickListener {
     private static final String TAG = AdController.class.getSimpleName();
     protected TextView adTime, adDetail;
-    protected ImageView back, volume, fullScreen;
+    protected ImageView back, volume, fullScreen, playButton;
 
     public AdController(@NonNull Context context) {
         super(context);
@@ -45,6 +45,8 @@ public class AdController extends BaseMediaController implements View.OnClickLis
         back.setVisibility(GONE);
         volume = (ImageView) controllerView.findViewById(R.id.iv_volume);
         fullScreen = (ImageView) controllerView.findViewById(R.id.fullscreen);
+        playButton = (ImageView) controllerView.findViewById(R.id.iv_play);
+        playButton.setOnClickListener(this);
         adTime.setOnClickListener(this);
         adDetail.setOnClickListener(this);
         back.setOnClickListener(this);
@@ -64,6 +66,8 @@ public class AdController extends BaseMediaController implements View.OnClickLis
             Toast.makeText(getContext(), "施工中~", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.ad_time) {
             mediaPlayer.skipToNext();
+        } else if (id == R.id.iv_play) {
+            doPauseResume();
         }
     }
 
@@ -74,6 +78,21 @@ public class AdController extends BaseMediaController implements View.OnClickLis
         } else {
             volume.setImageResource(R.drawable.ic_volume_off);
         }
+    }
+
+    @Override
+    public void updatePlayButton() {
+        playButton.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mediaPlayer.isPlaying()) {
+                    playButton.setSelected(false);
+                } else {
+                    playButton.setSelected(true);
+                }
+            }
+        });
+        updateProgress();
     }
 
     @Override

@@ -3,27 +3,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <ImageView
             android:id="@+id/back"
             style="@style/adIcon"
             android:src="@drawable/ic_back" />
+
         <TextView
             android:id="@+id/ad_time"
             style="@style/adText"
-            tools:text="2s|跳过"
-            android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"/>
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            tools:text="2s|跳过" />
     </RelativeLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="@dimen/controller_height"
         android:layout_gravity="bottom|end"
-        android:gravity="center">
+        android:gravity="end">
+
+        <ImageView
+            android:id="@+id/iv_play"
+            style="@style/adIcon"
+            android:src="@drawable/selector_play_button" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
 
         <TextView
             android:id="@+id/ad_detail"
