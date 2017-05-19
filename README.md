@@ -15,5 +15,11 @@ Step 1.Add it in your root build.gradle at the end of repositories:
 Step 2. Add the dependency
 
 	dependencies {
-	        compile 'com.github.DevlinChiu:MagicPlayer:v1.0'
+	        compile 'com.github.DevlinChiu:MagicPlayer:1.0.1'
 	}
+### ProGuard
+
+	-keep class tv.danmaku.ijk.** { *; }
+    -dontwarn tv.danmaku.ijk.**
+    -keep class com.devlin_n.magic_player.** { *; }
+    -dontwarn com.devlin_n.magic_player.**
