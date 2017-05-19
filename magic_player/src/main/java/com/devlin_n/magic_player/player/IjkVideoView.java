@@ -17,7 +17,6 @@ import android.view.OrientationEventListener;
 import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
@@ -34,7 +33,6 @@ import com.devlin_n.magic_player.util.KeyUtil;
 import com.devlin_n.magic_player.util.NetworkUtil;
 import com.devlin_n.magic_player.util.WindowUtil;
 import com.devlin_n.magic_player.widget.MagicSurfaceView;
-import com.devlin_n.magic_player.widget.MagicTextureView;
 import com.devlin_n.magic_player.widget.StatusView;
 
 import java.io.File;
@@ -58,7 +56,6 @@ public class IjkVideoView extends FrameLayout implements IjkMediaController.Medi
     private BaseMediaController mMediaController;//控制器
     private boolean isControllerAdded;//师傅添加控制器
     private MagicSurfaceView surfaceView;
-    private MagicTextureView textureView;
     private RelativeLayout surfaceContainer;
     private FrameLayout controllerContainer;
     private StatusView statusView;//显示错误信息的一个view
@@ -133,17 +130,18 @@ public class IjkVideoView extends FrameLayout implements IjkMediaController.Medi
         bufferProgress = (ProgressBar) videoView.findViewById(R.id.buffering);
         surfaceContainer = (RelativeLayout) videoView.findViewById(R.id.surface_container);
         controllerContainer = (FrameLayout) videoView.findViewById(R.id.controller_container);
-        //获取播放器竖屏时的原始宽高
-        getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                originalWidth = getWidth();
-                originalHeight = getHeight();
-                if (originalWidth != -1 && originalHeight != -1) {
-                    getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                }
-            }
-        });
+    }
+
+    /**
+     * 重写onWindowFocusChanged方法获取控件原始宽高
+     */
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus && originalWidth == 0 && originalHeight == 0) {
+            originalWidth = getWidth();
+            originalHeight = getHeight();
+        }
     }
 
     /**

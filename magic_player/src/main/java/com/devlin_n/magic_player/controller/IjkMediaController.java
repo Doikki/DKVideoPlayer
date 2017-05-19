@@ -300,7 +300,7 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
     public void reset() {
         currTime.setText(stringForTime(mediaPlayer.getDuration()));
         playButton.setSelected(true);
-        show(0);
+        show();
     }
 
     @Override
