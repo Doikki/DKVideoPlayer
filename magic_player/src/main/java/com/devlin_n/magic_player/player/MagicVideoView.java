@@ -27,8 +27,8 @@ import com.danikula.videocache.CacheListener;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.devlin_n.magic_player.R;
 import com.devlin_n.magic_player.controller.AdController;
-import com.devlin_n.magic_player.controller.BaseMediaController;
-import com.devlin_n.magic_player.controller.IjkMediaController;
+import com.devlin_n.magic_player.controller.BaseVideoController;
+import com.devlin_n.magic_player.controller.MagicVideoController;
 import com.devlin_n.magic_player.util.KeyUtil;
 import com.devlin_n.magic_player.util.NetworkUtil;
 import com.devlin_n.magic_player.util.WindowUtil;
@@ -47,13 +47,13 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
  * Created by Devlin_n on 2017/4/7.
  */
 
-public class IjkVideoView extends FrameLayout implements IjkMediaController.MediaPlayerControlInterface,
+public class MagicVideoView extends FrameLayout implements MagicVideoController.MediaPlayerControlInterface,
         IMediaPlayer.OnErrorListener, IMediaPlayer.OnCompletionListener, IMediaPlayer.OnInfoListener,
         IMediaPlayer.OnBufferingUpdateListener, IMediaPlayer.OnPreparedListener, IMediaPlayer.OnVideoSizeChangedListener, CacheListener {
 
-    private static final String TAG = IjkVideoView.class.getSimpleName();
+    private static final String TAG = MagicVideoView.class.getSimpleName();
     private IjkMediaPlayer mMediaPlayer;//ijkPlayer
-    private BaseMediaController mMediaController;//控制器
+    private BaseVideoController mMediaController;//控制器
     private boolean isControllerAdded;//师傅添加控制器
     private MagicSurfaceView surfaceView;
     private RelativeLayout surfaceContainer;
@@ -112,12 +112,12 @@ public class IjkVideoView extends FrameLayout implements IjkMediaController.Medi
     private boolean isCache;
 
 
-    public IjkVideoView(@NonNull Context context) {
+    public MagicVideoView(@NonNull Context context) {
         this(context, null);
     }
 
 
-    public IjkVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public MagicVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         initView();
     }
@@ -147,7 +147,7 @@ public class IjkVideoView extends FrameLayout implements IjkMediaController.Medi
     /**
      * 创建播放器实例，设置播放地址及播放器参数
      */
-    public IjkVideoView init() {
+    public MagicVideoView init() {
         mAudioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
         mAudioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
         mMediaPlayer = new IjkMediaPlayer();
@@ -175,7 +175,7 @@ public class IjkVideoView extends FrameLayout implements IjkMediaController.Medi
         try {
             mMediaPlayer.reset();
             if (isCache) {
-                HttpProxyCacheServer cacheServer = cacheServer();
+                HttpProxyCacheServer cacheServer = getCacheServer();
                 String proxyPath = cacheServer.getProxyUrl(mCurrentUrl);
                 cacheServer.registerCacheListener(this, mCurrentUrl);
                 if (cacheServer.isCached(mCurrentUrl)) {
@@ -196,8 +196,8 @@ public class IjkVideoView extends FrameLayout implements IjkMediaController.Medi
         }
     }
 
-    private HttpProxyCacheServer cacheServer() {
-        return ProxyFactory.getProxy(getContext().getApplicationContext());
+    private HttpProxyCacheServer getCacheServer() {
+        return VideoCacheManager.getProxy(getContext().getApplicationContext());
     }
 
     /**
@@ -229,7 +229,7 @@ public class IjkVideoView extends FrameLayout implements IjkMediaController.Medi
     /**
      * 设置视频比例
      */
-    public IjkVideoView setScreenType(int type) {
+    public MagicVideoView setScreenType(int type) {
         mCurrentScreenType = type;
         surfaceView.setScreenType(mCurrentScreenType);
         return this;
@@ -238,7 +238,7 @@ public class IjkVideoView extends FrameLayout implements IjkMediaController.Medi
     /**
      * 设置视频地址
      */
-    public IjkVideoView setUrl(String url) {
+    public MagicVideoView setUrl(String url) {
         this.mCurrentUrl = url;
         return this;
     }
@@ -246,7 +246,7 @@ public class IjkVideoView extends FrameLayout implements IjkMediaController.Medi
     /**
      * 一开始播放就seek到预先设置好的位置
      */
-    public IjkVideoView skipPositionWhenPlay(String url, int position) {
+    public MagicVideoView skipPositionWhenPlay(String url, int position) {
         this.mCurrentUrl = url;
         this.mCurrentPosition = position;
         return this;
@@ -255,7 +255,7 @@ public class IjkVideoView extends FrameLayout implements IjkMediaController.Medi
     /**
      * 设置视频的类型
      */
-    public IjkVideoView setVideoType(int type) {
+    public MagicVideoView setVideoType(int type) {
         mCurrentVideoType = type;
         return this;
     }
@@ -263,7 +263,7 @@ public class IjkVideoView extends FrameLayout implements IjkMediaController.Medi
     /**
      * 设置一个列表的视频
      */
-    public IjkVideoView setVideos(List<VideoModel> videoModels) {
+    public MagicVideoView setVideos(List<VideoModel> videoModels) {
         this.mVideoModels = videoModels;
         playNext();
         return this;
@@ -272,7 +272,7 @@ public class IjkVideoView extends FrameLayout implements IjkMediaController.Medi
     /**
      * 设置标题
      */
-    public IjkVideoView setTitle(String title) {
+    public MagicVideoView setTitle(String title) {
         if (title != null) {
             this.mCurrentTitle = title;
         }
@@ -282,7 +282,7 @@ public class IjkVideoView extends FrameLayout implements IjkMediaController.Medi
     /**
      * 开启缓存
      */
-    public IjkVideoView enableCache() {
+    public MagicVideoView enableCache() {
         isCache = true;
         return this;
     }
@@ -296,7 +296,7 @@ public class IjkVideoView extends FrameLayout implements IjkMediaController.Medi
             mCurrentUrl = videoModel.url;
             mCurrentTitle = videoModel.title;
             mCurrentPosition = 0;
-            setMediaController(videoModel.type);
+            setVideoController(videoModel.type);
         }
     }
 
@@ -393,7 +393,7 @@ public class IjkVideoView extends FrameLayout implements IjkMediaController.Medi
             orientationEventListener = null;
         }
 
-        cacheServer().unregisterCacheListener(this);
+        getCacheServer().unregisterCacheListener(this);
     }
 
     private boolean isInPlaybackState() {
@@ -488,7 +488,7 @@ public class IjkVideoView extends FrameLayout implements IjkMediaController.Medi
         if (mMediaController != null) mMediaController.startFullScreenDirectly();
     }
 
-    public IjkVideoView alwaysFullScreen() {
+    public MagicVideoView alwaysFullScreen() {
         mAlwaysFullScreen = true;
         return this;
     }
@@ -578,19 +578,19 @@ public class IjkVideoView extends FrameLayout implements IjkMediaController.Medi
     /**
      * 根据视频类型快速设置控制器
      */
-    public IjkVideoView setMediaController(int type) {
+    public MagicVideoView setVideoController(int type) {
         controllerContainer.removeAllViews();
         isControllerAdded = false;
         switch (type) {
             case VOD: {
-                IjkMediaController ijkMediaController = new IjkMediaController(getContext());
+                MagicVideoController ijkMediaController = new MagicVideoController(getContext());
                 ijkMediaController.setMediaPlayer(this);
                 mMediaController = ijkMediaController;
                 mCurrentVideoType = VOD;
                 break;
             }
             case LIVE: {
-                IjkMediaController ijkMediaController = new IjkMediaController(getContext());
+                MagicVideoController ijkMediaController = new MagicVideoController(getContext());
                 ijkMediaController.setMediaPlayer(this);
                 ijkMediaController.setLive(true);
                 mMediaController = ijkMediaController;
@@ -612,14 +612,14 @@ public class IjkVideoView extends FrameLayout implements IjkMediaController.Medi
     /**
      * 设置控制器
      */
-    public IjkVideoView setMediaController(BaseMediaController mediaController) {
+    public MagicVideoView setVideoController(BaseVideoController mediaController) {
         controllerContainer.removeAllViews();
         isControllerAdded = false;
         if (mediaController != null) {
             mediaController.setMediaPlayer(this);
             mMediaController = mediaController;
-            if (mediaController instanceof IjkMediaController) {
-                if (((IjkMediaController) mediaController).getLive()) {
+            if (mediaController instanceof MagicVideoController) {
+                if (((MagicVideoController) mediaController).getLive()) {
                     mCurrentVideoType = LIVE;
                 } else {
                     mCurrentVideoType = VOD;
@@ -779,7 +779,7 @@ public class IjkVideoView extends FrameLayout implements IjkMediaController.Medi
     /**
      * 设置自动旋转
      */
-    public IjkVideoView autoRotate() {
+    public MagicVideoView autoRotate() {
         this.mAutoRotate = true;
         orientationEventListener = new OrientationEventListener(getContext()) { // 加速度传感器监听，用于自动旋转屏幕
 

@@ -23,7 +23,7 @@ import com.devlin_n.magic_player.util.WindowUtil;
 public class BackgroundPlayService extends Service {
     private WindowManager wm;
     private WindowManager.LayoutParams wmParams;
-    private IjkVideoView videoView;
+    private MagicVideoView videoView;
     private String url;
     private View floatView;
     private int position;
@@ -69,7 +69,7 @@ public class BackgroundPlayService extends Service {
         wmParams.width = width;
         wmParams.height = width * 9 / 16;
         floatView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.layout_float_window, null);
-        videoView = (IjkVideoView) floatView.findViewById(R.id.video_view);
+        videoView = (MagicVideoView) floatView.findViewById(R.id.video_view);
         floatView.findViewById(R.id.btn_close).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

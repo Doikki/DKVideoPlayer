@@ -17,7 +17,7 @@ import com.devlin_n.magic_player.R;
  * Created by Devlin_n on 2017/4/12.
  */
 
-public class AdController extends BaseMediaController implements View.OnClickListener {
+public class AdController extends BaseVideoController implements View.OnClickListener {
     private static final String TAG = AdController.class.getSimpleName();
     protected TextView adTime, adDetail;
     protected ImageView back, volume, fullScreen, playButton;

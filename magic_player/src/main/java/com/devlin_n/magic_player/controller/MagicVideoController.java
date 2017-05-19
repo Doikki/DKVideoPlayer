@@ -13,7 +13,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.devlin_n.magic_player.R;
-import com.devlin_n.magic_player.player.IjkVideoView;
+import com.devlin_n.magic_player.player.MagicVideoView;
 import com.devlin_n.magic_player.util.WindowUtil;
 
 /**
@@ -21,7 +21,7 @@ import com.devlin_n.magic_player.util.WindowUtil;
  * Created by Devlin_n on 2017/4/7.
  */
 
-public class IjkMediaController extends BaseMediaController implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+public class MagicVideoController extends BaseVideoController implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
     private static final String TAG = "IjkMediaController";
     protected TextView totalTime, currTime;
     protected ImageView fullScreenButton;
@@ -38,11 +38,11 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
     private View statusHolder;
 
 
-    public IjkMediaController(@NonNull Context context) {
+    public MagicVideoController(@NonNull Context context) {
         this(context, null);
     }
 
-    public IjkMediaController(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public MagicVideoController(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
@@ -137,11 +137,11 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
 
     @Override
     public void updatePlayButton() {
-        if (mediaPlayer.getCurrentState() == IjkVideoView.STATE_BUFFERING) {
+        if (mediaPlayer.getCurrentState() == MagicVideoView.STATE_BUFFERING) {
             playButton.setVisibility(GONE);
             return;
         }
-        if (mShowing && !isLocked && mediaPlayer.getCurrentState() == IjkVideoView.STATE_BUFFERED) {
+        if (mShowing && !isLocked && mediaPlayer.getCurrentState() == MagicVideoView.STATE_BUFFERED) {
             playButton.setVisibility(VISIBLE);
             return;
         }
@@ -222,7 +222,7 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
                 bottomContainer.setVisibility(GONE);
                 bottomContainer.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_slide_bottom_out));
                 playButton.setVisibility(GONE);
-                if (mediaPlayer.getCurrentState() != IjkVideoView.STATE_BUFFERING) {
+                if (mediaPlayer.getCurrentState() != MagicVideoView.STATE_BUFFERING) {
                     playButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_out));
                 }
 
@@ -233,7 +233,7 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
 
     private void hideAllViews() {
         playButton.setVisibility(GONE);
-        if (mediaPlayer.getCurrentState() != IjkVideoView.STATE_BUFFERING) {
+        if (mediaPlayer.getCurrentState() != MagicVideoView.STATE_BUFFERING) {
             playButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_out));
         }
         bottomContainer.setVisibility(GONE);
@@ -252,7 +252,7 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
                     showAllViews();
                 }
             } else {
-                if (mediaPlayer.getCurrentState() != IjkVideoView.STATE_BUFFERING) {
+                if (mediaPlayer.getCurrentState() != MagicVideoView.STATE_BUFFERING) {
                     playButton.setVisibility(VISIBLE);
                     playButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_in));
                 }
@@ -275,7 +275,7 @@ public class IjkMediaController extends BaseMediaController implements View.OnCl
     }
 
     private void showAllViews() {
-        if (mediaPlayer.getCurrentState() != IjkVideoView.STATE_BUFFERING) {
+        if (mediaPlayer.getCurrentState() != MagicVideoView.STATE_BUFFERING) {
             playButton.setVisibility(VISIBLE);
             playButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_in));
         }

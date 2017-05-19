@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.devlin_n.magic_player.player.BackgroundPlayService;
+import com.devlin_n.magic_player.player.VideoCacheManager;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,5 +31,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void startFullScreen(View view) {
         startActivity(new Intent(this, FullScreenActivity.class));
+    }
+
+    public void clearCache(View view) {
+        VideoCacheManager.clearAllCache(this);
     }
 }

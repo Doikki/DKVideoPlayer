@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.SurfaceView;
 
-import com.devlin_n.magic_player.player.IjkVideoView;
+import com.devlin_n.magic_player.player.MagicVideoView;
 
 /**
  * Created by Devlin_n on 2017/4/10.
@@ -50,18 +50,18 @@ public class MagicSurfaceView extends SurfaceView {
 
         //如果设置了比例
         switch (screenType) {
-            case IjkVideoView.SCREEN_TYPE_ORIGINAL:
+            case MagicVideoView.SCREEN_TYPE_ORIGINAL:
                 width = mVideoWidth;
                 height = mVideoHeight;
                 break;
-            case IjkVideoView.SCREEN_TYPE_16_9:
+            case MagicVideoView.SCREEN_TYPE_16_9:
                 if (height > width / 16 * 9) {
                     height = width / 16 * 9;
                 } else {
                     width = height / 9 * 16;
                 }
                 break;
-            case IjkVideoView.SCREEN_TYPE_4_3:
+            case MagicVideoView.SCREEN_TYPE_4_3:
                 if (height > width / 4 * 3) {
                     height = width / 4 * 3;
                 } else {
@@ -69,7 +69,7 @@ public class MagicSurfaceView extends SurfaceView {
                 }
 //                Log.d("@@@@", "onMeasure 4:3 : width" + width + "    height:" + height);
                 break;
-            case IjkVideoView.SCREEN_TYPE_MATCH_PARENT:
+            case MagicVideoView.SCREEN_TYPE_MATCH_PARENT:
                 width = widthMeasureSpec;
                 height = heightMeasureSpec;
                 break;

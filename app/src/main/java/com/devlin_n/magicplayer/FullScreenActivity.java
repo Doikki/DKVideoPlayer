@@ -9,9 +9,9 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
-import com.devlin_n.magic_player.player.IjkVideoView;
+import com.devlin_n.magic_player.player.MagicVideoView;
 
-import static com.devlin_n.magic_player.player.IjkVideoView.ALERT_WINDOW_PERMISSION_CODE;
+import static com.devlin_n.magic_player.player.MagicVideoView.ALERT_WINDOW_PERMISSION_CODE;
 
 /**
  * 全屏播放
@@ -20,46 +20,46 @@ import static com.devlin_n.magic_player.player.IjkVideoView.ALERT_WINDOW_PERMISS
 
 public class FullScreenActivity extends AppCompatActivity{
 
-    private IjkVideoView ijkVideoView;
+    private MagicVideoView magicVideoView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ijkVideoView = new IjkVideoView(this);
-        setContentView(ijkVideoView);
-        ijkVideoView
+        magicVideoView = new MagicVideoView(this);
+        setContentView(magicVideoView);
+        magicVideoView
                 .init()
                 .autoRotate()
                 .alwaysFullScreen()
                 .setTitle("这是一个标题")
                 .setUrl("http://flv2.bn.netease.com/videolib3/1611/28/GbgsL3639/HD/movie_index.m3u8")
-                .setMediaController(IjkVideoView.VOD)
-                .setScreenType(IjkVideoView.SCREEN_TYPE_4_3)
+                .setVideoController(MagicVideoView.VOD)
+                .setScreenType(MagicVideoView.SCREEN_TYPE_4_3)
                 .start();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        ijkVideoView.pause();
+        magicVideoView.pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        ijkVideoView.resume();
-        ijkVideoView.stopFloatWindow();
+        magicVideoView.resume();
+        magicVideoView.stopFloatWindow();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ijkVideoView.release();
+        magicVideoView.release();
     }
 
     @Override
     public void onBackPressed() {
-        if (!ijkVideoView.onBackPressed()){
+        if (!magicVideoView.onBackPressed()){
             super.onBackPressed();
         }
     }
@@ -74,7 +74,7 @@ public class FullScreenActivity extends AppCompatActivity{
             if (!Settings.canDrawOverlays(this)) {
                 Toast.makeText(FullScreenActivity.this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
             } else {
-                ijkVideoView.startFloatWindow();
+                magicVideoView.startFloatWindow();
             }
         }
     }

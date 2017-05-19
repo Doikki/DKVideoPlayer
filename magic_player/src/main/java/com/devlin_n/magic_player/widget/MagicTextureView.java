@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.TextureView;
 
-import com.devlin_n.magic_player.player.IjkVideoView;
+import com.devlin_n.magic_player.player.MagicVideoView;
 
 /**
  * 用于显示video的，做了横屏与竖屏的匹配，还有需要rotation需求的
@@ -113,13 +113,13 @@ public class MagicTextureView extends TextureView {
         }
 
         //如果设置了比例
-        if (screenType == IjkVideoView.SCREEN_TYPE_16_9) {
+        if (screenType == MagicVideoView.SCREEN_TYPE_16_9) {
             if (height > width) {
                 width = height * 9 / 16;
             } else {
                 height = width * 9 / 16;
             }
-        } else if (screenType == IjkVideoView.SCREEN_TYPE_4_3) {
+        } else if (screenType == MagicVideoView.SCREEN_TYPE_4_3) {
             if (height > width) {
                 width = height * 3 / 4;
             } else {

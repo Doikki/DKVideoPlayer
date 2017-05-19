@@ -25,9 +25,9 @@ import java.util.Locale;
  * Created by Devlin_n on 2017/4/12.
  */
 
-public abstract class BaseMediaController extends FrameLayout {
+public abstract class BaseVideoController extends FrameLayout {
 
-    private static final String TAG = BaseMediaController.class.getSimpleName();
+    private static final String TAG = BaseVideoController.class.getSimpleName();
     protected View controllerView;//控制器视图
     protected MediaPlayerControlInterface mediaPlayer;//播放器
     protected boolean mShowing;//控制器是否处于显示状态
@@ -37,11 +37,11 @@ public abstract class BaseMediaController extends FrameLayout {
     private Formatter mFormatter;
     protected boolean isLocked;
 
-    public BaseMediaController(@NonNull Context context) {
+    public BaseVideoController(@NonNull Context context) {
         this(context, null);
     }
 
-    public BaseMediaController(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public BaseVideoController(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         initView();
     }

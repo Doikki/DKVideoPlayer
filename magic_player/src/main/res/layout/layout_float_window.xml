@@ -6,7 +6,7 @@
     android:background="@drawable/shape_float_window_background"
     android:padding="1dp">
 
-    <com.devlin_n.magic_player.player.IjkVideoView
+    <com.devlin_n.magic_player.player.MagicVideoView
         android:id="@+id/video_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
