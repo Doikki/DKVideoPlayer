@@ -40,6 +40,22 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def outputFile = output.outputFile
+            if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                if (variant.buildType.name == 'release') {
+                    def fileName = "${defaultConfig.applicationId}_${defaultConfig.versionName}_release.apk"
+                    output.outputFile = new File(outputFile.parent, fileName)
+                } else {
+                    def fileName = "${defaultConfig.applicationId}_${defaultConfig.versionName}_debug.apk"
+                    output.outputFile = new File(outputFile.parent, fileName)
+                }
+
+            }
+        }
+    }
 }
 
 dependencies {
