@@ -13,6 +13,10 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.devlin_n.magic_player.player.MagicVideoView;
+import com.devlin_n.magic_player.player.VideoModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.devlin_n.magic_player.player.MagicVideoView.ALERT_WINDOW_PERMISSION_CODE;
 
@@ -40,18 +44,18 @@ public class VodPlayerActivity extends AppCompatActivity {
 //        int widthPixels = getResources().getDisplayMetrics().widthPixels;
 //        magicVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 16 * 9));
 
-//        List<VideoModel> videos = new ArrayList<>();
-//        videos.add(new VideoModel(URL_AD, "广告", IjkVideoView.AD));
-//        videos.add(new VideoModel(URL_VOD, "网易公开课-如何掌控你的自由时间", IjkVideoView.VOD));
+        List<VideoModel> videos = new ArrayList<>();
+        videos.add(new VideoModel(URL_AD, "广告", MagicVideoView.AD));
+        videos.add(new VideoModel(URL_VOD, "网易公开课-如何掌控你的自由时间", MagicVideoView.VOD));
 
         magicVideoView
                 .init()
                 .autoRotate()
                 .enableCache()
-//                .setVideos(videos)
-                .setUrl(URL_VOD)
+                .setVideos(videos)
+//                .setUrl(URL_VOD)
                 .setTitle("网易公开课-如何掌控你的自由时间")
-                .setVideoController(MagicVideoView.VOD)
+//                .setVideoController(MagicVideoView.VOD)
                 .start();
     }
 

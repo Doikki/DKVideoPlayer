@@ -319,13 +319,14 @@ public abstract class BaseVideoController extends FrameLayout {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         post(mShowProgress);
-        updatePlayButton();
     }
 
     @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        updatePlayButton();
+    protected void onWindowVisibilityChanged(int visibility) {
+        super.onWindowVisibilityChanged(visibility);
+        if (visibility == VISIBLE) {
+            post(mShowProgress);
+        }
     }
 
     public interface MediaPlayerControlInterface {

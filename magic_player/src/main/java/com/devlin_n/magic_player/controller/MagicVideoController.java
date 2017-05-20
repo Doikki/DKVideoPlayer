@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.devlin_n.magic_player.R;
 import com.devlin_n.magic_player.player.MagicVideoView;
@@ -101,10 +102,12 @@ public class MagicVideoController extends BaseVideoController implements View.On
             mShowing = false;
             show();
             lock.setSelected(false);
+            Toast.makeText(getContext(), R.string.unlocked, Toast.LENGTH_SHORT).show();
         } else {
             hide();
             isLocked = true;
             lock.setSelected(true);
+            Toast.makeText(getContext(), R.string.locked, Toast.LENGTH_SHORT).show();
         }
         mediaPlayer.setLock(isLocked);
     }

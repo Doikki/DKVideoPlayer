@@ -5,4 +5,7 @@
     <string name="retry">重   试</string>
     <string name="continue_play">继续播放</string>
     <string name="wifi_tip">您正在使用移动网络，继续播放将消耗流量</string>
+    <string name="lock_tip">请先解锁屏幕！</string>
+    <string name="unlocked">已解锁</string>
+    <string name="locked">已锁定</string>
 </resources>
