@@ -96,11 +96,6 @@ public abstract class BaseVideoController extends FrameLayout {
 
     }
 
-    public void removeAllCallbacks(){
-        removeCallbacks(mShowProgress);
-        removeCallbacks(mFadeOut);
-    }
-
     protected void doPauseResume() {
         if (mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
@@ -320,8 +315,17 @@ public abstract class BaseVideoController extends FrameLayout {
         }
     }
 
-    public void updateProgress() {
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
         post(mShowProgress);
+        updatePlayButton();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        updatePlayButton();
     }
 
     public interface MediaPlayerControlInterface {

@@ -22,7 +22,7 @@ import com.devlin_n.magic_player.util.WindowUtil;
  */
 
 public class MagicVideoController extends BaseVideoController implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
-    private static final String TAG = "IjkMediaController";
+    private static final String TAG = MagicVideoController.class.getSimpleName();
     protected TextView totalTime, currTime;
     protected ImageView fullScreenButton;
     protected LinearLayout bottomContainer, topContainer;
@@ -32,7 +32,7 @@ public class MagicVideoController extends BaseVideoController implements View.On
     protected ImageView lock;
     protected TextView title;
     protected ImageView playButton;
-    private int sDefaultTimeout = 2000;
+    private int sDefaultTimeout = 3000;
     private boolean isLive;
     private boolean isDragging;
     private View statusHolder;

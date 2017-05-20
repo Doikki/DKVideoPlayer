@@ -345,7 +345,6 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
                 mMediaPlayer.pause();
                 mCurrentState = STATE_PAUSED;
             }
-            if (mMediaController != null) mMediaController.updatePlayButton();
         }
         mTargetState = STATE_PAUSED;
         AppCompatActivity activity = WindowUtil.getAppCompActivity(getContext());
@@ -357,10 +356,6 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
         if (isInPlaybackState() && !mMediaPlayer.isPlaying() && mCurrentState != STATE_PLAYBACK_COMPLETED) {
             mMediaPlayer.start();
             mCurrentState = STATE_PLAYING;
-        }
-        if (mMediaController != null) {
-            mMediaController.updateProgress();
-            mMediaController.updatePlayButton();
         }
         mTargetState = STATE_PLAYING;
         AppCompatActivity activity = WindowUtil.getAppCompActivity(getContext());
@@ -715,7 +710,6 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
                 mMediaController.setLayoutParams(new LayoutParams(originalWidth, originalHeight));
             }
             controllerContainer.addView(mMediaController);
-            mMediaController.updateProgress();
             isControllerAdded = true;
         }
     }

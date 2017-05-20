@@ -92,7 +92,6 @@ public class AdController extends BaseVideoController implements View.OnClickLis
                 }
             }
         });
-        updateProgress();
     }
 
     @Override
