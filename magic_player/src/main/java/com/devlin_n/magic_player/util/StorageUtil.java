@@ -84,36 +84,40 @@ public class StorageUtil {
     /**
      * delete directory
      */
-    public static void deleteFiles(File root) {
+    public static boolean deleteFiles(File root) {
         File files[] = root.listFiles();
         if (files != null) {
             for (File f : files) {
                 if (!f.isDirectory() && f.exists()) { // 判断是否存在
-                    try {
-                        f.delete();
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    if (!f.delete()) {
+                        return false;
                     }
                 }
             }
         }
+        return true;
     }
 
     /**
      * delete file
      */
-    public static void deleteFile(String filePath) {
+    public static boolean deleteFile(String filePath) {
         File file = new File(filePath);
         if (file.exists()) {
             if (file.isFile()) {
-                file.delete();
+                if (!file.delete()) {
+                    return false;
+                }
             } else {
                 String[] filePaths = file.list();
                 for (String path : filePaths) {
                     deleteFile(filePath + File.separator + path);
                 }
-                file.delete();
+                if (!file.delete()) {
+                    return false;
+                }
             }
         }
+        return true;
     }
 }

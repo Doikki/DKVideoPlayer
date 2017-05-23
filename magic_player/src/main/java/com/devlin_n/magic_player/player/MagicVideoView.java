@@ -96,11 +96,11 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
 
     private AudioManager mAudioManager;//系统音频管理器
 
+    public static final int SCREEN_TYPE_DEFAULT = 0;
     public static final int SCREEN_TYPE_16_9 = 1;
     public static final int SCREEN_TYPE_4_3 = 2;
     public static final int SCREEN_TYPE_MATCH_PARENT = 3;
     public static final int SCREEN_TYPE_ORIGINAL = 4;
-    private int mCurrentScreenType;
 
     /**
      * 加速度传感器监听
@@ -142,7 +142,13 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
             originalWidth = getWidth();
             originalHeight = getHeight();
             if (mMediaController != null) {
-                mMediaController.setLayoutParams(new LayoutParams(originalWidth, originalHeight));
+                if (isFullScreen) {
+                    //如果直接全屏播放器，需要去掉navigation bar的高度，不能直接使用获取的原始高宽
+                    mMediaController.setLayoutParams(new LayoutParams(WindowUtil.getScreenWidth(getContext()),
+                            WindowUtil.getScreenHeight(getContext(), false)));
+                } else {
+                    mMediaController.setLayoutParams(new LayoutParams(originalWidth, originalHeight));
+                }
             }
         }
     }
@@ -233,8 +239,7 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
      * 设置视频比例
      */
     public MagicVideoView setScreenType(int type) {
-        mCurrentScreenType = type;
-        surfaceView.setScreenType(mCurrentScreenType);
+        surfaceView.setScreenType(type);
         return this;
     }
 

@@ -24,7 +24,7 @@ import static com.devlin_n.magic_player.player.MagicVideoView.ALERT_WINDOW_PERMI
 public class LivePlayerActivity extends AppCompatActivity {
 
     private MagicVideoView magicVideoView;
-    private static final String URL = "http://ivi.bupt.edu.cn/hls/cctv6.m3u8";
+    private static final String URL = "http://ivi.bupt.edu.cn/hls/hunanhd.m3u8";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,7 +43,7 @@ public class LivePlayerActivity extends AppCompatActivity {
                 .init()
                 .autoRotate()
                 .setUrl(URL)
-                .setTitle("CCTV6")
+                .setTitle("湖南卫视")
                 .setVideoController(MagicVideoView.LIVE)
                 .start();
     }
@@ -116,5 +116,9 @@ public class LivePlayerActivity extends AppCompatActivity {
 
     public void original(View view) {
         magicVideoView.setScreenType(MagicVideoView.SCREEN_TYPE_ORIGINAL);
+    }
+
+    public void defaultSize(View view) {
+        magicVideoView.setScreenType(MagicVideoView.SCREEN_TYPE_DEFAULT);
     }
 }
