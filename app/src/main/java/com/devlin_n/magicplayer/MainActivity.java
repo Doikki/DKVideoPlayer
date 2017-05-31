@@ -48,4 +48,8 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "清除缓存成功", Toast.LENGTH_SHORT).show();
         }
     }
+
+    public void list(View view) {
+        startActivity(new Intent(this, RecyclerViewActivity.class));
+    }
 }

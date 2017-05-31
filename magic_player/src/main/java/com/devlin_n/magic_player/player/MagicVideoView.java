@@ -312,6 +312,8 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
     public void start() {
         if (mCurrentState == STATE_IDLE) {
             if (mAlwaysFullScreen) startFullScreenDirectly();
+//            MagicPlayerManager.instance().releaseNiceVideoPlayer();
+//            MagicPlayerManager.instance().setCurrentNiceVideoPlayer(this);
             if (checkNetwork()) return;
             startPrepare();
         } else {
@@ -635,7 +637,7 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
     }
 
     @Override
-    public boolean onError(IMediaPlayer iMediaPlayer, int i, int i1) {
+    public boolean onError(IMediaPlayer iMediaPlayer, int framework_err, int impl_err) {
         bufferProgress.setVisibility(GONE);
         mCurrentPosition = getCurrentPosition();
         if (statusView == null) {
