@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -19,7 +18,7 @@ import com.devlin_n.magic_player.R;
 public class StatusView extends LinearLayout {
 
     private TextView tvMessage;
-    private Button btnAction;
+    private TextView btnAction;
 
     public StatusView(Context context) {
         this(context, null);
@@ -33,7 +32,7 @@ public class StatusView extends LinearLayout {
     private void init() {
         View root = LayoutInflater.from(getContext()).inflate(R.layout.layout_status_view, this);
         tvMessage = (TextView) root.findViewById(R.id.message);
-        btnAction = (Button) root.findViewById(R.id.status_btn);
+        btnAction = (TextView) root.findViewById(R.id.status_btn);
         this.setBackgroundResource(android.R.color.black);
     }
 

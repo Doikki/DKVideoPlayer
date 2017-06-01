@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.graphics.SurfaceTexture;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
@@ -15,7 +16,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.OrientationEventListener;
+import android.view.Surface;
 import android.view.SurfaceHolder;
+import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -32,6 +35,7 @@ import com.devlin_n.magic_player.util.KeyUtil;
 import com.devlin_n.magic_player.util.NetworkUtil;
 import com.devlin_n.magic_player.util.WindowUtil;
 import com.devlin_n.magic_player.widget.MagicSurfaceView;
+import com.devlin_n.magic_player.widget.MagicTextureView;
 import com.devlin_n.magic_player.widget.StatusView;
 
 import java.io.File;
@@ -46,20 +50,20 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
  * Created by Devlin_n on 2017/4/7.
  */
 
-public class MagicVideoView extends FrameLayout implements MagicVideoController.MediaPlayerControlInterface,
-        IMediaPlayer.OnErrorListener, IMediaPlayer.OnCompletionListener, IMediaPlayer.OnInfoListener,
-        IMediaPlayer.OnBufferingUpdateListener, IMediaPlayer.OnPreparedListener, IMediaPlayer.OnVideoSizeChangedListener, CacheListener {
+public class MagicVideoView extends FrameLayout implements MagicVideoController.MediaPlayerControlInterface {
 
     private static final String TAG = MagicVideoView.class.getSimpleName();
     private IjkMediaPlayer mIjkPlayer;//ijkPlayer
     private BaseVideoController mVideoController;//控制器
-//    private boolean isControllerAdded;//师傅添加控制器
-    private MagicSurfaceView surfaceView;
+    private MagicSurfaceView mSurfaceView;
+    private MagicTextureView mTextureView;
+    private SurfaceTexture mSurfaceTexture;
     private FrameLayout playerContainer;
     private StatusView statusView;//显示错误信息的一个view
     private int bufferPercentage;//缓冲百分比
     private boolean isFullScreen;//是否处于全屏状态
     private boolean isMute;//是否静音
+    private boolean useSurfaceView;//是否使用TextureView
 
     public static final int ALERT_WINDOW_PERMISSION_CODE = 1;
 
@@ -101,6 +105,8 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
     public static final int SCREEN_TYPE_MATCH_PARENT = 3;
     public static final int SCREEN_TYPE_ORIGINAL = 4;
 
+    private int mCurrentScreenType = SCREEN_TYPE_DEFAULT;
+
     /**
      * 加速度传感器监听
      */
@@ -136,7 +142,7 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
     /**
      * 创建播放器实例，设置播放地址及播放器参数
      */
-    public MagicVideoView init() {
+    private void initPlayer() {
         if (mIjkPlayer == null) {
             mAudioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
             mAudioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
@@ -145,31 +151,33 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
             mIjkPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 1);
             mIjkPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", 1);
             mIjkPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            mIjkPlayer.setOnErrorListener(this);
-            mIjkPlayer.setOnCompletionListener(this);
-            mIjkPlayer.setOnInfoListener(this);
-            mIjkPlayer.setOnBufferingUpdateListener(this);
-            mIjkPlayer.setOnPreparedListener(this);
-            mIjkPlayer.setOnVideoSizeChangedListener(this);
-            addSurfaceView();
+            mIjkPlayer.setOnErrorListener(onErrorListener);
+            mIjkPlayer.setOnCompletionListener(onCompletionListener);
+            mIjkPlayer.setOnInfoListener(onInfoListener);
+            mIjkPlayer.setOnBufferingUpdateListener(onBufferingUpdateListener);
+            mIjkPlayer.setOnPreparedListener(onPreparedListener);
+            mIjkPlayer.setOnVideoSizeChangedListener(onVideoSizeChangedListener);
             mCurrentState = STATE_IDLE;
             mTargetState = STATE_IDLE;
         }
-        return this;
+        if (useSurfaceView) {
+            addSurfaceView();
+        } else {
+            addTextureView();
+        }
     }
 
     /**
      * 开始准备播放（直接播放）
      */
     private void startPrepare() {
-        init();
         if (mCurrentUrl == null || mCurrentUrl.trim().equals("")) return;
         try {
             mIjkPlayer.reset();
             if (isCache) {
                 HttpProxyCacheServer cacheServer = getCacheServer();
                 String proxyPath = cacheServer.getProxyUrl(mCurrentUrl);
-                cacheServer.registerCacheListener(this, mCurrentUrl);
+                cacheServer.registerCacheListener(cacheListener, mCurrentUrl);
                 if (cacheServer.isCached(mCurrentUrl)) {
                     bufferPercentage = 100;
                     mCurrentUrl = proxyPath;
@@ -195,9 +203,9 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
      * 添加SurfaceView
      */
     private void addSurfaceView() {
-        playerContainer.removeView(surfaceView);
-        surfaceView = new MagicSurfaceView(getContext());
-        SurfaceHolder surfaceHolder = surfaceView.getHolder();
+        playerContainer.removeView(mSurfaceView);
+        mSurfaceView = new MagicSurfaceView(getContext());
+        SurfaceHolder surfaceHolder = mSurfaceView.getHolder();
         surfaceHolder.addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
@@ -219,14 +227,163 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 Gravity.CENTER);
-        playerContainer.addView(surfaceView, 0, params);
+        playerContainer.addView(mSurfaceView, 0, params);
+    }
+
+    /**
+     * 添加TextureView
+     */
+    private void addTextureView() {
+        playerContainer.removeView(mTextureView);
+        mSurfaceTexture = null;
+        mTextureView = new MagicTextureView(getContext());
+        mTextureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
+            @Override
+            public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int width, int height) {
+                if (mSurfaceTexture != null) {
+                    mTextureView.setSurfaceTexture(mSurfaceTexture);
+                } else {
+                    mSurfaceTexture = surfaceTexture;
+                    mIjkPlayer.setSurface(new Surface(surfaceTexture));
+                }
+            }
+
+            @Override
+            public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int width, int height) {
+            }
+
+            @Override
+            public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
+                return mSurfaceTexture == null;
+            }
+
+            @Override
+            public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {
+            }
+        });
+        LayoutParams params = new LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                Gravity.CENTER);
+        playerContainer.addView(mTextureView, 0, params);
+    }
+
+    @Override
+    public void start() {
+        if (mCurrentState == STATE_IDLE) {
+            if (mAlwaysFullScreen) startFullScreenDirectly();
+            if (checkNetwork()) return;
+            MagicPlayerManager.instance().releaseVideoView();
+            MagicPlayerManager.instance().setCurrentVideoView(this);
+            initPlayer();
+            startPrepare();
+        } else {
+            if (isInPlaybackState()) {
+                mIjkPlayer.start();
+                mCurrentState = STATE_PLAYING;
+            }
+            mTargetState = STATE_PLAYING;
+        }
+        if (mVideoController != null)
+            mVideoController.setPlayState(mCurrentState, isFullScreen ? PLAYER_FULL_SCREEN : PLAYER_NORMAL);
+        AppCompatActivity activity = WindowUtil.getAppCompActivity(getContext());
+        if (activity != null)
+            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    }
+
+    private boolean checkNetwork() {
+        if (NetworkUtil.getNetworkType(getContext()) == NetworkUtil.NETWORK_MOBILE && !IS_PLAY_ON_MOBILE_NETWORK) {
+            playerContainer.removeView(statusView);
+            if (statusView == null) {
+                statusView = new StatusView(getContext());
+            }
+            statusView.setMessage(getResources().getString(R.string.wifi_tip));
+            statusView.setButtonTextAndAction(getResources().getString(R.string.continue_play), new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    IS_PLAY_ON_MOBILE_NETWORK = true;
+                    playerContainer.removeView(statusView);
+                    initPlayer();
+                    startPrepare();
+                }
+            });
+            playerContainer.addView(statusView);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void pause() {
+        if (isInPlaybackState()) {
+            if (mIjkPlayer.isPlaying()) {
+                mIjkPlayer.pause();
+                mCurrentState = STATE_PAUSED;
+            }
+        }
+        mTargetState = STATE_PAUSED;
+        if (mVideoController != null) mVideoController.setPlayState(mCurrentState, 0);
+        AppCompatActivity activity = WindowUtil.getAppCompActivity(getContext());
+        if (activity != null)
+            activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    }
+
+    public void resume() {
+        if (isInPlaybackState() && !mIjkPlayer.isPlaying() && mCurrentState != STATE_PLAYBACK_COMPLETED) {
+            mIjkPlayer.start();
+            mCurrentState = STATE_PLAYING;
+        }
+        mTargetState = STATE_PLAYING;
+        if (mVideoController != null) mVideoController.setPlayState(mCurrentState, 0);
+        AppCompatActivity activity = WindowUtil.getAppCompActivity(getContext());
+        if (activity != null)
+            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    }
+
+    public void stopPlayback() {
+        if (mIjkPlayer != null) {
+            mIjkPlayer.stop();
+            mIjkPlayer.release();
+            mIjkPlayer = null;
+            mCurrentState = STATE_IDLE;
+            mTargetState = STATE_IDLE;
+            mAudioManager.abandonAudioFocus(onAudioFocusChangeListener);
+        }
+    }
+
+    public void release() {
+        if (mIjkPlayer != null) {
+            mIjkPlayer.reset();
+            mIjkPlayer.release();
+            mIjkPlayer = null;
+            mCurrentState = STATE_IDLE;
+            mTargetState = STATE_IDLE;
+            mAudioManager.abandonAudioFocus(onAudioFocusChangeListener);
+        }
+        if (mAutoRotate && orientationEventListener != null) {
+            orientationEventListener.disable();
+            orientationEventListener = null;
+        }
+        if (mVideoController != null) mVideoController.reset();
+
+        playerContainer.removeView(mTextureView);
+        playerContainer.removeView(mSurfaceView);
+        if (mSurfaceTexture != null) {
+            mSurfaceTexture.release();
+            mSurfaceTexture = null;
+        }
+
+        mCurrentPosition = 0;
+        getCacheServer().unregisterCacheListener(cacheListener);
     }
 
     /**
      * 设置视频比例
      */
     public MagicVideoView setScreenType(int type) {
-        surfaceView.setScreenType(type);
+        this.mCurrentScreenType = type;
+        if (mSurfaceView != null) mSurfaceView.setScreenType(type);
+        if (mTextureView != null) mTextureView.setScreenType(type);
         return this;
     }
 
@@ -295,102 +452,12 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
         }
     }
 
-    @Override
-    public void start() {
-        if (mCurrentState == STATE_IDLE) {
-            if (mAlwaysFullScreen) startFullScreenDirectly();
-            if (checkNetwork()) return;
-            MagicPlayerManager.instance().releaseVideoView();
-            MagicPlayerManager.instance().setCurrentVideoView(this);
-            startPrepare();
-        } else {
-            if (isInPlaybackState()) {
-                mIjkPlayer.start();
-                mCurrentState = STATE_PLAYING;
-            }
-            mTargetState = STATE_PLAYING;
-        }
-        if (mVideoController != null) mVideoController.setPlayState(mCurrentState, isFullScreen ? PLAYER_FULL_SCREEN : PLAYER_NORMAL);
-        AppCompatActivity activity = WindowUtil.getAppCompActivity(getContext());
-        if (activity != null)
-            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    }
-
-    private boolean checkNetwork() {
-        if (NetworkUtil.getNetworkType(getContext()) == NetworkUtil.NETWORK_MOBILE && !IS_PLAY_ON_MOBILE_NETWORK) {
-            if (statusView == null) {
-                statusView = new StatusView(getContext());
-            }
-            statusView.setMessage(getResources().getString(R.string.wifi_tip));
-            statusView.setButtonTextAndAction(getResources().getString(R.string.continue_play), new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    IS_PLAY_ON_MOBILE_NETWORK = true;
-                    removeView(statusView);
-                    startPrepare();
-                }
-            });
-            addView(statusView);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public void pause() {
-        if (isInPlaybackState()) {
-            if (mIjkPlayer.isPlaying()) {
-                mIjkPlayer.pause();
-                mCurrentState = STATE_PAUSED;
-            }
-        }
-        mTargetState = STATE_PAUSED;
-        if (mVideoController != null) mVideoController.setPlayState(mCurrentState, 0);
-        AppCompatActivity activity = WindowUtil.getAppCompActivity(getContext());
-        if (activity != null)
-            activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    }
-
-    public void resume() {
-        if (isInPlaybackState() && !mIjkPlayer.isPlaying() && mCurrentState != STATE_PLAYBACK_COMPLETED) {
-            mIjkPlayer.start();
-            mCurrentState = STATE_PLAYING;
-        }
-        mTargetState = STATE_PLAYING;
-        if (mVideoController != null) mVideoController.setPlayState(mCurrentState, 0);
-        AppCompatActivity activity = WindowUtil.getAppCompActivity(getContext());
-        if (activity != null)
-            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    }
-
-    public void stopPlayback() {
-        if (mIjkPlayer != null) {
-            mIjkPlayer.stop();
-            mIjkPlayer.release();
-            mIjkPlayer = null;
-            mCurrentState = STATE_IDLE;
-            mTargetState = STATE_IDLE;
-            mAudioManager.abandonAudioFocus(onAudioFocusChangeListener);
-        }
-    }
-
-    public void release() {
-        if (mIjkPlayer != null) {
-            mIjkPlayer.reset();
-            mIjkPlayer.release();
-            mIjkPlayer = null;
-            mCurrentState = STATE_IDLE;
-            mTargetState = STATE_IDLE;
-            mAudioManager.abandonAudioFocus(onAudioFocusChangeListener);
-        }
-        if (mAutoRotate && orientationEventListener != null) {
-            orientationEventListener.disable();
-            orientationEventListener = null;
-        }
-        if (mVideoController != null) mVideoController.reset();
-        playerContainer.removeView(surfaceView);
-
-        getCacheServer().unregisterCacheListener(this);
+    /**
+     * 启用SurfaceView
+     */
+    public MagicVideoView useSurfaceView() {
+        this.useSurfaceView = true;
+        return this;
     }
 
     private boolean isInPlaybackState() {
@@ -499,6 +566,7 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
         if (mVideoModels != null && mVideoModels.size() > 1) {
             if (mCurrentVideoPosition >= mVideoModels.size()) return;
             playNext();
+            initPlayer();
             startPrepare();
             start();
         }
@@ -539,6 +607,9 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
         LayoutParams params = new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
+        if (mVideoController != null) mVideoController.setLayoutParams(new FrameLayout.LayoutParams(
+                WindowUtil.getScreenHeight(getContext(), false),
+                ViewGroup.LayoutParams.MATCH_PARENT));
         contentView.addView(playerContainer, params);
         isFullScreen = true;
         if (mVideoController != null) mVideoController.setPlayState(0, PLAYER_FULL_SCREEN);
@@ -555,6 +626,9 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
         LayoutParams params = new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
+        if (mVideoController != null) mVideoController.setLayoutParams(new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
         this.addView(playerContainer, params);
         isFullScreen = false;
         if (mVideoController != null) mVideoController.setPlayState(0, PLAYER_NORMAL);
@@ -633,92 +707,123 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
         return this;
     }
 
-    @Override
-    public boolean onError(IMediaPlayer iMediaPlayer, int framework_err, int impl_err) {
-        mCurrentPosition = getCurrentPosition();
-        removeView(statusView);
-        if (statusView == null) {
-            statusView = new StatusView(getContext());
-        }
-        statusView.setMessage(getResources().getString(R.string.error_message));
-        statusView.setButtonTextAndAction(getResources().getString(R.string.retry), new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                removeView(statusView);
-                startPrepare();
+    private IMediaPlayer.OnErrorListener onErrorListener = new IMediaPlayer.OnErrorListener() {
+        @Override
+        public boolean onError(IMediaPlayer iMediaPlayer, int framework_err, int impl_err) {
+            mCurrentPosition = getCurrentPosition();
+            playerContainer.removeView(statusView);
+            if (statusView == null) {
+                statusView = new StatusView(getContext());
             }
-        });
-        addView(statusView);
-        return true;
-    }
-
-    @Override
-    public void onCompletion(IMediaPlayer iMediaPlayer) {
-        mCurrentState = STATE_PLAYBACK_COMPLETED;
-        mTargetState = STATE_PLAYBACK_COMPLETED;
-        mCurrentVideoPosition++;
-        if (mVideoModels != null && mVideoModels.size() > 1) {
-            if (mCurrentVideoPosition >= mVideoModels.size()) {
-                if (mVideoController != null) mVideoController.reset();
-                return;
-            }
-            playNext();
-            startPrepare();
-        } else {
-            if (mVideoController != null) mVideoController.reset();
-        }
-        MagicPlayerManager.instance().setCurrentVideoView(null);
-    }
-
-    @Override
-    public boolean onInfo(IMediaPlayer iMediaPlayer, int what, int extra) {
-        switch (what) {
-            case IMediaPlayer.MEDIA_INFO_BUFFERING_START:
-                mCurrentState = STATE_BUFFERING;
-                if (mVideoController != null) mVideoController.setPlayState(mCurrentState, 0);
-                break;
-            case IMediaPlayer.MEDIA_INFO_BUFFERING_END:
-                mCurrentState = STATE_BUFFERED;
-                if (mVideoController != null) mVideoController.setPlayState(mCurrentState, 0);
-                if (mTargetState == STATE_PLAYING) mCurrentState = STATE_PLAYING;
-                if (mTargetState == STATE_PAUSED) mCurrentState = STATE_PAUSED;
-                if (mTargetState == STATE_PLAYBACK_COMPLETED)
-                    mCurrentState = STATE_PLAYBACK_COMPLETED;
-                break;
-            case IjkMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START:
-            case IjkMediaPlayer.MEDIA_INFO_AUDIO_RENDERING_START:
-                mCurrentState = STATE_PLAYING;
-                if (mVideoController != null) {
-                    mVideoController.setPlayState(mCurrentState, 0);
+            statusView.setMessage(getResources().getString(R.string.error_message));
+            statusView.setButtonTextAndAction(getResources().getString(R.string.retry), new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    playerContainer.removeView(statusView);
+                    initPlayer();
+                    startPrepare();
                 }
+            });
+            playerContainer.addView(statusView);
+            return true;
+        }
+    };
+
+    private IMediaPlayer.OnCompletionListener onCompletionListener = new IMediaPlayer.OnCompletionListener() {
+        @Override
+        public void onCompletion(IMediaPlayer iMediaPlayer) {
+            mCurrentState = STATE_PLAYBACK_COMPLETED;
+            mTargetState = STATE_PLAYBACK_COMPLETED;
+            mCurrentVideoPosition++;
+            if (mVideoModels != null && mVideoModels.size() > 1) {
+                if (mCurrentVideoPosition >= mVideoModels.size()) {
+                    if (mVideoController != null) mVideoController.reset();
+                    return;
+                }
+                playNext();
+                initPlayer();
+                startPrepare();
+            } else {
+                release();
+            }
+        }
+    };
+
+    private IMediaPlayer.OnInfoListener onInfoListener = new IMediaPlayer.OnInfoListener() {
+        @Override
+        public boolean onInfo(IMediaPlayer iMediaPlayer, int what, int extra) {
+            switch (what) {
+                case IMediaPlayer.MEDIA_INFO_BUFFERING_START:
+                    mCurrentState = STATE_BUFFERING;
+                    if (mVideoController != null) mVideoController.setPlayState(mCurrentState, 0);
+                    break;
+                case IMediaPlayer.MEDIA_INFO_BUFFERING_END:
+                    mCurrentState = STATE_BUFFERED;
+                    if (mVideoController != null) mVideoController.setPlayState(mCurrentState, 0);
+                    if (mTargetState == STATE_PLAYING) mCurrentState = STATE_PLAYING;
+                    if (mTargetState == STATE_PAUSED) mCurrentState = STATE_PAUSED;
+                    if (mTargetState == STATE_PLAYBACK_COMPLETED)
+                        mCurrentState = STATE_PLAYBACK_COMPLETED;
+                    break;
+                case IjkMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START:
+                case IjkMediaPlayer.MEDIA_INFO_AUDIO_RENDERING_START:
+                    mCurrentState = STATE_PLAYING;
+                    if (mVideoController != null) {
+                        mVideoController.setPlayState(mCurrentState, 0);
+                    }
 //                if (mTargetState == STATE_PAUSED) pause();
-                break;
+                    break;
+                case IjkMediaPlayer.MEDIA_INFO_VIDEO_ROTATION_CHANGED:
+                    if (mTextureView != null)
+                        mTextureView.setRotation(extra);
+                    break;
+            }
+            return true;
         }
-        return true;
-    }
+    };
 
-    @Override
-    public void onBufferingUpdate(IMediaPlayer iMediaPlayer, int i) {
-        if (!isCache) bufferPercentage = i;
-    }
-
-    @Override
-    public void onPrepared(IMediaPlayer iMediaPlayer) {
-        mCurrentState = STATE_PREPARED;
-        if (mCurrentPosition > 0 && mCurrentVideoType == VOD) {
-            seekTo(mCurrentPosition);
+    private IMediaPlayer.OnBufferingUpdateListener onBufferingUpdateListener = new IMediaPlayer.OnBufferingUpdateListener() {
+        @Override
+        public void onBufferingUpdate(IMediaPlayer iMediaPlayer, int i) {
+            if (!isCache) bufferPercentage = i;
         }
-        if (mVideoController != null) mVideoController.setPlayState(mCurrentState, 0);
-    }
+    };
 
-    @Override
-    public void onVideoSizeChanged(IMediaPlayer iMediaPlayer, int i, int i1, int i2, int i3) {
-        int videoWidth = iMediaPlayer.getVideoWidth();
-        int videoHeight = iMediaPlayer.getVideoHeight();
-        if (videoWidth != 0 && videoHeight != 0) {
-            surfaceView.setVideoSize(videoWidth, videoHeight);
+    private IMediaPlayer.OnPreparedListener onPreparedListener = new IMediaPlayer.OnPreparedListener() {
+        @Override
+        public void onPrepared(IMediaPlayer iMediaPlayer) {
+            mCurrentState = STATE_PREPARED;
+            if (mCurrentPosition > 0 && mCurrentVideoType == VOD) {
+                seekTo(mCurrentPosition);
+            }
+            if (mVideoController != null) mVideoController.setPlayState(mCurrentState, 0);
         }
-    }
+    };
+
+    private IMediaPlayer.OnVideoSizeChangedListener onVideoSizeChangedListener = new IMediaPlayer.OnVideoSizeChangedListener() {
+        @Override
+        public void onVideoSizeChanged(IMediaPlayer iMediaPlayer, int i, int i1, int i2, int i3) {
+            int videoWidth = iMediaPlayer.getVideoWidth();
+            int videoHeight = iMediaPlayer.getVideoHeight();
+            if (videoWidth != 0 && videoHeight != 0) {
+                if (useSurfaceView) {
+                    mSurfaceView.setScreenType(mCurrentScreenType);
+                    mSurfaceView.setVideoSize(videoWidth, videoHeight);
+                } else {
+                    mTextureView.setScreenType(mCurrentScreenType);
+                    mTextureView.setVideoSize(videoWidth, videoHeight);
+                }
+
+            }
+        }
+    };
+
+    private CacheListener cacheListener = new CacheListener() {
+        @Override
+        public void onCacheAvailable(File cacheFile, String url, int percentsAvailable) {
+            bufferPercentage = percentsAvailable;
+        }
+    };
 
     /**
      * 改变返回键逻辑，用于activity
@@ -733,7 +838,8 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
         if (isFullScreen) {
             WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             stopFullScreen();
-            if (mVideoController != null) mVideoController.setPlayState(mCurrentState, PLAYER_NORMAL);
+            if (mVideoController != null)
+                mVideoController.setPlayState(mCurrentState, PLAYER_NORMAL);
             return true;
         }
         return false;
@@ -815,10 +921,5 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
         };
         orientationEventListener.enable();
         return this;
-    }
-
-    @Override
-    public void onCacheAvailable(File cacheFile, String url, int percentsAvailable) {
-        bufferPercentage = percentsAvailable;
     }
 }

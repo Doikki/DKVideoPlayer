@@ -29,7 +29,6 @@ public class MagicSurfaceView extends SurfaceView {
         mVideoWidth = width;
         mVideoHeight = height;
         getHolder().setFixedSize(width, height);
-        requestLayout();
     }
 
     public void setScreenType(int type) {

@@ -28,7 +28,6 @@ public class FullScreenActivity extends AppCompatActivity{
         magicVideoView = new MagicVideoView(this);
         setContentView(magicVideoView);
         magicVideoView
-                .init()
                 .autoRotate()
                 .alwaysFullScreen()
                 .setTitle("这是一个标题")

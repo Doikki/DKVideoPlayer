@@ -40,7 +40,6 @@ public class LivePlayerActivity extends AppCompatActivity {
 //        magicVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 4 * 3));
 
         magicVideoView
-                .init()
                 .autoRotate()
                 .setUrl(URL)
                 .setTitle("湖南卫视")

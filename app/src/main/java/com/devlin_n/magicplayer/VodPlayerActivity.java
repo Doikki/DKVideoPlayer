@@ -49,7 +49,6 @@ public class VodPlayerActivity extends AppCompatActivity {
         videos.add(new VideoModel(URL_VOD, "网易公开课-如何掌控你的自由时间", MagicVideoView.VOD));
 
         magicVideoView
-                .init()
                 .autoRotate()
                 .enableCache()
                 .setVideos(videos)

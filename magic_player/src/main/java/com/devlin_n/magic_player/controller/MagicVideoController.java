@@ -34,7 +34,6 @@ public class MagicVideoController extends BaseVideoController implements View.On
     protected ImageView lock;
     protected TextView title;
     protected ImageView playButton;
-    private int sDefaultTimeout = 3000;
     private boolean isLive;
     private boolean isDragging;
     private View statusHolder;

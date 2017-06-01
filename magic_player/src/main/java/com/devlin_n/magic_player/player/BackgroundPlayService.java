@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.devlin_n.magic_player.R;
+import com.devlin_n.magic_player.controller.FloatController;
 import com.devlin_n.magic_player.util.KeyUtil;
 import com.devlin_n.magic_player.util.WindowUtil;
 
@@ -51,7 +52,7 @@ public class BackgroundPlayService extends Service {
     }
 
     private void startPlay() {
-        videoView.init().setVideoType(type).skipPositionWhenPlay(url, position).start();
+        videoView.setVideoType(type).skipPositionWhenPlay(url, position).setVideoController(new FloatController(getApplicationContext())).start();
         wm.addView(floatView, wmParams);
     }
 

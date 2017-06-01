@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -37,6 +38,14 @@ public class RecyclerViewActivity extends AppCompatActivity {
         initView();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private void initView() {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -57,33 +66,43 @@ public class RecyclerViewActivity extends AppCompatActivity {
         });
     }
 
-    public List<String> getVideoList() {
-        List<String> videoList = new ArrayList<>();
-        videoList.add(
-                "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/05/2017-05-17_17-33-30.mp4");
+    public List<VideoBean> getVideoList() {
+        List<VideoBean> videoList = new ArrayList<>();
+        videoList.add(new VideoBean("办公室小野开番外了，居然在办公室开澡堂！老板还点赞？",
+                "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/05/2017-05-17_17-30-43.jpg",
+                "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/05/2017-05-17_17-33-30.mp4"));
 
-        videoList.add(
-                "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/05/2017-05-10_10-20-26.mp4");
+        videoList.add(new VideoBean("小野在办公室用丝袜做茶叶蛋 边上班边看《外科风云》",
+                "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/05/2017-05-10_10-09-58.jpg",
+                "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/05/2017-05-10_10-20-26.mp4"));
 
-        videoList.add(
-                "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/05/2017-05-03_13-02-41.mp4");
+        videoList.add(new VideoBean("花盆叫花鸡，怀念玩泥巴，过家家，捡根竹竿当打狗棒的小时候",
+                "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/05/2017-05-03_12-52-08.jpg",
+                "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/05/2017-05-03_13-02-41.mp4"));
 
-        videoList.add(
-                "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/04/2017-04-28_18-20-56.mp4");
+        videoList.add(new VideoBean("针织方便面，这可能是史上最不方便的方便面",
+                "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/04/2017-04-28_18-18-22.jpg",
+                "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/04/2017-04-28_18-20-56.mp4"));
 
-        videoList.add(
-                "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/04/2017-04-26_10-06-25.mp4");
+        videoList.add(new VideoBean("宵夜的下午茶，办公室不只有KPI，也有诗和远方",
+                "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/04/2017-04-26_10-00-28.jpg",
+                "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/04/2017-04-26_10-06-25.mp4"));
 
-        videoList.add(
-                "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/04/2017-04-21_16-41-07.mp4");
-        videoList.add(
-                "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/04/2017-04-21_16-41-07.mp4");
-        videoList.add(
-                "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/04/2017-04-21_16-41-07.mp4");
-        videoList.add(
-                "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/04/2017-04-21_16-41-07.mp4");
-        videoList.add(
-                "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/04/2017-04-21_16-41-07.mp4");
+        videoList.add(new VideoBean("可乐爆米花，嘭嘭嘭......收花的人说要把我娶回家",
+                "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/04/2017-04-21_16-37-16.jpg",
+                "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/04/2017-04-21_16-41-07.mp4"));
+        videoList.add(new VideoBean("可乐爆米花，嘭嘭嘭......收花的人说要把我娶回家",
+                "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/04/2017-04-21_16-37-16.jpg",
+                "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/04/2017-04-21_16-41-07.mp4"));
+        videoList.add(new VideoBean("可乐爆米花，嘭嘭嘭......收花的人说要把我娶回家",
+                "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/04/2017-04-21_16-37-16.jpg",
+                "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/04/2017-04-21_16-41-07.mp4"));
+        videoList.add(new VideoBean("可乐爆米花，嘭嘭嘭......收花的人说要把我娶回家",
+                "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/04/2017-04-21_16-37-16.jpg",
+                "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/04/2017-04-21_16-41-07.mp4"));
+        videoList.add(new VideoBean("可乐爆米花，嘭嘭嘭......收花的人说要把我娶回家",
+                "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/04/2017-04-21_16-37-16.jpg",
+                "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/04/2017-04-21_16-41-07.mp4"));
         return videoList;
     }
 
@@ -92,16 +111,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
         super.onPause();
         MagicVideoView currentVideoView = MagicPlayerManager.instance().getCurrentVideoView();
         if (currentVideoView != null){
-            currentVideoView.pause();
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        MagicVideoView currentVideoView = MagicPlayerManager.instance().getCurrentVideoView();
-        if (currentVideoView != null){
-            currentVideoView.resume();
+            currentVideoView.release();
         }
     }
 
@@ -115,10 +125,10 @@ public class RecyclerViewActivity extends AppCompatActivity {
     private class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoHolder> {
 
 
-        private List<String> videos;
+        private List<VideoBean> videos;
         private Context context;
 
-        private VideoAdapter(List<String> videos, Context context) {
+        private VideoAdapter(List<VideoBean> videos, Context context) {
             this.videos = videos;
             this.context = context;
         }
@@ -133,14 +143,13 @@ public class RecyclerViewActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(VideoHolder holder, int position) {
 
-
+            VideoBean videoBean = videos.get(position);
             MagicVideoController magicVideoController = new MagicVideoController(context);
-            Glide
-                    .with(context)
-                    .load("http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/05/2017-05-17_17-30-43.jpg")
+            Glide.with(context)
+                    .load(videoBean.getThumb())
                     .asBitmap()
                     .into(magicVideoController.getThumb());
-            holder.magicVideoView.init().enableCache().setUrl(videos.get(position)).setVideoController(magicVideoController);
+            holder.magicVideoView.setUrl(videoBean.getUrl()).setTitle(videoBean.getTitle()).setVideoController(magicVideoController);
 
         }
 

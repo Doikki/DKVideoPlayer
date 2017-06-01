@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.devlin_n.magic_player.R;
+import com.devlin_n.magic_player.player.MagicVideoView;
 
 /**
  * 广告控制器
@@ -80,33 +81,17 @@ public class AdController extends BaseVideoController implements View.OnClickLis
         }
     }
 
-//    @Override
-//    public void updatePlayButton() {
-//        playButton.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (mediaPlayer.isPlaying()) {
-//                    playButton.setSelected(false);
-//                } else {
-//                    playButton.setSelected(true);
-//                }
-//            }
-//        });
-//    }
-//
-//    @Override
-//    public void updateFullScreen() {
-//        super.updateFullScreen();
-//        if (mediaPlayer != null) {
-//            if (mediaPlayer.isFullScreen()) {
-//                back.setVisibility(VISIBLE);
-//                fullScreen.setImageResource(R.drawable.ic_stop_fullscreen);
-//            } else {
-//                fullScreen.setImageResource(R.drawable.ic_start_fullscreen);
-//                back.setVisibility(GONE);
-//            }
-//        }
-//    }
+    @Override
+    public void setPlayState(int playState, int PlayerState) {
+        switch (playState) {
+            case MagicVideoView.STATE_PLAYING:
+                playButton.setSelected(true);
+                break;
+            case MagicVideoView.STATE_PAUSED:
+                playButton.setSelected(false);
+                break;
+        }
+    }
 
     @Override
     protected int setProgress() {

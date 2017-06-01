@@ -33,9 +33,11 @@ public abstract class BaseVideoController extends FrameLayout {
     protected boolean mShowing;//控制器是否处于显示状态
     protected CenterView mCenterView;
     protected AudioManager mAudioManager;
+    protected boolean isLocked;
+    protected int sDefaultTimeout = 3000;
     private StringBuilder mFormatBuilder;
     private Formatter mFormatter;
-    protected boolean isLocked;
+
 
     public BaseVideoController(@NonNull Context context) {
         this(context, null);
