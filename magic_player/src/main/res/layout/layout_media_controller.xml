@@ -116,14 +116,25 @@
         android:padding="@dimen/default_spacing"
         android:src="@drawable/selector_lock_button"
         android:visibility="invisible" />
+    <ImageView
+        android:id="@+id/thumb"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"/>
 
     <ImageView
         android:id="@+id/iv_play"
         android:layout_width="@dimen/player_play_btn_size"
         android:layout_height="@dimen/player_play_btn_size"
-        android:padding="@dimen/controller_icon_padding"
         android:layout_gravity="center"
         android:background="@drawable/shape_play_bg"
+        android:padding="@dimen/controller_icon_padding"
         android:src="@drawable/selector_play_button" />
 
+    <ProgressBar
+        android:id="@+id/buffering"
+        android:layout_width="@dimen/player_play_btn_size"
+        android:layout_height="@dimen/player_play_btn_size"
+        android:layout_gravity="center"
+        android:indeterminateDrawable="@drawable/progress_loading" />
 </FrameLayout>

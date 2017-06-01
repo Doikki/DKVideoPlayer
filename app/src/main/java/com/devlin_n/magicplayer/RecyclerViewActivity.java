@@ -11,6 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
+import com.devlin_n.magic_player.controller.MagicVideoController;
+import com.devlin_n.magic_player.player.MagicPlayerManager;
 import com.devlin_n.magic_player.player.MagicVideoView;
 
 import java.util.ArrayList;
@@ -22,8 +25,6 @@ import java.util.List;
 
 public class RecyclerViewActivity extends AppCompatActivity {
 
-    private RecyclerView recyclerView;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,7 +34,11 @@ public class RecyclerViewActivity extends AppCompatActivity {
             actionBar.setTitle("LIST");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        recyclerView = (RecyclerView) findViewById(R.id.rv);
+        initView();
+    }
+
+    private void initView() {
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new VideoAdapter(getVideoList(), this));
         recyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
@@ -82,6 +87,30 @@ public class RecyclerViewActivity extends AppCompatActivity {
         return videoList;
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MagicVideoView currentVideoView = MagicPlayerManager.instance().getCurrentVideoView();
+        if (currentVideoView != null){
+            currentVideoView.pause();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MagicVideoView currentVideoView = MagicPlayerManager.instance().getCurrentVideoView();
+        if (currentVideoView != null){
+            currentVideoView.resume();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!MagicPlayerManager.instance().onBackPressed()){
+            super.onBackPressed();
+        }
+    }
 
     private class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoHolder> {
 
@@ -105,7 +134,13 @@ public class RecyclerViewActivity extends AppCompatActivity {
         public void onBindViewHolder(VideoHolder holder, int position) {
 
 
-            holder.magicVideoView.init().setUrl(videos.get(position)).enableCache().setVideoController(MagicVideoView.VOD).autoRotate();
+            MagicVideoController magicVideoController = new MagicVideoController(context);
+            Glide
+                    .with(context)
+                    .load("http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/05/2017-05-17_17-30-43.jpg")
+                    .asBitmap()
+                    .into(magicVideoController.getThumb());
+            holder.magicVideoView.init().enableCache().setUrl(videos.get(position)).setVideoController(magicVideoController);
 
         }
 

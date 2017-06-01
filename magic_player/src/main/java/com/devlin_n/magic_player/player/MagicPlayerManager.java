@@ -19,18 +19,21 @@ public class MagicPlayerManager {
         return sInstance;
     }
 
-    public void setCurrentNiceVideoPlayer(MagicVideoView videoView) {
+    public void setCurrentVideoView(MagicVideoView videoView) {
         mVideoView = videoView;
     }
+    public MagicVideoView getCurrentVideoView() {
+        return mVideoView;
+    }
 
-    public void releaseNiceVideoPlayer() {
+    public void releaseVideoView() {
         if (mVideoView != null) {
             mVideoView.release();
             mVideoView = null;
         }
     }
 
-    public boolean onBackPressd() {
+    public boolean onBackPressed() {
         return mVideoView != null && mVideoView.onBackPressed();
     }
 }

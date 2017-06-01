@@ -3,6 +3,7 @@ package com.devlin_n.magic_player.player;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.media.AudioManager;
 import android.net.Uri;
@@ -12,15 +13,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
+import android.view.Gravity;
 import android.view.OrientationEventListener;
 import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.danikula.videocache.CacheListener;
@@ -52,16 +51,13 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
         IMediaPlayer.OnBufferingUpdateListener, IMediaPlayer.OnPreparedListener, IMediaPlayer.OnVideoSizeChangedListener, CacheListener {
 
     private static final String TAG = MagicVideoView.class.getSimpleName();
-    private IjkMediaPlayer mMediaPlayer;//ijkPlayer
-    private BaseVideoController mMediaController;//控制器
-    private boolean isControllerAdded;//师傅添加控制器
+    private IjkMediaPlayer mIjkPlayer;//ijkPlayer
+    private BaseVideoController mVideoController;//控制器
+//    private boolean isControllerAdded;//师傅添加控制器
     private MagicSurfaceView surfaceView;
-    private RelativeLayout surfaceContainer;
-    private FrameLayout controllerContainer;
+    private FrameLayout playerContainer;
     private StatusView statusView;//显示错误信息的一个view
     private int bufferPercentage;//缓冲百分比
-    private ProgressBar bufferProgress;//缓冲时显示的圆形进度条
-    private int originalWidth, originalHeight;//原始宽高，主要用于恢复竖屏
     private boolean isFullScreen;//是否处于全屏状态
     private boolean isMute;//是否静音
 
@@ -93,6 +89,9 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
 
     private int mCurrentState = STATE_IDLE;//当前播放器的状态
     private int mTargetState = STATE_IDLE;//代码执行完播放器应该达到的状态
+
+    public static final int PLAYER_NORMAL = 10;        // 普通播放器
+    public static final int PLAYER_FULL_SCREEN = 11;   // 全屏播放器
 
     private AudioManager mAudioManager;//系统音频管理器
 
@@ -126,53 +125,36 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
      * 初始化播放器视图
      */
     private void initView() {
-        View videoView = LayoutInflater.from(getContext()).inflate(R.layout.layout_video_view, this);
-        bufferProgress = (ProgressBar) videoView.findViewById(R.id.buffering);
-        surfaceContainer = (RelativeLayout) videoView.findViewById(R.id.surface_container);
-        controllerContainer = (FrameLayout) videoView.findViewById(R.id.controller_container);
-    }
-
-    /**
-     * 重写onWindowFocusChanged方法获取控件原始宽高
-     */
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus && originalWidth == 0 && originalHeight == 0) {
-            originalWidth = getWidth();
-            originalHeight = getHeight();
-            if (mMediaController != null) {
-                if (isFullScreen) {
-                    //如果直接全屏播放器，需要去掉navigation bar的高度，不能直接使用获取的原始高宽
-                    mMediaController.setLayoutParams(new LayoutParams(WindowUtil.getScreenWidth(getContext()),
-                            WindowUtil.getScreenHeight(getContext(), false)));
-                } else {
-                    mMediaController.setLayoutParams(new LayoutParams(originalWidth, originalHeight));
-                }
-            }
-        }
+        playerContainer = new FrameLayout(getContext());
+        playerContainer.setBackgroundColor(Color.BLACK);
+        LayoutParams params = new LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT);
+        this.addView(playerContainer, params);
     }
 
     /**
      * 创建播放器实例，设置播放地址及播放器参数
      */
     public MagicVideoView init() {
-        mAudioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
-        mAudioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
-        mMediaPlayer = new IjkMediaPlayer();
-        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 1);//开启硬解码
-        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 1);
-        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", 1);
-        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        mMediaPlayer.setOnErrorListener(this);
-        mMediaPlayer.setOnCompletionListener(this);
-        mMediaPlayer.setOnInfoListener(this);
-        mMediaPlayer.setOnBufferingUpdateListener(this);
-        mMediaPlayer.setOnPreparedListener(this);
-        mMediaPlayer.setOnVideoSizeChangedListener(this);
-        addSurfaceView();
-        mCurrentState = STATE_IDLE;
-        mTargetState = STATE_IDLE;
+        if (mIjkPlayer == null) {
+            mAudioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
+            mAudioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+            mIjkPlayer = new IjkMediaPlayer();
+            mIjkPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 1);//开启硬解码
+            mIjkPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 1);
+            mIjkPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", 1);
+            mIjkPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mIjkPlayer.setOnErrorListener(this);
+            mIjkPlayer.setOnCompletionListener(this);
+            mIjkPlayer.setOnInfoListener(this);
+            mIjkPlayer.setOnBufferingUpdateListener(this);
+            mIjkPlayer.setOnPreparedListener(this);
+            mIjkPlayer.setOnVideoSizeChangedListener(this);
+            addSurfaceView();
+            mCurrentState = STATE_IDLE;
+            mTargetState = STATE_IDLE;
+        }
         return this;
     }
 
@@ -180,9 +162,10 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
      * 开始准备播放（直接播放）
      */
     private void startPrepare() {
+        init();
         if (mCurrentUrl == null || mCurrentUrl.trim().equals("")) return;
         try {
-            mMediaPlayer.reset();
+            mIjkPlayer.reset();
             if (isCache) {
                 HttpProxyCacheServer cacheServer = getCacheServer();
                 String proxyPath = cacheServer.getProxyUrl(mCurrentUrl);
@@ -191,13 +174,12 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
                     bufferPercentage = 100;
                     mCurrentUrl = proxyPath;
                 }
-                mMediaPlayer.setDataSource(proxyPath);
+                mIjkPlayer.setDataSource(proxyPath);
             } else {
-                mMediaPlayer.setDataSource(mCurrentUrl);
+                mIjkPlayer.setDataSource(mCurrentUrl);
             }
-            mMediaPlayer.prepareAsync();
+            mIjkPlayer.prepareAsync();
             mCurrentState = STATE_PREPARING;
-            bufferProgress.setVisibility(VISIBLE);
         } catch (IOException e) {
             mCurrentState = STATE_ERROR;
             mTargetState = STATE_ERROR;
@@ -213,9 +195,8 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
      * 添加SurfaceView
      */
     private void addSurfaceView() {
-        surfaceContainer.removeAllViews();
+        playerContainer.removeView(surfaceView);
         surfaceView = new MagicSurfaceView(getContext());
-        surfaceView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
         SurfaceHolder surfaceHolder = surfaceView.getHolder();
         surfaceHolder.addCallback(new SurfaceHolder.Callback() {
             @Override
@@ -224,7 +205,9 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
 
             @Override
             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-                mMediaPlayer.setDisplay(holder);
+                if (mIjkPlayer != null) {
+                    mIjkPlayer.setDisplay(holder);
+                }
             }
 
             @Override
@@ -232,7 +215,11 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
             }
         });
         surfaceHolder.setFormat(PixelFormat.RGBA_8888);
-        surfaceContainer.addView(surfaceView);
+        LayoutParams params = new LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                Gravity.CENTER);
+        playerContainer.addView(surfaceView, 0, params);
     }
 
     /**
@@ -312,17 +299,18 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
     public void start() {
         if (mCurrentState == STATE_IDLE) {
             if (mAlwaysFullScreen) startFullScreenDirectly();
-//            MagicPlayerManager.instance().releaseNiceVideoPlayer();
-//            MagicPlayerManager.instance().setCurrentNiceVideoPlayer(this);
             if (checkNetwork()) return;
+            MagicPlayerManager.instance().releaseVideoView();
+            MagicPlayerManager.instance().setCurrentVideoView(this);
             startPrepare();
         } else {
             if (isInPlaybackState()) {
-                mMediaPlayer.start();
+                mIjkPlayer.start();
                 mCurrentState = STATE_PLAYING;
             }
             mTargetState = STATE_PLAYING;
         }
+        if (mVideoController != null) mVideoController.setPlayState(mCurrentState, isFullScreen ? PLAYER_FULL_SCREEN : PLAYER_NORMAL);
         AppCompatActivity activity = WindowUtil.getAppCompActivity(getContext());
         if (activity != null)
             activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -351,33 +339,35 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
     @Override
     public void pause() {
         if (isInPlaybackState()) {
-            if (mMediaPlayer.isPlaying()) {
-                mMediaPlayer.pause();
+            if (mIjkPlayer.isPlaying()) {
+                mIjkPlayer.pause();
                 mCurrentState = STATE_PAUSED;
             }
         }
         mTargetState = STATE_PAUSED;
+        if (mVideoController != null) mVideoController.setPlayState(mCurrentState, 0);
         AppCompatActivity activity = WindowUtil.getAppCompActivity(getContext());
         if (activity != null)
             activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     public void resume() {
-        if (isInPlaybackState() && !mMediaPlayer.isPlaying() && mCurrentState != STATE_PLAYBACK_COMPLETED) {
-            mMediaPlayer.start();
+        if (isInPlaybackState() && !mIjkPlayer.isPlaying() && mCurrentState != STATE_PLAYBACK_COMPLETED) {
+            mIjkPlayer.start();
             mCurrentState = STATE_PLAYING;
         }
         mTargetState = STATE_PLAYING;
+        if (mVideoController != null) mVideoController.setPlayState(mCurrentState, 0);
         AppCompatActivity activity = WindowUtil.getAppCompActivity(getContext());
         if (activity != null)
             activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     public void stopPlayback() {
-        if (mMediaPlayer != null) {
-            mMediaPlayer.stop();
-            mMediaPlayer.release();
-            mMediaPlayer = null;
+        if (mIjkPlayer != null) {
+            mIjkPlayer.stop();
+            mIjkPlayer.release();
+            mIjkPlayer = null;
             mCurrentState = STATE_IDLE;
             mTargetState = STATE_IDLE;
             mAudioManager.abandonAudioFocus(onAudioFocusChangeListener);
@@ -385,31 +375,33 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
     }
 
     public void release() {
-        if (mMediaPlayer != null) {
-            mMediaPlayer.reset();
-            mMediaPlayer.release();
-            mMediaPlayer = null;
+        if (mIjkPlayer != null) {
+            mIjkPlayer.reset();
+            mIjkPlayer.release();
+            mIjkPlayer = null;
             mCurrentState = STATE_IDLE;
             mTargetState = STATE_IDLE;
             mAudioManager.abandonAudioFocus(onAudioFocusChangeListener);
         }
-        if (mAutoRotate) {
+        if (mAutoRotate && orientationEventListener != null) {
             orientationEventListener.disable();
             orientationEventListener = null;
         }
+        if (mVideoController != null) mVideoController.reset();
+        playerContainer.removeView(surfaceView);
 
         getCacheServer().unregisterCacheListener(this);
     }
 
     private boolean isInPlaybackState() {
-        return (mMediaPlayer != null && mCurrentState != STATE_ERROR
+        return (mIjkPlayer != null && mCurrentState != STATE_ERROR
                 && mCurrentState != STATE_IDLE && mCurrentState != STATE_PREPARING);
     }
 
     @Override
     public int getDuration() {
         if (isInPlaybackState()) {
-            return (int) mMediaPlayer.getDuration();
+            return (int) mIjkPlayer.getDuration();
         }
         return 0;
     }
@@ -417,7 +409,7 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
     @Override
     public int getCurrentPosition() {
         if (isInPlaybackState()) {
-            mCurrentPosition = (int) mMediaPlayer.getCurrentPosition();
+            mCurrentPosition = (int) mIjkPlayer.getCurrentPosition();
             return mCurrentPosition;
         }
         return 0;
@@ -426,18 +418,18 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
     @Override
     public void seekTo(int pos) {
         if (isInPlaybackState() && mCurrentVideoType != LIVE) {
-            mMediaPlayer.seekTo(pos);
+            mIjkPlayer.seekTo(pos);
         }
     }
 
     @Override
     public boolean isPlaying() {
-        return mMediaPlayer != null && mMediaPlayer.isPlaying();
+        return mIjkPlayer != null && mIjkPlayer.isPlaying();
     }
 
     @Override
     public int getBufferPercentage() {
-        if (mMediaPlayer != null) {
+        if (mIjkPlayer != null) {
             return bufferPercentage;
         }
         return 0;
@@ -490,7 +482,7 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
     public void startFullScreenDirectly() {
         WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         startFullScreen();
-        if (mMediaController != null) mMediaController.startFullScreenDirectly();
+        if (mVideoController != null) mVideoController.startFullScreenDirectly();
     }
 
     public MagicVideoView alwaysFullScreen() {
@@ -518,10 +510,10 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
     @Override
     public void setMute() {
         if (isMute) {
-            mMediaPlayer.setVolume(1, 1);
+            mIjkPlayer.setVolume(1, 1);
             isMute = false;
         } else {
-            mMediaPlayer.setVolume(0, 0);
+            mIjkPlayer.setVolume(0, 0);
             isMute = true;
         }
     }
@@ -537,37 +529,35 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
     }
 
     @Override
-    public int getCurrentState() {
-        return mCurrentState;
-    }
-
-    @Override
     public void startFullScreen() {
         if (isFullScreen) return;
-        ViewGroup.LayoutParams layoutParams = this.getLayoutParams();
         WindowUtil.hideSupportActionBar(getContext(), true, true);
         WindowUtil.hideNavKey(getContext());
-        int height = WindowUtil.getScreenWidth(getContext());
-        layoutParams.width = WindowUtil.getScreenHeight(getContext(), true);
-        layoutParams.height = height;
-        if (mMediaController != null)
-            mMediaController.setLayoutParams(new LayoutParams(WindowUtil.getScreenHeight(getContext(), false), height));
-        this.setLayoutParams(layoutParams);
+        this.removeView(playerContainer);
+        ViewGroup contentView = (ViewGroup) WindowUtil.getAppCompActivity(getContext())
+                .findViewById(android.R.id.content);
+        LayoutParams params = new LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT);
+        contentView.addView(playerContainer, params);
         isFullScreen = true;
+        if (mVideoController != null) mVideoController.setPlayState(0, PLAYER_FULL_SCREEN);
     }
 
     @Override
     public void stopFullScreen() {
         if (!isFullScreen) return;
-        ViewGroup.LayoutParams layoutParams = this.getLayoutParams();
         WindowUtil.showSupportActionBar(getContext(), true, true);
         WindowUtil.showNavKey(getContext());
-        layoutParams.width = originalWidth;
-        layoutParams.height = originalHeight;
-        if (mMediaController != null)
-            mMediaController.setLayoutParams(new LayoutParams(originalWidth, originalHeight));
-        this.setLayoutParams(layoutParams);
+        ViewGroup contentView = (ViewGroup) WindowUtil.getAppCompActivity(getContext())
+                .findViewById(android.R.id.content);
+        contentView.removeView(playerContainer);
+        LayoutParams params = new LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT);
+        this.addView(playerContainer, params);
         isFullScreen = false;
+        if (mVideoController != null) mVideoController.setPlayState(0, PLAYER_NORMAL);
     }
 
     @Override
@@ -584,13 +574,12 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
      * 根据视频类型快速设置控制器
      */
     public MagicVideoView setVideoController(int type) {
-        controllerContainer.removeAllViews();
-        isControllerAdded = false;
+        playerContainer.removeView(mVideoController);
         switch (type) {
             case VOD: {
                 MagicVideoController ijkMediaController = new MagicVideoController(getContext());
                 ijkMediaController.setMediaPlayer(this);
-                mMediaController = ijkMediaController;
+                mVideoController = ijkMediaController;
                 mCurrentVideoType = VOD;
                 break;
             }
@@ -598,19 +587,24 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
                 MagicVideoController ijkMediaController = new MagicVideoController(getContext());
                 ijkMediaController.setMediaPlayer(this);
                 ijkMediaController.setLive(true);
-                mMediaController = ijkMediaController;
+                mVideoController = ijkMediaController;
                 mCurrentVideoType = LIVE;
                 break;
             }
             case AD:
                 AdController adController = new AdController(getContext());
                 adController.setMediaPlayer(this);
-                mMediaController = adController;
+                mVideoController = adController;
                 mCurrentVideoType = AD;
                 break;
             default:
                 break;
+
         }
+        LayoutParams params = new LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT);
+        playerContainer.addView(mVideoController, params);
         return this;
     }
 
@@ -618,11 +612,10 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
      * 设置控制器
      */
     public MagicVideoView setVideoController(BaseVideoController mediaController) {
-        controllerContainer.removeAllViews();
-        isControllerAdded = false;
+        playerContainer.removeView(mVideoController);
         if (mediaController != null) {
             mediaController.setMediaPlayer(this);
-            mMediaController = mediaController;
+            mVideoController = mediaController;
             if (mediaController instanceof MagicVideoController) {
                 if (((MagicVideoController) mediaController).getLive()) {
                     mCurrentVideoType = LIVE;
@@ -632,14 +625,18 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
             } else if (mediaController instanceof AdController) {
                 mCurrentVideoType = AD;
             }
+            LayoutParams params = new LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT);
+            playerContainer.addView(mVideoController, params);
         }
         return this;
     }
 
     @Override
     public boolean onError(IMediaPlayer iMediaPlayer, int framework_err, int impl_err) {
-        bufferProgress.setVisibility(GONE);
         mCurrentPosition = getCurrentPosition();
+        removeView(statusView);
         if (statusView == null) {
             statusView = new StatusView(getContext());
         }
@@ -662,28 +659,27 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
         mCurrentVideoPosition++;
         if (mVideoModels != null && mVideoModels.size() > 1) {
             if (mCurrentVideoPosition >= mVideoModels.size()) {
-                if (mMediaController != null) mMediaController.reset();
+                if (mVideoController != null) mVideoController.reset();
                 return;
             }
             playNext();
             startPrepare();
         } else {
-            if (mMediaController != null) mMediaController.reset();
+            if (mVideoController != null) mVideoController.reset();
         }
+        MagicPlayerManager.instance().setCurrentVideoView(null);
     }
 
     @Override
     public boolean onInfo(IMediaPlayer iMediaPlayer, int what, int extra) {
         switch (what) {
             case IMediaPlayer.MEDIA_INFO_BUFFERING_START:
-                bufferProgress.setVisibility(VISIBLE);
                 mCurrentState = STATE_BUFFERING;
-                if (mMediaController != null) mMediaController.updatePlayButton();
+                if (mVideoController != null) mVideoController.setPlayState(mCurrentState, 0);
                 break;
             case IMediaPlayer.MEDIA_INFO_BUFFERING_END:
-                bufferProgress.setVisibility(GONE);
                 mCurrentState = STATE_BUFFERED;
-                if (mMediaController != null) mMediaController.updatePlayButton();
+                if (mVideoController != null) mVideoController.setPlayState(mCurrentState, 0);
                 if (mTargetState == STATE_PLAYING) mCurrentState = STATE_PLAYING;
                 if (mTargetState == STATE_PAUSED) mCurrentState = STATE_PAUSED;
                 if (mTargetState == STATE_PLAYBACK_COMPLETED)
@@ -692,13 +688,10 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
             case IjkMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START:
             case IjkMediaPlayer.MEDIA_INFO_AUDIO_RENDERING_START:
                 mCurrentState = STATE_PLAYING;
-                bufferProgress.setVisibility(View.GONE);
-                if (mMediaController != null && !isControllerAdded) {
-                    controllerContainer.addView(mMediaController);
-                    isControllerAdded = true;
-                    mMediaController.updatePlayButton();
+                if (mVideoController != null) {
+                    mVideoController.setPlayState(mCurrentState, 0);
                 }
-                if (mTargetState == STATE_PAUSED) pause();
+//                if (mTargetState == STATE_PAUSED) pause();
                 break;
         }
         return true;
@@ -715,6 +708,7 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
         if (mCurrentPosition > 0 && mCurrentVideoType == VOD) {
             seekTo(mCurrentPosition);
         }
+        if (mVideoController != null) mVideoController.setPlayState(mCurrentState, 0);
     }
 
     @Override
@@ -730,16 +724,16 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
      * 改变返回键逻辑，用于activity
      */
     public boolean onBackPressed() {
-        if (mMediaController != null && isLocked) {
-            mMediaController.show();
+        if (mVideoController != null && isLocked) {
+            mVideoController.show();
             Toast.makeText(getContext(), R.string.lock_tip, Toast.LENGTH_SHORT).show();
             return true;
         }
         if (mAlwaysFullScreen) return false;
         if (isFullScreen) {
-            stopFullScreen();
             WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            if (mMediaController != null) mMediaController.updateFullScreen();
+            stopFullScreen();
+            if (mVideoController != null) mVideoController.setPlayState(mCurrentState, PLAYER_NORMAL);
             return true;
         }
         return false;
@@ -757,11 +751,9 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
                         break;
                     case AudioManager.AUDIOFOCUS_LOSS:
                         pause();
-                        if (mMediaController != null) mMediaController.updatePlayButton();
                         break;
                     case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
                         pause();
-                        if (mMediaController != null) mMediaController.updatePlayButton();
                         break;
                     case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
                         break;
@@ -786,7 +778,6 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
 
             @Override
             public void onOrientationChanged(int orientation) {
-                if (!isInPlaybackState()) return;
                 if (orientation >= 340) { //屏幕顶部朝上
                     if (isLocked || mAlwaysFullScreen) return;
                     if (CurrentOrientation == PORTRAIT) return;
@@ -820,7 +811,6 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
                     }
                     WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
                 }
-                if (mMediaController != null) mMediaController.updateFullScreen();
             }
         };
         orientationEventListener.enable();

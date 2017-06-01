@@ -45,7 +45,7 @@ public class VodPlayerActivity extends AppCompatActivity {
 //        magicVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 16 * 9));
 
         List<VideoModel> videos = new ArrayList<>();
-        videos.add(new VideoModel(URL_AD, "广告", MagicVideoView.AD));
+//        videos.add(new VideoModel(URL_AD, "广告", MagicVideoView.AD));
         videos.add(new VideoModel(URL_VOD, "网易公开课-如何掌控你的自由时间", MagicVideoView.VOD));
 
         magicVideoView

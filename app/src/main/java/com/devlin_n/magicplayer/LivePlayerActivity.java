@@ -44,8 +44,8 @@ public class LivePlayerActivity extends AppCompatActivity {
                 .autoRotate()
                 .setUrl(URL)
                 .setTitle("湖南卫视")
-                .setVideoController(MagicVideoView.LIVE)
-                .start();
+                .setVideoController(MagicVideoView.LIVE);
+//                .start();
     }
 
     @Override

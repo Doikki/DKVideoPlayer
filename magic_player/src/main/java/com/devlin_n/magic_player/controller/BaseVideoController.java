@@ -79,8 +79,7 @@ public abstract class BaseVideoController extends FrameLayout {
     public void reset() {
     }
 
-    public void updatePlayButton() {
-    }
+    public void setPlayState(int playState, int PlayerState){}
 
     /**
      * 返回控制器的显示状态
@@ -89,8 +88,6 @@ public abstract class BaseVideoController extends FrameLayout {
         return mShowing;
     }
 
-    public void updateFullScreen() {
-    }
 
     public void startFullScreenDirectly() {
 
@@ -102,7 +99,6 @@ public abstract class BaseVideoController extends FrameLayout {
         } else {
             mediaPlayer.start();
         }
-        updatePlayButton();
     }
 
     /**
@@ -116,7 +112,6 @@ public abstract class BaseVideoController extends FrameLayout {
             WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             mediaPlayer.startFullScreen();
         }
-        updateFullScreen();
     }
 
 
@@ -363,8 +358,6 @@ public abstract class BaseVideoController extends FrameLayout {
         boolean isMute();
 
         void setLock(boolean isLocked);
-
-        int getCurrentState();
     }
 
     public void setMediaPlayer(MediaPlayerControlInterface mediaPlayer) {

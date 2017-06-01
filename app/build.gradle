@@ -65,5 +65,6 @@ dependencies {
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
     compile "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion"
+    compile 'com.github.bumptech.glide:glide:3.7.0'
 }
 

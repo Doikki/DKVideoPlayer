@@ -5,21 +5,19 @@
     android:layout_height="match_parent"
     android:background="@android:color/black">
 
-    <RelativeLayout
-        android:id="@+id/surface_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"/>
     <FrameLayout
-        android:id="@+id/controller_container"
+        android:id="@+id/player_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"/>
-    <ProgressBar
-        android:id="@+id/buffering"
-        android:layout_width="@dimen/player_play_btn_size"
-        android:layout_height="@dimen/player_play_btn_size"
-        android:layout_gravity="center"
-        android:indeterminateDrawable="@drawable/progress_loading"
-        android:visibility="gone" />
+        android:background="@android:color/black">
+    </FrameLayout>
+
+
+    <!--<ProgressBar-->
+        <!--android:id="@+id/buffering"-->
+        <!--android:layout_width="@dimen/player_play_btn_size"-->
+        <!--android:layout_height="@dimen/player_play_btn_size"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:indeterminateDrawable="@drawable/progress_loading"-->
+        <!--android:visibility="gone" />-->
 </FrameLayout>

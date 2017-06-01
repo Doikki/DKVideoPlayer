@@ -80,33 +80,33 @@ public class AdController extends BaseVideoController implements View.OnClickLis
         }
     }
 
-    @Override
-    public void updatePlayButton() {
-        playButton.post(new Runnable() {
-            @Override
-            public void run() {
-                if (mediaPlayer.isPlaying()) {
-                    playButton.setSelected(false);
-                } else {
-                    playButton.setSelected(true);
-                }
-            }
-        });
-    }
-
-    @Override
-    public void updateFullScreen() {
-        super.updateFullScreen();
-        if (mediaPlayer != null) {
-            if (mediaPlayer.isFullScreen()) {
-                back.setVisibility(VISIBLE);
-                fullScreen.setImageResource(R.drawable.ic_stop_fullscreen);
-            } else {
-                fullScreen.setImageResource(R.drawable.ic_start_fullscreen);
-                back.setVisibility(GONE);
-            }
-        }
-    }
+//    @Override
+//    public void updatePlayButton() {
+//        playButton.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (mediaPlayer.isPlaying()) {
+//                    playButton.setSelected(false);
+//                } else {
+//                    playButton.setSelected(true);
+//                }
+//            }
+//        });
+//    }
+//
+//    @Override
+//    public void updateFullScreen() {
+//        super.updateFullScreen();
+//        if (mediaPlayer != null) {
+//            if (mediaPlayer.isFullScreen()) {
+//                back.setVisibility(VISIBLE);
+//                fullScreen.setImageResource(R.drawable.ic_stop_fullscreen);
+//            } else {
+//                fullScreen.setImageResource(R.drawable.ic_start_fullscreen);
+//                back.setVisibility(GONE);
+//            }
+//        }
+//    }
 
     @Override
     protected int setProgress() {
