@@ -116,11 +116,12 @@
         android:padding="@dimen/default_spacing"
         android:src="@drawable/selector_lock_button"
         android:visibility="invisible" />
+
     <ImageView
         android:id="@+id/thumb"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerCrop" />
 
     <ImageView
         android:id="@+id/iv_play"
@@ -131,10 +132,38 @@
         android:padding="@dimen/controller_icon_padding"
         android:src="@drawable/selector_play_button" />
 
+    <LinearLayout
+        android:id="@+id/complete_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/iv_replay"
+            android:layout_width="@dimen/player_play_btn_size"
+            android:layout_height="@dimen/player_play_btn_size"
+            android:layout_gravity="center"
+            android:background="@drawable/shape_play_bg"
+            android:padding="@dimen/controller_icon_padding"
+            android:src="@drawable/ic_refresh" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/controller_icon_padding"
+            android:textColor="@android:color/white"
+            android:text="@string/replay" />
+
+    </LinearLayout>
+
+
     <ProgressBar
         android:id="@+id/buffering"
         android:layout_width="@dimen/player_play_btn_size"
         android:layout_height="@dimen/player_play_btn_size"
         android:layout_gravity="center"
-        android:indeterminateDrawable="@drawable/progress_loading" />
+        android:indeterminateDrawable="@drawable/progress_loading"
+        android:visibility="gone" />
 </FrameLayout>

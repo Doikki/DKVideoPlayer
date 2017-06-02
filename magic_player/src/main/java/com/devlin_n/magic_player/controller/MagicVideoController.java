@@ -40,6 +40,8 @@ public class MagicVideoController extends BaseVideoController implements View.On
 
     private ProgressBar bufferProgress;
     private ImageView thumb;
+    private ImageView rePlayButton;
+    private LinearLayout completeContainer;
 
 
     public MagicVideoController(@NonNull Context context) {
@@ -78,6 +80,10 @@ public class MagicVideoController extends BaseVideoController implements View.On
         thumb = (ImageView) controllerView.findViewById(R.id.thumb);
         thumb.setOnClickListener(this);
         bufferProgress = (ProgressBar) controllerView.findViewById(R.id.buffering);
+        rePlayButton = (ImageView) controllerView.findViewById(R.id.iv_replay);
+        rePlayButton.setOnClickListener(this);
+        completeContainer = (LinearLayout) controllerView.findViewById(R.id.complete_container);
+        completeContainer.setOnClickListener(this);
         title = (TextView) controllerView.findViewById(R.id.title);
         statusHolder = controllerView.findViewById(R.id.status_holder);
         statusHolder.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) WindowUtil.getStatusBarHeight(getContext())));
@@ -97,13 +103,13 @@ public class MagicVideoController extends BaseVideoController implements View.On
             doStartStopFullScreen();
         } else if (i == R.id.lock) {
             doLockUnlock();
-        } else if (i == R.id.iv_play || i == R.id.thumb) {
+        } else if (i == R.id.iv_play || i == R.id.thumb || i == R.id.iv_replay) {
             doPauseResume();
         }
     }
 
     @Override
-    public void setPlayState(int playState, int playerState) {
+    public void setPlayerState(int playerState) {
         switch (playerState) {
             case MagicVideoView.PLAYER_NORMAL:
                 if (isLocked) return;
@@ -129,12 +135,19 @@ public class MagicVideoController extends BaseVideoController implements View.On
                 }
                 break;
         }
+    }
+
+    @Override
+    public void setPlayState(int playState) {
+
         switch (playState) {
             case MagicVideoView.STATE_IDLE:
+                thumb.setVisibility(VISIBLE);
                 break;
             case MagicVideoView.STATE_PLAYING:
                 playButton.setSelected(true);
                 thumb.setVisibility(GONE);
+                completeContainer.setVisibility(GONE);
                 hide();
                 break;
             case MagicVideoView.STATE_PAUSED:
@@ -145,6 +158,7 @@ public class MagicVideoController extends BaseVideoController implements View.On
                 bufferProgress.setVisibility(VISIBLE);
                 playButton.setVisibility(GONE);
                 thumb.setVisibility(GONE);
+                completeContainer.setVisibility(GONE);
                 break;
             case MagicVideoView.STATE_PREPARED:
                 bufferProgress.setVisibility(GONE);
@@ -163,6 +177,13 @@ public class MagicVideoController extends BaseVideoController implements View.On
                 if (mShowing && !isLocked) {
                     playButton.setVisibility(VISIBLE);
                 }
+                break;
+            case MagicVideoView.STATE_PLAYBACK_COMPLETED:
+                hide();
+                thumb.setVisibility(VISIBLE);
+                completeContainer.setVisibility(VISIBLE);
+                isLocked = false;
+                mediaPlayer.setLock(false);
                 break;
         }
     }
@@ -323,7 +344,11 @@ public class MagicVideoController extends BaseVideoController implements View.On
     @Override
     public void reset() {
         hide();
+        isLocked = false;
+        lock.setSelected(false);
+        mediaPlayer.setLock(false);
         playButton.setSelected(false);
+        completeContainer.setVisibility(GONE);
         playButton.setVisibility(VISIBLE);
         thumb.setVisibility(VISIBLE);
     }

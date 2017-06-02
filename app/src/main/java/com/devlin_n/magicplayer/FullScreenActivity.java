@@ -9,6 +9,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
+import com.devlin_n.magic_player.player.MagicPlayerManager;
 import com.devlin_n.magic_player.player.MagicVideoView;
 
 import static com.devlin_n.magic_player.player.MagicVideoView.ALERT_WINDOW_PERMISSION_CODE;
@@ -53,7 +54,7 @@ public class FullScreenActivity extends AppCompatActivity{
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        magicVideoView.release();
+        MagicPlayerManager.instance().releaseVideoView();
     }
 
     @Override

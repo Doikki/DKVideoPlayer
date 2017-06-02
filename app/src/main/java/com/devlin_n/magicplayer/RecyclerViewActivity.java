@@ -149,7 +149,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
                     .load(videoBean.getThumb())
                     .asBitmap()
                     .into(magicVideoController.getThumb());
-            holder.magicVideoView.setUrl(videoBean.getUrl()).setTitle(videoBean.getTitle()).setVideoController(magicVideoController);
+            holder.magicVideoView.enableCache().setUrl(videoBean.getUrl()).setTitle(videoBean.getTitle()).setVideoController(magicVideoController);
 
         }
 

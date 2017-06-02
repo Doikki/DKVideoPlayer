@@ -40,7 +40,7 @@ public class FloatController extends BaseVideoController {
     }
 
     @Override
-    public void setPlayState(int playState, int PlayerState) {
+    public void setPlayState(int playState) {
         switch (playState) {
             case MagicVideoView.STATE_IDLE:
                 break;

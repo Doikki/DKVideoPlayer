@@ -8,4 +8,5 @@
     <string name="lock_tip">请先解锁屏幕！</string>
     <string name="unlocked">已解锁</string>
     <string name="locked">已锁定</string>
+    <string name="replay">重新播放</string>
 </resources>

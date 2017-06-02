@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.devlin_n.magic_player.player.MagicPlayerManager;
 import com.devlin_n.magic_player.player.MagicVideoView;
 
 import static android.os.Build.VERSION_CODES.M;
@@ -71,7 +72,7 @@ public class LivePlayerActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        magicVideoView.release();
+        MagicPlayerManager.instance().releaseVideoView();
     }
 
 

@@ -1,11 +1,13 @@
 package com.devlin_n.magic_player.player;
 
+import java.lang.ref.WeakReference;
+
 /**
  * 视频播放器管理器.
  */
 public class MagicPlayerManager {
 
-    private MagicVideoView mVideoView;
+    private WeakReference<MagicVideoView> mVideoView; //写成弱引用防止内存泄露
 
     private MagicPlayerManager() {
     }
@@ -20,20 +22,22 @@ public class MagicPlayerManager {
     }
 
     public void setCurrentVideoView(MagicVideoView videoView) {
-        mVideoView = videoView;
+        mVideoView = new WeakReference<>(videoView);
     }
+
     public MagicVideoView getCurrentVideoView() {
-        return mVideoView;
+        if (mVideoView == null) return null;
+        return mVideoView.get();
     }
 
     public void releaseVideoView() {
-        if (mVideoView != null) {
-            mVideoView.release();
+        if (mVideoView != null && mVideoView.get() != null) {
+            mVideoView.get().release();
             mVideoView = null;
         }
     }
 
     public boolean onBackPressed() {
-        return mVideoView != null && mVideoView.onBackPressed();
+        return mVideoView != null && mVideoView.get() != null && mVideoView.get().onBackPressed();
     }
 }

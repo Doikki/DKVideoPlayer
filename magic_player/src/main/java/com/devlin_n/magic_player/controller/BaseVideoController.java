@@ -81,7 +81,8 @@ public abstract class BaseVideoController extends FrameLayout {
     public void reset() {
     }
 
-    public void setPlayState(int playState, int PlayerState){}
+    public void setPlayState(int playState){}
+    public void setPlayerState(int playerState){}
 
     /**
      * 返回控制器的显示状态
