@@ -11,7 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.devlin_n.magic_player.player.MagicPlayerManager;
+import com.devlin_n.magic_player.controller.MagicVideoController;
 import com.devlin_n.magic_player.player.MagicVideoView;
 
 import static android.os.Build.VERSION_CODES.M;
@@ -40,11 +40,14 @@ public class LivePlayerActivity extends AppCompatActivity {
 //        int widthPixels = getResources().getDisplayMetrics().widthPixels;
 //        magicVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 4 * 3));
 
+        MagicVideoController controller = new MagicVideoController(this);
+        controller.setLive(true);
+
         magicVideoView
                 .autoRotate()
                 .setUrl(URL)
                 .setTitle("湖南卫视")
-                .setVideoController(MagicVideoView.LIVE);
+                .setVideoController(controller);
 //                .start();
     }
 
@@ -72,7 +75,7 @@ public class LivePlayerActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        MagicPlayerManager.instance().releaseVideoView();
+        magicVideoView.release();
     }
 
 

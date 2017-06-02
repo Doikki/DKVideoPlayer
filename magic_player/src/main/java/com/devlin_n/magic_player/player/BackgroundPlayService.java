@@ -28,7 +28,8 @@ public class BackgroundPlayService extends Service {
     private String url;
     private View floatView;
     private int position;
-    private int type;
+    private Intent intent;
+    private boolean isCache;
 
     @Nullable
     @Override
@@ -38,9 +39,10 @@ public class BackgroundPlayService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        this.intent = intent;
         url = intent.getStringExtra(KeyUtil.URL);
         position = intent.getIntExtra(KeyUtil.POSITION, 0);
-        type = intent.getIntExtra(KeyUtil.TYPE, 0);
+        isCache = intent.getBooleanExtra(KeyUtil.ENABLE_CACHE, false);
         startPlay();
         return START_NOT_STICKY;
     }
@@ -52,7 +54,8 @@ public class BackgroundPlayService extends Service {
     }
 
     private void startPlay() {
-        videoView.setVideoType(type).skipPositionWhenPlay(url, position).setVideoController(new FloatController(getApplicationContext())).start();
+        if (isCache) videoView.enableCache();
+        videoView.skipPositionWhenPlay(url, position).setVideoController(new FloatController(getApplicationContext())).start();
         wm.addView(floatView, wmParams);
     }
 
@@ -74,9 +77,7 @@ public class BackgroundPlayService extends Service {
         floatView.findViewById(R.id.btn_close).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                wm.removeView(floatView);
-                videoView.release();
-                floatView = null;
+               stopService(intent);
             }
         });
         floatView.setOnTouchListener(new View.OnTouchListener() {

@@ -28,7 +28,6 @@ import android.widget.Toast;
 import com.danikula.videocache.CacheListener;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.devlin_n.magic_player.R;
-import com.devlin_n.magic_player.controller.AdController;
 import com.devlin_n.magic_player.controller.BaseVideoController;
 import com.devlin_n.magic_player.controller.MagicVideoController;
 import com.devlin_n.magic_player.util.KeyUtil;
@@ -67,16 +66,11 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
 
     public static final int ALERT_WINDOW_PERMISSION_CODE = 1;
 
-    //三种视频类型
-    public static final int VOD = 1;//点播
-    public static final int LIVE = 2;//直播
-    public static final int AD = 3;//广告
 
     private String mCurrentUrl;//当前播放视频的地址
     private List<VideoModel> mVideoModels;//列表播放数据
     private int mCurrentVideoPosition = 0;//列表播放时当前播放视频的在List中的位置
     private int mCurrentPosition;//当前正在播放视频的位置
-    private int mCurrentVideoType;//当前正在播放视频的类型
     private String mCurrentTitle = "";//当前正在播放视频的标题
     private static boolean IS_PLAY_ON_MOBILE_NETWORK = false;//记录是否在移动网络下播放视频
 
@@ -92,7 +86,6 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
     public static final int STATE_BUFFERED = 7;
 
     private int mCurrentState = STATE_IDLE;//当前播放器的状态
-//    private int mTargetState = STATE_IDLE;//代码执行完播放器应该达到的状态/
 
     public static final int PLAYER_NORMAL = 10;        // 普通播放器
     public static final int PLAYER_FULL_SCREEN = 11;   // 全屏播放器
@@ -115,6 +108,7 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
     private boolean isLocked;
     private boolean mAlwaysFullScreen;//总是全屏
     private boolean isCache;
+    private boolean addToPlayerManager;
 
 
     public MagicVideoView(@NonNull Context context) {
@@ -276,8 +270,10 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
         if (mCurrentState == STATE_IDLE) {
             if (mAlwaysFullScreen) startFullScreenDirectly();
             if (checkNetwork()) return;
-            MagicPlayerManager.instance().releaseVideoView();
-            MagicPlayerManager.instance().setCurrentVideoView(this);
+            if (addToPlayerManager) {
+                MagicPlayerManager.instance().releaseVideoView();
+                MagicPlayerManager.instance().setCurrentVideoView(this);
+            }
             initPlayer();
             startPrepare();
         } else if (isInPlaybackState()) {
@@ -409,14 +405,6 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
     }
 
     /**
-     * 设置视频的类型
-     */
-    public MagicVideoView setVideoType(int type) {
-        mCurrentVideoType = type;
-        return this;
-    }
-
-    /**
      * 设置一个列表的视频
      */
     public MagicVideoView setVideos(List<VideoModel> videoModels) {
@@ -444,6 +432,14 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
     }
 
     /**
+     * 添加到MagicPlayerManager,如需集成到RecyclerView或ListView请开启此选项
+     */
+    public MagicVideoView addToPlayerManager() {
+        addToPlayerManager = true;
+        return this;
+    }
+
+    /**
      * 播放下一条视频
      */
     private void playNext() {
@@ -452,7 +448,7 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
             mCurrentUrl = videoModel.url;
             mCurrentTitle = videoModel.title;
             mCurrentPosition = 0;
-            setVideoController(videoModel.type);
+            setVideoController(videoModel.controller);
         }
     }
 
@@ -488,7 +484,7 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
 
     @Override
     public void seekTo(int pos) {
-        if (isInPlaybackState() && mCurrentVideoType != LIVE) {
+        if (isInPlaybackState()) {
             mIjkPlayer.seekTo(pos);
         }
     }
@@ -532,8 +528,8 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
         Intent intent = new Intent(getContext(), BackgroundPlayService.class);
         intent.putExtra(KeyUtil.URL, mCurrentUrl);
         getCurrentPosition();
-        intent.putExtra(KeyUtil.POSITION, mCurrentPosition);
-        intent.putExtra(KeyUtil.TYPE, mCurrentVideoType);
+        intent.putExtra(KeyUtil.POSITION, getDuration() <= 0 ? 0 : mCurrentPosition);
+        intent.putExtra(KeyUtil.ENABLE_CACHE, isCache);
         getContext().getApplicationContext().startService(intent);
         WindowUtil.getAppCompActivity(getContext()).finish();
     }
@@ -648,43 +644,6 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
         return mCurrentTitle;
     }
 
-    /**
-     * 根据视频类型快速设置控制器
-     */
-    public MagicVideoView setVideoController(int type) {
-        playerContainer.removeView(mVideoController);
-        switch (type) {
-            case VOD: {
-                MagicVideoController ijkMediaController = new MagicVideoController(getContext());
-                ijkMediaController.setMediaPlayer(this);
-                mVideoController = ijkMediaController;
-                mCurrentVideoType = VOD;
-                break;
-            }
-            case LIVE: {
-                MagicVideoController ijkMediaController = new MagicVideoController(getContext());
-                ijkMediaController.setMediaPlayer(this);
-                ijkMediaController.setLive(true);
-                mVideoController = ijkMediaController;
-                mCurrentVideoType = LIVE;
-                break;
-            }
-            case AD:
-                AdController adController = new AdController(getContext());
-                adController.setMediaPlayer(this);
-                mVideoController = adController;
-                mCurrentVideoType = AD;
-                break;
-            default:
-                break;
-
-        }
-        LayoutParams params = new LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT);
-        playerContainer.addView(mVideoController, params);
-        return this;
-    }
 
     /**
      * 设置控制器
@@ -694,15 +653,6 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
         if (mediaController != null) {
             mediaController.setMediaPlayer(this);
             mVideoController = mediaController;
-            if (mediaController instanceof MagicVideoController) {
-                if (((MagicVideoController) mediaController).getLive()) {
-                    mCurrentVideoType = LIVE;
-                } else {
-                    mCurrentVideoType = VOD;
-                }
-            } else if (mediaController instanceof AdController) {
-                mCurrentVideoType = AD;
-            }
             LayoutParams params = new LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT);
@@ -793,7 +743,7 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
         public void onPrepared(IMediaPlayer iMediaPlayer) {
             mCurrentState = STATE_PREPARED;
             if (mVideoController != null) mVideoController.setPlayState(mCurrentState);
-            if (mCurrentPosition > 0 && mCurrentVideoType == VOD) {
+            if (mCurrentPosition > 0) {
                 seekTo(mCurrentPosition);
             }
             if (mVideoController != null) mVideoController.setPlayState(mCurrentState);

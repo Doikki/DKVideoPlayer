@@ -9,7 +9,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
-import com.devlin_n.magic_player.player.MagicPlayerManager;
+import com.devlin_n.magic_player.controller.MagicVideoController;
 import com.devlin_n.magic_player.player.MagicVideoView;
 
 import static com.devlin_n.magic_player.player.MagicVideoView.ALERT_WINDOW_PERMISSION_CODE;
@@ -33,7 +33,7 @@ public class FullScreenActivity extends AppCompatActivity{
                 .alwaysFullScreen()
                 .setTitle("这是一个标题")
                 .setUrl("http://flv2.bn.netease.com/videolib3/1611/28/GbgsL3639/HD/movie_index.m3u8")
-                .setVideoController(MagicVideoView.VOD)
+                .setVideoController(new MagicVideoController(this))
                 .setScreenType(MagicVideoView.SCREEN_TYPE_16_9)
                 .start();
     }
@@ -54,7 +54,7 @@ public class FullScreenActivity extends AppCompatActivity{
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        MagicPlayerManager.instance().releaseVideoView();
+        magicVideoView.release();
     }
 
     @Override

@@ -8,5 +8,5 @@ public class KeyUtil {
 
     public static final String URL = "url";
     public static final String POSITION = "position";
-    public static final String TYPE = "type";
+    public static final String ENABLE_CACHE = "enable_cache";
 }
