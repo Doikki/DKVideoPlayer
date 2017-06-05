@@ -1,5 +1,6 @@
 package com.devlin_n.magicplayer;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
@@ -9,22 +10,15 @@ import android.view.View;
 
 import com.devlin_n.magic_player.controller.MagicVideoController;
 import com.devlin_n.magic_player.player.MagicVideoView;
-import com.devlin_n.magic_player.player.VideoModel;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * 点播播放
+ * 播放其他链接
  * Created by Devlin_n on 2017/4/7.
  */
 
-public class VodPlayerActivity extends AppCompatActivity {
+public class PlayerActivity extends AppCompatActivity {
 
     private MagicVideoView magicVideoView;
-    private static final String URL_VOD = "http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv";
-//    private static final String URL_VOD = "http://uploads.cutv.com:8088/video/data/201703/10/encode_file/515b6a95601ba6b39620358f2677a17358c2472411d53.mp4";
-    private static final String URL_AD = "http://gslb.miaopai.com/stream/FQXM04zrW1dcXGiPdJ6Q3KAq2Fpv4TLV.mp4";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -32,25 +26,24 @@ public class VodPlayerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_vod_player);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle("VOD");
+            actionBar.setTitle("Player");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         magicVideoView = (MagicVideoView) findViewById(R.id.magic_video_view);
-//        int widthPixels = getResources().getDisplayMetrics().widthPixels;
-//        magicVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 16 * 9));
 
-        List<VideoModel> videos = new ArrayList<>();
-        videos.add(new VideoModel(URL_AD, "广告", new MagicVideoController(this)));
-        videos.add(new VideoModel(URL_VOD, "网易公开课-如何掌控你的自由时间", new MagicVideoController(this)));
-
-        magicVideoView
-                .autoRotate()
-                .enableCache()
-                .setVideos(videos)
-//                .setUrl(URL_VOD)
-//                .setTitle("网易公开课-如何掌控你的自由时间")
-                .setVideoController(new MagicVideoController(this))
-                .start();
+        Intent intent = getIntent();
+        if (intent != null) {
+            MagicVideoController controller = new MagicVideoController(this);
+            boolean isLive = intent.getBooleanExtra("isLive", false);
+            if (isLive) {
+                controller.setLive(true);
+            }
+            magicVideoView
+                    .autoRotate()
+                    .setUrl(intent.getStringExtra("url"))
+                    .setVideoController(controller)
+                    .start();
+        }
     }
 
     @Override
@@ -95,8 +88,8 @@ public class VodPlayerActivity extends AppCompatActivity {
 //    @Override
 //    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 //        if (requestCode == ALERT_WINDOW_PERMISSION_CODE) {
-//            if (!Settings.canDrawOverlays(this)) {
-//                Toast.makeText(VodPlayerActivity.this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
+//            if (FloatWindowManager.getInstance().checkPermission(this)) {
+//                Toast.makeText(PlayerActivity.this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
 //            } else {
 //                magicVideoView.startFloatWindow();
 //            }

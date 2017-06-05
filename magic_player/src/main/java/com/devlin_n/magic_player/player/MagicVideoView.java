@@ -7,9 +7,6 @@ import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.SurfaceTexture;
 import android.media.AudioManager;
-import android.net.Uri;
-import android.os.Build;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -33,6 +30,7 @@ import com.devlin_n.magic_player.controller.MagicVideoController;
 import com.devlin_n.magic_player.util.KeyUtil;
 import com.devlin_n.magic_player.util.NetworkUtil;
 import com.devlin_n.magic_player.util.WindowUtil;
+import com.devlin_n.magic_player.util.permission.FloatWindowManager;
 import com.devlin_n.magic_player.widget.MagicSurfaceView;
 import com.devlin_n.magic_player.widget.MagicTextureView;
 import com.devlin_n.magic_player.widget.StatusView;
@@ -503,17 +501,23 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
      */
     @Override
     public void startFloatWindow() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {//Android M 以上系统需要请求权限
-            if (!Settings.canDrawOverlays(WindowUtil.getAppCompActivity(getContext()))) {
-                Toast.makeText(WindowUtil.getAppCompActivity(getContext()), R.string.float_window_warning, Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                        Uri.parse("package:" + WindowUtil.getAppCompActivity(getContext()).getPackageName()));
-                WindowUtil.getAppCompActivity(getContext()).startActivityForResult(intent, ALERT_WINDOW_PERMISSION_CODE);
-            } else {
-                startBackgroundService();
-            }
-        } else {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {//Android M 以上系统需要请求权限
+//            if (!Settings.canDrawOverlays(WindowUtil.getAppCompActivity(getContext()))) {
+//                Toast.makeText(WindowUtil.getAppCompActivity(getContext()), R.string.float_window_warning, Toast.LENGTH_LONG).show();
+//                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+//                        Uri.parse("package:" + WindowUtil.getAppCompActivity(getContext()).getPackageName()));
+//                WindowUtil.getAppCompActivity(getContext()).startActivityForResult(intent, ALERT_WINDOW_PERMISSION_CODE);
+//            } else {
+//                startBackgroundService();
+//            }
+//        } else {
+//            startBackgroundService();
+//        }
+
+        if (FloatWindowManager.getInstance().checkPermission(getContext())) {
             startBackgroundService();
+        } else {
+            FloatWindowManager.getInstance().applyPermission(getContext());
         }
     }
 

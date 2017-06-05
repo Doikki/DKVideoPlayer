@@ -369,8 +369,11 @@ public class MagicVideoController extends BaseVideoController implements View.On
         int duration = mediaPlayer.getDuration();
         if (videoProgress != null) {
             if (duration > 0) {
+                videoProgress.setEnabled(true);
                 int pos = (int) (position * 1.0 / duration * videoProgress.getMax());
                 videoProgress.setProgress(pos);
+            } else {
+                videoProgress.setEnabled(false);
             }
             int percent = mediaPlayer.getBufferPercentage();
             if (percent >= 95) { //修复第二进度不能100%问题
@@ -392,7 +395,7 @@ public class MagicVideoController extends BaseVideoController implements View.On
 
     @Override
     protected void slideToChangePosition(float deltaX) {
-        if (!isLive) {
+        if (!isLive && mediaPlayer.getDuration() > 0) {
             super.slideToChangePosition(deltaX);
         } else {
             mSliding = false;

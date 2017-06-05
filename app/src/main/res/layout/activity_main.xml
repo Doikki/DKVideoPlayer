@@ -4,40 +4,109 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <Button
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="skipToVodPlayer"
-        android:text="VOD PLAYER" />
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="skipToLivePlayer"
-        android:text="LIVE PLAYER" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="startFullScreen"
-        android:text="ALWAYS ON FULLSCREEN" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="skipToVodPlayer"
+                android:text="VOD PLAYER" />
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="list"
-        android:text="LIST" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="skipToLivePlayer"
+                android:text="LIVE PLAYER" />
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="closeFloatWindow"
-        android:text="CLOSE PIP" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="startFullScreen"
+                android:text="ALWAYS ON FULLSCREEN" />
 
-    <Button
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="list"
+                android:text="LIST" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="closeFloatWindow"
+                android:text="CLOSE PIP" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="clearCache"
+                android:text="CLEAR CACHE" />
+        </LinearLayout>
+
+    </ScrollView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginBottom="10dp"
+        android:background="@android:color/black" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="other:" />
+
+        <EditText
+            android:id="@+id/et"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="2" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="playOther"
+            android:text="play" />
+    </LinearLayout>
+
+    <RadioGroup
+        android:id="@+id/rg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="clearCache"
-        android:text="CLEAR CACHE" />
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="视频类型：" />
+
+        <RadioButton
+            android:id="@+id/vod"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="点播" />
+
+        <RadioButton
+            android:id="@+id/live"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="直播" />
+
+    </RadioGroup>
 
 </LinearLayout>

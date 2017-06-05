@@ -7,7 +7,7 @@
     <com.devlin_n.magic_player.player.MagicVideoView
         android:id="@+id/magic_video_view"
         android:layout_width="match_parent"
-        android:layout_height="400dp" />
+        android:layout_height="300dp" />
 
     <Button
         android:layout_width="match_parent"
