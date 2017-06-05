@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.devlin_n.magic_player.R;
 import com.devlin_n.magic_player.player.MagicVideoView;
+import com.devlin_n.magic_player.util.L;
 import com.devlin_n.magic_player.util.WindowUtil;
 
 /**
@@ -24,7 +25,6 @@ import com.devlin_n.magic_player.util.WindowUtil;
  */
 
 public class MagicVideoController extends BaseVideoController implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
-    private static final String TAG = MagicVideoController.class.getSimpleName();
     protected TextView totalTime, currTime;
     protected ImageView fullScreenButton;
     protected LinearLayout bottomContainer, topContainer;
@@ -40,7 +40,6 @@ public class MagicVideoController extends BaseVideoController implements View.On
 
     private ProgressBar bufferProgress;
     private ImageView thumb;
-    private ImageView rePlayButton;
     private LinearLayout completeContainer;
 
 
@@ -80,7 +79,7 @@ public class MagicVideoController extends BaseVideoController implements View.On
         thumb = (ImageView) controllerView.findViewById(R.id.thumb);
         thumb.setOnClickListener(this);
         bufferProgress = (ProgressBar) controllerView.findViewById(R.id.buffering);
-        rePlayButton = (ImageView) controllerView.findViewById(R.id.iv_replay);
+        ImageView rePlayButton = (ImageView) controllerView.findViewById(R.id.iv_replay);
         rePlayButton.setOnClickListener(this);
         completeContainer = (LinearLayout) controllerView.findViewById(R.id.complete_container);
         completeContainer.setOnClickListener(this);
@@ -142,43 +141,52 @@ public class MagicVideoController extends BaseVideoController implements View.On
 
         switch (playState) {
             case MagicVideoView.STATE_IDLE:
+                L.e("STATE_IDLE");
                 thumb.setVisibility(VISIBLE);
                 break;
             case MagicVideoView.STATE_PLAYING:
+                L.e("STATE_PLAYING");
                 playButton.setSelected(true);
                 thumb.setVisibility(GONE);
                 completeContainer.setVisibility(GONE);
                 hide();
                 break;
             case MagicVideoView.STATE_PAUSED:
+                L.e("STATE_PAUSED");
                 playButton.setSelected(false);
                 show(0);
                 break;
             case MagicVideoView.STATE_PREPARING:
-                bufferProgress.setVisibility(VISIBLE);
+                L.e("STATE_PREPARING");
                 playButton.setVisibility(GONE);
+                bufferProgress.setVisibility(VISIBLE);
                 thumb.setVisibility(GONE);
                 completeContainer.setVisibility(GONE);
                 break;
             case MagicVideoView.STATE_PREPARED:
+                L.e("STATE_PREPARED");
                 bufferProgress.setVisibility(GONE);
                 if (mShowing) {
                     playButton.setVisibility(VISIBLE);
                 }
                 break;
             case MagicVideoView.STATE_ERROR:
+                L.e("STATE_ERROR");
                 break;
             case MagicVideoView.STATE_BUFFERING:
+                L.e("STATE_BUFFERING");
                 bufferProgress.setVisibility(VISIBLE);
                 playButton.setVisibility(GONE);
                 break;
             case MagicVideoView.STATE_BUFFERED:
+                L.e("STATE_BUFFERED");
                 bufferProgress.setVisibility(GONE);
                 if (mShowing && !isLocked) {
                     playButton.setVisibility(VISIBLE);
                 }
                 break;
             case MagicVideoView.STATE_PLAYBACK_COMPLETED:
+                L.e("STATE_PLAYBACK_COMPLETED");
                 hide();
                 thumb.setVisibility(VISIBLE);
                 completeContainer.setVisibility(VISIBLE);
@@ -217,12 +225,11 @@ public class MagicVideoController extends BaseVideoController implements View.On
         });
     }
 
+    /**
+     * 设置是否为直播视频
+     */
     public void setLive(boolean live) {
         isLive = live;
-    }
-
-    public boolean getLive() {
-        return isLive;
     }
 
     @Override

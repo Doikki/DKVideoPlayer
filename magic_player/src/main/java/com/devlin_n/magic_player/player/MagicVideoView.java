@@ -51,7 +51,6 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 public class MagicVideoView extends FrameLayout implements MagicVideoController.MediaPlayerControlInterface {
 
-    private static final String TAG = MagicVideoView.class.getSimpleName();
     private IjkMediaPlayer mIjkPlayer;//ijkPlayer
     private BaseVideoController mVideoController;//控制器
     private MagicSurfaceView mSurfaceView;
@@ -360,10 +359,7 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
             orientationEventListener = null;
         }
         getCacheServer().unregisterCacheListener(cacheListener);
-        resetPlayer();
-    }
 
-    public void resetPlayer() {
         if (mVideoController != null) mVideoController.reset();
 
         playerContainer.removeView(mTextureView);
@@ -372,10 +368,10 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
             mSurfaceTexture.release();
             mSurfaceTexture = null;
         }
+
         isLocked = false;
         mCurrentPosition = 0;
     }
-
 
     /**
      * 设置视频比例
@@ -714,13 +710,12 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
                     mCurrentState = STATE_BUFFERED;
                     if (mVideoController != null) mVideoController.setPlayState(mCurrentState);
                     break;
-                case IjkMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START:
-                case IjkMediaPlayer.MEDIA_INFO_AUDIO_RENDERING_START:
+                case IjkMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START: // 视频开始渲染
                     mCurrentState = STATE_PLAYING;
                     if (mVideoController != null) {
                         mVideoController.setPlayState(mCurrentState);
                     }
-//                if (mTargetState == STATE_PAUSED) pause();
+                    if (getWindowVisibility() != VISIBLE) pause();
                     break;
                 case IjkMediaPlayer.MEDIA_INFO_VIDEO_ROTATION_CHANGED:
                     if (mTextureView != null)
@@ -746,7 +741,6 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
             if (mCurrentPosition > 0) {
                 seekTo(mCurrentPosition);
             }
-            if (mVideoController != null) mVideoController.setPlayState(mCurrentState);
         }
     };
 
