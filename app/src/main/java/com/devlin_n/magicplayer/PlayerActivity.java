@@ -42,6 +42,7 @@ public class PlayerActivity extends AppCompatActivity {
             }
             magicVideoView
                     .autoRotate()
+                    .useAndroidMediaPlayer()
                     .setUrl(intent.getStringExtra("url"))
                     .setVideoController(controller)
                     .start();

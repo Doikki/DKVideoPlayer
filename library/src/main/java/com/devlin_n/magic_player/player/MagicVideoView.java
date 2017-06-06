@@ -37,6 +37,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import tv.danmaku.ijk.media.player.AndroidMediaPlayer;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
@@ -47,7 +48,7 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 public class MagicVideoView extends FrameLayout implements MagicVideoController.MediaPlayerControlInterface {
 
-    private IjkMediaPlayer mIjkPlayer;//ijkPlayer
+    private IMediaPlayer mMediaPlayer;//ijkPlayer
     private BaseVideoController mVideoController;//控制器
     private MagicSurfaceView mSurfaceView;
     private MagicTextureView mTextureView;
@@ -58,6 +59,7 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
     private boolean isFullScreen;//是否处于全屏状态
     private boolean isMute;//是否静音
     private boolean useSurfaceView;//是否使用TextureView
+    private boolean useAndroidMediaPlayer;//是否使用AndroidMediaPlayer
 
     private String mCurrentUrl;//当前播放视频的地址
     private List<VideoModel> mVideoModels;//列表播放数据
@@ -129,20 +131,24 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
      * 创建播放器实例，设置播放地址及播放器参数
      */
     private void initPlayer() {
-        if (mIjkPlayer == null) {
+        if (mMediaPlayer == null) {
+            if (useAndroidMediaPlayer) {
+                mMediaPlayer = new AndroidMediaPlayer();
+            } else {
+                mMediaPlayer = new IjkMediaPlayer();
+                ((IjkMediaPlayer) mMediaPlayer).setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 1);//开启硬解码
+                ((IjkMediaPlayer) mMediaPlayer).setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 1);
+                ((IjkMediaPlayer) mMediaPlayer).setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", 1);
+            }
             mAudioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
             mAudioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
-            mIjkPlayer = new IjkMediaPlayer();
-            mIjkPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 1);//开启硬解码
-            mIjkPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 1);
-            mIjkPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", 1);
-            mIjkPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            mIjkPlayer.setOnErrorListener(onErrorListener);
-            mIjkPlayer.setOnCompletionListener(onCompletionListener);
-            mIjkPlayer.setOnInfoListener(onInfoListener);
-            mIjkPlayer.setOnBufferingUpdateListener(onBufferingUpdateListener);
-            mIjkPlayer.setOnPreparedListener(onPreparedListener);
-            mIjkPlayer.setOnVideoSizeChangedListener(onVideoSizeChangedListener);
+            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mMediaPlayer.setOnErrorListener(onErrorListener);
+            mMediaPlayer.setOnCompletionListener(onCompletionListener);
+            mMediaPlayer.setOnInfoListener(onInfoListener);
+            mMediaPlayer.setOnBufferingUpdateListener(onBufferingUpdateListener);
+            mMediaPlayer.setOnPreparedListener(onPreparedListener);
+            mMediaPlayer.setOnVideoSizeChangedListener(onVideoSizeChangedListener);
             mCurrentState = STATE_IDLE;
             if (mVideoController != null) mVideoController.setPlayState(mCurrentState);
         }
@@ -159,7 +165,6 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
     private void startPrepare() {
         if (mCurrentUrl == null || mCurrentUrl.trim().equals("")) return;
         try {
-            mIjkPlayer.reset();
             if (isCache) {
                 HttpProxyCacheServer cacheServer = getCacheServer();
                 String proxyPath = cacheServer.getProxyUrl(mCurrentUrl);
@@ -167,11 +172,11 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
                 if (cacheServer.isCached(mCurrentUrl)) {
                     bufferPercentage = 100;
                 }
-                mIjkPlayer.setDataSource(proxyPath);
+                mMediaPlayer.setDataSource(proxyPath);
             } else {
-                mIjkPlayer.setDataSource(mCurrentUrl);
+                mMediaPlayer.setDataSource(mCurrentUrl);
             }
-            mIjkPlayer.prepareAsync();
+            mMediaPlayer.prepareAsync();
             mCurrentState = STATE_PREPARING;
             if (mVideoController != null) {
                 mVideoController.setPlayState(mCurrentState);
@@ -202,8 +207,8 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
 
             @Override
             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-                if (mIjkPlayer != null) {
-                    mIjkPlayer.setDisplay(holder);
+                if (mMediaPlayer != null) {
+                    mMediaPlayer.setDisplay(holder);
                 }
             }
 
@@ -233,7 +238,7 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
                     mTextureView.setSurfaceTexture(mSurfaceTexture);
                 } else {
                     mSurfaceTexture = surfaceTexture;
-                    mIjkPlayer.setSurface(new Surface(surfaceTexture));
+                    mMediaPlayer.setSurface(new Surface(surfaceTexture));
                 }
             }
 
@@ -269,7 +274,7 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
             initPlayer();
             startPrepare();
         } else if (isInPlaybackState()) {
-            mIjkPlayer.start();
+            mMediaPlayer.start();
             mCurrentState = STATE_PLAYING;
             if (mVideoController != null) {
                 mVideoController.setPlayState(mCurrentState);
@@ -303,8 +308,8 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
     @Override
     public void pause() {
         if (isInPlaybackState()) {
-            if (mIjkPlayer.isPlaying()) {
-                mIjkPlayer.pause();
+            if (mMediaPlayer.isPlaying()) {
+                mMediaPlayer.pause();
                 mCurrentState = STATE_PAUSED;
                 if (mVideoController != null) mVideoController.setPlayState(mCurrentState);
                 setKeepScreenOn(false);
@@ -313,8 +318,8 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
     }
 
     public void resume() {
-        if (isInPlaybackState() && !mIjkPlayer.isPlaying() && mCurrentState != STATE_PLAYBACK_COMPLETED) {
-            mIjkPlayer.start();
+        if (isInPlaybackState() && !mMediaPlayer.isPlaying() && mCurrentState != STATE_PLAYBACK_COMPLETED) {
+            mMediaPlayer.start();
             mCurrentState = STATE_PLAYING;
             if (mVideoController != null) mVideoController.setPlayState(mCurrentState);
             setKeepScreenOn(true);
@@ -322,10 +327,10 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
     }
 
     public void stopPlayback() {
-        if (mIjkPlayer != null) {
-            mIjkPlayer.stop();
-            mIjkPlayer.release();
-            mIjkPlayer = null;
+        if (mMediaPlayer != null) {
+            mMediaPlayer.stop();
+            mMediaPlayer.release();
+            mMediaPlayer = null;
             mCurrentState = STATE_IDLE;
             mAudioManager.abandonAudioFocus(onAudioFocusChangeListener);
             setKeepScreenOn(false);
@@ -333,10 +338,10 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
     }
 
     public void release() {
-        if (mIjkPlayer != null) {
-            mIjkPlayer.reset();
-            mIjkPlayer.release();
-            mIjkPlayer = null;
+        if (mMediaPlayer != null) {
+            mMediaPlayer.reset();
+            mMediaPlayer.release();
+            mMediaPlayer = null;
             mCurrentState = STATE_IDLE;
             if (mVideoController != null) mVideoController.setPlayState(mCurrentState);
             mAudioManager.abandonAudioFocus(onAudioFocusChangeListener);
@@ -359,6 +364,14 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
 
         isLocked = false;
         mCurrentPosition = 0;
+    }
+
+    /**
+     * 启用AndroidMediaPlayer,如不调用默认使用IjkMediaPlayer
+     */
+    public MagicVideoView useAndroidMediaPlayer() {
+        this.useAndroidMediaPlayer = true;
+        return this;
     }
 
     /**
@@ -445,14 +458,14 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
     }
 
     private boolean isInPlaybackState() {
-        return (mIjkPlayer != null && mCurrentState != STATE_ERROR
+        return (mMediaPlayer != null && mCurrentState != STATE_ERROR
                 && mCurrentState != STATE_IDLE && mCurrentState != STATE_PREPARING);
     }
 
     @Override
     public int getDuration() {
         if (isInPlaybackState()) {
-            return (int) mIjkPlayer.getDuration();
+            return (int) mMediaPlayer.getDuration();
         }
         return 0;
     }
@@ -460,7 +473,7 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
     @Override
     public int getCurrentPosition() {
         if (isInPlaybackState()) {
-            mCurrentPosition = (int) mIjkPlayer.getCurrentPosition();
+            mCurrentPosition = (int) mMediaPlayer.getCurrentPosition();
             return mCurrentPosition;
         }
         return 0;
@@ -469,18 +482,18 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
     @Override
     public void seekTo(int pos) {
         if (isInPlaybackState()) {
-            mIjkPlayer.seekTo(pos);
+            mMediaPlayer.seekTo(pos);
         }
     }
 
     @Override
     public boolean isPlaying() {
-        return mIjkPlayer != null && mIjkPlayer.isPlaying();
+        return mMediaPlayer != null && mMediaPlayer.isPlaying();
     }
 
     @Override
     public int getBufferPercentage() {
-        if (mIjkPlayer != null) {
+        if (mMediaPlayer != null) {
             return bufferPercentage;
         }
         return 0;
@@ -556,10 +569,10 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
     @Override
     public void setMute() {
         if (isMute) {
-            mIjkPlayer.setVolume(1, 1);
+            mMediaPlayer.setVolume(1, 1);
             isMute = false;
         } else {
-            mIjkPlayer.setVolume(0, 0);
+            mMediaPlayer.setVolume(0, 0);
             isMute = true;
         }
     }
@@ -674,7 +687,12 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
                     return;
                 }
                 playNext();
-                initPlayer();
+                mMediaPlayer.reset();
+                if (mMediaPlayer instanceof IjkMediaPlayer) {
+                    initPlayer();
+                } else {
+                    mMediaPlayer.setOnPreparedListener(onPreparedListener);
+                }
                 startPrepare();
             }
         }
@@ -693,10 +711,6 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
                     if (mVideoController != null) mVideoController.setPlayState(mCurrentState);
                     break;
                 case IjkMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START: // 视频开始渲染
-                    mCurrentState = STATE_PLAYING;
-                    if (mVideoController != null) {
-                        mVideoController.setPlayState(mCurrentState);
-                    }
                     if (getWindowVisibility() != VISIBLE) pause();
                     break;
                 case IjkMediaPlayer.MEDIA_INFO_VIDEO_ROTATION_CHANGED:
@@ -723,6 +737,7 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
             if (mCurrentPosition > 0) {
                 seekTo(mCurrentPosition);
             }
+            start();
         }
     };
 

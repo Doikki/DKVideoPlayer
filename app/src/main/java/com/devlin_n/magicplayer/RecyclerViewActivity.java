@@ -150,7 +150,8 @@ public class RecyclerViewActivity extends AppCompatActivity {
                     .asBitmap()
                     .into(magicVideoController.getThumb());
             holder.magicVideoView
-                    .enableCache()
+//                    .enableCache()
+                    .useAndroidMediaPlayer()
                     .addToPlayerManager()
                     .setUrl(videoBean.getUrl())
                     .setTitle(videoBean.getTitle())

@@ -41,6 +41,7 @@ public class LivePlayerActivity extends AppCompatActivity {
 
         magicVideoView
                 .autoRotate()
+//                .useAndroidMediaPlayer()
                 .setUrl(URL)
                 .setTitle("湖南卫视")
                 .setVideoController(controller);

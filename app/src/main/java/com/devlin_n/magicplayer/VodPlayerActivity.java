@@ -48,7 +48,9 @@ public class VodPlayerActivity extends AppCompatActivity {
 
         magicVideoView
                 .autoRotate()
-                .enableCache()
+//                .enableCache()
+//                .useSurfaceView()
+                .useAndroidMediaPlayer()
                 .setVideos(videos)
 //                .setUrl(URL_VOD)
 //                .setTitle("网易公开课-如何掌控你的自由时间")

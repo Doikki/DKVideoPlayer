@@ -55,7 +55,7 @@ public class BackgroundPlayService extends Service {
 
     private void startPlay() {
         if (isCache) videoView.enableCache();
-        videoView.skipPositionWhenPlay(url, position).setVideoController(new FloatController(getApplicationContext())).start();
+        videoView.useAndroidMediaPlayer().skipPositionWhenPlay(url, position).setVideoController(new FloatController(getApplicationContext())).start();
         wm.addView(floatView, wmParams);
     }
 
