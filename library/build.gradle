@@ -12,12 +12,19 @@ android {
         versionCode 5
         versionName "1.0.4"
     }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
     compile "tv.danmaku.ijk.media:ijkplayer-java:$rootProject.ijkPlayerVersion"
-    compile "tv.danmaku.ijk.media:ijkplayer-armv7a:$rootProject.ijkPlayerVersion"
+//    compile "tv.danmaku.ijk.media:ijkplayer-armv7a:$rootProject.ijkPlayerVersion"
     compile 'com.danikula:videocache:2.7.0'
+    compile 'com.github.DevlinChiu:FloatWindowPermission:1.0'
 }

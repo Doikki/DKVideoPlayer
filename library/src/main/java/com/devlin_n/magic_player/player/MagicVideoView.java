@@ -9,7 +9,6 @@ import android.graphics.SurfaceTexture;
 import android.media.AudioManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.OrientationEventListener;
@@ -18,19 +17,18 @@ import android.view.SurfaceHolder;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.danikula.videocache.CacheListener;
 import com.danikula.videocache.HttpProxyCacheServer;
+import com.devlin_n.library.FloatWindowManager;
 import com.devlin_n.magic_player.R;
 import com.devlin_n.magic_player.controller.BaseVideoController;
 import com.devlin_n.magic_player.controller.MagicVideoController;
 import com.devlin_n.magic_player.util.KeyUtil;
 import com.devlin_n.magic_player.util.NetworkUtil;
 import com.devlin_n.magic_player.util.WindowUtil;
-import com.devlin_n.magic_player.util.permission.FloatWindowManager;
 import com.devlin_n.magic_player.widget.MagicSurfaceView;
 import com.devlin_n.magic_player.widget.MagicTextureView;
 import com.devlin_n.magic_player.widget.StatusView;
@@ -60,9 +58,6 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
     private boolean isFullScreen;//是否处于全屏状态
     private boolean isMute;//是否静音
     private boolean useSurfaceView;//是否使用TextureView
-
-    public static final int ALERT_WINDOW_PERMISSION_CODE = 1;
-
 
     private String mCurrentUrl;//当前播放视频的地址
     private List<VideoModel> mVideoModels;//列表播放数据
@@ -280,10 +275,7 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
                 mVideoController.setPlayState(mCurrentState);
             }
         }
-
-        AppCompatActivity activity = WindowUtil.getAppCompActivity(getContext());
-        if (activity != null)
-            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        setKeepScreenOn(true);
     }
 
     private boolean checkNetwork() {
@@ -315,11 +307,9 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
                 mIjkPlayer.pause();
                 mCurrentState = STATE_PAUSED;
                 if (mVideoController != null) mVideoController.setPlayState(mCurrentState);
+                setKeepScreenOn(false);
             }
         }
-        AppCompatActivity activity = WindowUtil.getAppCompActivity(getContext());
-        if (activity != null)
-            activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     public void resume() {
@@ -327,10 +317,8 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
             mIjkPlayer.start();
             mCurrentState = STATE_PLAYING;
             if (mVideoController != null) mVideoController.setPlayState(mCurrentState);
+            setKeepScreenOn(true);
         }
-        AppCompatActivity activity = WindowUtil.getAppCompActivity(getContext());
-        if (activity != null)
-            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     public void stopPlayback() {
@@ -340,6 +328,7 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
             mIjkPlayer = null;
             mCurrentState = STATE_IDLE;
             mAudioManager.abandonAudioFocus(onAudioFocusChangeListener);
+            setKeepScreenOn(false);
         }
     }
 
@@ -351,6 +340,7 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
             mCurrentState = STATE_IDLE;
             if (mVideoController != null) mVideoController.setPlayState(mCurrentState);
             mAudioManager.abandonAudioFocus(onAudioFocusChangeListener);
+            setKeepScreenOn(false);
         }
         if (mAutoRotate && orientationEventListener != null) {
             orientationEventListener.disable();
@@ -501,18 +491,6 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
      */
     @Override
     public void startFloatWindow() {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {//Android M 以上系统需要请求权限
-//            if (!Settings.canDrawOverlays(WindowUtil.getAppCompActivity(getContext()))) {
-//                Toast.makeText(WindowUtil.getAppCompActivity(getContext()), R.string.float_window_warning, Toast.LENGTH_LONG).show();
-//                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-//                        Uri.parse("package:" + WindowUtil.getAppCompActivity(getContext()).getPackageName()));
-//                WindowUtil.getAppCompActivity(getContext()).startActivityForResult(intent, ALERT_WINDOW_PERMISSION_CODE);
-//            } else {
-//                startBackgroundService();
-//            }
-//        } else {
-//            startBackgroundService();
-//        }
 
         if (FloatWindowManager.getInstance().checkPermission(getContext())) {
             startBackgroundService();

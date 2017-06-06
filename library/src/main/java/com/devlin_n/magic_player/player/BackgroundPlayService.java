@@ -67,11 +67,13 @@ public class BackgroundPlayService extends Service {
         // 设置图片格式，效果为背景透明
         wmParams.format = PixelFormat.RGBA_8888;
         wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-        wmParams.gravity = Gravity.END | Gravity.BOTTOM; // 调整悬浮窗口至右下角
+        wmParams.gravity = Gravity.START | Gravity.TOP; // 调整悬浮窗口至右下角
         // 设置悬浮窗口长宽数据
         int width = WindowUtil.dip2px(getApplicationContext(), 250);
         wmParams.width = width;
         wmParams.height = width * 9 / 16;
+        wmParams.x = WindowUtil.getScreenWidth(getApplicationContext()) - width;
+        wmParams.y = WindowUtil.getScreenHeight(getApplicationContext(), false) / 2;
         floatView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.layout_float_window, null);
         videoView = (MagicVideoView) floatView.findViewById(R.id.video_view);
         floatView.findViewById(R.id.btn_close).setOnClickListener(new View.OnClickListener() {
@@ -96,7 +98,6 @@ public class BackgroundPlayService extends Service {
                         break;
                     case MotionEvent.ACTION_UP:
                     case MotionEvent.ACTION_MOVE:
-                        wmParams.gravity = Gravity.START | Gravity.TOP;
                         wmParams.x = X - floatX;
                         wmParams.y = Y - floatY;
                         wm.updateViewLayout(floatView, wmParams);

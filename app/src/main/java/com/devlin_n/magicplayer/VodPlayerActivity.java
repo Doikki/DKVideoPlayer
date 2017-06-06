@@ -1,12 +1,15 @@
 package com.devlin_n.magicplayer;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
+import com.devlin_n.library.FloatWindowManager;
 import com.devlin_n.magic_player.controller.MagicVideoController;
 import com.devlin_n.magic_player.player.MagicVideoView;
 import com.devlin_n.magic_player.player.VideoModel;
@@ -23,7 +26,7 @@ public class VodPlayerActivity extends AppCompatActivity {
 
     private MagicVideoView magicVideoView;
     private static final String URL_VOD = "http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv";
-//    private static final String URL_VOD = "http://uploads.cutv.com:8088/video/data/201703/10/encode_file/515b6a95601ba6b39620358f2677a17358c2472411d53.mp4";
+    //    private static final String URL_VOD = "http://uploads.cutv.com:8088/video/data/201703/10/encode_file/515b6a95601ba6b39620358f2677a17358c2472411d53.mp4";
     private static final String URL_AD = "http://gslb.miaopai.com/stream/FQXM04zrW1dcXGiPdJ6Q3KAq2Fpv4TLV.mp4";
 
     @Override
@@ -88,20 +91,16 @@ public class VodPlayerActivity extends AppCompatActivity {
         }
     }
 
-//    /**
-//     * 用户返回
-//     */
-//    @RequiresApi(api = Build.VERSION_CODES.M)
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (requestCode == ALERT_WINDOW_PERMISSION_CODE) {
-//            if (!Settings.canDrawOverlays(this)) {
-//                Toast.makeText(VodPlayerActivity.this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
-//            } else {
-//                magicVideoView.startFloatWindow();
-//            }
-//        }
-//    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == FloatWindowManager.PERMISSION_REQUEST_CODE) {
+            if (FloatWindowManager.getInstance().checkPermission(this)) {
+                magicVideoView.startFloatWindow();
+            } else {
+                Toast.makeText(VodPlayerActivity.this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
     public void startFloatWindow(View view) {
         magicVideoView.startFloatWindow();

@@ -1,9 +1,12 @@
 package com.devlin_n.magicplayer;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
+import com.devlin_n.library.FloatWindowManager;
 import com.devlin_n.magic_player.controller.MagicVideoController;
 import com.devlin_n.magic_player.player.MagicVideoView;
 
@@ -57,18 +60,14 @@ public class FullScreenActivity extends AppCompatActivity{
         }
     }
 
-//    /**
-//     * 用户返回
-//     */
-//    @RequiresApi(api = Build.VERSION_CODES.M)
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (requestCode == ALERT_WINDOW_PERMISSION_CODE) {
-//            if (!Settings.canDrawOverlays(this)) {
-//                Toast.makeText(FullScreenActivity.this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
-//            } else {
-//                magicVideoView.startFloatWindow();
-//            }
-//        }
-//    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == FloatWindowManager.PERMISSION_REQUEST_CODE) {
+            if (FloatWindowManager.getInstance().checkPermission(this)) {
+                magicVideoView.startFloatWindow();
+            } else {
+                Toast.makeText(FullScreenActivity.this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 }

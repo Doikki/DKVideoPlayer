@@ -83,4 +83,8 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("isLive", isLive);
         startActivity(intent);
     }
+
+    public void clearUrl(View view) {
+        editText.setText("");
+    }
 }
