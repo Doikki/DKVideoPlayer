@@ -7,7 +7,6 @@ import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -30,7 +29,6 @@ import java.util.Locale;
 
 public abstract class BaseVideoController extends FrameLayout {
 
-    private static final String TAG = BaseVideoController.class.getSimpleName();
     protected View controllerView;//控制器视图
     protected MediaPlayerControlInterface mediaPlayer;//播放器
     protected boolean mShowing;//控制器是否处于显示状态
@@ -40,6 +38,8 @@ public abstract class BaseVideoController extends FrameLayout {
     protected int sDefaultTimeout = 3000;
     private StringBuilder mFormatBuilder;
     private Formatter mFormatter;
+    private GestureDetector mGestureDetector;
+    protected boolean gestureEnabled;
 
 
     public BaseVideoController(@NonNull Context context) {
@@ -67,11 +67,11 @@ public abstract class BaseVideoController extends FrameLayout {
         setLongClickable(true);
         setClickable(true);
         setFocusable(true);
-        final GestureDetector gestureDetector = new GestureDetector(getContext(), new MyGestureListener());
+        mGestureDetector = new GestureDetector(getContext(), new MyGestureListener());
         this.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                return gestureDetector.onTouchEvent(event);
+                return mGestureDetector.onTouchEvent(event);
             }
         });
     }
@@ -166,17 +166,25 @@ public abstract class BaseVideoController extends FrameLayout {
 
     protected int mPosition;
 
+    protected boolean mNeedSeek;
+
     private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
 
-        private boolean mChangePosition;
         private boolean firstTouch;
+        private boolean mChangePosition;
+        private boolean mChangeBrightness;
+        private boolean mChangeVolume;
+
         @Override
         public boolean onDown(MotionEvent e) {
-            Log.d(TAG, "onDown: called");
+            if (!gestureEnabled) return super.onDown(e);
             streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
             mBrightness = WindowUtil.getAppCompActivity(getContext()).getWindow().getAttributes().screenBrightness;
             firstTouch = true;
-            return false;
+            mChangePosition = false;
+            mChangeBrightness = false;
+            mChangeVolume = false;
+            return true;
         }
 
         @Override
@@ -191,118 +199,52 @@ public abstract class BaseVideoController extends FrameLayout {
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            if (!isLocked && mediaPlayer.isFullScreen()) {
-                float x = e1.getX();
-                float y = e1.getY();
-                float mDownX = e2.getX();
-                float mDownY = e2.getY();
-
-                float deltaX = x - mDownX;
-                float deltaY = y - mDownY;
-
-                if (firstTouch) {
-                    mChangePosition = Math.abs(distanceX) >= Math.abs(distanceY);
-                    firstTouch = false;
-                }
-                if (mChangePosition) {
-                    slideToChangePosition(deltaX);
-                } else {
+            if (!gestureEnabled) return super.onScroll(e1, e2, distanceX, distanceY);
+            float deltaX = e1.getX() - e2.getX();
+            float deltaY = e1.getY() - e2.getY();
+            if (firstTouch) {
+                mChangePosition = Math.abs(distanceX) >= Math.abs(distanceY);
+                if (!mChangePosition) {
                     int screenWidth = WindowUtil.getScreenWidth(getContext());
-                    if (mDownX > screenWidth / 2) {
-                        slideToChangeBrightness(deltaY);
+                    if (e2.getX() > screenWidth / 2) {
+                        mChangeBrightness = true;
                     } else {
-                        slideToChangeVolume(deltaY);
+                        mChangeVolume = true;
                     }
                 }
+                firstTouch = false;
+            }
+            if (mChangePosition) {
+                slideToChangePosition(deltaX);
+            } else if (mChangeBrightness) {
+                slideToChangeBrightness(deltaY);
+            } else if (mChangeVolume) {
+                slideToChangeVolume(deltaY);
             }
             return true;
         }
 
-
         @Override
         public boolean onDoubleTap(MotionEvent e) {
-            doPauseResume();
+            if (!isLocked) doPauseResume();
             return true;
         }
     }
 
-
-//    @Override
-//    public boolean onTouchEvent(MotionEvent event) {
-//        float x = event.getX();
-//        float y = event.getY();
-//        switch (event.getAction()) {
-//            case MotionEvent.ACTION_DOWN:
-//                if (!isLocked && mediaPlayer.isFullScreen()) {
-//                    mDownX = event.getX();
-//                    mDownY = event.getY();
-//                    mChangeBrightness = false;
-//                    mChangeVolume = false;
-//                    mChangePosition = false;
-//                    mSliding = false;
-//                    mThreshold = 60;
-//                    streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-//                    mBrightness = WindowUtil.getAppCompActivity(getContext()).getWindow().getAttributes().screenBrightness;
-//                }
-//                break;
-//            case MotionEvent.ACTION_MOVE:
-//                if (!isLocked && mediaPlayer.isFullScreen()) {
-//                    float deltaX = x - mDownX;
-//                    float deltaY = y - mDownY;
-//                    float absDeltaX = Math.abs(deltaX);
-//                    float absDeltaY = Math.abs(deltaY);
-//                    if (absDeltaX < mThreshold && absDeltaY < mThreshold) return false;
-//                    if (!mSliding) {
-//                        if (absDeltaX > absDeltaY) {
-//                            mChangePosition = true;
-//                            mSliding = true;
-//                        } else {
-//                            int screenWidth = WindowUtil.getScreenWidth(getContext());
-//
-//                            if (mDownX > screenWidth / 2) {
-//                                mChangeBrightness = true;
-//                                mSliding = true;
-//                            } else {
-//                                mChangeVolume = true;
-//                                mSliding = true;
-//                            }
-//                        }
-//                        mThreshold = 0;
-//                    }
-//
-//                    if (mChangePosition) {
-//                        slideToChangePosition(deltaX);
-//                    } else if (mChangeVolume) {
-//                        slideToChangeVolume(deltaY);
-//                    } else if (mChangeBrightness) {
-//                        slideToChangeBrightness(deltaY);
-//                    }
-//                }
-//                break;
-//            case MotionEvent.ACTION_UP:
-//                if (!mSliding) {
-//                    if (isShowing()) {
-//                        hide();
-//                    } else {
-//                        show();
-//                    }
-//                }
-//                if (!isLocked && mediaPlayer.isFullScreen()) {
-//                    if (mSliding) {
-//                        mCenterView.setVisibility(GONE);
-//                        mSliding = false;
-//                    }
-//                    if (mChangePosition) mediaPlayer.seekTo(mPosition);
-//                }
-//                break;
-//            case MotionEvent.ACTION_CANCEL:
-//                hide();
-//                break;
-//            default:
-//                break;
-//        }
-//        return ;
-//    }
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        boolean detectedUp = event.getAction() == MotionEvent.ACTION_UP;
+        if (!mGestureDetector.onTouchEvent(event) && detectedUp) {
+            if (mCenterView.getVisibility() == VISIBLE) {
+                mCenterView.setVisibility(GONE);
+            }
+            if (mNeedSeek) {
+                mediaPlayer.seekTo(mPosition);
+                mNeedSeek = false;
+            }
+        }
+        return true;
+    }
 
     protected void slideToChangePosition(float deltaX) {
         mCenterView.setVisibility(VISIBLE);
@@ -322,13 +264,13 @@ public abstract class BaseVideoController extends FrameLayout {
         if (position < 0) position = 0;
         mPosition = position;
         mCenterView.setTextView(stringForTime(position) + "/" + stringForTime(duration));
+        mNeedSeek = true;
     }
 
     protected void slideToChangeBrightness(float deltaY) {
         mCenterView.setVisibility(VISIBLE);
         hide();
         mCenterView.setProVisibility(View.VISIBLE);
-//        deltaY = -deltaY;
         Window window = WindowUtil.getAppCompActivity(getContext()).getWindow();
         WindowManager.LayoutParams attributes = window.getAttributes();
         mCenterView.setIcon(R.drawable.ic_brightness);
@@ -350,7 +292,6 @@ public abstract class BaseVideoController extends FrameLayout {
         mCenterView.setVisibility(VISIBLE);
         hide();
         mCenterView.setProVisibility(View.VISIBLE);
-//        deltaY = -deltaY;
         int streamMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         int height = getMeasuredHeight();
         float deltaV = deltaY * 2 / height * streamMaxVolume;

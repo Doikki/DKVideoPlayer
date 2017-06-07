@@ -117,6 +117,7 @@ public class MagicVideoController extends BaseVideoController implements View.On
         switch (playerState) {
             case MagicVideoView.PLAYER_NORMAL:
                 if (isLocked) return;
+                gestureEnabled = false;
                 fullScreenButton.setSelected(false);
                 backButton.setVisibility(INVISIBLE);
                 lock.setVisibility(INVISIBLE);
@@ -125,6 +126,7 @@ public class MagicVideoController extends BaseVideoController implements View.On
                 break;
             case MagicVideoView.PLAYER_FULL_SCREEN:
                 if (isLocked) return;
+                gestureEnabled = true;
                 fullScreenButton.setSelected(true);
                 statusHolder.setVisibility(VISIBLE);
                 backButton.setVisibility(VISIBLE);
@@ -154,19 +156,20 @@ public class MagicVideoController extends BaseVideoController implements View.On
                 playButton.setSelected(true);
                 thumb.setVisibility(GONE);
                 completeContainer.setVisibility(GONE);
-//                hide();
+                hide();
                 break;
             case MagicVideoView.STATE_PAUSED:
                 L.e("STATE_PAUSED");
                 playButton.setSelected(false);
-//                show(0);
+                show(0);
                 break;
             case MagicVideoView.STATE_PREPARING:
                 L.e("STATE_PREPARING");
+                playButton.clearAnimation();
                 playButton.setVisibility(GONE);
-                bufferProgress.setVisibility(VISIBLE);
                 thumb.setVisibility(GONE);
                 completeContainer.setVisibility(GONE);
+                bufferProgress.setVisibility(VISIBLE);
                 break;
             case MagicVideoView.STATE_PREPARED:
                 L.e("STATE_PREPARED");
@@ -180,8 +183,9 @@ public class MagicVideoController extends BaseVideoController implements View.On
                 break;
             case MagicVideoView.STATE_BUFFERING:
                 L.e("STATE_BUFFERING");
-                bufferProgress.setVisibility(VISIBLE);
+                playButton.clearAnimation();
                 playButton.setVisibility(GONE);
+                bufferProgress.setVisibility(VISIBLE);
                 break;
             case MagicVideoView.STATE_BUFFERED:
                 L.e("STATE_BUFFERED");
@@ -205,12 +209,14 @@ public class MagicVideoController extends BaseVideoController implements View.On
         if (isLocked) {
             isLocked = false;
             mShowing = false;
+            gestureEnabled = true;
             show();
             lock.setSelected(false);
             Toast.makeText(getContext(), R.string.unlocked, Toast.LENGTH_SHORT).show();
         } else {
             hide();
             isLocked = true;
+            gestureEnabled = false;
             lock.setSelected(true);
             Toast.makeText(getContext(), R.string.locked, Toast.LENGTH_SHORT).show();
         }
@@ -361,6 +367,7 @@ public class MagicVideoController extends BaseVideoController implements View.On
         mediaPlayer.setLock(false);
         playButton.setSelected(false);
         completeContainer.setVisibility(GONE);
+        bufferProgress.setVisibility(GONE);
         playButton.setVisibility(VISIBLE);
         thumb.setVisibility(VISIBLE);
     }
@@ -398,14 +405,14 @@ public class MagicVideoController extends BaseVideoController implements View.On
     }
 
 
-//    @Override
-//    protected void slideToChangePosition(float deltaX) {
-//        if (!isLive && mediaPlayer.getDuration() > 0) {
-//            super.slideToChangePosition(deltaX);
-//        } else {
-//            mSliding = false;
-//        }
-//    }
+    @Override
+    protected void slideToChangePosition(float deltaX) {
+        if (isLive) {
+            mNeedSeek = false;
+        } else {
+            super.slideToChangePosition(deltaX);
+        }
+    }
 
     public ImageView getThumb(){
         return thumb;
