@@ -85,6 +85,8 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
     public static final int PLAYER_FULL_SCREEN = 11;   // 全屏播放器
 
     private AudioManager mAudioManager;//系统音频管理器
+    @NonNull
+    private AudioFocusHelper mAudioFocusHelper = new AudioFocusHelper();
 
     public static final int SCREEN_TYPE_DEFAULT = 0;
     public static final int SCREEN_TYPE_16_9 = 1;
@@ -140,8 +142,7 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
                 ((IjkMediaPlayer) mMediaPlayer).setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 1);
                 ((IjkMediaPlayer) mMediaPlayer).setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", 1);
             }
-            mAudioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
-            mAudioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+            mAudioManager = (AudioManager) getContext().getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mMediaPlayer.setOnErrorListener(onErrorListener);
             mMediaPlayer.setOnCompletionListener(onCompletionListener);
@@ -271,6 +272,7 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
                 MagicPlayerManager.instance().releaseVideoView();
                 MagicPlayerManager.instance().setCurrentVideoView(this);
             }
+            if (mAutoRotate && orientationEventListener != null) orientationEventListener.enable();
             initPlayer();
             startPrepare();
         } else if (isInPlaybackState()) {
@@ -281,6 +283,7 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
             }
         }
         setKeepScreenOn(true);
+        mAudioFocusHelper.requestFocus();
     }
 
     private boolean checkNetwork() {
@@ -313,6 +316,7 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
                 mCurrentState = STATE_PAUSED;
                 if (mVideoController != null) mVideoController.setPlayState(mCurrentState);
                 setKeepScreenOn(false);
+                mAudioFocusHelper.abandonFocus();
             }
         }
     }
@@ -322,6 +326,7 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
             mMediaPlayer.start();
             mCurrentState = STATE_PLAYING;
             if (mVideoController != null) mVideoController.setPlayState(mCurrentState);
+            mAudioFocusHelper.requestFocus();
             setKeepScreenOn(true);
         }
     }
@@ -332,26 +337,30 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
             mMediaPlayer.release();
             mMediaPlayer = null;
             mCurrentState = STATE_IDLE;
-            mAudioManager.abandonAudioFocus(onAudioFocusChangeListener);
+            mAudioFocusHelper.abandonFocus();
             setKeepScreenOn(false);
         }
     }
 
     public void release() {
         if (mMediaPlayer != null) {
-            mMediaPlayer.reset();
-            mMediaPlayer.release();
-            mMediaPlayer = null;
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    mMediaPlayer.reset();
+                    mMediaPlayer.release();
+                    mMediaPlayer = null;
+                }
+            });
             mCurrentState = STATE_IDLE;
             if (mVideoController != null) mVideoController.setPlayState(mCurrentState);
-            mAudioManager.abandonAudioFocus(onAudioFocusChangeListener);
+            mAudioFocusHelper.abandonFocus();
             setKeepScreenOn(false);
         }
         if (mAutoRotate && orientationEventListener != null) {
             orientationEventListener.disable();
-            orientationEventListener = null;
         }
-        getCacheServer().unregisterCacheListener(cacheListener);
+        if (isCache) getCacheServer().unregisterCacheListener(cacheListener);
 
         if (mVideoController != null) mVideoController.reset();
 
@@ -691,7 +700,12 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
                 if (mMediaPlayer instanceof IjkMediaPlayer) {
                     initPlayer();
                 } else {
+                    mMediaPlayer.setOnErrorListener(onErrorListener);
+                    mMediaPlayer.setOnCompletionListener(onCompletionListener);
+                    mMediaPlayer.setOnInfoListener(onInfoListener);
+                    mMediaPlayer.setOnBufferingUpdateListener(onBufferingUpdateListener);
                     mMediaPlayer.setOnPreparedListener(onPreparedListener);
+                    mMediaPlayer.setOnVideoSizeChangedListener(onVideoSizeChangedListener);
                 }
                 startPrepare();
             }
@@ -789,27 +803,83 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
     /**
      * 音频焦点改变监听
      */
-    private AudioManager.OnAudioFocusChangeListener onAudioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
+    private class AudioFocusHelper implements AudioManager.OnAudioFocusChangeListener {
+        boolean startRequested = false;
+        boolean pausedForLoss = false;
+        int currentFocus = 0;
+
         @Override
         public void onAudioFocusChange(int focusChange) {
-            try {
-                switch (focusChange) {
-                    case AudioManager.AUDIOFOCUS_GAIN:
-                        break;
-                    case AudioManager.AUDIOFOCUS_LOSS:
+            if (currentFocus == focusChange) {
+                return;
+            }
+
+            currentFocus = focusChange;
+            switch (focusChange) {
+                case AudioManager.AUDIOFOCUS_GAIN:
+                case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT:
+                    if (startRequested || pausedForLoss) {
+                        start();
+                        startRequested = false;
+                        pausedForLoss = false;
+                    }
+                    break;
+                case AudioManager.AUDIOFOCUS_LOSS:
+                    if (isPlaying()) {
+                        pausedForLoss = true;
                         pause();
-                        break;
-                    case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+                    }
+                    break;
+                case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+                case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+                    if (isPlaying()) {
+                        pausedForLoss = true;
                         pause();
-                        break;
-                    case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
-                        break;
-                }
-            } catch (IllegalStateException e) {
-                e.printStackTrace();
+                    }
+                    break;
             }
         }
-    };
+
+        /**
+         * Requests to obtain the audio focus
+         *
+         * @return True if the focus was granted
+         */
+        boolean requestFocus() {
+            if (currentFocus == AudioManager.AUDIOFOCUS_GAIN) {
+                return true;
+            }
+
+            if (mAudioManager == null) {
+                return false;
+            }
+
+            int status = mAudioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+            if (AudioManager.AUDIOFOCUS_REQUEST_GRANTED == status) {
+                currentFocus = AudioManager.AUDIOFOCUS_GAIN;
+                return true;
+            }
+
+            startRequested = true;
+            return false;
+        }
+
+        /**
+         * Requests the system to drop the audio focus
+         *
+         * @return True if the focus was lost
+         */
+        boolean abandonFocus() {
+
+            if (mAudioManager == null) {
+                return false;
+            }
+
+            startRequested = false;
+            int status = mAudioManager.abandonAudioFocus(this);
+            return AudioManager.AUDIOFOCUS_REQUEST_GRANTED == status;
+        }
+    }
 
     /**
      * 设置自动旋转
@@ -860,7 +930,6 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
                 }
             }
         };
-        orientationEventListener.enable();
         return this;
     }
 }

@@ -151,6 +151,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
                     .into(magicVideoController.getThumb());
             holder.magicVideoView
 //                    .enableCache()
+                    .autoRotate()
                     .useAndroidMediaPlayer()
                     .addToPlayerManager()
                     .setUrl(videoBean.getUrl())

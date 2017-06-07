@@ -3,9 +3,12 @@ package com.devlin_n.magic_player.controller;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.media.AudioManager;
+import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -44,7 +47,12 @@ public abstract class BaseVideoController extends FrameLayout {
     }
 
     public BaseVideoController(@NonNull Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
+
+    }
+
+    public BaseVideoController(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
         initView();
     }
 
@@ -56,6 +64,16 @@ public abstract class BaseVideoController extends FrameLayout {
         mAudioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
         mFormatBuilder = new StringBuilder();
         mFormatter = new Formatter(mFormatBuilder, Locale.getDefault());
+        setLongClickable(true);
+        setClickable(true);
+        setFocusable(true);
+        final GestureDetector gestureDetector = new GestureDetector(getContext(), new MyGestureListener());
+        this.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return gestureDetector.onTouchEvent(event);
+            }
+        });
     }
 
     /**
@@ -81,8 +99,11 @@ public abstract class BaseVideoController extends FrameLayout {
     public void reset() {
     }
 
-    public void setPlayState(int playState){}
-    public void setPlayerState(int playerState){}
+    public void setPlayState(int playState) {
+    }
+
+    public void setPlayerState(int playerState) {
+    }
 
     /**
      * 返回控制器的显示状态
@@ -139,106 +160,155 @@ public abstract class BaseVideoController extends FrameLayout {
         return 0;
     }
 
-    private float mDownX, mDownY;
-
-    protected boolean mChangeVolume = false;//是否改变音量
-
-    protected boolean mChangePosition = false;//是否改变播放进度
-
-    protected boolean mChangeBrightness = false;
-
     protected int streamVolume;
 
     protected float mBrightness;
 
-    protected boolean mSliding;
-
     protected int mPosition;
 
-    private int mThreshold;
+    private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
 
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        float x = event.getX();
-        float y = event.getY();
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                if (!isLocked && mediaPlayer.isFullScreen()) {
-                    mDownX = event.getX();
-                    mDownY = event.getY();
-                    mChangeBrightness = false;
-                    mChangeVolume = false;
-                    mChangePosition = false;
-                    mSliding = false;
-                    mThreshold = 60;
-                    streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-                    mBrightness = WindowUtil.getAppCompActivity(getContext()).getWindow().getAttributes().screenBrightness;
-                }
-                break;
-            case MotionEvent.ACTION_MOVE:
-                if (!isLocked && mediaPlayer.isFullScreen()) {
-                    float deltaX = x - mDownX;
-                    float deltaY = y - mDownY;
-                    float absDeltaX = Math.abs(deltaX);
-                    float absDeltaY = Math.abs(deltaY);
-                    if (absDeltaX < mThreshold && absDeltaY < mThreshold) return false;
-                    if (!mSliding) {
-                        if (absDeltaX > absDeltaY) {
-                            mChangePosition = true;
-                            mSliding = true;
-                        } else {
-                            int screenWidth = WindowUtil.getScreenWidth(getContext());
-
-                            if (mDownX > screenWidth / 2) {
-                                mChangeBrightness = true;
-                                mSliding = true;
-                            } else {
-                                mChangeVolume = true;
-                                mSliding = true;
-                            }
-                        }
-                        mThreshold = 0;
-                    }
-
-                    if (mChangePosition) {
-                        slideToChangePosition(deltaX);
-                    } else if (mChangeVolume) {
-                        slideToChangeVolume(deltaY);
-                    } else if (mChangeBrightness) {
-                        slideToChangeBrightness(deltaY);
-                    }
-                }
-                break;
-            case MotionEvent.ACTION_UP:
-                if (!mSliding) {
-                    if (isShowing()) {
-                        hide();
-                    } else {
-                        show();
-                    }
-                }
-                if (!isLocked && mediaPlayer.isFullScreen()) {
-                    if (mSliding) {
-                        mCenterView.setVisibility(GONE);
-                        mSliding = false;
-                    }
-                    if (mChangePosition) mediaPlayer.seekTo(mPosition);
-                }
-                break;
-            case MotionEvent.ACTION_CANCEL:
-                hide();
-                break;
-            default:
-                break;
+        private boolean mChangePosition;
+        private boolean firstTouch;
+        @Override
+        public boolean onDown(MotionEvent e) {
+            Log.d(TAG, "onDown: called");
+            streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+            mBrightness = WindowUtil.getAppCompActivity(getContext()).getWindow().getAttributes().screenBrightness;
+            firstTouch = true;
+            return false;
         }
-        return true;
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            if (isShowing()) {
+                hide();
+            } else {
+                show();
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            if (!isLocked && mediaPlayer.isFullScreen()) {
+                float x = e1.getX();
+                float y = e1.getY();
+                float mDownX = e2.getX();
+                float mDownY = e2.getY();
+
+                float deltaX = x - mDownX;
+                float deltaY = y - mDownY;
+
+                if (firstTouch) {
+                    mChangePosition = Math.abs(distanceX) >= Math.abs(distanceY);
+                    firstTouch = false;
+                }
+                if (mChangePosition) {
+                    slideToChangePosition(deltaX);
+                } else {
+                    int screenWidth = WindowUtil.getScreenWidth(getContext());
+                    if (mDownX > screenWidth / 2) {
+                        slideToChangeBrightness(deltaY);
+                    } else {
+                        slideToChangeVolume(deltaY);
+                    }
+                }
+            }
+            return true;
+        }
+
+
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            doPauseResume();
+            return true;
+        }
     }
+
+
+//    @Override
+//    public boolean onTouchEvent(MotionEvent event) {
+//        float x = event.getX();
+//        float y = event.getY();
+//        switch (event.getAction()) {
+//            case MotionEvent.ACTION_DOWN:
+//                if (!isLocked && mediaPlayer.isFullScreen()) {
+//                    mDownX = event.getX();
+//                    mDownY = event.getY();
+//                    mChangeBrightness = false;
+//                    mChangeVolume = false;
+//                    mChangePosition = false;
+//                    mSliding = false;
+//                    mThreshold = 60;
+//                    streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+//                    mBrightness = WindowUtil.getAppCompActivity(getContext()).getWindow().getAttributes().screenBrightness;
+//                }
+//                break;
+//            case MotionEvent.ACTION_MOVE:
+//                if (!isLocked && mediaPlayer.isFullScreen()) {
+//                    float deltaX = x - mDownX;
+//                    float deltaY = y - mDownY;
+//                    float absDeltaX = Math.abs(deltaX);
+//                    float absDeltaY = Math.abs(deltaY);
+//                    if (absDeltaX < mThreshold && absDeltaY < mThreshold) return false;
+//                    if (!mSliding) {
+//                        if (absDeltaX > absDeltaY) {
+//                            mChangePosition = true;
+//                            mSliding = true;
+//                        } else {
+//                            int screenWidth = WindowUtil.getScreenWidth(getContext());
+//
+//                            if (mDownX > screenWidth / 2) {
+//                                mChangeBrightness = true;
+//                                mSliding = true;
+//                            } else {
+//                                mChangeVolume = true;
+//                                mSliding = true;
+//                            }
+//                        }
+//                        mThreshold = 0;
+//                    }
+//
+//                    if (mChangePosition) {
+//                        slideToChangePosition(deltaX);
+//                    } else if (mChangeVolume) {
+//                        slideToChangeVolume(deltaY);
+//                    } else if (mChangeBrightness) {
+//                        slideToChangeBrightness(deltaY);
+//                    }
+//                }
+//                break;
+//            case MotionEvent.ACTION_UP:
+//                if (!mSliding) {
+//                    if (isShowing()) {
+//                        hide();
+//                    } else {
+//                        show();
+//                    }
+//                }
+//                if (!isLocked && mediaPlayer.isFullScreen()) {
+//                    if (mSliding) {
+//                        mCenterView.setVisibility(GONE);
+//                        mSliding = false;
+//                    }
+//                    if (mChangePosition) mediaPlayer.seekTo(mPosition);
+//                }
+//                break;
+//            case MotionEvent.ACTION_CANCEL:
+//                hide();
+//                break;
+//            default:
+//                break;
+//        }
+//        return ;
+//    }
 
     protected void slideToChangePosition(float deltaX) {
         mCenterView.setVisibility(VISIBLE);
         hide();
         mCenterView.setProVisibility(View.GONE);
+        deltaX = -deltaX;
         int width = getMeasuredWidth();
         int duration = mediaPlayer.getDuration();
         int currentPosition = mediaPlayer.getCurrentPosition();
@@ -258,7 +328,7 @@ public abstract class BaseVideoController extends FrameLayout {
         mCenterView.setVisibility(VISIBLE);
         hide();
         mCenterView.setProVisibility(View.VISIBLE);
-        deltaY = -deltaY;
+//        deltaY = -deltaY;
         Window window = WindowUtil.getAppCompActivity(getContext()).getWindow();
         WindowManager.LayoutParams attributes = window.getAttributes();
         mCenterView.setIcon(R.drawable.ic_brightness);
@@ -280,7 +350,7 @@ public abstract class BaseVideoController extends FrameLayout {
         mCenterView.setVisibility(VISIBLE);
         hide();
         mCenterView.setProVisibility(View.VISIBLE);
-        deltaY = -deltaY;
+//        deltaY = -deltaY;
         int streamMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         int height = getMeasuredHeight();
         float deltaV = deltaY * 2 / height * streamMaxVolume;

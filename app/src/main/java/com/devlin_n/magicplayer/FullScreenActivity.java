@@ -27,7 +27,7 @@ public class FullScreenActivity extends AppCompatActivity{
         magicVideoView
                 .autoRotate()
                 .alwaysFullScreen()
-                .useAndroidMediaPlayer()
+//                .useAndroidMediaPlayer()
                 .setTitle("这是一个标题")
                 .setUrl("http://flv2.bn.netease.com/videolib3/1611/28/GbgsL3639/HD/movie_index.m3u8")
                 .setVideoController(new MagicVideoController(this))

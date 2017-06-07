@@ -1,6 +1,7 @@
 package com.devlin_n.magic_player.controller;
 
 import android.content.Context;
+import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -48,7 +49,11 @@ public class MagicVideoController extends BaseVideoController implements View.On
     }
 
     public MagicVideoController(@NonNull Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
+    }
+
+    public MagicVideoController(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
     }
 
     @Override
@@ -149,12 +154,12 @@ public class MagicVideoController extends BaseVideoController implements View.On
                 playButton.setSelected(true);
                 thumb.setVisibility(GONE);
                 completeContainer.setVisibility(GONE);
-                hide();
+//                hide();
                 break;
             case MagicVideoView.STATE_PAUSED:
                 L.e("STATE_PAUSED");
                 playButton.setSelected(false);
-                show(0);
+//                show(0);
                 break;
             case MagicVideoView.STATE_PREPARING:
                 L.e("STATE_PREPARING");
@@ -393,14 +398,14 @@ public class MagicVideoController extends BaseVideoController implements View.On
     }
 
 
-    @Override
-    protected void slideToChangePosition(float deltaX) {
-        if (!isLive && mediaPlayer.getDuration() > 0) {
-            super.slideToChangePosition(deltaX);
-        } else {
-            mSliding = false;
-        }
-    }
+//    @Override
+//    protected void slideToChangePosition(float deltaX) {
+//        if (!isLive && mediaPlayer.getDuration() > 0) {
+//            super.slideToChangePosition(deltaX);
+//        } else {
+//            mSliding = false;
+//        }
+//    }
 
     public ImageView getThumb(){
         return thumb;
