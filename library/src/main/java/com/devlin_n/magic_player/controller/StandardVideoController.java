@@ -25,7 +25,7 @@ import com.devlin_n.magic_player.util.WindowUtil;
  * Created by Devlin_n on 2017/4/7.
  */
 
-public class MagicVideoController extends BaseVideoController implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+public class StandardVideoController extends BaseVideoController implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
     protected TextView totalTime, currTime;
     protected ImageView fullScreenButton;
     protected LinearLayout bottomContainer, topContainer;
@@ -42,23 +42,24 @@ public class MagicVideoController extends BaseVideoController implements View.On
     private ProgressBar bufferProgress;
     private ImageView thumb;
     private LinearLayout completeContainer;
+    private boolean showTopContainer;
 
 
-    public MagicVideoController(@NonNull Context context) {
+    public StandardVideoController(@NonNull Context context) {
         this(context, null);
     }
 
-    public MagicVideoController(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public StandardVideoController(@NonNull Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public MagicVideoController(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
+    public StandardVideoController(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
     @Override
     protected int getLayoutId() {
-        return R.layout.layout_video_controller;
+        return R.layout.layout_standard_controller;
     }
 
     @Override
@@ -75,7 +76,6 @@ public class MagicVideoController extends BaseVideoController implements View.On
         currTime = (TextView) controllerView.findViewById(R.id.curr_time);
         floatScreen.setOnClickListener(this);
         backButton = (ImageView) controllerView.findViewById(R.id.back);
-        backButton.setVisibility(INVISIBLE);
         backButton.setOnClickListener(this);
         lock = (ImageView) controllerView.findViewById(R.id.lock);
         lock.setOnClickListener(this);
@@ -91,11 +91,6 @@ public class MagicVideoController extends BaseVideoController implements View.On
         title = (TextView) controllerView.findViewById(R.id.title);
         statusHolder = controllerView.findViewById(R.id.status_holder);
         statusHolder.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) WindowUtil.getStatusBarHeight(getContext())));
-        statusHolder.setVisibility(GONE);
-        topContainer.setVisibility(GONE);
-        bottomContainer.setVisibility(GONE);
-        lock.setVisibility(GONE);
-        bufferProgress.setVisibility(GONE);
     }
 
     @Override
@@ -112,6 +107,11 @@ public class MagicVideoController extends BaseVideoController implements View.On
         }
     }
 
+    public void showTopContainer() {
+        this.showTopContainer = true;
+        topContainer.setVisibility(VISIBLE);
+    }
+
     @Override
     public void setPlayerState(int playerState) {
         switch (playerState) {
@@ -119,10 +119,10 @@ public class MagicVideoController extends BaseVideoController implements View.On
                 if (isLocked) return;
                 gestureEnabled = false;
                 fullScreenButton.setSelected(false);
-                backButton.setVisibility(INVISIBLE);
-                lock.setVisibility(INVISIBLE);
-                topContainer.setVisibility(INVISIBLE);
+                backButton.setVisibility(GONE);
+                lock.setVisibility(GONE);
                 statusHolder.setVisibility(GONE);
+                if (mShowing) topContainer.setVisibility(showTopContainer ? VISIBLE : GONE);
                 break;
             case MagicVideoView.PLAYER_FULL_SCREEN:
                 if (isLocked) return;
@@ -130,14 +130,13 @@ public class MagicVideoController extends BaseVideoController implements View.On
                 fullScreenButton.setSelected(true);
                 statusHolder.setVisibility(VISIBLE);
                 backButton.setVisibility(VISIBLE);
-                if (isShowing()) {
+                if (mShowing) {
                     lock.setVisibility(VISIBLE);
                     topContainer.setVisibility(VISIBLE);
                     WindowUtil.showNavKey(getContext());
                     WindowUtil.showStatusBar(getContext());
                 } else {
-                    lock.setVisibility(INVISIBLE);
-                    topContainer.setVisibility(INVISIBLE);
+                    lock.setVisibility(GONE);
                 }
                 break;
         }
@@ -149,13 +148,13 @@ public class MagicVideoController extends BaseVideoController implements View.On
         switch (playState) {
             case MagicVideoView.STATE_IDLE:
                 L.e("STATE_IDLE");
-                thumb.setVisibility(VISIBLE);
                 break;
             case MagicVideoView.STATE_PLAYING:
                 L.e("STATE_PLAYING");
                 playButton.setSelected(true);
                 thumb.setVisibility(GONE);
                 completeContainer.setVisibility(GONE);
+                topContainer.setVisibility(GONE);
                 hide();
                 break;
             case MagicVideoView.STATE_PAUSED:
@@ -165,10 +164,10 @@ public class MagicVideoController extends BaseVideoController implements View.On
                 break;
             case MagicVideoView.STATE_PREPARING:
                 L.e("STATE_PREPARING");
-                playButton.clearAnimation();
                 playButton.setVisibility(GONE);
-                thumb.setVisibility(GONE);
+//                thumb.setVisibility(GONE);
                 completeContainer.setVisibility(GONE);
+                topContainer.setVisibility(GONE);
                 bufferProgress.setVisibility(VISIBLE);
                 break;
             case MagicVideoView.STATE_PREPARED:
@@ -183,7 +182,6 @@ public class MagicVideoController extends BaseVideoController implements View.On
                 break;
             case MagicVideoView.STATE_BUFFERING:
                 L.e("STATE_BUFFERING");
-                playButton.clearAnimation();
                 playButton.setVisibility(GONE);
                 bufferProgress.setVisibility(VISIBLE);
                 break;
@@ -199,6 +197,11 @@ public class MagicVideoController extends BaseVideoController implements View.On
                 hide();
                 thumb.setVisibility(VISIBLE);
                 completeContainer.setVisibility(VISIBLE);
+                if (mediaPlayer.isFullScreen()) {
+                    topContainer.setVisibility(GONE);
+                } else {
+                    topContainer.setVisibility(showTopContainer ? VISIBLE : GONE);
+                }
                 isLocked = false;
                 mediaPlayer.setLock(false);
                 break;
@@ -274,21 +277,20 @@ public class MagicVideoController extends BaseVideoController implements View.On
     @Override
     public void hide() {
         removeCallbacks(mShowProgress);
-        removeCallbacks(mFadeOut);
+//        removeCallbacks(mFadeOut);
         if (mShowing) {
+            startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_out));
             if (mediaPlayer.isFullScreen()) {
                 lock.setVisibility(GONE);
-                lock.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_out));
                 if (!isLocked) {
                     hideAllViews();
+                    WindowUtil.hideStatusBar(getContext());
+                    WindowUtil.hideNavKey(getContext());
+                    topContainer.setVisibility(GONE);
                 }
             } else {
-                bottomContainer.setVisibility(GONE);
-                bottomContainer.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_slide_bottom_out));
-                if (bufferProgress.getVisibility() != VISIBLE) {
-                    playButton.setVisibility(GONE);
-                    playButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_out));
-                }
+                if (showTopContainer) topContainer.setVisibility(GONE);
+                hideAllViews();
             }
             mShowing = false;
         }
@@ -297,14 +299,9 @@ public class MagicVideoController extends BaseVideoController implements View.On
     private void hideAllViews() {
         if (bufferProgress.getVisibility() != VISIBLE) {
             playButton.setVisibility(GONE);
-            playButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_out));
         }
         bottomContainer.setVisibility(GONE);
-        bottomContainer.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_slide_bottom_out));
-        topContainer.setVisibility(GONE);
-        topContainer.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_slide_top_out));
-        WindowUtil.hideStatusBar(getContext());
-        WindowUtil.hideNavKey(getContext());
+
     }
 
     private void show(int timeout) {
@@ -313,20 +310,14 @@ public class MagicVideoController extends BaseVideoController implements View.On
                 lock.setVisibility(VISIBLE);
                 if (!isLocked) {
                     showAllViews();
+                    topContainer.setVisibility(VISIBLE);
                 }
             } else {
-                if (bufferProgress.getVisibility() != VISIBLE) {
-                    playButton.setVisibility(VISIBLE);
-                    playButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_in));
-                }
-                bottomContainer.setVisibility(VISIBLE);
-                bottomContainer.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_slide_bottom_in));
-                topContainer.setVisibility(GONE);
-                if (isLive) {
-                    videoProgress.setVisibility(INVISIBLE);
-                    totalTime.setVisibility(INVISIBLE);
-                }
+                showAllViews();
+                if (showTopContainer)
+                    topContainer.setVisibility(VISIBLE);
             }
+//            startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_in));
             mShowing = true;
         }
         post(mShowProgress);
@@ -340,12 +331,8 @@ public class MagicVideoController extends BaseVideoController implements View.On
     private void showAllViews() {
         if (bufferProgress.getVisibility() != VISIBLE) {
             playButton.setVisibility(VISIBLE);
-            playButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_in));
         }
         bottomContainer.setVisibility(VISIBLE);
-        bottomContainer.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_slide_bottom_in));
-        topContainer.setVisibility(VISIBLE);
-        topContainer.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_slide_top_in));
         WindowUtil.showStatusBar(getContext());
         WindowUtil.showNavKey(getContext());
         if (isLive) {
@@ -370,6 +357,11 @@ public class MagicVideoController extends BaseVideoController implements View.On
         bufferProgress.setVisibility(GONE);
         playButton.setVisibility(VISIBLE);
         thumb.setVisibility(VISIBLE);
+        if (!mediaPlayer.isFullScreen() && showTopContainer) {
+            topContainer.setVisibility(VISIBLE);
+        } else {
+            topContainer.setVisibility(GONE);
+        }
     }
 
     @Override
@@ -414,7 +406,7 @@ public class MagicVideoController extends BaseVideoController implements View.On
         }
     }
 
-    public ImageView getThumb(){
+    public ImageView getThumb() {
         return thumb;
     }
 }

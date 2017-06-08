@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/default_spacing"
         android:textColor="@android:color/white"
-        android:textSize="@dimen/controller_text_size"
+        android:textSize="@dimen/controller_time_text_size"
         tools:text="100"/>
     <ProgressBar
         android:id="@+id/pro_percent"

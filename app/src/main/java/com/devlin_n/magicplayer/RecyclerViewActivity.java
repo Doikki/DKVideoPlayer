@@ -11,9 +11,10 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
-import com.devlin_n.magic_player.controller.MagicVideoController;
+import com.devlin_n.magic_player.controller.StandardVideoController;
 import com.devlin_n.magic_player.player.MagicPlayerManager;
 import com.devlin_n.magic_player.player.MagicVideoView;
 
@@ -144,15 +145,18 @@ public class RecyclerViewActivity extends AppCompatActivity {
         public void onBindViewHolder(VideoHolder holder, int position) {
 
             VideoBean videoBean = videos.get(position);
-            MagicVideoController magicVideoController = new MagicVideoController(context);
+            StandardVideoController magicVideoController = new StandardVideoController(context);
+            magicVideoController.showTopContainer();
             Glide.with(context)
                     .load(videoBean.getThumb())
                     .asBitmap()
+                    .animate(R.anim.anim_alpha_in)
+                    .placeholder(android.R.color.darker_gray)
                     .into(magicVideoController.getThumb());
             holder.magicVideoView
-//                    .enableCache()
+                    .enableCache()
                     .autoRotate()
-                    .useAndroidMediaPlayer()
+//                    .useAndroidMediaPlayer()
                     .addToPlayerManager()
                     .setUrl(videoBean.getUrl())
                     .setTitle(videoBean.getTitle())
@@ -172,6 +176,8 @@ public class RecyclerViewActivity extends AppCompatActivity {
             public VideoHolder(View itemView) {
                 super(itemView);
                 magicVideoView = (MagicVideoView) itemView.findViewById(R.id.video_view);
+                int widthPixels = getResources().getDisplayMetrics().widthPixels;
+                magicVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 16 * 9));
             }
         }
     }

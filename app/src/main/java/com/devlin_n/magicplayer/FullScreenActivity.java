@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.devlin_n.library.FloatWindowManager;
-import com.devlin_n.magic_player.controller.MagicVideoController;
+import com.devlin_n.magic_player.controller.StandardVideoController;
 import com.devlin_n.magic_player.player.MagicVideoView;
 
 /**
@@ -30,7 +30,7 @@ public class FullScreenActivity extends AppCompatActivity{
 //                .useAndroidMediaPlayer()
                 .setTitle("这是一个标题")
                 .setUrl("http://flv2.bn.netease.com/videolib3/1611/28/GbgsL3639/HD/movie_index.m3u8")
-                .setVideoController(new MagicVideoController(this))
+                .setVideoController(new StandardVideoController(this))
                 .setScreenType(MagicVideoView.SCREEN_TYPE_16_9)
                 .start();
     }

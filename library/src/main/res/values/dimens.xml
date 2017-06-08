@@ -2,9 +2,10 @@
 <resources>
     <dimen name="controller_height">40dp</dimen>
     <dimen name="controller_icon_padding">10dp</dimen>
-    <dimen name="controller_text_size">14sp</dimen>
+    <dimen name="controller_text_size">16sp</dimen>
     <dimen name="default_spacing">10dp</dimen>
-    <dimen name="controller_seekbar_size">12dp</dimen>
-    <dimen name="controller_seekbar_max_size">2dp</dimen>
+    <dimen name="controller_seekbar_size">14dp</dimen>
+    <dimen name="controller_seekbar_max_size">1dp</dimen>
     <dimen name="player_play_btn_size">50dp</dimen>
+    <dimen name="controller_time_text_size">14sp</dimen>
 </resources>

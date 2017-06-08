@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.devlin_n.library.FloatWindowManager;
-import com.devlin_n.magic_player.controller.MagicVideoController;
+import com.devlin_n.magic_player.controller.StandardVideoController;
 import com.devlin_n.magic_player.player.MagicVideoView;
 import com.devlin_n.magic_player.player.VideoModel;
 
@@ -43,18 +43,17 @@ public class VodPlayerActivity extends AppCompatActivity {
 //        magicVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 16 * 9));
 
         List<VideoModel> videos = new ArrayList<>();
-        videos.add(new VideoModel(URL_AD, "广告", new MagicVideoController(this)));
-        videos.add(new VideoModel(URL_VOD, "网易公开课-如何掌控你的自由时间", new MagicVideoController(this)));
+        videos.add(new VideoModel(URL_AD, "广告", new StandardVideoController(this)));
+        videos.add(new VideoModel(URL_VOD, "网易公开课-如何掌控你的自由时间", new StandardVideoController(this)));
 
         magicVideoView
                 .autoRotate()
-//                .enableCache()
+                .enableCache()
 //                .useSurfaceView()
-                .useAndroidMediaPlayer()
+//                .useAndroidMediaPlayer()
                 .setVideos(videos)
 //                .setUrl(URL_VOD)
 //                .setTitle("网易公开课-如何掌控你的自由时间")
-                .setVideoController(new MagicVideoController(this))
                 .start();
     }
 

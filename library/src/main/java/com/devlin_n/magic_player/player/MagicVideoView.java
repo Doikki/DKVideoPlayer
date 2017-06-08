@@ -25,7 +25,6 @@ import com.danikula.videocache.HttpProxyCacheServer;
 import com.devlin_n.library.FloatWindowManager;
 import com.devlin_n.magic_player.R;
 import com.devlin_n.magic_player.controller.BaseVideoController;
-import com.devlin_n.magic_player.controller.MagicVideoController;
 import com.devlin_n.magic_player.util.KeyUtil;
 import com.devlin_n.magic_player.util.NetworkUtil;
 import com.devlin_n.magic_player.util.WindowUtil;
@@ -46,7 +45,7 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
  * Created by Devlin_n on 2017/4/7.
  */
 
-public class MagicVideoView extends FrameLayout implements MagicVideoController.MediaPlayerControlInterface {
+public class MagicVideoView extends FrameLayout implements BaseVideoController.MediaPlayerControlInterface {
 
     private IMediaPlayer mMediaPlayer;//ijkPlayer
     private BaseVideoController mVideoController;//控制器
@@ -537,6 +536,7 @@ public class MagicVideoView extends FrameLayout implements MagicVideoController.
     /**
      * 关闭画中画
      */
+    @Override
     public void stopFloatWindow() {
         Intent intent = new Intent(getContext(), BackgroundPlayService.class);
         getContext().getApplicationContext().stopService(intent);

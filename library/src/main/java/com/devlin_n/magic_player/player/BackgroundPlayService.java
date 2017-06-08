@@ -6,15 +6,12 @@ import android.graphics.PixelFormat;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.WindowManager;
 
-import com.devlin_n.magic_player.R;
 import com.devlin_n.magic_player.controller.FloatController;
 import com.devlin_n.magic_player.util.KeyUtil;
 import com.devlin_n.magic_player.util.WindowUtil;
+import com.devlin_n.magic_player.widget.FloatView;
 
 /**
  * 悬浮播放
@@ -26,9 +23,8 @@ public class BackgroundPlayService extends Service {
     private WindowManager.LayoutParams wmParams;
     private MagicVideoView videoView;
     private String url;
-    private View floatView;
+    private FloatView floatView;
     private int position;
-    private Intent intent;
     private boolean isCache;
 
     @Nullable
@@ -39,7 +35,6 @@ public class BackgroundPlayService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        this.intent = intent;
         url = intent.getStringExtra(KeyUtil.URL);
         position = intent.getIntExtra(KeyUtil.POSITION, 0);
         isCache = intent.getBooleanExtra(KeyUtil.ENABLE_CACHE, false);
@@ -74,38 +69,8 @@ public class BackgroundPlayService extends Service {
         wmParams.height = width * 9 / 16;
         wmParams.x = WindowUtil.getScreenWidth(getApplicationContext()) - width;
         wmParams.y = WindowUtil.getScreenHeight(getApplicationContext(), false) / 2;
-        floatView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.layout_float_window, null);
-        videoView = (MagicVideoView) floatView.findViewById(R.id.video_view);
-        floatView.findViewById(R.id.btn_close).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               stopService(intent);
-            }
-        });
-        floatView.setOnTouchListener(new View.OnTouchListener() {
-            private int floatX;
-            private int floatY;
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                final int X = (int) event.getRawX();
-                final int Y = (int) event.getRawY();
-
-                switch (event.getAction() & MotionEvent.ACTION_MASK) {
-                    case MotionEvent.ACTION_DOWN:
-                        floatX = (int) event.getX();
-                        floatY = (int) (event.getY() + WindowUtil.getStatusBarHeight(getApplicationContext()));
-                        break;
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_MOVE:
-                        wmParams.x = X - floatX;
-                        wmParams.y = Y - floatY;
-                        wm.updateViewLayout(floatView, wmParams);
-                        break;
-                }
-                return false;
-            }
-        });
+        floatView = new FloatView(getApplicationContext(), wm, wmParams);
+        videoView = floatView.magicVideoView;
     }
 
     @Override

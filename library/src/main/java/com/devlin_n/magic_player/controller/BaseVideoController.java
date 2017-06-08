@@ -11,6 +11,7 @@ import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -40,6 +41,8 @@ public abstract class BaseVideoController extends FrameLayout {
     private Formatter mFormatter;
     private GestureDetector mGestureDetector;
     protected boolean gestureEnabled;
+    private float downX;
+    private float downY;
 
 
     public BaseVideoController(@NonNull Context context) {
@@ -64,7 +67,6 @@ public abstract class BaseVideoController extends FrameLayout {
         mAudioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
         mFormatBuilder = new StringBuilder();
         mFormatter = new Formatter(mFormatBuilder, Locale.getDefault());
-        setLongClickable(true);
         setClickable(true);
         setFocusable(true);
         mGestureDetector = new GestureDetector(getContext(), new MyGestureListener());
@@ -160,6 +162,28 @@ public abstract class BaseVideoController extends FrameLayout {
         return 0;
     }
 
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                downX = ev.getX();
+                downY = ev.getY();
+                // True if the child does not want the parent to intercept touch events.
+                getParent().requestDisallowInterceptTouchEvent(true);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                float absDeltaX = Math.abs(ev.getX() - downX);
+                float absDeltaY = Math.abs(ev.getY() - downY);
+                if (absDeltaX > ViewConfiguration.get(getContext()).getScaledTouchSlop() ||
+                        absDeltaY > ViewConfiguration.get(getContext()).getScaledTouchSlop()) {
+                    getParent().requestDisallowInterceptTouchEvent(false);
+                }
+            case MotionEvent.ACTION_UP:
+                break;
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
     protected int streamVolume;
 
     protected float mBrightness;
@@ -243,7 +267,7 @@ public abstract class BaseVideoController extends FrameLayout {
                 mNeedSeek = false;
             }
         }
-        return true;
+        return super.onTouchEvent(event);
     }
 
     protected void slideToChangePosition(float deltaX) {
@@ -354,6 +378,8 @@ public abstract class BaseVideoController extends FrameLayout {
         int getBufferPercentage();
 
         void startFloatWindow();
+
+        void stopFloatWindow();
 
         void startFullScreen();
 

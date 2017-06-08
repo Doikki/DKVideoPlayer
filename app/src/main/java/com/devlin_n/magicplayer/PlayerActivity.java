@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.devlin_n.library.FloatWindowManager;
-import com.devlin_n.magic_player.controller.MagicVideoController;
+import com.devlin_n.magic_player.controller.StandardVideoController;
 import com.devlin_n.magic_player.player.MagicVideoView;
 
 /**
@@ -35,7 +35,7 @@ public class PlayerActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         if (intent != null) {
-            MagicVideoController controller = new MagicVideoController(this);
+            StandardVideoController controller = new StandardVideoController(this);
             boolean isLive = intent.getBooleanExtra("isLive", false);
             if (isLive) {
                 controller.setLive(true);

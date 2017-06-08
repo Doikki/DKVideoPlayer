@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.devlin_n.library.FloatWindowManager;
-import com.devlin_n.magic_player.controller.MagicVideoController;
+import com.devlin_n.magic_player.controller.StandardVideoController;
 import com.devlin_n.magic_player.player.MagicVideoView;
 
 /**
@@ -36,7 +36,7 @@ public class LivePlayerActivity extends AppCompatActivity {
 //        int widthPixels = getResources().getDisplayMetrics().widthPixels;
 //        magicVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 4 * 3));
 
-        MagicVideoController controller = new MagicVideoController(this);
+        StandardVideoController controller = new StandardVideoController(this);
         controller.setLive(true);
 
         magicVideoView

@@ -2,12 +2,27 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <ImageView
+        android:id="@+id/iv_play"
+        android:layout_width="@dimen/player_play_btn_size"
+        android:layout_height="@dimen/player_play_btn_size"
+        android:layout_gravity="center"
+        android:background="@drawable/shape_play_bg"
+        android:padding="@dimen/controller_icon_padding"
+        android:src="@drawable/selector_play_button" />
 
     <ProgressBar
         android:id="@+id/buffering"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="@dimen/player_play_btn_size"
+        android:layout_height="@dimen/player_play_btn_size"
         android:layout_gravity="center"
         android:indeterminateDrawable="@drawable/progress_loading" />
+    <ImageView
+        android:id="@+id/btn_close"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_gravity="end"
+        android:layout_margin="4dp"
+        android:src="@drawable/ic_close" />
 
 </FrameLayout>
