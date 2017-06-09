@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.devlin_n.magic_player.player.MagicVideoView
+    <com.devlin_n.yin_yang_player.player.YinYangPlayer
         android:id="@+id/magic_video_view"
         android:layout_width="match_parent"
         android:layout_height="300dp" />

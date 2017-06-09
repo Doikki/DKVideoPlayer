@@ -37,7 +37,7 @@
                 android:layout_height="@dimen/controller_height"
                 android:layout_gravity="center"
                 android:padding="@dimen/controller_icon_padding"
-                android:src="@drawable/ic_back"
+                android:src="@drawable/ic_action_arrow_back"
                 android:visibility="gone"
                 tools:visibility="visible"/>
 
@@ -58,8 +58,9 @@
                 android:layout_height="@dimen/controller_height"
                 android:layout_gravity="center"
                 android:padding="@dimen/controller_icon_padding"
-                android:src="@drawable/ic_pip"
-                android:visibility="gone" />
+                android:src="@drawable/ic_action_picture_in_picture"
+                android:visibility="gone"
+                tools:visibility="visible"/>
         </LinearLayout>
     </LinearLayout>
 
@@ -92,8 +93,7 @@
             android:layout_weight="1"
             android:background="@null"
             android:max="1000"
-            android:maxHeight="@dimen/controller_seekbar_max_size"
-            android:minHeight="@dimen/controller_seekbar_max_size"
+            android:maxHeight="2dp"
             android:progressDrawable="@drawable/seekbar_progress"
             android:thumb="@drawable/seekbar_thumb" />
 
@@ -129,15 +129,6 @@
         android:visibility="gone"
         tools:visibility="visible"/>
 
-    <ImageView
-        android:id="@+id/iv_play"
-        android:layout_width="@dimen/player_play_btn_size"
-        android:layout_height="@dimen/player_play_btn_size"
-        android:layout_gravity="center"
-        android:background="@drawable/shape_play_bg"
-        android:padding="@dimen/controller_icon_padding"
-        android:src="@drawable/selector_play_button" />
-
     <LinearLayout
         android:id="@+id/complete_container"
         android:layout_width="match_parent"
@@ -153,7 +144,7 @@
             android:layout_gravity="center"
             android:background="@drawable/shape_play_bg"
             android:padding="@dimen/controller_icon_padding"
-            android:src="@drawable/ic_refresh" />
+            android:src="@drawable/ic_action_replay" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -164,13 +155,20 @@
 
     </LinearLayout>
 
+    <com.devlin_n.yin_yang_player.widget.PlayProgressButton
+        android:id="@+id/play_progress_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
 
     <ProgressBar
-        android:id="@+id/buffering"
-        android:layout_width="@dimen/player_play_btn_size"
-        android:layout_height="@dimen/player_play_btn_size"
-        android:layout_gravity="center"
-        android:indeterminateDrawable="@drawable/progress_loading"
-        android:visibility="gone"
-        tools:visibility="visible"/>
+        android:id="@+id/bottom_progress"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:max="1000"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:progressDrawable="@drawable/seekbar_progress"
+        android:layout_gravity="bottom"
+        android:visibility="gone"/>
+
 </FrameLayout>

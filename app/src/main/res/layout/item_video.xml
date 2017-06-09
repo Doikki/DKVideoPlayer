@@ -7,7 +7,7 @@
         android:layout_height="10dp"
         android:background="@android:color/white"/>
 
-    <com.devlin_n.magic_player.player.MagicVideoView
+    <com.devlin_n.yin_yang_player.player.YinYangPlayer
         android:id="@+id/video_view"
         android:layout_width="match_parent"
         android:layout_height="250dp"/>
