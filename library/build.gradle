@@ -27,4 +27,6 @@ dependencies {
 //    compile "tv.danmaku.ijk.media:ijkplayer-armv7a:$rootProject.ijkPlayerVersion"
     compile 'com.danikula:videocache:2.7.0'
     compile 'com.github.DevlinChiu:FloatWindowPermission:1.0'
+    compile 'com.github.ctiao:DanmakuFlameMaster:0.8.3'
+    compile 'com.github.ctiao:ndkbitmap-armv7a:0.8.3'
 }

@@ -59,9 +59,9 @@ public class RecyclerViewActivity extends AppCompatActivity {
 
             @Override
             public void onChildViewDetachedFromWindow(View view) {
-                YinYangPlayer magicVideoView = (YinYangPlayer) view.findViewById(R.id.video_view);
-                if (magicVideoView != null) {
-                    magicVideoView.release();
+                YinYangPlayer yinYangPlayer = (YinYangPlayer) view.findViewById(R.id.video_view);
+                if (yinYangPlayer != null) {
+                    yinYangPlayer.release();
                 }
             }
         });
@@ -153,7 +153,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
                     .animate(R.anim.anim_alpha_in)
                     .placeholder(android.R.color.darker_gray)
                     .into(magicVideoController.getThumb());
-            holder.magicVideoView
+            holder.yinYangPlayer
                     .enableCache()
                     .autoRotate()
 //                    .useAndroidMediaPlayer()
@@ -171,13 +171,13 @@ public class RecyclerViewActivity extends AppCompatActivity {
 
         class VideoHolder extends RecyclerView.ViewHolder {
 
-            private YinYangPlayer magicVideoView;
+            private YinYangPlayer yinYangPlayer;
 
             public VideoHolder(View itemView) {
                 super(itemView);
-                magicVideoView = (YinYangPlayer) itemView.findViewById(R.id.video_view);
+                yinYangPlayer = (YinYangPlayer) itemView.findViewById(R.id.video_view);
                 int widthPixels = getResources().getDisplayMetrics().widthPixels;
-                magicVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 16 * 9));
+                yinYangPlayer.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 16 * 9));
             }
         }
     }

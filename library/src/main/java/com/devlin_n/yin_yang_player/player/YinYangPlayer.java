@@ -36,6 +36,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import master.flame.danmaku.danmaku.model.android.DanmakuContext;
+import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
+import master.flame.danmaku.ui.widget.DanmakuView;
 import tv.danmaku.ijk.media.player.AndroidMediaPlayer;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
@@ -52,6 +55,9 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
     private YinYangSurfaceView mSurfaceView;
     private YinYangTextureView mTextureView;
     private SurfaceTexture mSurfaceTexture;
+    private DanmakuView mDanmakuView;
+    private DanmakuContext mContext;
+    private BaseDanmakuParser mParser;
     private FrameLayout playerContainer;
     private StatusView statusView;//显示错误信息的一个view
     private int bufferPercentage;//缓冲百分比
@@ -157,6 +163,10 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
         } else {
             addTextureView();
         }
+        if (mDanmakuView != null){
+            playerContainer.removeView(mDanmakuView);
+            playerContainer.addView(mDanmakuView, 1);
+        }
     }
 
     /**
@@ -181,6 +191,9 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
             if (mVideoController != null) {
                 mVideoController.setPlayState(mCurrentState);
                 mVideoController.setPlayerState(isFullScreen ? PLAYER_FULL_SCREEN : PLAYER_NORMAL);
+            }
+            if (mDanmakuView != null) {
+                mDanmakuView.prepare(mParser, mContext);
             }
         } catch (IOException e) {
             mCurrentState = STATE_ERROR;
@@ -280,6 +293,9 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
             if (mVideoController != null) {
                 mVideoController.setPlayState(mCurrentState);
             }
+            if (mDanmakuView != null && mDanmakuView.isPrepared() && mDanmakuView.isPaused()) {
+                mDanmakuView.resume();
+            }
         }
         setKeepScreenOn(true);
         mAudioFocusHelper.requestFocus();
@@ -317,6 +333,9 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
                 setKeepScreenOn(false);
                 mAudioFocusHelper.abandonFocus();
             }
+            if (mDanmakuView != null && mDanmakuView.isPrepared()) {
+                mDanmakuView.pause();
+            }
         }
     }
 
@@ -327,6 +346,9 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
             if (mVideoController != null) mVideoController.setPlayState(mCurrentState);
             mAudioFocusHelper.requestFocus();
             setKeepScreenOn(true);
+        }
+        if (mDanmakuView != null && mDanmakuView.isPrepared() && mDanmakuView.isPaused()) {
+            mDanmakuView.resume();
         }
     }
 
@@ -351,6 +373,11 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
             mAudioFocusHelper.abandonFocus();
             setKeepScreenOn(false);
         }
+        if (mDanmakuView != null) {
+            // dont forget release!
+            mDanmakuView.release();
+            mDanmakuView = null;
+        }
         if (mAutoRotate && orientationEventListener != null) {
             orientationEventListener.disable();
         }
@@ -367,6 +394,16 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
 
         isLocked = false;
         mCurrentPosition = 0;
+    }
+
+    /**
+     * 添加弹幕
+     */
+    public YinYangPlayer addDanmukuView(DanmakuView danmakuView, DanmakuContext context, BaseDanmakuParser parser) {
+        this.mDanmakuView = danmakuView;
+        this.mContext = context;
+        this.mParser = parser;
+        return this;
     }
 
     /**
@@ -486,6 +523,7 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
     public void seekTo(int pos) {
         if (isInPlaybackState()) {
             mMediaPlayer.seekTo(pos);
+            if (mDanmakuView != null) mDanmakuView.seekTo((long) pos);
         }
     }
 

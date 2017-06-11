@@ -17,14 +17,14 @@ import com.devlin_n.yin_yang_player.player.YinYangPlayer;
 
 public class FullScreenActivity extends AppCompatActivity{
 
-    private YinYangPlayer magicVideoView;
+    private YinYangPlayer yinYangPlayer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        magicVideoView = new YinYangPlayer(this);
-        setContentView(magicVideoView);
-        magicVideoView
+        yinYangPlayer = new YinYangPlayer(this);
+        setContentView(yinYangPlayer);
+        yinYangPlayer
                 .autoRotate()
                 .alwaysFullScreen()
 //                .useAndroidMediaPlayer()
@@ -38,25 +38,25 @@ public class FullScreenActivity extends AppCompatActivity{
     @Override
     protected void onPause() {
         super.onPause();
-        magicVideoView.pause();
+        yinYangPlayer.pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        magicVideoView.resume();
-        magicVideoView.stopFloatWindow();
+        yinYangPlayer.resume();
+        yinYangPlayer.stopFloatWindow();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        magicVideoView.release();
+        yinYangPlayer.release();
     }
 
     @Override
     public void onBackPressed() {
-        if (!magicVideoView.onBackPressed()){
+        if (!yinYangPlayer.onBackPressed()){
             super.onBackPressed();
         }
     }
@@ -65,7 +65,7 @@ public class FullScreenActivity extends AppCompatActivity{
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == FloatWindowManager.PERMISSION_REQUEST_CODE) {
             if (FloatWindowManager.getInstance().checkPermission(this)) {
-                magicVideoView.startFloatWindow();
+                yinYangPlayer.startFloatWindow();
             } else {
                 Toast.makeText(FullScreenActivity.this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
             }

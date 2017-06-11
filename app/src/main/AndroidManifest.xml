@@ -43,6 +43,10 @@
             android:name="com.devlin_n.yyplayer.PlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
+        <activity
+            android:name="com.devlin_n.yyplayer.DanmakuActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
