@@ -64,7 +64,7 @@ public class BackgroundPlayService extends Service {
         wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
         wmParams.gravity = Gravity.START | Gravity.TOP; // 调整悬浮窗口至右下角
         // 设置悬浮窗口长宽数据
-        int width = WindowUtil.dip2px(getApplicationContext(), 250);
+        int width = WindowUtil.dp2px(getApplicationContext(), 250);
         wmParams.width = width;
         wmParams.height = width * 9 / 16;
         wmParams.x = WindowUtil.getScreenWidth(getApplicationContext()) - width;

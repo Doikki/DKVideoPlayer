@@ -58,10 +58,20 @@
             android:layout_height="wrap_content"
             android:text="隐藏弹幕"
             android:onClick="hideDanMu"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="发送一条弹幕"
+            android:text="发送一条普通弹幕"
             android:onClick="addDanmaku"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="发送一条自定义弹幕"
+            android:onClick="addDanmakuWithDrawable"/>
     </LinearLayout>
 </LinearLayout>

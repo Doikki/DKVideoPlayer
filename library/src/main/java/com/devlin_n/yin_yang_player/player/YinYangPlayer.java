@@ -51,6 +51,7 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 public class YinYangPlayer extends FrameLayout implements BaseVideoController.MediaPlayerControlInterface {
 
     private IMediaPlayer mMediaPlayer;//ijkPlayer
+    @Nullable
     private BaseVideoController mVideoController;//控制器
     private YinYangSurfaceView mSurfaceView;
     private YinYangTextureView mTextureView;
@@ -701,20 +702,6 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
             mCurrentState = STATE_ERROR;
             if (mVideoController != null) mVideoController.setPlayState(mCurrentState);
             mCurrentPosition = getCurrentPosition();
-            playerContainer.removeView(statusView);
-            if (statusView == null) {
-                statusView = new StatusView(getContext());
-            }
-            statusView.setMessage(getResources().getString(R.string.error_message));
-            statusView.setButtonTextAndAction(getResources().getString(R.string.retry), new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    playerContainer.removeView(statusView);
-                    initPlayer();
-                    startPrepare();
-                }
-            });
-            playerContainer.addView(statusView);
             return true;
         }
     };

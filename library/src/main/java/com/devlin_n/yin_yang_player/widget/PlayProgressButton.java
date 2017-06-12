@@ -47,12 +47,12 @@ public class PlayProgressButton extends FrameLayout {
 
 
     private void init() {
-        LayoutParams params = new LayoutParams(WindowUtil.dip2px(getContext(), 50), WindowUtil.dip2px(getContext(), 50));
+        LayoutParams params = new LayoutParams(WindowUtil.dp2px(getContext(), 50), WindowUtil.dp2px(getContext(), 50));
 
         playButton = new ImageView(getContext());
         playButton.setImageResource(R.drawable.selector_play_button);
         playButton.setBackgroundResource(R.drawable.shape_play_bg);
-        int playPadding = WindowUtil.dip2px(getContext(), 10);
+        int playPadding = WindowUtil.dp2px(getContext(), 10);
         playButton.setPadding(playPadding, playPadding, playPadding, playPadding);
         addView(playButton, params);
 
