@@ -43,6 +43,8 @@ public abstract class BaseVideoController extends FrameLayout {
     protected boolean gestureEnabled;
     private float downX;
     private float downY;
+    protected int screenWidth;
+    protected int screenHeight;
 
 
     public BaseVideoController(@NonNull Context context) {
@@ -76,6 +78,8 @@ public abstract class BaseVideoController extends FrameLayout {
                 return mGestureDetector.onTouchEvent(event);
             }
         });
+        screenWidth = WindowUtil.getScreenWidth(getContext());
+        screenHeight = WindowUtil.getScreenHeight(getContext(), false);
     }
 
     /**
@@ -215,8 +219,7 @@ public abstract class BaseVideoController extends FrameLayout {
             if (firstTouch) {
                 mChangePosition = Math.abs(distanceX) >= Math.abs(distanceY);
                 if (!mChangePosition) {
-                    int screenWidth = WindowUtil.getScreenWidth(getContext());
-                    if (e2.getX() > screenWidth / 2) {
+                    if (e2.getX() > screenHeight / 2) {
                         mChangeBrightness = true;
                     } else {
                         mChangeVolume = true;

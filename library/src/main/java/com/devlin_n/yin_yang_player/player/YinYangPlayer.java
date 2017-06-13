@@ -742,6 +742,7 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
         if (mMediaPlayer instanceof IjkMediaPlayer) {
             initPlayer();
         } else {
+            mMediaPlayer.setVolume(1, 1);
             mMediaPlayer.setOnErrorListener(onErrorListener);
             mMediaPlayer.setOnCompletionListener(onCompletionListener);
             mMediaPlayer.setOnInfoListener(onInfoListener);

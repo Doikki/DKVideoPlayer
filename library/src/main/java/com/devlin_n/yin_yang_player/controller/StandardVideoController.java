@@ -140,7 +140,7 @@ public class StandardVideoController extends BaseVideoController implements View
             case YinYangPlayer.PLAYER_FULL_SCREEN:
                 if (isLocked) return;
                 setLayoutParams(new FrameLayout.LayoutParams(
-                        WindowUtil.getScreenHeight(getContext(), false),
+                        screenHeight,
                         ViewGroup.LayoutParams.MATCH_PARENT));
                 gestureEnabled = true;
                 fullScreenButton.setSelected(true);
