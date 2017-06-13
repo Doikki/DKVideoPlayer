@@ -20,7 +20,7 @@ import com.devlin_n.yin_yang_player.player.YinYangPlayer;
 
 public class LivePlayerActivity extends AppCompatActivity {
 
-    private YinYangPlayer magicVideoView;
+    private YinYangPlayer yinYangPlayer;
     private static final String URL = "http://ivi.bupt.edu.cn/hls/hunanhd.m3u8";
 
     @Override
@@ -32,14 +32,14 @@ public class LivePlayerActivity extends AppCompatActivity {
             actionBar.setTitle("LIVE");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        magicVideoView = (YinYangPlayer) findViewById(R.id.magic_video_view);
+        yinYangPlayer = (YinYangPlayer) findViewById(R.id.magic_video_view);
 //        int widthPixels = getResources().getDisplayMetrics().widthPixels;
-//        magicVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 4 * 3));
+//        yinYangPlayer.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 4 * 3));
 
         StandardVideoController controller = new StandardVideoController(this);
         controller.setLive(true);
 
-        magicVideoView
+        yinYangPlayer
                 .autoRotate()
 //                .useAndroidMediaPlayer()
                 .setUrl(URL)
@@ -59,26 +59,26 @@ public class LivePlayerActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        magicVideoView.pause();
+        yinYangPlayer.pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        magicVideoView.resume();
-        magicVideoView.stopFloatWindow();
+        yinYangPlayer.resume();
+        yinYangPlayer.stopFloatWindow();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        magicVideoView.release();
+        yinYangPlayer.release();
     }
 
 
     @Override
     public void onBackPressed() {
-        if (!magicVideoView.onBackPressed()) {
+        if (!yinYangPlayer.onBackPressed()) {
             super.onBackPressed();
         }
     }
@@ -87,7 +87,7 @@ public class LivePlayerActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == FloatWindowManager.PERMISSION_REQUEST_CODE) {
             if (FloatWindowManager.getInstance().checkPermission(this)) {
-                magicVideoView.startFloatWindow();
+                yinYangPlayer.startFloatWindow();
             } else {
                 Toast.makeText(LivePlayerActivity.this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
             }
@@ -95,26 +95,26 @@ public class LivePlayerActivity extends AppCompatActivity {
     }
 
     public void startFloatWindow(View view) {
-        magicVideoView.startFloatWindow();
+        yinYangPlayer.startFloatWindow();
     }
 
     public void wide(View view) {
-        magicVideoView.setScreenType(YinYangPlayer.SCREEN_TYPE_16_9);
+        yinYangPlayer.setScreenType(YinYangPlayer.SCREEN_TYPE_16_9);
     }
 
     public void tv(View view) {
-        magicVideoView.setScreenType(YinYangPlayer.SCREEN_TYPE_4_3);
+        yinYangPlayer.setScreenType(YinYangPlayer.SCREEN_TYPE_4_3);
     }
 
     public void match(View view) {
-        magicVideoView.setScreenType(YinYangPlayer.SCREEN_TYPE_MATCH_PARENT);
+        yinYangPlayer.setScreenType(YinYangPlayer.SCREEN_TYPE_MATCH_PARENT);
     }
 
     public void original(View view) {
-        magicVideoView.setScreenType(YinYangPlayer.SCREEN_TYPE_ORIGINAL);
+        yinYangPlayer.setScreenType(YinYangPlayer.SCREEN_TYPE_ORIGINAL);
     }
 
     public void defaultSize(View view) {
-        magicVideoView.setScreenType(YinYangPlayer.SCREEN_TYPE_DEFAULT);
+        yinYangPlayer.setScreenType(YinYangPlayer.SCREEN_TYPE_DEFAULT);
     }
 }

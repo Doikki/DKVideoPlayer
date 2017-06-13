@@ -57,6 +57,7 @@ public class FloatController extends BaseVideoController implements View.OnClick
 
     @Override
     public void setPlayState(int playState) {
+        super.setPlayState(playState);
         switch (playState) {
             case YinYangPlayer.STATE_IDLE:
                 break;

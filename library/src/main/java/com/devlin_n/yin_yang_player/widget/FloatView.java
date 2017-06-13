@@ -34,7 +34,7 @@ public class FloatView extends FrameLayout{
 
     private void init() {
         setBackgroundResource(R.drawable.shape_float_window_background);
-        int padding = WindowUtil.dip2px(getContext(), 1);
+        int padding = WindowUtil.dp2px(getContext(), 1);
         setPadding(padding, padding, padding, padding);
         magicVideoView = new YinYangPlayer(getContext());
         addView(magicVideoView);

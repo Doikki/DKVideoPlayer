@@ -43,6 +43,8 @@ public abstract class BaseVideoController extends FrameLayout {
     protected boolean gestureEnabled;
     private float downX;
     private float downY;
+    protected int screenWidth;
+    protected int screenHeight;
 
 
     public BaseVideoController(@NonNull Context context) {
@@ -76,6 +78,8 @@ public abstract class BaseVideoController extends FrameLayout {
                 return mGestureDetector.onTouchEvent(event);
             }
         });
+        screenWidth = WindowUtil.getScreenWidth(getContext());
+        screenHeight = WindowUtil.getScreenHeight(getContext(), false);
     }
 
     /**
@@ -95,25 +99,11 @@ public abstract class BaseVideoController extends FrameLayout {
     public void hide() {
     }
 
-    /**
-     * 重置
-     */
-    public void reset() {
-    }
-
     public void setPlayState(int playState) {
     }
 
     public void setPlayerState(int playerState) {
     }
-
-    /**
-     * 返回控制器的显示状态
-     */
-    public boolean isShowing() {
-        return mShowing;
-    }
-
 
     public void startFullScreenDirectly() {
 
@@ -213,7 +203,7 @@ public abstract class BaseVideoController extends FrameLayout {
 
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
-            if (isShowing()) {
+            if (mShowing) {
                 hide();
             } else {
                 show();
@@ -229,8 +219,7 @@ public abstract class BaseVideoController extends FrameLayout {
             if (firstTouch) {
                 mChangePosition = Math.abs(distanceX) >= Math.abs(distanceY);
                 if (!mChangePosition) {
-                    int screenWidth = WindowUtil.getScreenWidth(getContext());
-                    if (e2.getX() > screenWidth / 2) {
+                    if (e2.getX() > screenHeight / 2) {
                         mChangeBrightness = true;
                     } else {
                         mChangeVolume = true;

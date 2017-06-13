@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ContextThemeWrapper;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
@@ -189,11 +190,17 @@ public class WindowUtil {
     }
 
     /**
-     * dip转为px
+     * dp转为px
      */
-    public static int dip2px(Context context, float dipValue) {
-        float fontScale = context.getResources().getDisplayMetrics().density;
-        return (int) (dipValue * fontScale + 0.5f);
+    public static int dp2px(Context context, float dpValue) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValue, context.getResources().getDisplayMetrics());
+    }
+
+    /**
+     * sp转为px
+     */
+    public static int sp2px(Context context, float dpValue) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, dpValue, context.getResources().getDisplayMetrics());
     }
 
     /**

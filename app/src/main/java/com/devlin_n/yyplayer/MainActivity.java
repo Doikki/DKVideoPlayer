@@ -87,4 +87,8 @@ public class MainActivity extends AppCompatActivity {
     public void clearUrl(View view) {
         editText.setText("");
     }
+
+    public void danmaku(View view) {
+        startActivity(new Intent(this, DanmakuActivity.class));
+    }
 }

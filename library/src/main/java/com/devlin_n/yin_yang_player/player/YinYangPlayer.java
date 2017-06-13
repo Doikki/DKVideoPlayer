@@ -28,14 +28,17 @@ import com.devlin_n.yin_yang_player.controller.BaseVideoController;
 import com.devlin_n.yin_yang_player.util.KeyUtil;
 import com.devlin_n.yin_yang_player.util.NetworkUtil;
 import com.devlin_n.yin_yang_player.util.WindowUtil;
+import com.devlin_n.yin_yang_player.widget.StatusView;
 import com.devlin_n.yin_yang_player.widget.YinYangSurfaceView;
 import com.devlin_n.yin_yang_player.widget.YinYangTextureView;
-import com.devlin_n.yin_yang_player.widget.StatusView;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import master.flame.danmaku.danmaku.model.android.DanmakuContext;
+import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
+import master.flame.danmaku.ui.widget.DanmakuView;
 import tv.danmaku.ijk.media.player.AndroidMediaPlayer;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
@@ -48,10 +51,14 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 public class YinYangPlayer extends FrameLayout implements BaseVideoController.MediaPlayerControlInterface {
 
     private IMediaPlayer mMediaPlayer;//ijkPlayer
+    @Nullable
     private BaseVideoController mVideoController;//控制器
     private YinYangSurfaceView mSurfaceView;
     private YinYangTextureView mTextureView;
     private SurfaceTexture mSurfaceTexture;
+    private DanmakuView mDanmakuView;
+    private DanmakuContext mContext;
+    private BaseDanmakuParser mParser;
     private FrameLayout playerContainer;
     private StatusView statusView;//显示错误信息的一个view
     private int bufferPercentage;//缓冲百分比
@@ -157,6 +164,10 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
         } else {
             addTextureView();
         }
+        if (mDanmakuView != null) {
+            playerContainer.removeView(mDanmakuView);
+            playerContainer.addView(mDanmakuView, 1);
+        }
     }
 
     /**
@@ -181,6 +192,9 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
             if (mVideoController != null) {
                 mVideoController.setPlayState(mCurrentState);
                 mVideoController.setPlayerState(isFullScreen ? PLAYER_FULL_SCREEN : PLAYER_NORMAL);
+            }
+            if (mDanmakuView != null) {
+                mDanmakuView.prepare(mParser, mContext);
             }
         } catch (IOException e) {
             mCurrentState = STATE_ERROR;
@@ -266,12 +280,12 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
     public void start() {
         if (mCurrentState == STATE_IDLE) {
             if (mAlwaysFullScreen) startFullScreenDirectly();
-            if (checkNetwork()) return;
             if (addToPlayerManager) {
                 YinYangPlayerManager.instance().releaseVideoView();
                 YinYangPlayerManager.instance().setCurrentVideoView(this);
             }
             if (mAutoRotate && orientationEventListener != null) orientationEventListener.enable();
+            if (checkNetwork()) return;
             initPlayer();
             startPrepare();
         } else if (isInPlaybackState()) {
@@ -279,6 +293,9 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
             mCurrentState = STATE_PLAYING;
             if (mVideoController != null) {
                 mVideoController.setPlayState(mCurrentState);
+            }
+            if (mDanmakuView != null && mDanmakuView.isPrepared() && mDanmakuView.isPaused()) {
+                mDanmakuView.resume();
             }
         }
         setKeepScreenOn(true);
@@ -317,6 +334,9 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
                 setKeepScreenOn(false);
                 mAudioFocusHelper.abandonFocus();
             }
+            if (mDanmakuView != null && mDanmakuView.isPrepared()) {
+                mDanmakuView.pause();
+            }
         }
     }
 
@@ -328,6 +348,9 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
             mAudioFocusHelper.requestFocus();
             setKeepScreenOn(true);
         }
+        if (mDanmakuView != null && mDanmakuView.isPrepared() && mDanmakuView.isPaused()) {
+            mDanmakuView.resume();
+        }
     }
 
     public void stopPlayback() {
@@ -336,6 +359,7 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
             mMediaPlayer.release();
             mMediaPlayer = null;
             mCurrentState = STATE_IDLE;
+            if (mVideoController != null) mVideoController.setPlayState(mCurrentState);
             mAudioFocusHelper.abandonFocus();
             setKeepScreenOn(false);
         }
@@ -343,23 +367,33 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
 
     public void release() {
         if (mMediaPlayer != null) {
-            mMediaPlayer.reset();
-            mMediaPlayer.release();
-            mMediaPlayer = null;
+            //起一个线程来释放播放器，解决列表播放卡顿问题
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    mMediaPlayer.reset();
+                    mMediaPlayer.release();
+                    mMediaPlayer = null;
+                }
+            }).start();
             mCurrentState = STATE_IDLE;
             if (mVideoController != null) mVideoController.setPlayState(mCurrentState);
             mAudioFocusHelper.abandonFocus();
             setKeepScreenOn(false);
+        }
+        if (mDanmakuView != null) {
+            // dont forget release!
+            mDanmakuView.release();
+            mDanmakuView = null;
         }
         if (mAutoRotate && orientationEventListener != null) {
             orientationEventListener.disable();
         }
         if (isCache) getCacheServer().unregisterCacheListener(cacheListener);
 
-        if (mVideoController != null) mVideoController.reset();
-
         playerContainer.removeView(mTextureView);
         playerContainer.removeView(mSurfaceView);
+        playerContainer.removeView(statusView);
         if (mSurfaceTexture != null) {
             mSurfaceTexture.release();
             mSurfaceTexture = null;
@@ -367,6 +401,16 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
 
         isLocked = false;
         mCurrentPosition = 0;
+    }
+
+    /**
+     * 添加弹幕
+     */
+    public YinYangPlayer addDanmukuView(DanmakuView danmakuView, DanmakuContext context, BaseDanmakuParser parser) {
+        this.mDanmakuView = danmakuView;
+        this.mContext = context;
+        this.mParser = parser;
+        return this;
     }
 
     /**
@@ -486,6 +530,7 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
     public void seekTo(int pos) {
         if (isInPlaybackState()) {
             mMediaPlayer.seekTo(pos);
+            if (mDanmakuView != null) mDanmakuView.seekTo((long) pos);
         }
     }
 
@@ -519,6 +564,7 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
      * 启动画中画播放的后台服务
      */
     private void startBackgroundService() {
+        if (!isInPlaybackState()) return;
         Intent intent = new Intent(getContext(), BackgroundPlayService.class);
         intent.putExtra(KeyUtil.URL, mCurrentUrl);
         getCurrentPosition();
@@ -561,10 +607,8 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
         if (mVideoModels != null && mVideoModels.size() > 1) {
             if (mCurrentVideoPosition >= mVideoModels.size()) return;
             playNext();
-            mMediaPlayer.reset();
-            initPlayer();
+            resetPlayer();
             startPrepare();
-            start();
         }
     }
 
@@ -603,9 +647,6 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
         LayoutParams params = new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
-        if (mVideoController != null) mVideoController.setLayoutParams(new FrameLayout.LayoutParams(
-                WindowUtil.getScreenHeight(getContext(), false),
-                ViewGroup.LayoutParams.MATCH_PARENT));
         contentView.addView(playerContainer, params);
         isFullScreen = true;
         if (mVideoController != null) mVideoController.setPlayerState(PLAYER_FULL_SCREEN);
@@ -622,9 +663,6 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
         LayoutParams params = new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
-        if (mVideoController != null) mVideoController.setLayoutParams(new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT));
         this.addView(playerContainer, params);
         isFullScreen = false;
         if (mVideoController != null) mVideoController.setPlayerState(PLAYER_NORMAL);
@@ -672,7 +710,7 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
                 @Override
                 public void onClick(View v) {
                     playerContainer.removeView(statusView);
-                    initPlayer();
+                    resetPlayer();
                     startPrepare();
                 }
             });
@@ -693,21 +731,26 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
                     return;
                 }
                 playNext();
-                mMediaPlayer.reset();
-                if (mMediaPlayer instanceof IjkMediaPlayer) {
-                    initPlayer();
-                } else {
-                    mMediaPlayer.setOnErrorListener(onErrorListener);
-                    mMediaPlayer.setOnCompletionListener(onCompletionListener);
-                    mMediaPlayer.setOnInfoListener(onInfoListener);
-                    mMediaPlayer.setOnBufferingUpdateListener(onBufferingUpdateListener);
-                    mMediaPlayer.setOnPreparedListener(onPreparedListener);
-                    mMediaPlayer.setOnVideoSizeChangedListener(onVideoSizeChangedListener);
-                }
+                resetPlayer();
                 startPrepare();
             }
         }
     };
+
+    private void resetPlayer() {
+        mMediaPlayer.reset();
+        if (mMediaPlayer instanceof IjkMediaPlayer) {
+            initPlayer();
+        } else {
+            mMediaPlayer.setVolume(1, 1);
+            mMediaPlayer.setOnErrorListener(onErrorListener);
+            mMediaPlayer.setOnCompletionListener(onCompletionListener);
+            mMediaPlayer.setOnInfoListener(onInfoListener);
+            mMediaPlayer.setOnBufferingUpdateListener(onBufferingUpdateListener);
+            mMediaPlayer.setOnPreparedListener(onPreparedListener);
+            mMediaPlayer.setOnVideoSizeChangedListener(onVideoSizeChangedListener);
+        }
+    }
 
     private IMediaPlayer.OnInfoListener onInfoListener = new IMediaPlayer.OnInfoListener() {
         @Override
