@@ -95,25 +95,11 @@ public abstract class BaseVideoController extends FrameLayout {
     public void hide() {
     }
 
-    /**
-     * 重置
-     */
-    public void reset() {
-    }
-
     public void setPlayState(int playState) {
     }
 
     public void setPlayerState(int playerState) {
     }
-
-    /**
-     * 返回控制器的显示状态
-     */
-    public boolean isShowing() {
-        return mShowing;
-    }
-
 
     public void startFullScreenDirectly() {
 
@@ -213,7 +199,7 @@ public abstract class BaseVideoController extends FrameLayout {
 
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
-            if (isShowing()) {
+            if (mShowing) {
                 hide();
             } else {
                 show();

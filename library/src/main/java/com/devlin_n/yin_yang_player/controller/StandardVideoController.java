@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -126,6 +127,9 @@ public class StandardVideoController extends BaseVideoController implements View
         switch (playerState) {
             case YinYangPlayer.PLAYER_NORMAL:
                 if (isLocked) return;
+                setLayoutParams(new FrameLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT));
                 gestureEnabled = false;
                 fullScreenButton.setSelected(false);
                 backButton.setVisibility(GONE);
@@ -135,6 +139,9 @@ public class StandardVideoController extends BaseVideoController implements View
                 break;
             case YinYangPlayer.PLAYER_FULL_SCREEN:
                 if (isLocked) return;
+                setLayoutParams(new FrameLayout.LayoutParams(
+                        WindowUtil.getScreenHeight(getContext(), false),
+                        ViewGroup.LayoutParams.MATCH_PARENT));
                 gestureEnabled = true;
                 fullScreenButton.setSelected(true);
                 statusHolder.setVisibility(VISIBLE);
@@ -153,10 +160,24 @@ public class StandardVideoController extends BaseVideoController implements View
 
     @Override
     public void setPlayState(int playState) {
-
+        super.setPlayState(playState);
         switch (playState) {
             case YinYangPlayer.STATE_IDLE:
                 L.e("STATE_IDLE");
+                hide();
+                isLocked = false;
+                lock.setSelected(false);
+                mediaPlayer.setLock(false);
+                completeContainer.setVisibility(GONE);
+                bottomProgress.setVisibility(GONE);
+                thumb.setVisibility(VISIBLE);
+                playProgressButton.setVisibility(VISIBLE);
+                playProgressButton.reset();
+                if (!mediaPlayer.isFullScreen() && showTopContainer) {
+                    topContainer.setVisibility(VISIBLE);
+                } else {
+                    topContainer.setVisibility(GONE);
+                }
                 break;
             case YinYangPlayer.STATE_PLAYING:
                 L.e("STATE_PLAYING");
@@ -180,7 +201,7 @@ public class StandardVideoController extends BaseVideoController implements View
                 break;
             case YinYangPlayer.STATE_PREPARED:
                 L.e("STATE_PREPARED");
-                bottomProgress.setVisibility(VISIBLE);
+                if (!isLive) bottomProgress.setVisibility(VISIBLE);
                 playProgressButton.setVisibility(GONE);
                 break;
             case YinYangPlayer.STATE_ERROR:
@@ -201,6 +222,8 @@ public class StandardVideoController extends BaseVideoController implements View
                 hide();
                 thumb.setVisibility(VISIBLE);
                 completeContainer.setVisibility(VISIBLE);
+                bottomProgress.setProgress(0);
+                bottomProgress.setSecondaryProgress(0);
                 if (mediaPlayer.isFullScreen()) {
                     topContainer.setVisibility(GONE);
                 } else {
@@ -248,6 +271,10 @@ public class StandardVideoController extends BaseVideoController implements View
      */
     public void setLive(boolean live) {
         isLive = live;
+        bottomProgress.setVisibility(GONE);
+        videoProgress.setVisibility(INVISIBLE);
+        totalTime.setVisibility(INVISIBLE);
+        floatScreen.setVisibility(VISIBLE);
     }
 
     @Override
@@ -298,8 +325,10 @@ public class StandardVideoController extends BaseVideoController implements View
                 }
                 hideAllViews();
             }
-            bottomProgress.setVisibility(VISIBLE);
-            bottomProgress.startAnimation(showAnim);
+            if (!isLive && !isLocked) {
+                bottomProgress.setVisibility(VISIBLE);
+                bottomProgress.startAnimation(showAnim);
+            }
             mShowing = false;
         }
     }
@@ -326,8 +355,10 @@ public class StandardVideoController extends BaseVideoController implements View
                     topContainer.startAnimation(showAnim);
                 }
             }
-            bottomProgress.setVisibility(GONE);
-            bottomProgress.startAnimation(hideAnim);
+            if (!isLocked && !isLive) {
+                bottomProgress.setVisibility(GONE);
+                bottomProgress.startAnimation(hideAnim);
+            }
             mShowing = true;
         }
         removeCallbacks(mFadeOut);
@@ -342,34 +373,11 @@ public class StandardVideoController extends BaseVideoController implements View
         bottomContainer.startAnimation(showAnim);
         WindowUtil.showStatusBar(getContext());
         WindowUtil.showNavKey(getContext());
-        if (isLive) {
-            videoProgress.setVisibility(INVISIBLE);
-            totalTime.setVisibility(INVISIBLE);
-            floatScreen.setVisibility(VISIBLE);
-        }
     }
 
     @Override
     public void show() {
         show(sDefaultTimeout);
-    }
-
-    @Override
-    public void reset() {
-        hide();
-        isLocked = false;
-        lock.setSelected(false);
-        mediaPlayer.setLock(false);
-        completeContainer.setVisibility(GONE);
-        bottomProgress.setVisibility(GONE);
-        thumb.setVisibility(VISIBLE);
-        playProgressButton.show();
-        playProgressButton.reset();
-        if (!mediaPlayer.isFullScreen() && showTopContainer) {
-            topContainer.setVisibility(VISIBLE);
-        } else {
-            topContainer.setVisibility(GONE);
-        }
     }
 
     @Override

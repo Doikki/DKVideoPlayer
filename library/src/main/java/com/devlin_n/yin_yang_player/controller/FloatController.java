@@ -9,7 +9,6 @@ import android.view.View;
 import com.devlin_n.yin_yang_player.R;
 import com.devlin_n.yin_yang_player.player.YinYangPlayer;
 import com.devlin_n.yin_yang_player.widget.PlayProgressButton;
-import com.devlin_n.yin_yang_player.widget.StatusView;
 
 /**
  * 悬浮播放控制器
@@ -19,7 +18,6 @@ import com.devlin_n.yin_yang_player.widget.StatusView;
 public class FloatController extends BaseVideoController implements View.OnClickListener {
 
     private PlayProgressButton playProgressButton;
-    private StatusView statusView;
 
 
     public FloatController(@NonNull Context context) {
@@ -59,6 +57,7 @@ public class FloatController extends BaseVideoController implements View.OnClick
 
     @Override
     public void setPlayState(int playState) {
+        super.setPlayState(playState);
         switch (playState) {
             case YinYangPlayer.STATE_IDLE:
                 break;
@@ -77,18 +76,6 @@ public class FloatController extends BaseVideoController implements View.OnClick
                 playProgressButton.setVisibility(GONE);
                 break;
             case YinYangPlayer.STATE_ERROR:
-                if (statusView == null) {
-                    statusView = new StatusView(getContext());
-                }
-                statusView.setMessage(getResources().getString(R.string.error_message));
-                statusView.setButtonTextAndAction(getResources().getString(R.string.retry), new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        removeView(statusView);
-                        mediaPlayer.start();
-                    }
-                });
-                addView(statusView);
                 break;
             case YinYangPlayer.STATE_BUFFERING:
                 playProgressButton.setState(PlayProgressButton.STATE_LOADING);

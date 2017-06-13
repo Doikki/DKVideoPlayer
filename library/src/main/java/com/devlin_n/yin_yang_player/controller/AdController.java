@@ -82,6 +82,7 @@ public class AdController extends BaseVideoController implements View.OnClickLis
 
     @Override
     public void setPlayState(int playState) {
+        super.setPlayState(playState);
         switch (playState) {
             case YinYangPlayer.STATE_PLAYING:
                 post(mShowProgress);

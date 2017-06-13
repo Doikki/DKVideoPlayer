@@ -26,6 +26,7 @@ public class BackgroundPlayService extends Service {
     private FloatView floatView;
     private int position;
     private boolean isCache;
+    public static boolean IS_START_FLOAT_WINDOW = false;
 
     @Nullable
     @Override
@@ -38,6 +39,7 @@ public class BackgroundPlayService extends Service {
         url = intent.getStringExtra(KeyUtil.URL);
         position = intent.getIntExtra(KeyUtil.POSITION, 0);
         isCache = intent.getBooleanExtra(KeyUtil.ENABLE_CACHE, false);
+        IS_START_FLOAT_WINDOW = true;
         startPlay();
         return START_NOT_STICKY;
     }
@@ -50,7 +52,7 @@ public class BackgroundPlayService extends Service {
 
     private void startPlay() {
         if (isCache) videoView.enableCache();
-        videoView.useAndroidMediaPlayer().skipPositionWhenPlay(url, position).setVideoController(new FloatController(getApplicationContext())).start();
+        videoView.skipPositionWhenPlay(url, position).setVideoController(new FloatController(getApplicationContext())).start();
         wm.addView(floatView, wmParams);
     }
 
@@ -76,6 +78,7 @@ public class BackgroundPlayService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        IS_START_FLOAT_WINDOW = false;
         if (floatView != null) wm.removeView(floatView);
         videoView.release();
     }

@@ -26,7 +26,8 @@ import java.util.List;
 public class VodPlayerActivity extends AppCompatActivity {
 
     private YinYangPlayer yinYangPlayer;
-    private static final String URL_VOD = "http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv";
+//    private static final String URL_VOD = "http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv";
+    private static final String URL_VOD = "http://baobab.wdjcdn.com/14564977406580.mp4";
     //    private static final String URL_VOD = "http://uploads.cutv.com:8088/video/data/201703/10/encode_file/515b6a95601ba6b39620358f2677a17358c2472411d53.mp4";
     private static final String URL_AD = "http://gslb.miaopai.com/stream/FQXM04zrW1dcXGiPdJ6Q3KAq2Fpv4TLV.mp4";
 
@@ -45,13 +46,13 @@ public class VodPlayerActivity extends AppCompatActivity {
 
         List<VideoModel> videos = new ArrayList<>();
         videos.add(new VideoModel(URL_AD, "广告", new AdController(this)));
-        videos.add(new VideoModel(URL_VOD, "网易公开课-如何掌控你的自由时间", new StandardVideoController(this)));
+        videos.add(new VideoModel(URL_VOD, "奥斯卡", new StandardVideoController(this)));
 
         yinYangPlayer
                 .autoRotate()
 //                .enableCache()
 //                .useSurfaceView()
-//                .useAndroidMediaPlayer()
+                .useAndroidMediaPlayer()
                 .setVideos(videos)
 //                .setUrl(URL_VOD)
 //                .setTitle("网易公开课-如何掌控你的自由时间")
