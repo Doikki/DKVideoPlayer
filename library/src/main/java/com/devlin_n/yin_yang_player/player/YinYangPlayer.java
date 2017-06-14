@@ -48,7 +48,7 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
  * Created by Devlin_n on 2017/4/7.
  */
 
-public class YinYangPlayer extends FrameLayout implements BaseVideoController.MediaPlayerControlInterface {
+public class YinYangPlayer extends FrameLayout implements BaseVideoController.MediaPlayerControl {
 
     private IMediaPlayer mMediaPlayer;//ijkPlayer
     @Nullable
@@ -94,13 +94,13 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
     @NonNull
     private AudioFocusHelper mAudioFocusHelper = new AudioFocusHelper();
 
-    public static final int SCREEN_TYPE_DEFAULT = 0;
-    public static final int SCREEN_TYPE_16_9 = 1;
-    public static final int SCREEN_TYPE_4_3 = 2;
-    public static final int SCREEN_TYPE_MATCH_PARENT = 3;
-    public static final int SCREEN_TYPE_ORIGINAL = 4;
+    public static final int SCREEN_SCALE_DEFAULT = 0;
+    public static final int SCREEN_SCALE_16_9 = 1;
+    public static final int SCREEN_SCALE_4_3 = 2;
+    public static final int SCREEN_SCALE_MATCH_PARENT = 3;
+    public static final int SCREEN_SCALE_ORIGINAL = 4;
 
-    private int mCurrentScreenType = SCREEN_TYPE_DEFAULT;
+    private int mCurrentScreenScale = SCREEN_SCALE_DEFAULT;
 
     /**
      * 加速度传感器监听
@@ -367,7 +367,7 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
 
     public void release() {
         if (mMediaPlayer != null) {
-            //起一个线程来释放播放器，解决列表播放卡顿问题
+            //启动一个线程来释放播放器，解决列表播放卡顿问题
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -424,10 +424,11 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
     /**
      * 设置视频比例
      */
-    public YinYangPlayer setScreenType(int type) {
-        this.mCurrentScreenType = type;
-        if (mSurfaceView != null) mSurfaceView.setScreenType(type);
-        if (mTextureView != null) mTextureView.setScreenType(type);
+    @Override
+    public YinYangPlayer setScreenScale(int screenScale) {
+        this.mCurrentScreenScale = screenScale;
+        if (mSurfaceView != null) mSurfaceView.setScreenScale(screenScale);
+        if (mTextureView != null) mTextureView.setScreenScale(screenScale);
         return this;
     }
 
@@ -802,10 +803,10 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
             int videoHeight = iMediaPlayer.getVideoHeight();
             if (videoWidth != 0 && videoHeight != 0) {
                 if (useSurfaceView) {
-                    mSurfaceView.setScreenType(mCurrentScreenType);
+                    mSurfaceView.setScreenScale(mCurrentScreenScale);
                     mSurfaceView.setVideoSize(videoWidth, videoHeight);
                 } else {
-                    mTextureView.setScreenType(mCurrentScreenType);
+                    mTextureView.setScreenScale(mCurrentScreenScale);
                     mTextureView.setVideoSize(videoWidth, videoHeight);
                 }
 

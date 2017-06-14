@@ -1,17 +1,17 @@
 package com.devlin_n.yyplayer;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.AbsListView;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
 
 import com.bumptech.glide.Glide;
 import com.devlin_n.yin_yang_player.controller.StandardVideoController;
@@ -22,21 +22,63 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Devlin_n on 2017/5/31.
+ * Created by Devlin_n on 2017/6/14.
  */
 
-public class RecyclerViewActivity extends AppCompatActivity {
+public class ListViewActivity extends AppCompatActivity {
+
+    private ListView listView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recycler_view);
+        setContentView(R.layout.activity_list_view);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle("RECYCLER");
+            actionBar.setTitle("LIST");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        initView();
+        listView = (ListView) findViewById(R.id.lv);
+        listView.setAdapter(new VideoAdapter(getVideoList()));
+
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+
+            private int firstVisibleItem = -1, lastVisibleItem;
+            private View fistView, lastView;
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (this.firstVisibleItem < firstVisibleItem) {
+                    this.firstVisibleItem = firstVisibleItem;
+                    this.lastVisibleItem = firstVisibleItem + visibleItemCount;
+                    GCView(fistView);
+                    fistView = view.getChildAt(0);
+                    lastView = view.getChildAt(visibleItemCount - 1);
+                } else if (this.lastVisibleItem > (firstVisibleItem + visibleItemCount)) {
+                    this.firstVisibleItem = firstVisibleItem;
+                    this.lastVisibleItem = firstVisibleItem + visibleItemCount;
+                    GCView(lastView);
+                    fistView = view.getChildAt(0);
+                    lastView = view.getChildAt(visibleItemCount - 1);
+                }
+
+            }
+
+            private void GCView(View gcView) {
+                if (gcView != null) {
+                    YinYangPlayer yinYangPlayer = (YinYangPlayer) gcView.findViewById(R.id.video_player);
+                    if (yinYangPlayer != null) {
+                        yinYangPlayer.release();
+                    }
+
+                }
+            }
+        });
     }
 
     @Override
@@ -47,25 +89,22 @@ public class RecyclerViewActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void initView() {
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new VideoAdapter(getVideoList(), this));
-        recyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
-            @Override
-            public void onChildViewAttachedToWindow(View view) {
-
-            }
-
-            @Override
-            public void onChildViewDetachedFromWindow(View view) {
-                YinYangPlayer yinYangPlayer = (YinYangPlayer) view.findViewById(R.id.video_player);
-                if (yinYangPlayer != null) {
-                    yinYangPlayer.release();
-                }
-            }
-        });
+    @Override
+    protected void onPause() {
+        super.onPause();
+        YinYangPlayer currentVideoView = YinYangPlayerManager.instance().getCurrentVideoView();
+        if (currentVideoView != null) {
+            currentVideoView.release();
+        }
     }
+
+    @Override
+    public void onBackPressed() {
+        if (!YinYangPlayerManager.instance().onBackPressed()) {
+            super.onBackPressed();
+        }
+    }
+
 
     public List<VideoBean> getVideoList() {
         List<VideoBean> videoList = new ArrayList<>();
@@ -120,76 +159,70 @@ public class RecyclerViewActivity extends AppCompatActivity {
         return videoList;
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        YinYangPlayer currentVideoView = YinYangPlayerManager.instance().getCurrentVideoView();
-        if (currentVideoView != null){
-            currentVideoView.release();
-        }
-    }
 
-    @Override
-    public void onBackPressed() {
-        if (!YinYangPlayerManager.instance().onBackPressed()){
-            super.onBackPressed();
-        }
-    }
+    private class VideoAdapter extends BaseAdapter {
 
-    private class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoHolder> {
+        private List<VideoBean> videos = new ArrayList<>();
 
-
-        private List<VideoBean> videos;
-        private Context context;
-
-        private VideoAdapter(List<VideoBean> videos, Context context) {
+        public VideoAdapter(List<VideoBean> videos) {
             this.videos = videos;
-            this.context = context;
         }
 
         @Override
-        public VideoHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View itemView = LayoutInflater.from(context).inflate(R.layout.item_video, parent, false);
-            return new VideoHolder(itemView);
-
+        public int getCount() {
+            return videos.size();
         }
 
         @Override
-        public void onBindViewHolder(final VideoHolder holder, int position) {
+        public Object getItem(int position) {
+            return videos.get(position);
+        }
 
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder viewHolder;
             VideoBean videoBean = videos.get(position);
-            StandardVideoController controller = new StandardVideoController(context);
-            Glide.with(context)
-                    .load(videoBean.getThumb())
-                    .asBitmap()
-                    .animate(R.anim.anim_alpha_in)
-                    .placeholder(android.R.color.darker_gray)
-                    .into(controller.getThumb());
-            holder.yinYangPlayer
+            if (convertView == null) {
+                convertView = LayoutInflater.from(ListViewActivity.this).inflate(R.layout.item_video, listView, false);
+                viewHolder = new ViewHolder(convertView);
+                convertView.setTag(viewHolder);
+                Log.d("@@@@@@@@@", "getView: null");
+            } else {
+                viewHolder = (ViewHolder) convertView.getTag();
+                Log.d("@@@@@@@@@", "getView: no null");
+            }
+
+            viewHolder.yinYangPlayer
                     .enableCache()
                     .autoRotate()
 //                    .useAndroidMediaPlayer()
                     .addToPlayerManager()
                     .setUrl(videoBean.getUrl())
                     .setTitle(videoBean.getTitle())
-                    .setVideoController(controller);
+                    .setVideoController(viewHolder.controller);
+            Glide.with(ListViewActivity.this)
+                    .load(videoBean.getThumb())
+                    .asBitmap()
+                    .animate(R.anim.anim_alpha_in)
+                    .placeholder(android.R.color.darker_gray)
+                    .into(viewHolder.controller.getThumb());
 
+            return convertView;
         }
 
-        @Override
-        public int getItemCount() {
-            return videos.size();
-        }
 
-        class VideoHolder extends RecyclerView.ViewHolder {
-
+        class ViewHolder {
             private YinYangPlayer yinYangPlayer;
+            private StandardVideoController controller;
 
-            public VideoHolder(View itemView) {
-                super(itemView);
-                yinYangPlayer = (YinYangPlayer) itemView.findViewById(R.id.video_player);
-                int widthPixels = getResources().getDisplayMetrics().widthPixels;
-                yinYangPlayer.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 16 * 9));
+            ViewHolder(View itemView) {
+                this.yinYangPlayer = (YinYangPlayer) itemView.findViewById(R.id.video_player);
+                controller = new StandardVideoController(ListViewActivity.this);
             }
         }
     }

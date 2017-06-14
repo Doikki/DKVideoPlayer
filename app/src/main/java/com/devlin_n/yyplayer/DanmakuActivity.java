@@ -60,7 +60,7 @@ public class DanmakuActivity extends AppCompatActivity {
             actionBar.setTitle("弹幕");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        yinYangPlayer = (YinYangPlayer) findViewById(R.id.magic_video_view);
+        yinYangPlayer = (YinYangPlayer) findViewById(R.id.player);
 
         initDanMuView();
         yinYangPlayer
@@ -119,26 +119,6 @@ public class DanmakuActivity extends AppCompatActivity {
                 Toast.makeText(DanmakuActivity.this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
             }
         }
-    }
-
-    public void startFloatWindow(View view) {
-        yinYangPlayer.startFloatWindow();
-    }
-
-    public void wide(View view) {
-        yinYangPlayer.setScreenType(YinYangPlayer.SCREEN_TYPE_16_9);
-    }
-
-    public void tv(View view) {
-        yinYangPlayer.setScreenType(YinYangPlayer.SCREEN_TYPE_4_3);
-    }
-
-    public void match(View view) {
-        yinYangPlayer.setScreenType(YinYangPlayer.SCREEN_TYPE_MATCH_PARENT);
-    }
-
-    public void original(View view) {
-        yinYangPlayer.setScreenType(YinYangPlayer.SCREEN_TYPE_ORIGINAL);
     }
 
     private void initDanMuView() {
@@ -229,7 +209,8 @@ public class DanmakuActivity extends AppCompatActivity {
         // for(int i=0;i<100;i++){
         // }
         Drawable drawable = ContextCompat.getDrawable(this, R.mipmap.ic_launcher);
-        drawable.setBounds(0, 0, 80, 80);
+        int size = WindowUtil.dp2px(this, 20);
+        drawable.setBounds(0, 0, size, size);
 
 //        danmaku.text = "这是一条弹幕";
         danmaku.text = createSpannable(drawable);
@@ -293,7 +274,8 @@ public class DanmakuActivity extends AppCompatActivity {
         public void drawBackground(BaseDanmaku danmaku, Canvas canvas, float left, float top) {
             paint.setAntiAlias(true);
             paint.setColor(Color.parseColor("#65777777"));//黑色 普通
-            canvas.drawRoundRect(new RectF(left, top, left + danmaku.paintWidth, top + danmaku.paintHeight), 50, 50, paint);
+            int radius = WindowUtil.dp2px(DanmakuActivity.this, 10);
+            canvas.drawRoundRect(new RectF(left, top, left + danmaku.paintWidth, top + danmaku.paintHeight), radius, radius, paint);
         }
 
         @Override

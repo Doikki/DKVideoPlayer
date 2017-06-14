@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void list(View view) {
+    public void recycler(View view) {
         startActivity(new Intent(this, RecyclerViewActivity.class));
     }
 
@@ -90,5 +90,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void danmaku(View view) {
         startActivity(new Intent(this, DanmakuActivity.class));
+    }
+
+    public void list(View view) {
+        startActivity(new Intent(this, ListViewActivity.class));
     }
 }

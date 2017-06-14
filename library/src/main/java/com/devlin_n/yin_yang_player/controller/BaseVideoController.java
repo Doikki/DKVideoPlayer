@@ -31,7 +31,7 @@ import java.util.Locale;
 public abstract class BaseVideoController extends FrameLayout {
 
     protected View controllerView;//控制器视图
-    protected MediaPlayerControlInterface mediaPlayer;//播放器
+    protected MediaPlayerControl mediaPlayer;//播放器
     protected boolean mShowing;//控制器是否处于显示状态
     protected CenterView mCenterView;
     protected AudioManager mAudioManager;
@@ -351,7 +351,7 @@ public abstract class BaseVideoController extends FrameLayout {
         }
     }
 
-    public interface MediaPlayerControlInterface {
+    public interface MediaPlayerControl {
         void start();
 
         void pause();
@@ -387,9 +387,11 @@ public abstract class BaseVideoController extends FrameLayout {
         boolean isMute();
 
         void setLock(boolean isLocked);
+
+        MediaPlayerControl setScreenScale(int screenScale);
     }
 
-    public void setMediaPlayer(MediaPlayerControlInterface mediaPlayer) {
+    public void setMediaPlayer(MediaPlayerControl mediaPlayer) {
         this.mediaPlayer = mediaPlayer;
     }
 }

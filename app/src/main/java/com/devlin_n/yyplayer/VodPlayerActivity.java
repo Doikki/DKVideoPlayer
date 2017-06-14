@@ -6,14 +6,13 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.devlin_n.library.FloatWindowManager;
 import com.devlin_n.yin_yang_player.controller.AdController;
 import com.devlin_n.yin_yang_player.controller.StandardVideoController;
-import com.devlin_n.yin_yang_player.player.YinYangPlayer;
 import com.devlin_n.yin_yang_player.player.VideoModel;
+import com.devlin_n.yin_yang_player.player.YinYangPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +39,7 @@ public class VodPlayerActivity extends AppCompatActivity {
             actionBar.setTitle("VOD");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        yinYangPlayer = (YinYangPlayer) findViewById(R.id.magic_video_view);
+        yinYangPlayer = (YinYangPlayer) findViewById(R.id.player);
 //        int widthPixels = getResources().getDisplayMetrics().widthPixels;
 //        yinYangPlayer.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 16 * 9));
 
@@ -103,25 +102,5 @@ public class VodPlayerActivity extends AppCompatActivity {
                 Toast.makeText(VodPlayerActivity.this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
             }
         }
-    }
-
-    public void startFloatWindow(View view) {
-        yinYangPlayer.startFloatWindow();
-    }
-
-    public void wide(View view) {
-        yinYangPlayer.setScreenType(YinYangPlayer.SCREEN_TYPE_16_9);
-    }
-
-    public void tv(View view) {
-        yinYangPlayer.setScreenType(YinYangPlayer.SCREEN_TYPE_4_3);
-    }
-
-    public void match(View view) {
-        yinYangPlayer.setScreenType(YinYangPlayer.SCREEN_TYPE_MATCH_PARENT);
-    }
-
-    public void original(View view) {
-        yinYangPlayer.setScreenType(YinYangPlayer.SCREEN_TYPE_ORIGINAL);
     }
 }

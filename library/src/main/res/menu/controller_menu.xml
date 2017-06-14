@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/float_window"
+        android:title="悬浮窗"
+        android:icon="@drawable/ic_action_picture_in_picture"/>
+    <item android:id="@+id/screen_scale"
+        android:title="画面比例">
+        <menu>
+            <item android:id="@+id/scale_default"
+                android:title="默认"/>
+            <item android:id="@+id/scale_original"
+                android:title="原始"/>
+            <item android:id="@+id/scale_16_9"
+                android:title="16:9"/>
+            <item android:id="@+id/scale_4_3"
+                android:title="4:3"/>
+            <item android:id="@+id/scale_match"
+                android:title="铺满屏幕"/>
+        </menu>
+    </item>
+
+</menu>

@@ -95,6 +95,19 @@ public class AdController extends BaseVideoController implements View.OnClickLis
     }
 
     @Override
+    public void setPlayerState(int playerState) {
+        super.setPlayerState(playerState);
+        switch (playerState) {
+            case YinYangPlayer.PLAYER_NORMAL:
+                back.setVisibility(GONE);
+                break;
+            case YinYangPlayer.PLAYER_FULL_SCREEN:
+                back.setVisibility(VISIBLE);
+                break;
+        }
+    }
+
+    @Override
     protected int setProgress() {
         if (mediaPlayer == null) {
             return 0;

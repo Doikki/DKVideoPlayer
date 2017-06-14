@@ -6,9 +6,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.devlin_n.library.FloatWindowManager;
 import com.devlin_n.yin_yang_player.controller.StandardVideoController;
 import com.devlin_n.yin_yang_player.player.YinYangPlayer;
@@ -32,13 +32,20 @@ public class LivePlayerActivity extends AppCompatActivity {
             actionBar.setTitle("LIVE");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        yinYangPlayer = (YinYangPlayer) findViewById(R.id.magic_video_view);
+        yinYangPlayer = (YinYangPlayer) findViewById(R.id.player);
 //        int widthPixels = getResources().getDisplayMetrics().widthPixels;
 //        yinYangPlayer.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 4 * 3));
 
         StandardVideoController controller = new StandardVideoController(this);
         controller.setLive(true);
-
+        Glide.with(this)
+                .load("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=" +
+                        "1497428393984&di=0b8c95c1ae8f9427335f9cf73bfe692c&imgtype=0&src=http%" +
+                        "3A%2F%2Fn1.itc.cn%2Fimg8%2Fwb%2Frecom%2F2017%2F01%2F08%2F148380896090867654.JPEG")
+                .asBitmap()
+                .animate(R.anim.anim_alpha_in)
+                .placeholder(android.R.color.darker_gray)
+                .into(controller.getThumb());
         yinYangPlayer
                 .autoRotate()
 //                .useAndroidMediaPlayer()
@@ -92,29 +99,5 @@ public class LivePlayerActivity extends AppCompatActivity {
                 Toast.makeText(LivePlayerActivity.this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
             }
         }
-    }
-
-    public void startFloatWindow(View view) {
-        yinYangPlayer.startFloatWindow();
-    }
-
-    public void wide(View view) {
-        yinYangPlayer.setScreenType(YinYangPlayer.SCREEN_TYPE_16_9);
-    }
-
-    public void tv(View view) {
-        yinYangPlayer.setScreenType(YinYangPlayer.SCREEN_TYPE_4_3);
-    }
-
-    public void match(View view) {
-        yinYangPlayer.setScreenType(YinYangPlayer.SCREEN_TYPE_MATCH_PARENT);
-    }
-
-    public void original(View view) {
-        yinYangPlayer.setScreenType(YinYangPlayer.SCREEN_TYPE_ORIGINAL);
-    }
-
-    public void defaultSize(View view) {
-        yinYangPlayer.setScreenType(YinYangPlayer.SCREEN_TYPE_DEFAULT);
     }
 }

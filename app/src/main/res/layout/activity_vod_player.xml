@@ -5,43 +5,7 @@
     android:orientation="vertical">
 
     <com.devlin_n.yin_yang_player.player.YinYangPlayer
-        android:id="@+id/magic_video_view"
+        android:id="@+id/player"
         android:layout_width="match_parent"
         android:layout_height="300dp" />
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="startFloatWindow"
-        android:text="Picture in Picture" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="original"
-            android:text="original" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="wide"
-            android:text="16:9" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="tv"
-            android:text="4:3" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="match"
-            android:text="match" />
-
-    </LinearLayout>
 </LinearLayout>
