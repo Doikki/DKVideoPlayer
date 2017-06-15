@@ -8,11 +8,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.devlin_n.library.FloatWindowManager;
-import com.devlin_n.yin_yang_player.controller.AdController;
-import com.devlin_n.yin_yang_player.controller.StandardVideoController;
-import com.devlin_n.yin_yang_player.player.VideoModel;
-import com.devlin_n.yin_yang_player.player.YinYangPlayer;
+import com.devlin_n.floatWindowPermission.FloatWindowManager;
+import com.devlin_n.yinyangplayer.controller.AdController;
+import com.devlin_n.yinyangplayer.controller.StandardVideoController;
+import com.devlin_n.yinyangplayer.player.VideoModel;
+import com.devlin_n.yinyangplayer.player.YinYangPlayer;
 import com.devlin_n.yyplayer.R;
 
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public class VodPlayerActivity extends AppCompatActivity {
                 .autoRotate()
 //                .enableCache()
 //                .useSurfaceView()
-                .useAndroidMediaPlayer()
+//                .useAndroidMediaPlayer()
                 .setVideos(videos)
 //                .setUrl(URL_VOD)
 //                .setTitle("网易公开课-如何掌控你的自由时间")

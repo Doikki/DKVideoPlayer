@@ -9,9 +9,9 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.devlin_n.library.FloatWindowManager;
-import com.devlin_n.yin_yang_player.controller.StandardVideoController;
-import com.devlin_n.yin_yang_player.player.YinYangPlayer;
+import com.devlin_n.floatWindowPermission.FloatWindowManager;
+import com.devlin_n.yinyangplayer.controller.StandardVideoController;
+import com.devlin_n.yinyangplayer.player.YinYangPlayer;
 import com.devlin_n.yyplayer.R;
 
 /**

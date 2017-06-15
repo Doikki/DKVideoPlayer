@@ -1,4 +1,4 @@
-package com.devlin_n.yin_yang_player.controller;
+package com.devlin_n.yinyangplayer.controller;
 
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -16,9 +16,10 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
-import com.devlin_n.yin_yang_player.R;
-import com.devlin_n.yin_yang_player.util.WindowUtil;
-import com.devlin_n.yin_yang_player.widget.CenterView;
+import com.devlin_n.yinyangplayer.R;
+import com.devlin_n.yinyangplayer.util.Constants;
+import com.devlin_n.yinyangplayer.util.WindowUtil;
+import com.devlin_n.yinyangplayer.widget.CenterView;
 
 import java.util.Formatter;
 import java.util.Locale;
@@ -43,8 +44,6 @@ public abstract class BaseVideoController extends FrameLayout {
     protected boolean gestureEnabled;
     private float downX;
     private float downY;
-    protected int screenWidth;
-    protected int screenHeight;
 
 
     public BaseVideoController(@NonNull Context context) {
@@ -78,8 +77,6 @@ public abstract class BaseVideoController extends FrameLayout {
                 return mGestureDetector.onTouchEvent(event);
             }
         });
-        screenWidth = WindowUtil.getScreenWidth(getContext());
-        screenHeight = WindowUtil.getScreenHeight(getContext(), false);
     }
 
     /**
@@ -122,10 +119,10 @@ public abstract class BaseVideoController extends FrameLayout {
      */
     protected void doStartStopFullScreen() {
         if (mediaPlayer.isFullScreen()) {
-            WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             mediaPlayer.stopFullScreen();
         } else {
-            WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             mediaPlayer.startFullScreen();
         }
     }
@@ -193,7 +190,7 @@ public abstract class BaseVideoController extends FrameLayout {
         public boolean onDown(MotionEvent e) {
             if (!gestureEnabled) return super.onDown(e);
             streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-            mBrightness = WindowUtil.getAppCompActivity(getContext()).getWindow().getAttributes().screenBrightness;
+            mBrightness = WindowUtil.scanForActivity(getContext()).getWindow().getAttributes().screenBrightness;
             firstTouch = true;
             mChangePosition = false;
             mChangeBrightness = false;
@@ -219,7 +216,7 @@ public abstract class BaseVideoController extends FrameLayout {
             if (firstTouch) {
                 mChangePosition = Math.abs(distanceX) >= Math.abs(distanceY);
                 if (!mChangePosition) {
-                    if (e2.getX() > screenHeight / 2) {
+                    if (e2.getX() > Constants.SCREEN_HEIGHT / 2) {
                         mChangeBrightness = true;
                     } else {
                         mChangeVolume = true;
@@ -284,7 +281,7 @@ public abstract class BaseVideoController extends FrameLayout {
         mCenterView.setVisibility(VISIBLE);
         hide();
         mCenterView.setProVisibility(View.VISIBLE);
-        Window window = WindowUtil.getAppCompActivity(getContext()).getWindow();
+        Window window = WindowUtil.scanForActivity(getContext()).getWindow();
         WindowManager.LayoutParams attributes = window.getAttributes();
         mCenterView.setIcon(R.drawable.ic_action_brightness);
         int height = getMeasuredHeight();

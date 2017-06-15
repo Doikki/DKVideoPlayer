@@ -1,4 +1,4 @@
-package com.devlin_n.yin_yang_player.controller;
+package com.devlin_n.yinyangplayer.controller;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -10,8 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.devlin_n.yin_yang_player.R;
-import com.devlin_n.yin_yang_player.player.YinYangPlayer;
+import com.devlin_n.yinyangplayer.R;
+import com.devlin_n.yinyangplayer.player.YinYangPlayer;
 
 /**
  * 广告控制器

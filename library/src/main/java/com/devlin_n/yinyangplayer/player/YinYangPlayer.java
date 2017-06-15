@@ -1,4 +1,4 @@
-package com.devlin_n.yin_yang_player.player;
+package com.devlin_n.yinyangplayer.player;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,15 +22,16 @@ import android.widget.Toast;
 
 import com.danikula.videocache.CacheListener;
 import com.danikula.videocache.HttpProxyCacheServer;
-import com.devlin_n.library.FloatWindowManager;
-import com.devlin_n.yin_yang_player.R;
-import com.devlin_n.yin_yang_player.controller.BaseVideoController;
-import com.devlin_n.yin_yang_player.util.KeyUtil;
-import com.devlin_n.yin_yang_player.util.NetworkUtil;
-import com.devlin_n.yin_yang_player.util.WindowUtil;
-import com.devlin_n.yin_yang_player.widget.StatusView;
-import com.devlin_n.yin_yang_player.widget.YinYangSurfaceView;
-import com.devlin_n.yin_yang_player.widget.YinYangTextureView;
+import com.devlin_n.floatWindowPermission.FloatWindowManager;
+import com.devlin_n.yinyangplayer.R;
+import com.devlin_n.yinyangplayer.controller.BaseVideoController;
+import com.devlin_n.yinyangplayer.util.Constants;
+import com.devlin_n.yinyangplayer.util.KeyUtil;
+import com.devlin_n.yinyangplayer.util.NetworkUtil;
+import com.devlin_n.yinyangplayer.util.WindowUtil;
+import com.devlin_n.yinyangplayer.widget.StatusView;
+import com.devlin_n.yinyangplayer.widget.YinYangSurfaceView;
+import com.devlin_n.yinyangplayer.widget.YinYangTextureView;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,7 +73,6 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
     private int mCurrentVideoPosition = 0;//列表播放时当前播放视频的在List中的位置
     private int mCurrentPosition;//当前正在播放视频的位置
     private String mCurrentTitle = "";//当前正在播放视频的标题
-    private static boolean IS_PLAY_ON_MOBILE_NETWORK = false;//记录是否在移动网络下播放视频
 
     //播放器的各种状态
     public static final int STATE_ERROR = -1;
@@ -127,6 +127,8 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
      * 初始化播放器视图
      */
     private void initView() {
+        Constants.SCREEN_HEIGHT = WindowUtil.getScreenHeight(getContext(), false);
+        Constants.SCREEN_WIDTH = WindowUtil.getScreenWidth(getContext());
         playerContainer = new FrameLayout(getContext());
         playerContainer.setBackgroundColor(Color.BLACK);
         LayoutParams params = new LayoutParams(
@@ -281,8 +283,8 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
         if (mCurrentState == STATE_IDLE) {
             if (mAlwaysFullScreen) startFullScreenDirectly();
             if (addToPlayerManager) {
-                YinYangPlayerManager.instance().releaseVideoView();
-                YinYangPlayerManager.instance().setCurrentVideoView(this);
+                YinYangPlayerManager.instance().releaseVideoPlayer();
+                YinYangPlayerManager.instance().setCurrentVideoPlayer(this);
             }
             if (mAutoRotate && orientationEventListener != null) orientationEventListener.enable();
             if (checkNetwork()) return;
@@ -303,7 +305,7 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
     }
 
     private boolean checkNetwork() {
-        if (NetworkUtil.getNetworkType(getContext()) == NetworkUtil.NETWORK_MOBILE && !IS_PLAY_ON_MOBILE_NETWORK) {
+        if (NetworkUtil.getNetworkType(getContext()) == NetworkUtil.NETWORK_MOBILE && !Constants.IS_PLAY_ON_MOBILE_NETWORK) {
             playerContainer.removeView(statusView);
             if (statusView == null) {
                 statusView = new StatusView(getContext());
@@ -312,7 +314,7 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
             statusView.setButtonTextAndAction(getResources().getString(R.string.continue_play), new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    IS_PLAY_ON_MOBILE_NETWORK = true;
+                    Constants.IS_PLAY_ON_MOBILE_NETWORK = true;
                     playerContainer.removeView(statusView);
                     initPlayer();
                     startPrepare();
@@ -572,7 +574,7 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
         intent.putExtra(KeyUtil.POSITION, getDuration() <= 0 ? 0 : mCurrentPosition);
         intent.putExtra(KeyUtil.ENABLE_CACHE, isCache);
         getContext().getApplicationContext().startService(intent);
-        WindowUtil.getAppCompActivity(getContext()).finish();
+        WindowUtil.scanForActivity(getContext()).finish();
     }
 
     /**
@@ -589,7 +591,7 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
      */
     @Override
     public void startFullScreenDirectly() {
-        WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         startFullScreen();
         if (mVideoController != null) mVideoController.startFullScreenDirectly();
     }
@@ -643,7 +645,7 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
         WindowUtil.hideSupportActionBar(getContext(), true, true);
         WindowUtil.hideNavKey(getContext());
         this.removeView(playerContainer);
-        ViewGroup contentView = (ViewGroup) WindowUtil.getAppCompActivity(getContext())
+        ViewGroup contentView = (ViewGroup) WindowUtil.scanForActivity(getContext())
                 .findViewById(android.R.id.content);
         LayoutParams params = new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -658,7 +660,7 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
         if (!isFullScreen) return;
         WindowUtil.showSupportActionBar(getContext(), true, true);
         WindowUtil.showNavKey(getContext());
-        ViewGroup contentView = (ViewGroup) WindowUtil.getAppCompActivity(getContext())
+        ViewGroup contentView = (ViewGroup) WindowUtil.scanForActivity(getContext())
                 .findViewById(android.R.id.content);
         contentView.removeView(playerContainer);
         LayoutParams params = new LayoutParams(
@@ -832,7 +834,7 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
         }
         if (mAlwaysFullScreen) return false;
         if (isFullScreen) {
-            WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             stopFullScreen();
             if (mVideoController != null)
                 mVideoController.setPlayerState(PLAYER_NORMAL);
@@ -945,7 +947,7 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
                             return;
                         }
                         CurrentOrientation = PORTRAIT;
-                        WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                        WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                         stopFullScreen();
                     } else if (orientation >= 260 && orientation <= 280) { //屏幕左边朝上
                         if (CurrentOrientation == LANDSCAPE) return;
@@ -957,7 +959,7 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
                         if (!isFullScreen()) {
                             startFullScreen();
                         }
-                        WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                        WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                     } else if (orientation >= 70 && orientation <= 90) { //屏幕右边朝上
                         if (CurrentOrientation == REVERSE_LANDSCAPE) return;
                         if (CurrentOrientation == PORTRAIT && isFullScreen()) {
@@ -968,7 +970,7 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
                         if (!isFullScreen()) {
                             startFullScreen();
                         }
-                        WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+                        WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
                     }
                 }
             };

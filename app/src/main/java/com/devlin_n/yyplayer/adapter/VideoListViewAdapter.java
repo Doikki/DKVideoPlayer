@@ -7,8 +7,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.bumptech.glide.Glide;
-import com.devlin_n.yin_yang_player.controller.StandardVideoController;
-import com.devlin_n.yin_yang_player.player.YinYangPlayer;
+import com.devlin_n.yinyangplayer.controller.StandardVideoController;
+import com.devlin_n.yinyangplayer.player.YinYangPlayer;
 import com.devlin_n.yyplayer.R;
 import com.devlin_n.yyplayer.bean.VideoBean;
 

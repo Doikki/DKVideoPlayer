@@ -1,4 +1,4 @@
-package com.devlin_n.yin_yang_player.widget;
+package com.devlin_n.yinyangplayer.widget;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,8 +12,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.devlin_n.yin_yang_player.R;
-import com.devlin_n.yin_yang_player.player.BackgroundPlayService;
+import com.devlin_n.yinyangplayer.R;
+import com.devlin_n.yinyangplayer.player.BackgroundPlayService;
+import com.devlin_n.yinyangplayer.util.Constants;
 
 /**
  * 错误提示，网络提示
@@ -44,7 +45,7 @@ public class StatusView extends LinearLayout {
         ivClose = (ImageView) root.findViewById(R.id.btn_close);
         this.setBackgroundResource(android.R.color.black);
         setClickable(true);
-        if (BackgroundPlayService.IS_START_FLOAT_WINDOW) {
+        if (Constants.IS_START_FLOAT_WINDOW) {
             ivClose.setVisibility(VISIBLE);
             ivClose.setOnClickListener(new OnClickListener() {
                 @Override

@@ -1,16 +1,20 @@
 package com.devlin_n.yyplayer.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
-import com.devlin_n.yin_yang_player.player.YinYangPlayer;
-import com.devlin_n.yin_yang_player.player.YinYangPlayerManager;
+import com.devlin_n.floatWindowPermission.FloatWindowManager;
+import com.devlin_n.yinyangplayer.player.YinYangPlayer;
+import com.devlin_n.yinyangplayer.player.YinYangPlayerManager;
 import com.devlin_n.yyplayer.R;
 import com.devlin_n.yyplayer.bean.VideoBean;
 import com.devlin_n.yyplayer.adapter.VideoRecyclerViewAdapter;
@@ -57,7 +61,10 @@ public class RecyclerViewActivity extends AppCompatActivity {
             @Override
             public void onChildViewDetachedFromWindow(View view) {
                 YinYangPlayer yinYangPlayer = (YinYangPlayer) view.findViewById(R.id.video_player);
-                if (yinYangPlayer != null) {
+                if (yinYangPlayer != null && !yinYangPlayer.isFullScreen()) {
+                    Log.d("@@@@@@", "onChildViewDetachedFromWindow: called");
+                    int tag = (int) yinYangPlayer.getTag();
+                    Log.d("@@@@@@", "onChildViewDetachedFromWindow: position: " + tag);
                     yinYangPlayer.release();
                 }
             }
@@ -120,9 +127,9 @@ public class RecyclerViewActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        YinYangPlayer currentVideoView = YinYangPlayerManager.instance().getCurrentVideoView();
-        if (currentVideoView != null){
-            currentVideoView.release();
+        YinYangPlayer currentVideoPlayer = YinYangPlayerManager.instance().getCurrentVideoPlayer();
+        if (currentVideoPlayer != null){
+            currentVideoPlayer.release();
         }
     }
 
@@ -130,6 +137,17 @@ public class RecyclerViewActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (!YinYangPlayerManager.instance().onBackPressed()){
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == FloatWindowManager.PERMISSION_REQUEST_CODE) {
+            if (FloatWindowManager.getInstance().checkPermission(this)) {
+                YinYangPlayerManager.instance().getCurrentVideoPlayer().startFloatWindow();
+            } else {
+                Toast.makeText(this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

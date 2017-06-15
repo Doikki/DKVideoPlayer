@@ -1,4 +1,4 @@
-package com.devlin_n.yin_yang_player.widget;
+package com.devlin_n.yinyangplayer.widget;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -7,9 +7,9 @@ import android.view.MotionEvent;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
-import com.devlin_n.yin_yang_player.R;
-import com.devlin_n.yin_yang_player.player.YinYangPlayer;
-import com.devlin_n.yin_yang_player.util.WindowUtil;
+import com.devlin_n.yinyangplayer.R;
+import com.devlin_n.yinyangplayer.player.YinYangPlayer;
+import com.devlin_n.yinyangplayer.util.WindowUtil;
 
 /**
  * 悬浮窗控件（解决滑动冲突）

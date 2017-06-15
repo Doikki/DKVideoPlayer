@@ -1,34 +1,35 @@
-package com.devlin_n.yin_yang_player.widget;
+package com.devlin_n.yinyangplayer.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.SurfaceView;
+import android.view.TextureView;
 
-import com.devlin_n.yin_yang_player.player.YinYangPlayer;
+import com.devlin_n.yinyangplayer.player.YinYangPlayer;
 
 /**
- * Created by Devlin_n on 2017/4/10.
+ * 用于显示video的，做了横屏与竖屏的匹配，还有需要rotation需求的
  */
 
-public class YinYangSurfaceView extends SurfaceView {
+public class YinYangTextureView extends TextureView {
 
     private int mVideoWidth;
+
     private int mVideoHeight;
+
     private int screenType;
 
-    public YinYangSurfaceView(Context context) {
+    public YinYangTextureView(Context context) {
         super(context);
     }
 
-    public YinYangSurfaceView(Context context, AttributeSet attrs) {
+    public YinYangTextureView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
-
 
     public void setVideoSize(int width, int height) {
         mVideoWidth = width;
         mVideoHeight = height;
-        getHolder().setFixedSize(width, height);
+
     }
 
     public void setScreenScale(int type) {

@@ -1,4 +1,4 @@
-package com.devlin_n.yin_yang_player.player;
+package com.devlin_n.yinyangplayer.player;
 
 import java.lang.ref.WeakReference;
 
@@ -21,16 +21,16 @@ public class YinYangPlayerManager {
         return sInstance;
     }
 
-    public void setCurrentVideoView(YinYangPlayer player) {
+    public void setCurrentVideoPlayer(YinYangPlayer player) {
         mPlayer = new WeakReference<>(player);
     }
 
-    public YinYangPlayer getCurrentVideoView() {
+    public YinYangPlayer getCurrentVideoPlayer() {
         if (mPlayer == null) return null;
         return mPlayer.get();
     }
 
-    public void releaseVideoView() {
+    public void releaseVideoPlayer() {
         if (mPlayer != null && mPlayer.get() != null) {
             mPlayer.get().release();
             mPlayer = null;

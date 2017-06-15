@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
-import com.devlin_n.yin_yang_player.controller.StandardVideoController;
-import com.devlin_n.yin_yang_player.player.YinYangPlayer;
+import com.devlin_n.yinyangplayer.controller.StandardVideoController;
+import com.devlin_n.yinyangplayer.player.YinYangPlayer;
 import com.devlin_n.yyplayer.R;
 import com.devlin_n.yyplayer.bean.VideoBean;
 
@@ -37,13 +37,12 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
         public void onBindViewHolder(final VideoHolder holder, int position) {
 
             VideoBean videoBean = videos.get(position);
-            StandardVideoController controller = new StandardVideoController(context);
             Glide.with(context)
                     .load(videoBean.getThumb())
                     .asBitmap()
                     .animate(R.anim.anim_alpha_in)
                     .placeholder(android.R.color.darker_gray)
-                    .into(controller.getThumb());
+                    .into(holder.controller.getThumb());
             holder.yinYangPlayer
                     .enableCache()
                     .autoRotate()
@@ -51,7 +50,8 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
                     .addToPlayerManager()
                     .setUrl(videoBean.getUrl())
                     .setTitle(videoBean.getTitle())
-                    .setVideoController(controller);
+                    .setVideoController(holder.controller);
+            holder.yinYangPlayer.setTag(position);
 
         }
 
@@ -65,7 +65,7 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
             private YinYangPlayer yinYangPlayer;
             private StandardVideoController controller;
 
-            public VideoHolder(View itemView) {
+            VideoHolder(View itemView) {
                 super(itemView);
                 yinYangPlayer = (YinYangPlayer) itemView.findViewById(R.id.video_player);
                 int widthPixels = context.getResources().getDisplayMetrics().widthPixels;

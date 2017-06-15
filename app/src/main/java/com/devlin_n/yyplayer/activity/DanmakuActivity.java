@@ -19,12 +19,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.devlin_n.library.FloatWindowManager;
-import com.devlin_n.yin_yang_player.controller.StandardVideoController;
-import com.devlin_n.yin_yang_player.player.YinYangPlayer;
-import com.devlin_n.yin_yang_player.util.WindowUtil;
-import com.devlin_n.yyplayer.widget.CenteredImageSpan;
+import com.devlin_n.floatWindowPermission.FloatWindowManager;
+import com.devlin_n.yinyangplayer.controller.StandardVideoController;
+import com.devlin_n.yinyangplayer.player.YinYangPlayer;
+import com.devlin_n.yinyangplayer.util.WindowUtil;
 import com.devlin_n.yyplayer.R;
+import com.devlin_n.yyplayer.widget.CenteredImageSpan;
 
 import java.util.HashMap;
 

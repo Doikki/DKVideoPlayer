@@ -1,10 +1,10 @@
-package com.devlin_n.yin_yang_player.player;
+package com.devlin_n.yinyangplayer.player;
 
 import android.content.Context;
 
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.danikula.videocache.file.Md5FileNameGenerator;
-import com.devlin_n.yin_yang_player.util.StorageUtil;
+import com.devlin_n.yinyangplayer.util.StorageUtil;
 
 import java.io.File;
 

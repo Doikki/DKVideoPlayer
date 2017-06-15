@@ -9,13 +9,15 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.devlin_n.yin_yang_player.player.BackgroundPlayService;
-import com.devlin_n.yin_yang_player.player.VideoCacheManager;
+import com.devlin_n.yinyangplayer.player.BackgroundPlayService;
+import com.devlin_n.yinyangplayer.player.VideoCacheManager;
 import com.devlin_n.yyplayer.activity.DanmakuActivity;
 import com.devlin_n.yyplayer.activity.FullScreenActivity;
 import com.devlin_n.yyplayer.activity.ListViewActivity;
@@ -55,6 +57,29 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+        switch (itemId) {
+            case R.id.close_float_window:
+                Intent intent = new Intent(this, BackgroundPlayService.class);
+                getApplicationContext().stopService(intent);
+                break;
+            case R.id.clear_cache:
+                if (VideoCacheManager.clearAllCache(this)) {
+                    Toast.makeText(this, "清除缓存成功", Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
     public void skipToVodPlayer(View view) {
         startActivity(new Intent(this, VodPlayerActivity.class));
     }
@@ -63,19 +88,8 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this, LivePlayerActivity.class));
     }
 
-    public void closeFloatWindow(View view) {
-        Intent intent = new Intent(this, BackgroundPlayService.class);
-        getApplicationContext().stopService(intent);
-    }
-
     public void startFullScreen(View view) {
         startActivity(new Intent(this, FullScreenActivity.class));
-    }
-
-    public void clearCache(View view) {
-        if (VideoCacheManager.clearAllCache(this)) {
-            Toast.makeText(this, "清除缓存成功", Toast.LENGTH_SHORT).show();
-        }
     }
 
     public void recycler(View view) {

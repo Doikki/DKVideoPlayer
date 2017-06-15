@@ -1,4 +1,4 @@
-package com.devlin_n.yin_yang_player.controller;
+package com.devlin_n.yinyangplayer.controller;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -6,9 +6,9 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.devlin_n.yin_yang_player.R;
-import com.devlin_n.yin_yang_player.player.YinYangPlayer;
-import com.devlin_n.yin_yang_player.widget.PlayProgressButton;
+import com.devlin_n.yinyangplayer.R;
+import com.devlin_n.yinyangplayer.player.YinYangPlayer;
+import com.devlin_n.yinyangplayer.widget.PlayProgressButton;
 
 /**
  * 悬浮播放控制器

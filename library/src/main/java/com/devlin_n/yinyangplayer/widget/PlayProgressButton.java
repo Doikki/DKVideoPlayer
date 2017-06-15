@@ -1,4 +1,4 @@
-package com.devlin_n.yin_yang_player.widget;
+package com.devlin_n.yinyangplayer.widget;
 
 import android.content.Context;
 import android.support.annotation.AttrRes;
@@ -11,8 +11,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.devlin_n.yin_yang_player.R;
-import com.devlin_n.yin_yang_player.util.WindowUtil;
+import com.devlin_n.yinyangplayer.R;
+import com.devlin_n.yinyangplayer.util.WindowUtil;
 
 /**
  * 播放按钮和加载进度条封装
@@ -103,12 +103,6 @@ public class PlayProgressButton extends FrameLayout {
         setVisibility(GONE);
         startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_out));
 
-    }
-
-    public void reset() {
-        progressBar.setVisibility(GONE);
-        playButton.setSelected(false);
-        playButton.setVisibility(VISIBLE);
     }
 
     public void setPlayButtonClickListener(OnClickListener listener) {

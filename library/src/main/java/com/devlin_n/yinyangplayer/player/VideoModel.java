@@ -1,6 +1,6 @@
-package com.devlin_n.yin_yang_player.player;
+package com.devlin_n.yinyangplayer.player;
 
-import com.devlin_n.yin_yang_player.controller.BaseVideoController;
+import com.devlin_n.yinyangplayer.controller.BaseVideoController;
 
 /**
  * Created by Devlin_n on 2017/4/11.

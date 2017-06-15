@@ -1,6 +1,8 @@
-package com.devlin_n.yin_yang_player.util;
+package com.devlin_n.yinyangplayer.util;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.os.Build;
@@ -101,9 +103,9 @@ public class WindowUtil {
                         WindowManager.LayoutParams.FLAG_FULLSCREEN);
                 fragmentActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             } else {
-                getAppCompActivity(context).getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                scanForActivity(context).getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                         WindowManager.LayoutParams.FLAG_FULLSCREEN);
-                getAppCompActivity(context).getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+                scanForActivity(context).getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             }
         }
     }
@@ -129,10 +131,17 @@ public class WindowUtil {
                 fragmentActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
                 fragmentActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             } else {
-                getAppCompActivity(context).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-                getAppCompActivity(context).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+                scanForActivity(context).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                scanForActivity(context).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             }
         }
+    }
+
+    /**
+     * 获取Activity
+     */
+    public static Activity scanForActivity(Context context) {
+        return context == null ? null : (context instanceof Activity ? (Activity) context : (context instanceof ContextWrapper ? scanForActivity(((ContextWrapper) context).getBaseContext()) : null));
     }
 
     /**
@@ -147,32 +156,32 @@ public class WindowUtil {
         } else {
             flag = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION; // hide nav
         }
-        getAppCompActivity(context).getWindow().getDecorView().setSystemUiVisibility(flag);
+        scanForActivity(context).getWindow().getDecorView().setSystemUiVisibility(flag);
     }
 
     /**
      * 显示NavigationBar
      */
     public static void showNavKey(Context context) {
-        getAppCompActivity(context).getWindow().getDecorView().setSystemUiVisibility(0);
+        scanForActivity(context).getWindow().getDecorView().setSystemUiVisibility(0);
     }
 
     /**
      * 隐藏状态栏
      */
     public static void hideStatusBar(Context context) {
-        WindowManager.LayoutParams attrs = getAppCompActivity(context).getWindow().getAttributes();
+        WindowManager.LayoutParams attrs = scanForActivity(context).getWindow().getAttributes();
         attrs.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
-        getAppCompActivity(context).getWindow().setAttributes(attrs);
+        scanForActivity(context).getWindow().setAttributes(attrs);
     }
 
     /**
      * 显示状态栏
      */
     public static void showStatusBar(Context context) {
-        WindowManager.LayoutParams attrs = getAppCompActivity(context).getWindow().getAttributes();
+        WindowManager.LayoutParams attrs = scanForActivity(context).getWindow().getAttributes();
         attrs.flags &= ~WindowManager.LayoutParams.FLAG_FULLSCREEN;
-        getAppCompActivity(context).getWindow().setAttributes(attrs);
+        scanForActivity(context).getWindow().setAttributes(attrs);
     }
 
 

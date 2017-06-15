@@ -1,10 +1,12 @@
-package com.devlin_n.yin_yang_player.controller;
+package com.devlin_n.yinyangplayer.controller;
 
 import android.content.Context;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.PopupMenu;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,17 +15,16 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.devlin_n.yin_yang_player.R;
-import com.devlin_n.yin_yang_player.player.YinYangPlayer;
-import com.devlin_n.yin_yang_player.util.L;
-import com.devlin_n.yin_yang_player.util.WindowUtil;
-import com.devlin_n.yin_yang_player.widget.PlayProgressButton;
+import com.devlin_n.yinyangplayer.R;
+import com.devlin_n.yinyangplayer.player.YinYangPlayer;
+import com.devlin_n.yinyangplayer.util.Constants;
+import com.devlin_n.yinyangplayer.util.L;
+import com.devlin_n.yinyangplayer.util.WindowUtil;
 
 /**
  * 直播/点播控制器
@@ -35,7 +36,6 @@ public class StandardVideoController extends BaseVideoController implements View
     protected ImageView fullScreenButton;
     protected LinearLayout bottomContainer, topContainer;
     protected SeekBar videoProgress;
-    //    protected ImageView floatScreen;
     protected ImageView moreMenu;
     protected ImageView backButton;
     protected ImageView lock;
@@ -43,13 +43,13 @@ public class StandardVideoController extends BaseVideoController implements View
     private boolean isLive;
     private boolean isDragging;
     private View statusHolder;
-//    private FrameLayout coverContainer;
 
     private ProgressBar bottomProgress;
-    private PlayProgressButton playProgressButton;
+    private ImageView playButton;
+    private ImageView startPlayButton;
+    private ProgressBar loadingProgress;
     private ImageView thumb;
     private LinearLayout completeContainer;
-    //    private boolean showTopContainer;
     private Animation showAnim = AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_in);
     private Animation hideAnim = AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_out);
     private PopupMenu popupMenu;
@@ -75,7 +75,6 @@ public class StandardVideoController extends BaseVideoController implements View
     @Override
     protected void initView() {
         super.initView();
-//        floatScreen = (ImageView) controllerView.findViewById(R.id.float_screen);
         moreMenu = (ImageView) controllerView.findViewById(R.id.more_menu);
         moreMenu.setOnClickListener(this);
         fullScreenButton = (ImageView) controllerView.findViewById(R.id.fullscreen);
@@ -86,22 +85,16 @@ public class StandardVideoController extends BaseVideoController implements View
         videoProgress.setOnSeekBarChangeListener(this);
         totalTime = (TextView) controllerView.findViewById(R.id.total_time);
         currTime = (TextView) controllerView.findViewById(R.id.curr_time);
-//        floatScreen.setOnClickListener(this);
         backButton = (ImageView) controllerView.findViewById(R.id.back);
         backButton.setOnClickListener(this);
         lock = (ImageView) controllerView.findViewById(R.id.lock);
         lock.setOnClickListener(this);
         thumb = (ImageView) controllerView.findViewById(R.id.thumb);
         thumb.setOnClickListener(this);
-//        coverContainer = (FrameLayout) controllerView.findViewById(R.id.cover_container);
-        playProgressButton = (PlayProgressButton) controllerView.findViewById(R.id.play_progress_btn);
-        playProgressButton.setVisibility(VISIBLE);
-        playProgressButton.setPlayButtonClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                doPauseResume();
-            }
-        });
+        playButton = (ImageView) controllerView.findViewById(R.id.iv_play);
+        playButton.setOnClickListener(this);
+        startPlayButton = (ImageView) controllerView.findViewById(R.id.start_play);
+        loadingProgress = (ProgressBar) controllerView.findViewById(R.id.loading);
         bottomProgress = (ProgressBar) controllerView.findViewById(R.id.bottom_progress);
         ImageView rePlayButton = (ImageView) controllerView.findViewById(R.id.iv_replay);
         rePlayButton.setOnClickListener(this);
@@ -110,7 +103,7 @@ public class StandardVideoController extends BaseVideoController implements View
         title = (TextView) controllerView.findViewById(R.id.title);
         statusHolder = controllerView.findViewById(R.id.status_holder);
         statusHolder.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) WindowUtil.getStatusBarHeight(getContext())));
-        popupMenu = new PopupMenu(getContext(), moreMenu);
+        popupMenu = new PopupMenu(getContext(), moreMenu, Gravity.END);
         popupMenu.getMenuInflater().inflate(R.menu.controller_menu, popupMenu.getMenu());
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
@@ -129,6 +122,7 @@ public class StandardVideoController extends BaseVideoController implements View
                 } else if (itemId == R.id.scale_4_3) {
                     mediaPlayer.setScreenScale(YinYangPlayer.SCREEN_SCALE_4_3);
                 }
+                popupMenu.dismiss();
                 return false;
             }
         });
@@ -141,11 +135,11 @@ public class StandardVideoController extends BaseVideoController implements View
             doStartStopFullScreen();
         } else if (i == R.id.lock) {
             doLockUnlock();
-        } else if (i == R.id.thumb || i == R.id.iv_replay) {
+        } else if (i == R.id.iv_play || i == R.id.thumb || i == R.id.iv_replay) {
             doPauseResume();
         } else if (i == R.id.more_menu) {
             popupMenu.show();
-            show(5000);
+            show();
         }
     }
 
@@ -157,6 +151,7 @@ public class StandardVideoController extends BaseVideoController implements View
     public void setPlayerState(int playerState) {
         switch (playerState) {
             case YinYangPlayer.PLAYER_NORMAL:
+                L.e("PLAYER_NORMAL");
                 if (isLocked) return;
                 setLayoutParams(new FrameLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
@@ -169,10 +164,16 @@ public class StandardVideoController extends BaseVideoController implements View
                 title.setVisibility(INVISIBLE);
                 break;
             case YinYangPlayer.PLAYER_FULL_SCREEN:
+                L.e("PLAYER_FULL_SCREEN");
                 if (isLocked) return;
-                setLayoutParams(new FrameLayout.LayoutParams(
-                        screenHeight,
-                        ViewGroup.LayoutParams.MATCH_PARENT));
+                postDelayed(new Runnable() {//解决ListView无效问题
+                    @Override
+                    public void run() {
+                        setLayoutParams(new FrameLayout.LayoutParams(
+                                Constants.SCREEN_HEIGHT,
+                                Constants.SCREEN_WIDTH));
+                    }
+                }, 300);
                 gestureEnabled = true;
                 fullScreenButton.setSelected(true);
                 statusHolder.setVisibility(VISIBLE);
@@ -201,46 +202,43 @@ public class StandardVideoController extends BaseVideoController implements View
                 mediaPlayer.setLock(false);
                 completeContainer.setVisibility(GONE);
                 bottomProgress.setVisibility(GONE);
-                playProgressButton.reset();
-                playProgressButton.setVisibility(VISIBLE);
+                loadingProgress.setVisibility(GONE);
+                startPlayButton.setVisibility(VISIBLE);
                 thumb.setVisibility(VISIBLE);
                 break;
             case YinYangPlayer.STATE_PLAYING:
                 L.e("STATE_PLAYING");
                 post(mShowProgress);
-                playProgressButton.setState(PlayProgressButton.STATE_PLAYING);
+                playButton.setSelected(true);
                 completeContainer.setVisibility(GONE);
                 thumb.setVisibility(GONE);
-                hide();
                 break;
             case YinYangPlayer.STATE_PAUSED:
                 L.e("STATE_PAUSED");
-                playProgressButton.setState(PlayProgressButton.STATE_PAUSE);
-                show(0);
+                playButton.setSelected(false);
                 break;
             case YinYangPlayer.STATE_PREPARING:
                 L.e("STATE_PREPARING");
                 completeContainer.setVisibility(GONE);
-                playProgressButton.setState(PlayProgressButton.STATE_LOADING);
-                playProgressButton.setVisibility(VISIBLE);
+                startPlayButton.setVisibility(GONE);
+                loadingProgress.setVisibility(VISIBLE);
                 break;
             case YinYangPlayer.STATE_PREPARED:
                 L.e("STATE_PREPARED");
                 if (!isLive) bottomProgress.setVisibility(VISIBLE);
-                playProgressButton.setVisibility(GONE);
+                loadingProgress.setVisibility(GONE);
                 break;
             case YinYangPlayer.STATE_ERROR:
                 L.e("STATE_ERROR");
                 break;
             case YinYangPlayer.STATE_BUFFERING:
                 L.e("STATE_BUFFERING");
-                playProgressButton.setState(PlayProgressButton.STATE_LOADING);
-                playProgressButton.setVisibility(VISIBLE);
+                startPlayButton.setVisibility(GONE);
+                loadingProgress.setVisibility(VISIBLE);
                 break;
             case YinYangPlayer.STATE_BUFFERED:
+                loadingProgress.setVisibility(GONE);
                 L.e("STATE_BUFFERED");
-                playProgressButton.setState(PlayProgressButton.STATE_LOADING_END);
-                if (!mShowing || isLocked) playProgressButton.setVisibility(GONE);
                 break;
             case YinYangPlayer.STATE_PLAYBACK_COMPLETED:
                 L.e("STATE_PLAYBACK_COMPLETED");
@@ -281,7 +279,7 @@ public class StandardVideoController extends BaseVideoController implements View
         backButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                WindowUtil.getAppCompActivity(getContext()).finish();
+                WindowUtil.scanForActivity(getContext()).finish();
             }
         });
     }
@@ -350,7 +348,6 @@ public class StandardVideoController extends BaseVideoController implements View
     private void hideAllViews() {
         topContainer.setVisibility(GONE);
         topContainer.startAnimation(hideAnim);
-        playProgressButton.hide();
         bottomContainer.setVisibility(GONE);
         bottomContainer.startAnimation(hideAnim);
     }
@@ -378,7 +375,6 @@ public class StandardVideoController extends BaseVideoController implements View
     }
 
     private void showAllViews() {
-        playProgressButton.show();
         bottomContainer.setVisibility(VISIBLE);
         bottomContainer.startAnimation(showAnim);
         topContainer.setVisibility(VISIBLE);

@@ -1,4 +1,4 @@
-package com.devlin_n.yin_yang_player.util;
+package com.devlin_n.yinyangplayer.util;
 
 import android.content.Context;
 import android.os.Environment;

@@ -1,4 +1,4 @@
-package com.devlin_n.yin_yang_player.widget;
+package com.devlin_n.yinyangplayer.widget;
 
 import android.content.Context;
 import android.view.Gravity;
@@ -11,7 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.devlin_n.yin_yang_player.R;
+import com.devlin_n.yinyangplayer.R;
 
 /**
  * 显示亮度，音量，进度

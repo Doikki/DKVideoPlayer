@@ -1,20 +1,22 @@
 package com.devlin_n.yyplayer.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ListView;
+import android.widget.Toast;
 
-import com.devlin_n.yin_yang_player.player.YinYangPlayer;
-import com.devlin_n.yin_yang_player.player.YinYangPlayerManager;
+import com.devlin_n.floatWindowPermission.FloatWindowManager;
+import com.devlin_n.yinyangplayer.player.YinYangPlayer;
+import com.devlin_n.yinyangplayer.player.YinYangPlayerManager;
 import com.devlin_n.yyplayer.R;
-import com.devlin_n.yyplayer.bean.VideoBean;
 import com.devlin_n.yyplayer.adapter.VideoListViewAdapter;
+import com.devlin_n.yyplayer.bean.VideoBean;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,39 +41,50 @@ public class ListViewActivity extends AppCompatActivity {
 
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
 
-            private int firstVisibleItem = -1, lastVisibleItem;
             private View fistView, lastView;
+            private int lastFirstVisibleItem = -1;//必须初始化为小于0的数
+            private int lastVisibleItem;
+            private boolean scrollFlag;
 
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
+                switch (scrollState) {
+                    case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
+                        scrollFlag = false;
+                        break;
+                    case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
+                        scrollFlag = true;
+                        break;
+                    case AbsListView.OnScrollListener.SCROLL_STATE_FLING:
+                        scrollFlag = true;
+                        break;
+                }
 
             }
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                if (fistView == null || this.firstVisibleItem < firstVisibleItem) {
-                    this.firstVisibleItem = firstVisibleItem;
-                    this.lastVisibleItem = firstVisibleItem + visibleItemCount;
-                    GCView(fistView);
-                    fistView = view.getChildAt(0);
-                    lastView = view.getChildAt(visibleItemCount - 1);
-                } else if (this.lastVisibleItem > (firstVisibleItem + visibleItemCount)) {
-                    this.firstVisibleItem = firstVisibleItem;
-                    this.lastVisibleItem = firstVisibleItem + visibleItemCount;
-                    GCView(lastView);
-                    fistView = view.getChildAt(0);
-                    lastView = view.getChildAt(visibleItemCount - 1);
+                if (scrollFlag) {
+                    if (lastFirstVisibleItem < firstVisibleItem) {
+                        GCView(fistView);
+                        fistView = view.getChildAt(0);
+                        lastView = view.getChildAt(visibleItemCount - 1);
+                    } else if (lastVisibleItem > firstVisibleItem + visibleItemCount - 1) {
+                        GCView(lastView);
+                        fistView = view.getChildAt(0);
+                        lastView = view.getChildAt(visibleItemCount - 1);
+                    }
+                    lastFirstVisibleItem = firstVisibleItem;
+                    lastVisibleItem = firstVisibleItem + visibleItemCount - 1;
                 }
-
             }
 
             private void GCView(View gcView) {
                 if (gcView != null) {
                     YinYangPlayer yinYangPlayer = (YinYangPlayer) gcView.findViewById(R.id.video_player);
-                    if (yinYangPlayer != null) {
+                    if (yinYangPlayer != null && !yinYangPlayer.isFullScreen()) {
                         yinYangPlayer.release();
                     }
-
                 }
             }
         });
@@ -88,9 +101,9 @@ public class ListViewActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        YinYangPlayer currentVideoView = YinYangPlayerManager.instance().getCurrentVideoView();
-        if (currentVideoView != null) {
-            currentVideoView.release();
+        YinYangPlayer currentVideoPlayer = YinYangPlayerManager.instance().getCurrentVideoPlayer();
+        if (currentVideoPlayer != null) {
+            currentVideoPlayer.release();
         }
     }
 
@@ -98,6 +111,17 @@ public class ListViewActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (!YinYangPlayerManager.instance().onBackPressed()) {
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == FloatWindowManager.PERMISSION_REQUEST_CODE) {
+            if (FloatWindowManager.getInstance().checkPermission(this)) {
+                YinYangPlayerManager.instance().getCurrentVideoPlayer().startFloatWindow();
+            } else {
+                Toast.makeText(this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

@@ -1,4 +1,4 @@
-package com.devlin_n.yin_yang_player.util;
+package com.devlin_n.yinyangplayer.util;
 
 import android.util.Log;
 
@@ -9,7 +9,7 @@ import android.util.Log;
 
 public class L {
 
-    private static final String TAG = "MagicPlayer";
+    private static final String TAG = "YinYangPlayer";
 
 
     public static void d(String msg) {

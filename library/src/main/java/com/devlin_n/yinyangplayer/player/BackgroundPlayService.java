@@ -1,4 +1,4 @@
-package com.devlin_n.yin_yang_player.player;
+package com.devlin_n.yinyangplayer.player;
 
 import android.app.Service;
 import android.content.Intent;
@@ -8,10 +8,11 @@ import android.support.annotation.Nullable;
 import android.view.Gravity;
 import android.view.WindowManager;
 
-import com.devlin_n.yin_yang_player.controller.FloatController;
-import com.devlin_n.yin_yang_player.util.KeyUtil;
-import com.devlin_n.yin_yang_player.util.WindowUtil;
-import com.devlin_n.yin_yang_player.widget.FloatView;
+import com.devlin_n.yinyangplayer.controller.FloatController;
+import com.devlin_n.yinyangplayer.util.Constants;
+import com.devlin_n.yinyangplayer.util.KeyUtil;
+import com.devlin_n.yinyangplayer.util.WindowUtil;
+import com.devlin_n.yinyangplayer.widget.FloatView;
 
 /**
  * 悬浮播放
@@ -26,7 +27,6 @@ public class BackgroundPlayService extends Service {
     private FloatView floatView;
     private int position;
     private boolean isCache;
-    public static boolean IS_START_FLOAT_WINDOW = false;
 
     @Nullable
     @Override
@@ -39,7 +39,7 @@ public class BackgroundPlayService extends Service {
         url = intent.getStringExtra(KeyUtil.URL);
         position = intent.getIntExtra(KeyUtil.POSITION, 0);
         isCache = intent.getBooleanExtra(KeyUtil.ENABLE_CACHE, false);
-        IS_START_FLOAT_WINDOW = true;
+        Constants.IS_START_FLOAT_WINDOW = true;
         startPlay();
         return START_NOT_STICKY;
     }
@@ -78,7 +78,7 @@ public class BackgroundPlayService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        IS_START_FLOAT_WINDOW = false;
+        Constants.IS_START_FLOAT_WINDOW = false;
         if (floatView != null) wm.removeView(floatView);
         videoView.release();
     }
