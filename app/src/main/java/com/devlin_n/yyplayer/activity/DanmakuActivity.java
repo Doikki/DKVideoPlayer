@@ -1,4 +1,4 @@
-package com.devlin_n.yyplayer;
+package com.devlin_n.yyplayer.activity;
 
 import android.content.Intent;
 import android.graphics.Canvas;
@@ -23,6 +23,8 @@ import com.devlin_n.library.FloatWindowManager;
 import com.devlin_n.yin_yang_player.controller.StandardVideoController;
 import com.devlin_n.yin_yang_player.player.YinYangPlayer;
 import com.devlin_n.yin_yang_player.util.WindowUtil;
+import com.devlin_n.yyplayer.widget.CenteredImageSpan;
+import com.devlin_n.yyplayer.R;
 
 import java.util.HashMap;
 

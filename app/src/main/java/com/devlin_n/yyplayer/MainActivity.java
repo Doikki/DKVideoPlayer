@@ -16,6 +16,13 @@ import android.widget.Toast;
 
 import com.devlin_n.yin_yang_player.player.BackgroundPlayService;
 import com.devlin_n.yin_yang_player.player.VideoCacheManager;
+import com.devlin_n.yyplayer.activity.DanmakuActivity;
+import com.devlin_n.yyplayer.activity.FullScreenActivity;
+import com.devlin_n.yyplayer.activity.ListViewActivity;
+import com.devlin_n.yyplayer.activity.LivePlayerActivity;
+import com.devlin_n.yyplayer.activity.PlayerActivity;
+import com.devlin_n.yyplayer.activity.RecyclerViewActivity;
+import com.devlin_n.yyplayer.activity.VodPlayerActivity;
 
 public class MainActivity extends AppCompatActivity {
 

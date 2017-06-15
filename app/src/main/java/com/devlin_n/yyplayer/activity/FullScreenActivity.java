@@ -1,4 +1,4 @@
-package com.devlin_n.yyplayer;
+package com.devlin_n.yyplayer.activity;
 
 import android.content.Intent;
 import android.os.Bundle;

@@ -1,22 +1,19 @@
-package com.devlin_n.yyplayer;
+package com.devlin_n.yyplayer.activity;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
-import com.bumptech.glide.Glide;
-import com.devlin_n.yin_yang_player.controller.StandardVideoController;
 import com.devlin_n.yin_yang_player.player.YinYangPlayer;
 import com.devlin_n.yin_yang_player.player.YinYangPlayerManager;
+import com.devlin_n.yyplayer.R;
+import com.devlin_n.yyplayer.bean.VideoBean;
+import com.devlin_n.yyplayer.adapter.VideoRecyclerViewAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +47,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
     private void initView() {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new VideoAdapter(getVideoList(), this));
+        recyclerView.setAdapter(new VideoRecyclerViewAdapter(getVideoList(), this));
         recyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
             @Override
             public void onChildViewAttachedToWindow(View view) {
@@ -133,64 +130,6 @@ public class RecyclerViewActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (!YinYangPlayerManager.instance().onBackPressed()){
             super.onBackPressed();
-        }
-    }
-
-    private class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoHolder> {
-
-
-        private List<VideoBean> videos;
-        private Context context;
-
-        private VideoAdapter(List<VideoBean> videos, Context context) {
-            this.videos = videos;
-            this.context = context;
-        }
-
-        @Override
-        public VideoHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View itemView = LayoutInflater.from(context).inflate(R.layout.item_video, parent, false);
-            return new VideoHolder(itemView);
-
-        }
-
-        @Override
-        public void onBindViewHolder(final VideoHolder holder, int position) {
-
-            VideoBean videoBean = videos.get(position);
-            StandardVideoController controller = new StandardVideoController(context);
-            Glide.with(context)
-                    .load(videoBean.getThumb())
-                    .asBitmap()
-                    .animate(R.anim.anim_alpha_in)
-                    .placeholder(android.R.color.darker_gray)
-                    .into(controller.getThumb());
-            holder.yinYangPlayer
-                    .enableCache()
-                    .autoRotate()
-//                    .useAndroidMediaPlayer()
-                    .addToPlayerManager()
-                    .setUrl(videoBean.getUrl())
-                    .setTitle(videoBean.getTitle())
-                    .setVideoController(controller);
-
-        }
-
-        @Override
-        public int getItemCount() {
-            return videos.size();
-        }
-
-        class VideoHolder extends RecyclerView.ViewHolder {
-
-            private YinYangPlayer yinYangPlayer;
-
-            public VideoHolder(View itemView) {
-                super(itemView);
-                yinYangPlayer = (YinYangPlayer) itemView.findViewById(R.id.video_player);
-                int widthPixels = getResources().getDisplayMetrics().widthPixels;
-                yinYangPlayer.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 16 * 9));
-            }
         }
     }
 }

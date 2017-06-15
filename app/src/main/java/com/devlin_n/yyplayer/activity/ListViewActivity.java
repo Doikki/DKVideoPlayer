@@ -1,22 +1,20 @@
-package com.devlin_n.yyplayer;
+package com.devlin_n.yyplayer.activity;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
 
-import com.bumptech.glide.Glide;
-import com.devlin_n.yin_yang_player.controller.StandardVideoController;
 import com.devlin_n.yin_yang_player.player.YinYangPlayer;
 import com.devlin_n.yin_yang_player.player.YinYangPlayerManager;
+import com.devlin_n.yyplayer.R;
+import com.devlin_n.yyplayer.bean.VideoBean;
+import com.devlin_n.yyplayer.adapter.VideoListViewAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +25,6 @@ import java.util.List;
 
 public class ListViewActivity extends AppCompatActivity {
 
-    private ListView listView;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,8 +34,8 @@ public class ListViewActivity extends AppCompatActivity {
             actionBar.setTitle("LIST");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        listView = (ListView) findViewById(R.id.lv);
-        listView.setAdapter(new VideoAdapter(getVideoList()));
+        ListView listView = (ListView) findViewById(R.id.lv);
+        listView.setAdapter(new VideoListViewAdapter(getVideoList(), this));
 
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
 
@@ -53,7 +49,7 @@ public class ListViewActivity extends AppCompatActivity {
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                if (this.firstVisibleItem < firstVisibleItem) {
+                if (fistView == null || this.firstVisibleItem < firstVisibleItem) {
                     this.firstVisibleItem = firstVisibleItem;
                     this.lastVisibleItem = firstVisibleItem + visibleItemCount;
                     GCView(fistView);
@@ -157,73 +153,5 @@ public class ListViewActivity extends AppCompatActivity {
                 "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/04/2017-04-21_16-41-07.mp4"));
 
         return videoList;
-    }
-
-
-    private class VideoAdapter extends BaseAdapter {
-
-        private List<VideoBean> videos = new ArrayList<>();
-
-        public VideoAdapter(List<VideoBean> videos) {
-            this.videos = videos;
-        }
-
-        @Override
-        public int getCount() {
-            return videos.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return videos.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder viewHolder;
-            VideoBean videoBean = videos.get(position);
-            if (convertView == null) {
-                convertView = LayoutInflater.from(ListViewActivity.this).inflate(R.layout.item_video, listView, false);
-                viewHolder = new ViewHolder(convertView);
-                convertView.setTag(viewHolder);
-                Log.d("@@@@@@@@@", "getView: null");
-            } else {
-                viewHolder = (ViewHolder) convertView.getTag();
-                Log.d("@@@@@@@@@", "getView: no null");
-            }
-
-            viewHolder.yinYangPlayer
-                    .enableCache()
-                    .autoRotate()
-//                    .useAndroidMediaPlayer()
-                    .addToPlayerManager()
-                    .setUrl(videoBean.getUrl())
-                    .setTitle(videoBean.getTitle())
-                    .setVideoController(viewHolder.controller);
-            Glide.with(ListViewActivity.this)
-                    .load(videoBean.getThumb())
-                    .asBitmap()
-                    .animate(R.anim.anim_alpha_in)
-                    .placeholder(android.R.color.darker_gray)
-                    .into(viewHolder.controller.getThumb());
-
-            return convertView;
-        }
-
-
-        class ViewHolder {
-            private YinYangPlayer yinYangPlayer;
-            private StandardVideoController controller;
-
-            ViewHolder(View itemView) {
-                this.yinYangPlayer = (YinYangPlayer) itemView.findViewById(R.id.video_player);
-                controller = new StandardVideoController(ListViewActivity.this);
-            }
-        }
     }
 }

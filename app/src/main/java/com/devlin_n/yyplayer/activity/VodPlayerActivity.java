@@ -1,4 +1,4 @@
-package com.devlin_n.yyplayer;
+package com.devlin_n.yyplayer.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,51 +8,55 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.devlin_n.library.FloatWindowManager;
+import com.devlin_n.yin_yang_player.controller.AdController;
 import com.devlin_n.yin_yang_player.controller.StandardVideoController;
+import com.devlin_n.yin_yang_player.player.VideoModel;
 import com.devlin_n.yin_yang_player.player.YinYangPlayer;
+import com.devlin_n.yyplayer.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * 直播播放
+ * 点播播放
  * Created by Devlin_n on 2017/4/7.
  */
 
-public class LivePlayerActivity extends AppCompatActivity {
+public class VodPlayerActivity extends AppCompatActivity {
 
     private YinYangPlayer yinYangPlayer;
-    private static final String URL = "http://ivi.bupt.edu.cn/hls/hunanhd.m3u8";
+//    private static final String URL_VOD = "http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv";
+    private static final String URL_VOD = "http://baobab.wdjcdn.com/14564977406580.mp4";
+    //    private static final String URL_VOD = "http://uploads.cutv.com:8088/video/data/201703/10/encode_file/515b6a95601ba6b39620358f2677a17358c2472411d53.mp4";
+    private static final String URL_AD = "http://gslb.miaopai.com/stream/FQXM04zrW1dcXGiPdJ6Q3KAq2Fpv4TLV.mp4";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_live_player);
+        setContentView(R.layout.activity_vod_player);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle("LIVE");
+            actionBar.setTitle("VOD");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         yinYangPlayer = (YinYangPlayer) findViewById(R.id.player);
 //        int widthPixels = getResources().getDisplayMetrics().widthPixels;
-//        yinYangPlayer.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 4 * 3));
+//        yinYangPlayer.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 16 * 9));
 
-        StandardVideoController controller = new StandardVideoController(this);
-        controller.setLive(true);
-        Glide.with(this)
-                .load("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=" +
-                        "1497428393984&di=0b8c95c1ae8f9427335f9cf73bfe692c&imgtype=0&src=http%" +
-                        "3A%2F%2Fn1.itc.cn%2Fimg8%2Fwb%2Frecom%2F2017%2F01%2F08%2F148380896090867654.JPEG")
-                .asBitmap()
-                .animate(R.anim.anim_alpha_in)
-                .placeholder(android.R.color.darker_gray)
-                .into(controller.getThumb());
+        List<VideoModel> videos = new ArrayList<>();
+        videos.add(new VideoModel(URL_AD, "广告", new AdController(this)));
+        videos.add(new VideoModel(URL_VOD, "奥斯卡", new StandardVideoController(this)));
+
         yinYangPlayer
                 .autoRotate()
-//                .useAndroidMediaPlayer()
-                .setUrl(URL)
-                .setTitle("湖南卫视")
-                .setVideoController(controller);
-//                .start();
+//                .enableCache()
+//                .useSurfaceView()
+                .useAndroidMediaPlayer()
+                .setVideos(videos)
+//                .setUrl(URL_VOD)
+//                .setTitle("网易公开课-如何掌控你的自由时间")
+                .start();
     }
 
     @Override
@@ -72,7 +76,7 @@ public class LivePlayerActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        yinYangPlayer.resume();
+//        yinYangPlayer.resume();
         yinYangPlayer.stopFloatWindow();
     }
 
@@ -96,7 +100,7 @@ public class LivePlayerActivity extends AppCompatActivity {
             if (FloatWindowManager.getInstance().checkPermission(this)) {
                 yinYangPlayer.startFloatWindow();
             } else {
-                Toast.makeText(LivePlayerActivity.this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
+                Toast.makeText(VodPlayerActivity.this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
             }
         }
     }

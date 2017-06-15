@@ -1,4 +1,4 @@
-package com.devlin_n.yyplayer;
+package com.devlin_n.yyplayer.bean;
 
 /**
  * Created by Devlin_n on 2017/6/1.

@@ -386,7 +386,7 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
             mDanmakuView.release();
             mDanmakuView = null;
         }
-        if (mAutoRotate && orientationEventListener != null) {
+        if (orientationEventListener != null) {
             orientationEventListener.disable();
         }
         if (isCache) getCacheServer().unregisterCacheListener(cacheListener);
@@ -927,50 +927,52 @@ public class YinYangPlayer extends FrameLayout implements BaseVideoController.Me
      */
     public YinYangPlayer autoRotate() {
         this.mAutoRotate = true;
-        orientationEventListener = new OrientationEventListener(getContext()) { // 加速度传感器监听，用于自动旋转屏幕
+        if (orientationEventListener == null) {
+            orientationEventListener = new OrientationEventListener(getContext()) { // 加速度传感器监听，用于自动旋转屏幕
 
-            private int CurrentOrientation = 0;
-            private static final int PORTRAIT = 1;
-            private static final int LANDSCAPE = 2;
-            private static final int REVERSE_LANDSCAPE = 3;
+                private int CurrentOrientation = 0;
+                private static final int PORTRAIT = 1;
+                private static final int LANDSCAPE = 2;
+                private static final int REVERSE_LANDSCAPE = 3;
 
-            @Override
-            public void onOrientationChanged(int orientation) {
-                if (orientation >= 340) { //屏幕顶部朝上
-                    if (isLocked || mAlwaysFullScreen) return;
-                    if (CurrentOrientation == PORTRAIT) return;
-                    if ((CurrentOrientation == LANDSCAPE || CurrentOrientation == REVERSE_LANDSCAPE) && !isFullScreen()) {
+                @Override
+                public void onOrientationChanged(int orientation) {
+                    if (orientation >= 340) { //屏幕顶部朝上
+                        if (isLocked || mAlwaysFullScreen) return;
+                        if (CurrentOrientation == PORTRAIT) return;
+                        if ((CurrentOrientation == LANDSCAPE || CurrentOrientation == REVERSE_LANDSCAPE) && !isFullScreen()) {
+                            CurrentOrientation = PORTRAIT;
+                            return;
+                        }
                         CurrentOrientation = PORTRAIT;
-                        return;
-                    }
-                    CurrentOrientation = PORTRAIT;
-                    WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                    stopFullScreen();
-                } else if (orientation >= 260 && orientation <= 280) { //屏幕左边朝上
-                    if (CurrentOrientation == LANDSCAPE) return;
-                    if (CurrentOrientation == PORTRAIT && isFullScreen()) {
+                        WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                        stopFullScreen();
+                    } else if (orientation >= 260 && orientation <= 280) { //屏幕左边朝上
+                        if (CurrentOrientation == LANDSCAPE) return;
+                        if (CurrentOrientation == PORTRAIT && isFullScreen()) {
+                            CurrentOrientation = LANDSCAPE;
+                            return;
+                        }
                         CurrentOrientation = LANDSCAPE;
-                        return;
-                    }
-                    CurrentOrientation = LANDSCAPE;
-                    if (!isFullScreen()) {
-                        startFullScreen();
-                    }
-                    WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                } else if (orientation >= 70 && orientation <= 90) { //屏幕右边朝上
-                    if (CurrentOrientation == REVERSE_LANDSCAPE) return;
-                    if (CurrentOrientation == PORTRAIT && isFullScreen()) {
+                        if (!isFullScreen()) {
+                            startFullScreen();
+                        }
+                        WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                    } else if (orientation >= 70 && orientation <= 90) { //屏幕右边朝上
+                        if (CurrentOrientation == REVERSE_LANDSCAPE) return;
+                        if (CurrentOrientation == PORTRAIT && isFullScreen()) {
+                            CurrentOrientation = REVERSE_LANDSCAPE;
+                            return;
+                        }
                         CurrentOrientation = REVERSE_LANDSCAPE;
-                        return;
+                        if (!isFullScreen()) {
+                            startFullScreen();
+                        }
+                        WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
                     }
-                    CurrentOrientation = REVERSE_LANDSCAPE;
-                    if (!isFullScreen()) {
-                        startFullScreen();
-                    }
-                    WindowUtil.getAppCompActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
                 }
-            }
-        };
+            };
+        }
         return this;
     }
 }

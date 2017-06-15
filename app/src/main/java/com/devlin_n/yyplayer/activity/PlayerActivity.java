@@ -1,4 +1,4 @@
-package com.devlin_n.yyplayer;
+package com.devlin_n.yyplayer.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.devlin_n.library.FloatWindowManager;
 import com.devlin_n.yin_yang_player.controller.StandardVideoController;
 import com.devlin_n.yin_yang_player.player.YinYangPlayer;
+import com.devlin_n.yyplayer.R;
 
 /**
  * 播放其他链接
@@ -41,7 +42,7 @@ public class PlayerActivity extends AppCompatActivity {
             }
             yinYangPlayer
                     .autoRotate()
-                    .useAndroidMediaPlayer()
+//                    .useAndroidMediaPlayer()
                     .setUrl(intent.getStringExtra("url"))
                     .setVideoController(controller)
                     .start();

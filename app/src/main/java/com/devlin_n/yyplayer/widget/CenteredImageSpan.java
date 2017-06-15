@@ -1,4 +1,4 @@
-package com.devlin_n.yyplayer;
+package com.devlin_n.yyplayer.widget;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
