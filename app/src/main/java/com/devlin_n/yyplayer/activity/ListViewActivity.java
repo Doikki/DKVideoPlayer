@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * ListView
  * Created by Devlin_n on 2017/6/14.
  */
 
@@ -42,7 +43,7 @@ public class ListViewActivity extends AppCompatActivity {
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
 
             private View fistView, lastView;
-            private int lastFirstVisibleItem = -1;//必须初始化为小于0的数
+            private int lastFirstVisibleItem;
             private int lastVisibleItem;
             private boolean scrollFlag;
 
@@ -66,20 +67,18 @@ public class ListViewActivity extends AppCompatActivity {
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 if (scrollFlag) {
                     if (lastFirstVisibleItem < firstVisibleItem) {
-                        GCView(fistView);
-                        fistView = view.getChildAt(0);
-                        lastView = view.getChildAt(visibleItemCount - 1);
+                        gcView(fistView);
                     } else if (lastVisibleItem > firstVisibleItem + visibleItemCount - 1) {
-                        GCView(lastView);
-                        fistView = view.getChildAt(0);
-                        lastView = view.getChildAt(visibleItemCount - 1);
+                        gcView(lastView);
                     }
                     lastFirstVisibleItem = firstVisibleItem;
                     lastVisibleItem = firstVisibleItem + visibleItemCount - 1;
+                    fistView = view.getChildAt(0);
+                    lastView = view.getChildAt(visibleItemCount - 1);
                 }
             }
 
-            private void GCView(View gcView) {
+            private void gcView(View gcView) {
                 if (gcView != null) {
                     YinYangPlayer yinYangPlayer = (YinYangPlayer) gcView.findViewById(R.id.video_player);
                     if (yinYangPlayer != null && !yinYangPlayer.isFullScreen()) {

@@ -41,6 +41,7 @@ Step 2. Add the dependency
 	        compile 'com.github.DevlinChiu:YinYangPlayer:1.2'
 	}
 ```
+或者将library下载并导入项目中使用
 
 2.添加布局
 ```xml
