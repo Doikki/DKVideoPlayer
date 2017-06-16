@@ -3,7 +3,7 @@ A video player based on IjkPlayer.
 
 
 
-##特性
+## 特性
 * **支持滑动调节进度，声音、亮度。**
 * **支持双击播放、暂停。**
 * **支持重力感应自动进入/退出全屏。**
@@ -20,7 +20,7 @@ A video player based on IjkPlayer.
 * **支持广告播放。**
 * **支持弹幕**
 
-##使用
+## 使用
 
 1.添加类库
 ```
@@ -102,18 +102,18 @@ yinYangPlayer
 
 其他API的用法参照demo
 
-##截图
+## 截图
 <div>
 <img src="https://github.com/DevlinChiu/YinYangPlayer/blob/master/ScreenShot/1.jpg" width="240px" height="426px"/>
 <img src="https://github.com/DevlinChiu/YinYangPlayer/blob/master/ScreenShot/2.jpg" width="240px" height="426px"/>
 <img src="https://github.com/DevlinChiu/YinYangPlayer/blob/master/ScreenShot/3.jpg" width="240px" height="426px"/>
-<img src="https://github.com/DevlinChiu/YinYangPlayer/blob/master/ScreenShot/4.jpg" width="240px" height="426px"/>
 <img src="https://github.com/DevlinChiu/YinYangPlayer/blob/master/ScreenShot/5.jpg" width="240px" height="426px"/>
 <img src="https://github.com/DevlinChiu/YinYangPlayer/blob/master/ScreenShot/6.jpg" width="240px" height="426px"/>
 <img src="https://github.com/DevlinChiu/YinYangPlayer/blob/master/ScreenShot/7.jpg" width="240px" height="426px"/>
 <img src="https://github.com/DevlinChiu/YinYangPlayer/blob/master/ScreenShot/8.jpg" width="240px" height="426px"/>
 <img src="https://github.com/DevlinChiu/YinYangPlayer/blob/master/ScreenShot/9.jpg" width="240px" height="426px"/>
 <img src="https://github.com/DevlinChiu/YinYangPlayer/blob/master/ScreenShot/10.jpg" width="240px" height="426px"/>
+<img src="https://github.com/DevlinChiu/YinYangPlayer/blob/master/ScreenShot/4.jpg" width="426px" height="240px"/>
 </div>
 
 ## 混淆
