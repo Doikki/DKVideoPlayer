@@ -103,6 +103,18 @@ yinYangPlayer
 其他API的用法参照demo
 
 ##截图
+<div>
+<img src="https://github.com/DevlinChiu/YinYangPlayer/blob/master/ScreenShot/1.jpg" width="240px" height="426px"/>
+<img src="https://github.com/DevlinChiu/YinYangPlayer/blob/master/ScreenShot/2.jpg" width="240px" height="426px"/>
+<img src="https://github.com/DevlinChiu/YinYangPlayer/blob/master/ScreenShot/3.jpg" width="240px" height="426px"/>
+<img src="https://github.com/DevlinChiu/YinYangPlayer/blob/master/ScreenShot/4.jpg" width="240px" height="426px"/>
+<img src="https://github.com/DevlinChiu/YinYangPlayer/blob/master/ScreenShot/5.jpg" width="240px" height="426px"/>
+<img src="https://github.com/DevlinChiu/YinYangPlayer/blob/master/ScreenShot/6.jpg" width="240px" height="426px"/>
+<img src="https://github.com/DevlinChiu/YinYangPlayer/blob/master/ScreenShot/7.jpg" width="240px" height="426px"/>
+<img src="https://github.com/DevlinChiu/YinYangPlayer/blob/master/ScreenShot/8.jpg" width="240px" height="426px"/>
+<img src="https://github.com/DevlinChiu/YinYangPlayer/blob/master/ScreenShot/9.jpg" width="240px" height="426px"/>
+<img src="https://github.com/DevlinChiu/YinYangPlayer/blob/master/ScreenShot/10.jpg" width="240px" height="426px"/>
+</div>
 
 ## 混淆
 	-keep class tv.danmaku.ijk.** { *; }
