@@ -5,11 +5,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/thumb"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop" />
     <LinearLayout
         android:id="@+id/top_container"
         android:layout_width="match_parent"
@@ -39,7 +34,7 @@
                 android:padding="@dimen/controller_icon_padding"
                 android:src="@drawable/ic_action_arrow_back"
                 android:visibility="gone"
-                tools:visibility="visible"/>
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/title"
@@ -53,14 +48,11 @@
                 tools:text="这是一个标题" />
 
             <ImageView
-                android:id="@+id/float_screen"
+                android:id="@+id/more_menu"
                 android:layout_width="@dimen/controller_height"
                 android:layout_height="@dimen/controller_height"
-                android:layout_gravity="center"
                 android:padding="@dimen/controller_icon_padding"
-                android:src="@drawable/ic_action_picture_in_picture"
-                android:visibility="gone"
-                tools:visibility="visible"/>
+                android:src="@drawable/ic_action_more_vert" />
         </LinearLayout>
     </LinearLayout>
 
@@ -74,6 +66,13 @@
         android:orientation="horizontal"
         android:visibility="gone"
         tools:visibility="visible">
+
+        <ImageView
+            android:id="@+id/iv_play"
+            android:layout_width="@dimen/controller_height"
+            android:layout_height="@dimen/controller_height"
+            android:padding="@dimen/default_spacing"
+            android:src="@drawable/selector_play_button" />
 
         <TextView
             android:id="@+id/curr_time"
@@ -111,8 +110,6 @@
             android:id="@+id/fullscreen"
             android:layout_width="@dimen/controller_height"
             android:layout_height="@dimen/controller_height"
-            android:layout_gravity="center"
-            android:background="@android:color/transparent"
             android:padding="@dimen/controller_icon_padding"
             android:src="@drawable/selector_full_screen_button" />
     </LinearLayout>
@@ -127,7 +124,23 @@
         android:padding="@dimen/default_spacing"
         android:src="@drawable/selector_lock_button"
         android:visibility="gone"
-        tools:visibility="visible"/>
+        tools:visibility="visible" />
+
+    <ProgressBar
+        android:id="@+id/bottom_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_gravity="bottom"
+        android:max="1000"
+        android:progressDrawable="@drawable/seekbar_progress"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/thumb"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
 
     <LinearLayout
         android:id="@+id/complete_container"
@@ -150,25 +163,27 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/controller_icon_padding"
-            android:textColor="@android:color/white"
-            android:text="@string/replay" />
+            android:text="@string/replay"
+            android:textColor="@android:color/white" />
 
     </LinearLayout>
 
-    <com.devlin_n.yin_yang_player.widget.PlayProgressButton
-        android:id="@+id/play_progress_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"/>
+    <ImageView
+        android:id="@+id/start_play"
+        android:layout_width="@dimen/player_play_btn_size"
+        android:layout_height="@dimen/player_play_btn_size"
+        android:layout_gravity="center"
+        android:background="@drawable/shape_play_bg"
+        android:padding="@dimen/default_spacing"
+        android:src="@drawable/selector_play_button" />
 
     <ProgressBar
-        android:id="@+id/bottom_progress"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:max="1000"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:progressDrawable="@drawable/seekbar_progress"
-        android:layout_gravity="bottom"
-        android:visibility="gone"/>
+        android:id="@+id/loading"
+        android:layout_width="@dimen/player_play_btn_size"
+        android:layout_height="@dimen/player_play_btn_size"
+        android:layout_gravity="center"
+        android:indeterminateDrawable="@drawable/progress_loading"
+        android:visibility="gone"
+        tools:visibility="visible" />
 
 </FrameLayout>

@@ -18,13 +18,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:onClick="skipToVodPlayer"
-                android:text="VOD PLAYER" />
+                android:text="VOD" />
 
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:onClick="skipToLivePlayer"
-                android:text="LIVE PLAYER" />
+                android:text="LIVE" />
 
             <Button
                 android:layout_width="match_parent"
@@ -35,20 +35,20 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:onClick="recycler"
+                android:text="RECYCLER VIEW" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:onClick="list"
-                android:text="LIST" />
+                android:text="LIST VIEW" />
 
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="closeFloatWindow"
-                android:text="CLOSE PIP" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="clearCache"
-                android:text="CLEAR CACHE" />
+                android:onClick="danmaku"
+                android:text="DANMU" />
         </LinearLayout>
 
     </ScrollView>
