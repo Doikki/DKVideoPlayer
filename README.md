@@ -1,6 +1,7 @@
 # YinYangPlayer
 A video player based on IjkPlayer.
 
+[![](https://www.jitpack.io/v/DevlinChiu/YinYangPlayer.svg)](https://www.jitpack.io/#DevlinChiu/YinYangPlayer)
 
 
 ## 特性
