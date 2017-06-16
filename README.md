@@ -21,6 +21,7 @@ A video player based on [IjkPlayer](https://github.com/Bilibili/ijkplayer).
 * **支持广告播放。**
 * **支持弹幕，使用了[DanmakuFlameMaster](https://github.com/Bilibili/DanmakuFlameMaster)。**
 
+[demo下载](https://fir.im/zjst)
 ## 使用
 
 1.添加类库
