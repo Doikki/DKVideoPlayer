@@ -1,5 +1,5 @@
 # YinYangPlayer
-A video player based on IjkPlayer.
+A video player based on [IjkPlayer](https://github.com/Bilibili/ijkplayer).
 
 [![](https://www.jitpack.io/v/DevlinChiu/YinYangPlayer.svg)](https://www.jitpack.io/#DevlinChiu/YinYangPlayer)
 
@@ -19,7 +19,7 @@ A video player based on IjkPlayer.
 * **支持连续播放一个列表的视频。**
 * **支持悬浮窗播放。**
 * **支持广告播放。**
-* **支持弹幕**
+* **支持弹幕，使用了[DanmakuFlameMaster](https://github.com/Bilibili/DanmakuFlameMaster)。**
 
 ## 使用
 
