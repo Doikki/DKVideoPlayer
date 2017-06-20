@@ -39,8 +39,7 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
             VideoBean videoBean = videos.get(position);
             Glide.with(context)
                     .load(videoBean.getThumb())
-                    .asBitmap()
-                    .animate(R.anim.anim_alpha_in)
+                    .crossFade()
                     .placeholder(android.R.color.darker_gray)
                     .into(holder.controller.getThumb());
             holder.yinYangPlayer

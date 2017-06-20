@@ -62,8 +62,7 @@ public class VideoListViewAdapter extends BaseAdapter {
                 .setVideoController(viewHolder.controller);
         Glide.with(context)
                 .load(videoBean.getThumb())
-                .asBitmap()
-                .animate(R.anim.anim_alpha_in)
+                .crossFade()
                 .placeholder(android.R.color.darker_gray)
                 .into(viewHolder.controller.getThumb());
 
