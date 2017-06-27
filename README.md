@@ -1,4 +1,4 @@
-# YinYangPlayer
+# DCPlayer
 A video player based on [IjkPlayer](https://github.com/Bilibili/ijkplayer).
 
 [![](https://www.jitpack.io/v/DevlinChiu/YinYangPlayer.svg)](https://www.jitpack.io/#DevlinChiu/YinYangPlayer)
@@ -39,14 +39,14 @@ Step 1.Add it in your root build.gradle at the end of repositories:
 Step 2. Add the dependency
 
 	dependencies {
-	        compile 'com.github.DevlinChiu:YinYangPlayer:1.2'
+	        compile 'com.github.DevlinChiu:dcplayer:1.3'
 	}
 ```
 或者将library下载并导入项目中使用
 
 2.添加布局
 ```xml
-<com.devlin_n.yinyangplayer.player.YinYangPlayer
+<com.devlin_n.videoplayer.player.YinYangPlayer
         android:id="@+id/player"
         android:layout_width="match_parent"
         android:layout_height="300dp" />
@@ -54,9 +54,9 @@ Step 2. Add the dependency
 
 3.设置视频地址、标题、Controller等
 ```java
-yinYangPlayer = (YinYangPlayer) findViewById(R.id.player);
+ijkVideoView = (IjkVideoView) findViewById(R.id.player);
 StandardVideoController controller = new StandardVideoController(this);
-yinYangPlayer
+ijkVideoView
         .autoRotate() //启用重力感应自动进入/推出全屏功能
         .enableCache() //启用边播边缓存功能
         .useSurfaceView() //启用SurfaceView显示视频，不调用默认使用TextureView
@@ -72,25 +72,25 @@ yinYangPlayer
 @Override
     protected void onPause() {
         super.onPause();
-        yinYangPlayer.pause();
+        ijkVideoView.pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        yinYangPlayer.resume();
+        ijkVideoView.resume();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        yinYangPlayer.release();
+        ijkVideoView.release();
     }
 
 
     @Override
     public void onBackPressed() {
-        if (!yinYangPlayer.onBackPressed()) {
+        if (!ijkVideoView.onBackPressed()) {
             super.onBackPressed();
         }
     }
@@ -123,5 +123,5 @@ yinYangPlayer
 ## 混淆
 	-keep class tv.danmaku.ijk.** { *; }
     -dontwarn tv.danmaku.ijk.**
-    -keep class com.devlin_n.yinyangplayer.** { *; }
-    -dontwarn com.devlin_n.yinyangplayer.**
+    -keep class com.devlin_n.videoplayer.** { *; }
+    -dontwarn com.devlin_n.videoplayer.**

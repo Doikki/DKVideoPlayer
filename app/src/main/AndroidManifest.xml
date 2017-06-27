@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.devlin_n.yyplayer">
+    package="com.devlin_n.dcplayer">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:name="com.devlin_n.yyplayer.app.MyApplication"
+        android:name="com.devlin_n.dcplayer.app.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.devlin_n.yyplayer.MainActivity"
+            android:name="com.devlin_n.dcplayer.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden">
@@ -24,31 +24,31 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.devlin_n.yyplayer.activity.VodPlayerActivity"
+            android:name="com.devlin_n.dcplayer.activity.VodPlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.devlin_n.yyplayer.activity.LivePlayerActivity"
+            android:name="com.devlin_n.dcplayer.activity.LivePlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.devlin_n.yyplayer.activity.FullScreenActivity"
+            android:name="com.devlin_n.dcplayer.activity.FullScreenActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.devlin_n.yyplayer.activity.RecyclerViewActivity"
+            android:name="com.devlin_n.dcplayer.activity.RecyclerViewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.devlin_n.yyplayer.activity.PlayerActivity"
+            android:name="com.devlin_n.dcplayer.activity.PlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.devlin_n.yyplayer.activity.DanmakuActivity"
+            android:name="com.devlin_n.dcplayer.activity.DanmakuActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.devlin_n.yyplayer.activity.ListViewActivity"
+            android:name="com.devlin_n.dcplayer.activity.ListViewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
     </application>
