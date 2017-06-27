@@ -8,8 +8,8 @@ android {
         applicationId "com.devlin_n.dcplayer"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 6
-        versionName "1.2"
+        versionCode 7
+        versionName "1.3"
     }
 
 

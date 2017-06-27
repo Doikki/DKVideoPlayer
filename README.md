@@ -1,7 +1,7 @@
 # DCPlayer
 A video player based on [IjkPlayer](https://github.com/Bilibili/ijkplayer).
 
-[![](https://www.jitpack.io/v/DevlinChiu/YinYangPlayer.svg)](https://www.jitpack.io/#DevlinChiu/YinYangPlayer)
+[![](https://www.jitpack.io/v/DevlinChiu/dcplayer.svg)](https://www.jitpack.io/#DevlinChiu/dcplayer)
 [![API](https://img.shields.io/badge/API-16%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=16)
 
 
@@ -22,7 +22,7 @@ A video player based on [IjkPlayer](https://github.com/Bilibili/ijkplayer).
 * **支持广告播放。**
 * **支持弹幕，使用了[DanmakuFlameMaster](https://github.com/Bilibili/DanmakuFlameMaster)。**
 
-[demo下载](https://fir.im/zjst)
+[demo下载](https://fir.im/l4gn)
 ## 使用
 
 1.添加类库
@@ -46,7 +46,7 @@ Step 2. Add the dependency
 
 2.添加布局
 ```xml
-<com.devlin_n.videoplayer.player.YinYangPlayer
+<com.devlin_n.videoplayer.player.IjkVideoView
         android:id="@+id/player"
         android:layout_width="match_parent"
         android:layout_height="300dp" />
