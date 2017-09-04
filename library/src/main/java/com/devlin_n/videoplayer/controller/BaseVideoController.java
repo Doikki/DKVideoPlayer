@@ -18,6 +18,7 @@ import android.widget.FrameLayout;
 
 import com.devlin_n.videoplayer.R;
 import com.devlin_n.videoplayer.listener.ControllerListener;
+import com.devlin_n.videoplayer.player.IjkVideoView;
 import com.devlin_n.videoplayer.util.Constants;
 import com.devlin_n.videoplayer.util.WindowUtil;
 import com.devlin_n.videoplayer.widget.CenterView;
@@ -46,6 +47,7 @@ public abstract class BaseVideoController extends FrameLayout {
     private float downX;
     private float downY;
     protected ControllerListener listener;
+    protected int currentPlayState;
 
 
     public BaseVideoController(@NonNull Context context) {
@@ -99,6 +101,7 @@ public abstract class BaseVideoController extends FrameLayout {
     }
 
     public void setPlayState(int playState) {
+        currentPlayState = playState;
     }
 
     public void setPlayerState(int playerState) {
@@ -109,6 +112,7 @@ public abstract class BaseVideoController extends FrameLayout {
     }
 
     protected void doPauseResume() {
+        if (currentPlayState == IjkVideoView.STATE_BUFFERING) return;
         if (mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
         } else {

@@ -99,12 +99,10 @@ public class WindowUtil {
         if (statusBar) {
             if (context instanceof FragmentActivity) {
                 FragmentActivity fragmentActivity = (FragmentActivity) context;
-                fragmentActivity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                        WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                fragmentActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
                 fragmentActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             } else {
-                scanForActivity(context).getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                        WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                scanForActivity(context).getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
                 scanForActivity(context).getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             }
         }
@@ -170,18 +168,14 @@ public class WindowUtil {
      * 隐藏状态栏
      */
     public static void hideStatusBar(Context context) {
-        WindowManager.LayoutParams attrs = scanForActivity(context).getWindow().getAttributes();
-        attrs.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
-        scanForActivity(context).getWindow().setAttributes(attrs);
+        scanForActivity(context).getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
     /**
      * 显示状态栏
      */
     public static void showStatusBar(Context context) {
-        WindowManager.LayoutParams attrs = scanForActivity(context).getWindow().getAttributes();
-        attrs.flags &= ~WindowManager.LayoutParams.FLAG_FULLSCREEN;
-        scanForActivity(context).getWindow().setAttributes(attrs);
+        scanForActivity(context).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
 

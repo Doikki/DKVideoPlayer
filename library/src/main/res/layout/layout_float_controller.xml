@@ -1,12 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <com.devlin_n.videoplayer.widget.PlayProgressButton
-        android:id="@+id/play_progress_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"/>
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
+    <ImageView
+        android:id="@+id/start_play"
+        android:layout_width="@dimen/player_play_btn_size"
+        android:layout_height="@dimen/player_play_btn_size"
+        android:layout_gravity="center"
+        android:background="@drawable/shape_play_bg"
+        android:padding="@dimen/default_spacing"
+        android:src="@drawable/selector_play_button" />
+
+    <ProgressBar
+        android:id="@+id/loading"
+        android:layout_width="@dimen/player_play_btn_size"
+        android:layout_height="@dimen/player_play_btn_size"
+        android:layout_gravity="center"
+        android:indeterminateDrawable="@drawable/progress_loading"
+        android:visibility="gone"
+        tools:visibility="visible" />
     <ImageView
         android:id="@+id/btn_close"
         android:layout_width="20dp"

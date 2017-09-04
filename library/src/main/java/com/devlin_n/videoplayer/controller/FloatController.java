@@ -5,10 +5,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.devlin_n.videoplayer.R;
 import com.devlin_n.videoplayer.player.IjkVideoView;
-import com.devlin_n.videoplayer.widget.PlayProgressButton;
 
 /**
  * 悬浮播放控制器
@@ -17,7 +18,9 @@ import com.devlin_n.videoplayer.widget.PlayProgressButton;
 
 public class FloatController extends BaseVideoController implements View.OnClickListener {
 
-    private PlayProgressButton playProgressButton;
+
+    private ProgressBar proLoading;
+    private ImageView playButton;
 
 
     public FloatController(@NonNull Context context) {
@@ -38,13 +41,9 @@ public class FloatController extends BaseVideoController implements View.OnClick
         super.initView();
         this.setOnClickListener(this);
         controllerView.findViewById(R.id.btn_close).setOnClickListener(this);
-        playProgressButton = (PlayProgressButton) controllerView.findViewById(R.id.play_progress_btn);
-        playProgressButton.setPlayButtonClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                doPauseResume();
-            }
-        });
+        proLoading = (ProgressBar) controllerView.findViewById(R.id.loading);
+        playButton = (ImageView) controllerView.findViewById(R.id.start_play);
+        playButton.setOnClickListener(this);
     }
 
     @Override
@@ -52,6 +51,8 @@ public class FloatController extends BaseVideoController implements View.OnClick
         int id = v.getId();
         if (id == R.id.btn_close) {
             mediaPlayer.stopFloatWindow();
+        } else if (id == R.id.start_play) {
+            doPauseResume();
         }
     }
 
@@ -60,33 +61,41 @@ public class FloatController extends BaseVideoController implements View.OnClick
         super.setPlayState(playState);
         switch (playState) {
             case IjkVideoView.STATE_IDLE:
+                playButton.setSelected(false);
+                playButton.setVisibility(VISIBLE);
+                proLoading.setVisibility(GONE);
                 break;
             case IjkVideoView.STATE_PLAYING:
-                playProgressButton.setState(PlayProgressButton.STATE_PLAYING);
+                playButton.setSelected(true);
+                playButton.setVisibility(GONE);
+                proLoading.setVisibility(GONE);
                 hide();
                 break;
             case IjkVideoView.STATE_PAUSED:
-                playProgressButton.setState(PlayProgressButton.STATE_PAUSE);
+                playButton.setSelected(false);
+                playButton.setVisibility(VISIBLE);
+                proLoading.setVisibility(GONE);
                 show(0);
                 break;
             case IjkVideoView.STATE_PREPARING:
-                playProgressButton.setState(PlayProgressButton.STATE_LOADING);
+                playButton.setVisibility(GONE);
+                proLoading.setVisibility(VISIBLE);
                 break;
             case IjkVideoView.STATE_PREPARED:
-                playProgressButton.setVisibility(GONE);
+                playButton.setVisibility(GONE);
+                proLoading.setVisibility(GONE);
                 break;
             case IjkVideoView.STATE_ERROR:
                 break;
             case IjkVideoView.STATE_BUFFERING:
-                playProgressButton.setState(PlayProgressButton.STATE_LOADING);
-                playProgressButton.setVisibility(VISIBLE);
+                playButton.setVisibility(GONE);
+                proLoading.setVisibility(VISIBLE);
                 break;
             case IjkVideoView.STATE_BUFFERED:
-                playProgressButton.setState(PlayProgressButton.STATE_LOADING_END);
-                if (!mShowing) playProgressButton.setVisibility(GONE);
+                playButton.setVisibility(GONE);
+                proLoading.setVisibility(GONE);
                 break;
             case IjkVideoView.STATE_PLAYBACK_COMPLETED:
-                playProgressButton.setState(PlayProgressButton.STATE_PAUSE);
                 show(0);
                 break;
         }
@@ -99,10 +108,12 @@ public class FloatController extends BaseVideoController implements View.OnClick
     }
 
     private void show(int timeout) {
+        if (currentPlayState == IjkVideoView.STATE_BUFFERING) return;
         if (!mShowing) {
-            playProgressButton.show();
-            mShowing = true;
+            playButton.setVisibility(VISIBLE);
         }
+        mShowing = true;
+
         removeCallbacks(mFadeOut);
         if (timeout != 0) {
             postDelayed(mFadeOut, timeout);
@@ -112,8 +123,9 @@ public class FloatController extends BaseVideoController implements View.OnClick
 
     @Override
     public void hide() {
+        if (currentPlayState == IjkVideoView.STATE_BUFFERING) return;
         if (mShowing) {
-            playProgressButton.hide();
+            playButton.setVisibility(GONE);
             mShowing = false;
         }
     }
