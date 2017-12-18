@@ -648,7 +648,6 @@ public class IjkVideoView extends FrameLayout implements BaseVideoController.Med
     public void startFullScreen() {
         if (isFullScreen) return;
         WindowUtil.hideSupportActionBar(getContext(), true, true);
-        WindowUtil.hideNavKey(getContext());
         this.removeView(playerContainer);
         ViewGroup contentView = (ViewGroup) WindowUtil.scanForActivity(getContext())
                 .findViewById(android.R.id.content);
@@ -664,7 +663,6 @@ public class IjkVideoView extends FrameLayout implements BaseVideoController.Med
     public void stopFullScreen() {
         if (!isFullScreen) return;
         WindowUtil.showSupportActionBar(getContext(), true, true);
-        WindowUtil.showNavKey(getContext());
         ViewGroup contentView = (ViewGroup) WindowUtil.scanForActivity(getContext())
                 .findViewById(android.R.id.content);
         contentView.removeView(playerContainer);

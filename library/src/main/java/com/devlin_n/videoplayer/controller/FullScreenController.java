@@ -89,29 +89,29 @@ public class FullScreenController extends BaseVideoController implements View.On
         completeContainer = (LinearLayout) controllerView.findViewById(R.id.complete_container);
         completeContainer.setOnClickListener(this);
         title = (TextView) controllerView.findViewById(R.id.title);
-        popupMenu = new PopupMenu(getContext(), moreMenu, Gravity.END);
-        popupMenu.getMenuInflater().inflate(R.menu.controller_menu, popupMenu.getMenu());
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                int itemId = item.getItemId();
-                if (itemId == R.id.float_window) {
-                    mediaPlayer.startFloatWindow();
-                } else if (itemId == R.id.scale_default) {
-                    mediaPlayer.setScreenScale(IjkVideoView.SCREEN_SCALE_DEFAULT);
-                } else if (itemId == R.id.scale_original) {
-                    mediaPlayer.setScreenScale(IjkVideoView.SCREEN_SCALE_ORIGINAL);
-                } else if (itemId == R.id.scale_match) {
-                    mediaPlayer.setScreenScale(IjkVideoView.SCREEN_SCALE_MATCH_PARENT);
-                } else if (itemId == R.id.scale_16_9) {
-                    mediaPlayer.setScreenScale(IjkVideoView.SCREEN_SCALE_16_9);
-                } else if (itemId == R.id.scale_4_3) {
-                    mediaPlayer.setScreenScale(IjkVideoView.SCREEN_SCALE_4_3);
-                }
-                popupMenu.dismiss();
-                return false;
-            }
-        });
+//        popupMenu = new PopupMenu(getContext(), moreMenu, Gravity.END);
+//        popupMenu.getMenuInflater().inflate(R.menu.controller_menu, popupMenu.getMenu());
+//        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem item) {
+//                int itemId = item.getItemId();
+//                if (itemId == R.id.float_window) {
+//                    mediaPlayer.startFloatWindow();
+//                } else if (itemId == R.id.scale_default) {
+//                    mediaPlayer.setScreenScale(IjkVideoView.SCREEN_SCALE_DEFAULT);
+//                } else if (itemId == R.id.scale_original) {
+//                    mediaPlayer.setScreenScale(IjkVideoView.SCREEN_SCALE_ORIGINAL);
+//                } else if (itemId == R.id.scale_match) {
+//                    mediaPlayer.setScreenScale(IjkVideoView.SCREEN_SCALE_MATCH_PARENT);
+//                } else if (itemId == R.id.scale_16_9) {
+//                    mediaPlayer.setScreenScale(IjkVideoView.SCREEN_SCALE_16_9);
+//                } else if (itemId == R.id.scale_4_3) {
+//                    mediaPlayer.setScreenScale(IjkVideoView.SCREEN_SCALE_4_3);
+//                }
+//                popupMenu.dismiss();
+//                return false;
+//            }
+//        });
     }
 
     @Override
@@ -256,8 +256,6 @@ public class FullScreenController extends BaseVideoController implements View.On
                 lock.setVisibility(GONE);
                 if (!isLocked) {
                     hideAllViews();
-                    WindowUtil.hideStatusBar(getContext());
-                    WindowUtil.hideNavKey(getContext());
                 }
             } else {
                 hideAllViews();
@@ -304,8 +302,6 @@ public class FullScreenController extends BaseVideoController implements View.On
         bottomContainer.startAnimation(showAnim);
         topContainer.setVisibility(VISIBLE);
         topContainer.startAnimation(showAnim);
-        WindowUtil.showStatusBar(getContext());
-        WindowUtil.showNavKey(getContext());
     }
 
     @Override

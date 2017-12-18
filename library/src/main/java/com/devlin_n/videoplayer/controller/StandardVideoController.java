@@ -42,7 +42,7 @@ public class StandardVideoController extends BaseVideoController implements View
     protected TextView title;
     private boolean isLive;
     private boolean isDragging;
-    private View statusHolder;
+//    private View statusHolder;
 
     private ProgressBar bottomProgress;
     private ImageView playButton;
@@ -52,7 +52,6 @@ public class StandardVideoController extends BaseVideoController implements View
     private LinearLayout completeContainer;
     private Animation showAnim = AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_in);
     private Animation hideAnim = AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_out);
-    private PopupMenu popupMenu;
 
 
     public StandardVideoController(@NonNull Context context) {
@@ -101,31 +100,31 @@ public class StandardVideoController extends BaseVideoController implements View
         completeContainer = (LinearLayout) controllerView.findViewById(R.id.complete_container);
         completeContainer.setOnClickListener(this);
         title = (TextView) controllerView.findViewById(R.id.title);
-        statusHolder = controllerView.findViewById(R.id.status_holder);
-        statusHolder.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) WindowUtil.getStatusBarHeight(getContext())));
-        popupMenu = new PopupMenu(getContext(), moreMenu, Gravity.END);
-        popupMenu.getMenuInflater().inflate(R.menu.controller_menu, popupMenu.getMenu());
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                int itemId = item.getItemId();
-                if (itemId == R.id.float_window) {
-                    mediaPlayer.startFloatWindow();
-                } else if (itemId == R.id.scale_default) {
-                    mediaPlayer.setScreenScale(IjkVideoView.SCREEN_SCALE_DEFAULT);
-                } else if (itemId == R.id.scale_original) {
-                    mediaPlayer.setScreenScale(IjkVideoView.SCREEN_SCALE_ORIGINAL);
-                } else if (itemId == R.id.scale_match) {
-                    mediaPlayer.setScreenScale(IjkVideoView.SCREEN_SCALE_MATCH_PARENT);
-                } else if (itemId == R.id.scale_16_9) {
-                    mediaPlayer.setScreenScale(IjkVideoView.SCREEN_SCALE_16_9);
-                } else if (itemId == R.id.scale_4_3) {
-                    mediaPlayer.setScreenScale(IjkVideoView.SCREEN_SCALE_4_3);
-                }
-                popupMenu.dismiss();
-                return false;
-            }
-        });
+//        statusHolder = controllerView.findViewById(R.id.status_holder);
+//        statusHolder.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) WindowUtil.getStatusBarHeight(getContext())));
+//        popupMenu = new PopupMenu(getContext(), moreMenu, Gravity.END);
+//        popupMenu.getMenuInflater().inflate(R.menu.controller_menu, popupMenu.getMenu());
+//        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem item) {
+//                int itemId = item.getItemId();
+//                if (itemId == R.id.float_window) {
+//                    mediaPlayer.startFloatWindow();
+//                } else if (itemId == R.id.scale_default) {
+//                    mediaPlayer.setScreenScale(IjkVideoView.SCREEN_SCALE_DEFAULT);
+//                } else if (itemId == R.id.scale_original) {
+//                    mediaPlayer.setScreenScale(IjkVideoView.SCREEN_SCALE_ORIGINAL);
+//                } else if (itemId == R.id.scale_match) {
+//                    mediaPlayer.setScreenScale(IjkVideoView.SCREEN_SCALE_MATCH_PARENT);
+//                } else if (itemId == R.id.scale_16_9) {
+//                    mediaPlayer.setScreenScale(IjkVideoView.SCREEN_SCALE_16_9);
+//                } else if (itemId == R.id.scale_4_3) {
+//                    mediaPlayer.setScreenScale(IjkVideoView.SCREEN_SCALE_4_3);
+//                }
+//                popupMenu.dismiss();
+//                return false;
+//            }
+//        });
     }
 
     @Override
@@ -137,9 +136,6 @@ public class StandardVideoController extends BaseVideoController implements View
             doLockUnlock();
         } else if (i == R.id.iv_play || i == R.id.thumb || i == R.id.iv_replay) {
             doPauseResume();
-        } else if (i == R.id.more_menu) {
-            popupMenu.show();
-            show();
         }
     }
 
@@ -160,29 +156,27 @@ public class StandardVideoController extends BaseVideoController implements View
                 fullScreenButton.setSelected(false);
                 backButton.setVisibility(GONE);
                 lock.setVisibility(GONE);
-                statusHolder.setVisibility(GONE);
+//                statusHolder.setVisibility(GONE);
                 title.setVisibility(INVISIBLE);
                 break;
             case IjkVideoView.PLAYER_FULL_SCREEN:
                 L.e("PLAYER_FULL_SCREEN");
                 if (isLocked) return;
-                postDelayed(new Runnable() {//解决ListView无效问题
-                    @Override
-                    public void run() {
-                        setLayoutParams(new FrameLayout.LayoutParams(
-                                Constants.SCREEN_HEIGHT,
-                                Constants.SCREEN_WIDTH));
-                    }
-                }, 300);
+//                postDelayed(new Runnable() {//解决ListView无效问题
+//                    @Override
+//                    public void run() {
+//                        setLayoutParams(new FrameLayout.LayoutParams(
+//                                Constants.SCREEN_HEIGHT,
+//                                Constants.SCREEN_WIDTH));
+//                    }
+//                }, 300);
                 gestureEnabled = true;
                 fullScreenButton.setSelected(true);
-                statusHolder.setVisibility(VISIBLE);
+//                statusHolder.setVisibility(VISIBLE);
                 backButton.setVisibility(VISIBLE);
                 title.setVisibility(VISIBLE);
                 if (mShowing) {
                     lock.setVisibility(VISIBLE);
-                    WindowUtil.showNavKey(getContext());
-                    WindowUtil.showStatusBar(getContext());
                 } else {
                     lock.setVisibility(GONE);
                 }
@@ -274,12 +268,11 @@ public class StandardVideoController extends BaseVideoController implements View
     /**
      * 设置是否为直播视频
      */
-    public void setLive(boolean live) {
-        isLive = live;
+    public void setLive() {
+        isLive = true;
         bottomProgress.setVisibility(GONE);
         videoProgress.setVisibility(INVISIBLE);
         totalTime.setVisibility(INVISIBLE);
-        moreMenu.setVisibility(VISIBLE);
     }
 
     @Override
@@ -318,8 +311,6 @@ public class StandardVideoController extends BaseVideoController implements View
                 lock.setVisibility(GONE);
                 if (!isLocked) {
                     hideAllViews();
-                    WindowUtil.hideStatusBar(getContext());
-                    WindowUtil.hideNavKey(getContext());
                 }
             } else {
                 hideAllViews();
@@ -366,8 +357,6 @@ public class StandardVideoController extends BaseVideoController implements View
         bottomContainer.startAnimation(showAnim);
         topContainer.setVisibility(VISIBLE);
         topContainer.startAnimation(showAnim);
-        WindowUtil.showStatusBar(getContext());
-        WindowUtil.showNavKey(getContext());
     }
 
     @Override

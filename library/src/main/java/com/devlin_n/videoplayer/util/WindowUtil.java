@@ -6,6 +6,7 @@ import android.content.ContextWrapper;
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.os.Build;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -16,7 +17,9 @@ import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.Window;
 import android.view.WindowManager;
+import android.widget.DatePicker;
 
 /**
  * Window工具类
@@ -96,43 +99,27 @@ public class WindowUtil {
                 }
             }
         }
-        if (statusBar) {
-            if (context instanceof FragmentActivity) {
-                FragmentActivity fragmentActivity = (FragmentActivity) context;
-                fragmentActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-                fragmentActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-            } else {
-                scanForActivity(context).getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-                scanForActivity(context).getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-            }
-        }
+        scanForActivity(context).getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        hideNavigationBar(context);
     }
 
     /**
      * 显示ActionBar和StatusBar
      */
-    public static void showSupportActionBar(Context context, boolean actionBar, boolean statusBar) {
-        if (actionBar) {
-            AppCompatActivity appCompatActivity = getAppCompActivity(context);
-            if (appCompatActivity != null) {
-                ActionBar ab = appCompatActivity.getSupportActionBar();
-                if (ab != null) {
-                    ab.setShowHideAnimationEnabled(false);
-                    ab.show();
+    public static void showSupportActionBar(final Context context, final boolean actionBar, boolean statusBar) {
+            scanForActivity(context).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            showNavigationBar(context);
+            if (actionBar) {
+                AppCompatActivity appCompatActivity = getAppCompActivity(context);
+                if (appCompatActivity != null) {
+                    ActionBar ab = appCompatActivity.getSupportActionBar();
+                    if (ab != null) {
+                        ab.setShowHideAnimationEnabled(false);
+                        ab.show();
+                    }
                 }
             }
-        }
 
-        if (statusBar) {
-            if (context instanceof FragmentActivity) {
-                FragmentActivity fragmentActivity = (FragmentActivity) context;
-                fragmentActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-                fragmentActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-            } else {
-                scanForActivity(context).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-                scanForActivity(context).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-            }
-        }
     }
 
     /**
@@ -142,40 +129,19 @@ public class WindowUtil {
         return context == null ? null : (context instanceof Activity ? (Activity) context : (context instanceof ContextWrapper ? scanForActivity(((ContextWrapper) context).getBaseContext()) : null));
     }
 
-    /**
-     * 隐藏NavigationBar
-     */
-    public static void hideNavKey(Context context) {
-        int flag;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            //       设置屏幕始终在前面，不然点击鼠标，重新出现虚拟按键
-            flag = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-        } else {
-            flag = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION; // hide nav
-        }
-        scanForActivity(context).getWindow().getDecorView().setSystemUiVisibility(flag);
+    public static void hideNavigationBar(Context context) {
+        View decorView = scanForActivity(context).getWindow().getDecorView();
+        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN);
     }
 
-    /**
-     * 显示NavigationBar
-     */
-    public static void showNavKey(Context context) {
-        scanForActivity(context).getWindow().getDecorView().setSystemUiVisibility(0);
-    }
-
-    /**
-     * 隐藏状态栏
-     */
-    public static void hideStatusBar(Context context) {
-        scanForActivity(context).getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-    }
-
-    /**
-     * 显示状态栏
-     */
-    public static void showStatusBar(Context context) {
-        scanForActivity(context).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    private static void showNavigationBar(Context context) {
+        View decorView = scanForActivity(context).getWindow().getDecorView();
+        int systemUiVisibility = decorView.getSystemUiVisibility();
+        int flags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
+        systemUiVisibility &= ~flags;
+        decorView.setSystemUiVisibility(systemUiVisibility);
     }
 
 

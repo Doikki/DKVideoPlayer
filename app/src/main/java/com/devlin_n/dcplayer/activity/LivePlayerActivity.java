@@ -38,7 +38,7 @@ public class LivePlayerActivity extends AppCompatActivity {
 //        ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 4 * 3));
 
         StandardVideoController controller = new StandardVideoController(this);
-        controller.setLive(true);
+        controller.setLive();
         Glide.with(this)
                 .load("http://img.9ku.com/geshoutuji/singertuji/5/50815/50815_1.jpg")
                 .asBitmap()

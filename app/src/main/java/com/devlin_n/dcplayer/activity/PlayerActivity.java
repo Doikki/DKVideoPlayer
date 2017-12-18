@@ -38,7 +38,7 @@ public class PlayerActivity extends AppCompatActivity {
             StandardVideoController controller = new StandardVideoController(this);
             boolean isLive = intent.getBooleanExtra("isLive", false);
             if (isLive) {
-                controller.setLive(true);
+                controller.setLive();
             }
             ijkVideoView
                     .autoRotate()
