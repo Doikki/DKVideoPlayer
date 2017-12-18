@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.devlin_n.videoplayer.controller.StandardVideoController;
@@ -28,7 +29,7 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
 
         @Override
         public VideoHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View itemView = LayoutInflater.from(context).inflate(R.layout.item_video, parent, false);
+            View itemView = LayoutInflater.from(context).inflate(R.layout.item_video_auto_play, parent, false);
             return new VideoHolder(itemView);
 
         }
@@ -50,6 +51,7 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
                     .setUrl(videoBean.getUrl())
                     .setTitle(videoBean.getTitle())
                     .setVideoController(holder.controller);
+            holder.title.setText(videoBean.getTitle());
             holder.ijkVideoView.setTag(position);
 
         }
@@ -63,6 +65,7 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
 
             private IjkVideoView ijkVideoView;
             private StandardVideoController controller;
+            private TextView title;
 
             VideoHolder(View itemView) {
                 super(itemView);
@@ -71,6 +74,7 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
                 ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 16 * 9));
                 controller = new StandardVideoController(context);
                 ijkVideoView.setVideoController(controller);
+                title = itemView.findViewById(R.id.tv_title);
             }
         }
     }

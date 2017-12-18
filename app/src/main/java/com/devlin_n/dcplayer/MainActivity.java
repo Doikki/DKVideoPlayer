@@ -16,15 +16,16 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.devlin_n.videoplayer.player.BackgroundPlayService;
-import com.devlin_n.videoplayer.player.VideoCacheManager;
 import com.devlin_n.dcplayer.activity.DanmakuActivity;
 import com.devlin_n.dcplayer.activity.FullScreenActivity;
 import com.devlin_n.dcplayer.activity.ListViewActivity;
 import com.devlin_n.dcplayer.activity.LivePlayerActivity;
 import com.devlin_n.dcplayer.activity.PlayerActivity;
 import com.devlin_n.dcplayer.activity.RecyclerViewActivity;
+import com.devlin_n.dcplayer.activity.RecyclerViewAutoPlayActivity;
 import com.devlin_n.dcplayer.activity.VodPlayerActivity;
+import com.devlin_n.videoplayer.player.BackgroundPlayService;
+import com.devlin_n.videoplayer.player.VideoCacheManager;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -115,5 +116,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void list(View view) {
         startActivity(new Intent(this, ListViewActivity.class));
+    }
+
+    public void recyclerAutoPlay(View view) {
+        startActivity(new Intent(this, RecyclerViewAutoPlayActivity.class));
     }
 }

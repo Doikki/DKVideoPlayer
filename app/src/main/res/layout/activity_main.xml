@@ -41,6 +41,12 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:onClick="recyclerAutoPlay"
+                android:text="RECYCLER VIEW AUTO PLAY" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:onClick="list"
                 android:text="LIST VIEW" />
 

@@ -22,7 +22,7 @@ import com.devlin_n.dcplayer.R;
 public class LivePlayerActivity extends AppCompatActivity {
 
     private IjkVideoView ijkVideoView;
-    private static final String URL = "http://ivi.bupt.edu.cn/hls/hunanhd.m3u8";
+    private static final String URL = "http://ivi.bupt.edu.cn/hls/sztv.m3u8";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,9 +40,7 @@ public class LivePlayerActivity extends AppCompatActivity {
         StandardVideoController controller = new StandardVideoController(this);
         controller.setLive(true);
         Glide.with(this)
-                .load("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=" +
-                        "1497428393984&di=0b8c95c1ae8f9427335f9cf73bfe692c&imgtype=0&src=http%" +
-                        "3A%2F%2Fn1.itc.cn%2Fimg8%2Fwb%2Frecom%2F2017%2F01%2F08%2F148380896090867654.JPEG")
+                .load("http://img.9ku.com/geshoutuji/singertuji/5/50815/50815_1.jpg")
                 .asBitmap()
                 .animate(R.anim.anim_alpha_in)
                 .placeholder(android.R.color.darker_gray)
@@ -51,7 +49,7 @@ public class LivePlayerActivity extends AppCompatActivity {
                 .autoRotate()
 //                .useAndroidMediaPlayer()
                 .setUrl(URL)
-                .setTitle("湖南卫视")
+                .setTitle("深圳卫视")
                 .setVideoController(controller);
 //                .start();
     }
