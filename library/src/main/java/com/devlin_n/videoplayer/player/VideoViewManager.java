@@ -7,7 +7,7 @@ import java.lang.ref.WeakReference;
  */
 public class VideoViewManager {
 
-    private WeakReference<IjkVideoView> mPlayer; //写成弱引用防止内存泄露
+    private WeakReference<BaseIjkVideoView> mPlayer; //写成弱引用防止内存泄露
 
     private VideoViewManager() {
     }
@@ -21,11 +21,11 @@ public class VideoViewManager {
         return sInstance;
     }
 
-    public void setCurrentVideoPlayer(IjkVideoView player) {
+    public void setCurrentVideoPlayer(BaseIjkVideoView player) {
         mPlayer = new WeakReference<>(player);
     }
 
-    public IjkVideoView getCurrentVideoPlayer() {
+    public BaseIjkVideoView getCurrentVideoPlayer() {
         if (mPlayer == null) return null;
         return mPlayer.get();
     }

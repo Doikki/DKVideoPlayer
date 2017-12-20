@@ -1,6 +1,7 @@
 package com.devlin_n.videoplayer.controller;
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import com.devlin_n.videoplayer.R;
 import com.devlin_n.videoplayer.player.IjkVideoView;
+import com.devlin_n.videoplayer.util.WindowUtil;
 
 /**
  * 广告控制器
@@ -128,5 +130,16 @@ public class AdController extends BaseVideoController implements View.OnClickLis
                 break;
         }
         return false;
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if (mediaPlayer.isFullScreen()) {
+            WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            mediaPlayer.stopFullScreen();
+            setPlayerState(IjkVideoView.PLAYER_NORMAL);
+            return true;
+        }
+        return super.onBackPressed();
     }
 }

@@ -15,6 +15,7 @@ import android.view.ViewConfiguration;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.devlin_n.videoplayer.R;
 import com.devlin_n.videoplayer.listener.ControllerListener;
@@ -353,6 +354,13 @@ public abstract class BaseVideoController extends FrameLayout {
         if (visibility == VISIBLE) {
             post(mShowProgress);
         }
+    }
+
+    /**
+     * 改变返回键逻辑，用于activity
+     */
+    public boolean onBackPressed() {
+        return false;
     }
 
     public interface MediaPlayerControl {

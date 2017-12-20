@@ -127,7 +127,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        IjkVideoView currentVideoPlayer = VideoViewManager.instance().getCurrentVideoPlayer();
+        IjkVideoView currentVideoPlayer = (IjkVideoView) VideoViewManager.instance().getCurrentVideoPlayer();
         if (currentVideoPlayer != null){
             currentVideoPlayer.release();
         }

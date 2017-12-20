@@ -1,47 +1,31 @@
 package com.devlin_n.videoplayer.player;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.SurfaceTexture;
-import android.media.AudioManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.Gravity;
-import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.TextureView;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
-import com.danikula.videocache.CacheListener;
-import com.danikula.videocache.HttpProxyCacheServer;
-import com.devlin_n.floatWindowPermission.FloatWindowManager;
 import com.devlin_n.videoplayer.R;
 import com.devlin_n.videoplayer.controller.BaseVideoController;
-import com.devlin_n.videoplayer.listener.VideoListener;
 import com.devlin_n.videoplayer.util.Constants;
-import com.devlin_n.videoplayer.util.KeyUtil;
 import com.devlin_n.videoplayer.util.NetworkUtil;
 import com.devlin_n.videoplayer.util.WindowUtil;
 import com.devlin_n.videoplayer.widget.ResizeSurfaceView;
 import com.devlin_n.videoplayer.widget.ResizeTextureView;
 import com.devlin_n.videoplayer.widget.StatusView;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
 import master.flame.danmaku.danmaku.model.android.DanmakuContext;
 import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
 import master.flame.danmaku.ui.widget.DanmakuView;
-import tv.danmaku.ijk.media.player.AndroidMediaPlayer;
-import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 /**
@@ -49,12 +33,10 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
  * Created by Devlin_n on 2017/4/7.
  */
 
-public class IjkVideoView extends FrameLayout implements BaseVideoController.MediaPlayerControl {
+public class IjkVideoView extends BaseIjkVideoView {
 
-    private IMediaPlayer mMediaPlayer;//ijkPlayer
     @Nullable
     private BaseVideoController mVideoController;//控制器
-    private VideoListener listener;
     private ResizeSurfaceView mSurfaceView;
     private ResizeTextureView mTextureView;
     private SurfaceTexture mSurfaceTexture;
@@ -63,37 +45,8 @@ public class IjkVideoView extends FrameLayout implements BaseVideoController.Med
     private BaseDanmakuParser mParser;
     private FrameLayout playerContainer;
     private StatusView statusView;//显示错误信息的一个view
-    private int bufferPercentage;//缓冲百分比
-    private boolean isFullScreen;//是否处于全屏状态
-    private boolean isMute;//是否静音
     private boolean useSurfaceView;//是否使用TextureView
-    private boolean useAndroidMediaPlayer;//是否使用AndroidMediaPlayer
-
-    private String mCurrentUrl;//当前播放视频的地址
-    private List<VideoModel> mVideoModels;//列表播放数据
-    private int mCurrentVideoPosition = 0;//列表播放时当前播放视频的在List中的位置
-    private int mCurrentPosition;//当前正在播放视频的位置
-    private String mCurrentTitle = "";//当前正在播放视频的标题
-
-    //播放器的各种状态
-    public static final int STATE_ERROR = -1;
-    public static final int STATE_IDLE = 0;
-    public static final int STATE_PREPARING = 1;
-    public static final int STATE_PREPARED = 2;
-    public static final int STATE_PLAYING = 3;
-    public static final int STATE_PAUSED = 4;
-    public static final int STATE_PLAYBACK_COMPLETED = 5;
-    public static final int STATE_BUFFERING = 6;
-    public static final int STATE_BUFFERED = 7;
-
-    private int mCurrentState = STATE_IDLE;//当前播放器的状态
-
-    public static final int PLAYER_NORMAL = 10;        // 普通播放器
-    public static final int PLAYER_FULL_SCREEN = 11;   // 全屏播放器
-
-    private AudioManager mAudioManager;//系统音频管理器
-    @NonNull
-    private AudioFocusHelper mAudioFocusHelper = new AudioFocusHelper();
+    private boolean isFullScreen;//是否处于全屏状态
 
     public static final int SCREEN_SCALE_DEFAULT = 0;
     public static final int SCREEN_SCALE_16_9 = 1;
@@ -103,21 +56,9 @@ public class IjkVideoView extends FrameLayout implements BaseVideoController.Med
 
     private int mCurrentScreenScale = SCREEN_SCALE_DEFAULT;
 
-    /**
-     * 加速度传感器监听
-     */
-    protected OrientationEventListener orientationEventListener;
-    protected boolean mAutoRotate;//是否旋转屏幕
-    private boolean isLocked;
-    private boolean mAlwaysFullScreen;//总是全屏
-    private boolean isCache;
-    private boolean addToPlayerManager;
-
-
     public IjkVideoView(@NonNull Context context) {
         this(context, null);
     }
-
 
     public IjkVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -127,7 +68,9 @@ public class IjkVideoView extends FrameLayout implements BaseVideoController.Med
     /**
      * 初始化播放器视图
      */
-    private void initView() {
+    @Override
+    protected void initView() {
+        super.initView();
         Constants.SCREEN_HEIGHT = WindowUtil.getScreenHeight(getContext(), false);
         Constants.SCREEN_WIDTH = WindowUtil.getScreenWidth(getContext());
         playerContainer = new FrameLayout(getContext());
@@ -141,27 +84,9 @@ public class IjkVideoView extends FrameLayout implements BaseVideoController.Med
     /**
      * 创建播放器实例，设置播放地址及播放器参数
      */
-    private void initPlayer() {
-        if (mMediaPlayer == null) {
-            if (useAndroidMediaPlayer) {
-                mMediaPlayer = new AndroidMediaPlayer();
-            } else {
-                mMediaPlayer = new IjkMediaPlayer();
-                ((IjkMediaPlayer) mMediaPlayer).setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 1);//开启硬解码
-                ((IjkMediaPlayer) mMediaPlayer).setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 1);
-                ((IjkMediaPlayer) mMediaPlayer).setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", 1);
-            }
-            mAudioManager = (AudioManager) getContext().getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
-            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            mMediaPlayer.setOnErrorListener(onErrorListener);
-            mMediaPlayer.setOnCompletionListener(onCompletionListener);
-            mMediaPlayer.setOnInfoListener(onInfoListener);
-            mMediaPlayer.setOnBufferingUpdateListener(onBufferingUpdateListener);
-            mMediaPlayer.setOnPreparedListener(onPreparedListener);
-            mMediaPlayer.setOnVideoSizeChangedListener(onVideoSizeChangedListener);
-            mCurrentState = STATE_IDLE;
-            if (mVideoController != null) mVideoController.setPlayState(mCurrentState);
-        }
+    @Override
+    protected void initPlayer() {
+        super.initPlayer();
         if (useSurfaceView) {
             addSurfaceView();
         } else {
@@ -173,43 +98,23 @@ public class IjkVideoView extends FrameLayout implements BaseVideoController.Med
         }
     }
 
-    /**
-     * 开始准备播放（直接播放）
-     */
-    private void startPrepare() {
-        if (mCurrentUrl == null || mCurrentUrl.trim().equals("")) return;
-        try {
-            if (isCache) {
-                HttpProxyCacheServer cacheServer = getCacheServer();
-                String proxyPath = cacheServer.getProxyUrl(mCurrentUrl);
-                cacheServer.registerCacheListener(cacheListener, mCurrentUrl);
-                if (cacheServer.isCached(mCurrentUrl)) {
-                    bufferPercentage = 100;
-                }
-                mMediaPlayer.setDataSource(proxyPath);
-            } else {
-                mMediaPlayer.setDataSource(mCurrentUrl);
-            }
-            mMediaPlayer.prepareAsync();
-            mCurrentState = STATE_PREPARING;
-            if (mVideoController != null) {
-                mVideoController.setPlayState(mCurrentState);
-                mVideoController.setPlayerState(isFullScreen ? PLAYER_FULL_SCREEN : PLAYER_NORMAL);
-            }
-            if (mDanmakuView != null) {
-                mDanmakuView.prepare(mParser, mContext);
-            }
-        } catch (IOException e) {
-            mCurrentState = STATE_ERROR;
-            if (mVideoController != null) mVideoController.setPlayState(mCurrentState);
-            e.printStackTrace();
+    @Override
+    protected void setPlayState(int playState) {
+        if (mVideoController != null) mVideoController.setPlayState(playState);
+    }
+
+    @Override
+    protected void setPlayerState(int playerState) {
+        if (mVideoController != null) mVideoController.setPlayerState(playerState);
+    }
+
+    @Override
+    protected void startPrepare() {
+        super.startPrepare();
+        if (mDanmakuView != null) {
+            mDanmakuView.prepare(mParser, mContext);
         }
     }
-
-    private HttpProxyCacheServer getCacheServer() {
-        return VideoCacheManager.getProxy(getContext().getApplicationContext());
-    }
-
     /**
      * 添加SurfaceView
      */
@@ -279,33 +184,9 @@ public class IjkVideoView extends FrameLayout implements BaseVideoController.Med
         playerContainer.addView(mTextureView, 0, params);
     }
 
-    @Override
-    public void start() {
-        if (mCurrentState == STATE_IDLE) {
-            if (mAlwaysFullScreen) startFullScreenDirectly();
-            if (addToPlayerManager) {
-                VideoViewManager.instance().releaseVideoPlayer();
-                VideoViewManager.instance().setCurrentVideoPlayer(this);
-            }
-            if (mAutoRotate && orientationEventListener != null) orientationEventListener.enable();
-            if (checkNetwork()) return;
-            initPlayer();
-            startPrepare();
-        } else if (isInPlaybackState()) {
-            mMediaPlayer.start();
-            mCurrentState = STATE_PLAYING;
-            if (mVideoController != null) {
-                mVideoController.setPlayState(mCurrentState);
-            }
-            if (mDanmakuView != null && mDanmakuView.isPrepared() && mDanmakuView.isPaused()) {
-                mDanmakuView.resume();
-            }
-        }
-        setKeepScreenOn(true);
-        mAudioFocusHelper.requestFocus();
-    }
 
-    private boolean checkNetwork() {
+    @Override
+    protected boolean checkNetwork() {
         if (NetworkUtil.getNetworkType(getContext()) == NetworkUtil.NETWORK_MOBILE && !Constants.IS_PLAY_ON_MOBILE_NETWORK) {
             playerContainer.removeView(statusView);
             if (statusView == null) {
@@ -325,69 +206,42 @@ public class IjkVideoView extends FrameLayout implements BaseVideoController.Med
     }
 
     @Override
-    public void pause() {
+    public void start() {
+        super.start();
         if (isInPlaybackState()) {
-            if (mMediaPlayer.isPlaying()) {
-                mMediaPlayer.pause();
-                mCurrentState = STATE_PAUSED;
-                if (mVideoController != null) mVideoController.setPlayState(mCurrentState);
-                setKeepScreenOn(false);
-                mAudioFocusHelper.abandonFocus();
+            if (mDanmakuView != null && mDanmakuView.isPrepared() && mDanmakuView.isPaused()) {
+                mDanmakuView.resume();
             }
+        }
+    }
+
+    @Override
+    public void pause() {
+        super.pause();
+        if (isInPlaybackState()) {
             if (mDanmakuView != null && mDanmakuView.isPrepared()) {
                 mDanmakuView.pause();
             }
         }
     }
 
+    @Override
     public void resume() {
-        if (isInPlaybackState() && !mMediaPlayer.isPlaying() && mCurrentState != STATE_PLAYBACK_COMPLETED) {
-            mMediaPlayer.start();
-            mCurrentState = STATE_PLAYING;
-            if (mVideoController != null) mVideoController.setPlayState(mCurrentState);
-            mAudioFocusHelper.requestFocus();
-            setKeepScreenOn(true);
-        }
+        super.resume();
         if (mDanmakuView != null && mDanmakuView.isPrepared() && mDanmakuView.isPaused()) {
             mDanmakuView.resume();
         }
     }
 
-    public void stopPlayback() {
-        if (mMediaPlayer != null) {
-            mMediaPlayer.stop();
-            mMediaPlayer.release();
-            mMediaPlayer = null;
-            mCurrentState = STATE_IDLE;
-            if (mVideoController != null) mVideoController.setPlayState(mCurrentState);
-            mAudioFocusHelper.abandonFocus();
-            setKeepScreenOn(false);
-        }
-    }
 
+    @Override
     public void release() {
-        if (mMediaPlayer != null) {
-            //启动一个线程来释放播放器，解决列表播放卡顿问题
-            new Thread(() -> {
-                mMediaPlayer.reset();
-                mMediaPlayer.release();
-                mMediaPlayer = null;
-            }).start();
-            mCurrentState = STATE_IDLE;
-            if (mVideoController != null) mVideoController.setPlayState(mCurrentState);
-            mAudioFocusHelper.abandonFocus();
-            setKeepScreenOn(false);
-        }
+        super.release();
         if (mDanmakuView != null) {
             // dont forget release!
             mDanmakuView.release();
             mDanmakuView = null;
         }
-        if (orientationEventListener != null) {
-            orientationEventListener.disable();
-        }
-        if (isCache) getCacheServer().unregisterCacheListener(cacheListener);
-
         playerContainer.removeView(mTextureView);
         playerContainer.removeView(mSurfaceView);
         playerContainer.removeView(statusView);
@@ -395,9 +249,6 @@ public class IjkVideoView extends FrameLayout implements BaseVideoController.Med
             mSurfaceTexture.release();
             mSurfaceTexture = null;
         }
-
-        isLocked = false;
-        mCurrentPosition = 0;
     }
 
     /**
@@ -410,13 +261,6 @@ public class IjkVideoView extends FrameLayout implements BaseVideoController.Med
         return this;
     }
 
-    /**
-     * 启用{@link AndroidMediaPlayer},如不调用默认使用 {@link IjkMediaPlayer}
-     */
-    public IjkVideoView useAndroidMediaPlayer() {
-        this.useAndroidMediaPlayer = true;
-        return this;
-    }
 
     /**
      * 设置视频比例
@@ -430,213 +274,20 @@ public class IjkVideoView extends FrameLayout implements BaseVideoController.Med
     }
 
     /**
-     * 设置视频地址
-     */
-    public IjkVideoView setUrl(String url) {
-        this.mCurrentUrl = url;
-        return this;
-    }
-
-    /**
-     * 一开始播放就seek到预先设置好的位置
-     */
-    public IjkVideoView skipPositionWhenPlay(String url, int position) {
-        this.mCurrentUrl = url;
-        this.mCurrentPosition = position;
-        return this;
-    }
-
-    /**
-     * 设置一个列表的视频
-     */
-    public IjkVideoView setVideos(List<VideoModel> videoModels) {
-        this.mVideoModels = videoModels;
-        playNext();
-        return this;
-    }
-
-    /**
-     * 设置标题
-     */
-    public IjkVideoView setTitle(String title) {
-        if (title != null) {
-            this.mCurrentTitle = title;
-        }
-        return this;
-    }
-
-    /**
-     * 开启缓存
-     */
-    public IjkVideoView enableCache() {
-        isCache = true;
-        return this;
-    }
-
-    /**
-     * 添加到{@link VideoViewManager},如需集成到RecyclerView或ListView请开启此选项
-     */
-    public IjkVideoView addToPlayerManager() {
-        addToPlayerManager = true;
-        return this;
-    }
-
-    /**
-     * 播放下一条视频
-     */
-    private void playNext() {
-        VideoModel videoModel = mVideoModels.get(mCurrentVideoPosition);
-        if (videoModel != null) {
-            mCurrentUrl = videoModel.url;
-            mCurrentTitle = videoModel.title;
-            mCurrentPosition = 0;
-            setVideoController(videoModel.controller);
-        }
-    }
-
-    /**
      * 启用SurfaceView
      */
+    @Override
     public IjkVideoView useSurfaceView() {
         this.useSurfaceView = true;
         return this;
     }
 
-    public void setVideoListener(VideoListener listener) {
-        this.listener = listener;
-    }
-
-    private boolean isInPlaybackState() {
-        return (mMediaPlayer != null && mCurrentState != STATE_ERROR
-                && mCurrentState != STATE_IDLE && mCurrentState != STATE_PREPARING);
-    }
-
-    @Override
-    public int getDuration() {
-        if (isInPlaybackState()) {
-            return (int) mMediaPlayer.getDuration();
-        }
-        return 0;
-    }
-
-    @Override
-    public int getCurrentPosition() {
-        if (isInPlaybackState()) {
-            mCurrentPosition = (int) mMediaPlayer.getCurrentPosition();
-            return mCurrentPosition;
-        }
-        return 0;
-    }
-
     @Override
     public void seekTo(int pos) {
+        super.seekTo(pos);
         if (isInPlaybackState()) {
-            mMediaPlayer.seekTo(pos);
             if (mDanmakuView != null) mDanmakuView.seekTo((long) pos);
         }
-    }
-
-    @Override
-    public boolean isPlaying() {
-        return mMediaPlayer != null && mMediaPlayer.isPlaying();
-    }
-
-    @Override
-    public int getBufferPercentage() {
-        if (mMediaPlayer != null) {
-            return bufferPercentage;
-        }
-        return 0;
-    }
-
-    /**
-     * 开始画中画播放，点播视频会记录播放位置
-     */
-    @Override
-    public void startFloatWindow() {
-
-        if (FloatWindowManager.getInstance().checkPermission(getContext())) {
-            startBackgroundService();
-        } else {
-            FloatWindowManager.getInstance().applyPermission(getContext());
-        }
-    }
-
-    /**
-     * 启动画中画播放的后台服务
-     */
-    private void startBackgroundService() {
-        if (!isInPlaybackState()) return;
-        Intent intent = new Intent(getContext(), BackgroundPlayService.class);
-        intent.putExtra(KeyUtil.URL, mCurrentUrl);
-        getCurrentPosition();
-        intent.putExtra(KeyUtil.POSITION, getDuration() <= 0 ? 0 : mCurrentPosition);
-        intent.putExtra(KeyUtil.ENABLE_CACHE, isCache);
-        intent.putExtra(KeyUtil.ACTION, Constants.COMMAND_START);
-        getContext().getApplicationContext().startService(intent);
-        WindowUtil.scanForActivity(getContext()).finish();
-    }
-
-    /**
-     * 关闭画中画
-     */
-    @Override
-    public void stopFloatWindow() {
-        Intent intent = new Intent(getContext(), BackgroundPlayService.class);
-        intent.putExtra(KeyUtil.ACTION, Constants.COMMAND_STOP);
-        getContext().getApplicationContext().startService(intent);
-    }
-
-    /**
-     * 直接开始全屏播放
-     */
-    @Override
-    public void startFullScreenDirectly() {
-        WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        startFullScreen();
-    }
-
-    public IjkVideoView alwaysFullScreen() {
-        mAlwaysFullScreen = true;
-        return this;
-    }
-
-    /**
-     * 播放下一条视频，可用于跳过广告
-     */
-    @Override
-    public void skipToNext() {
-        mCurrentVideoPosition++;
-        if (mVideoModels != null && mVideoModels.size() > 1) {
-            if (mCurrentVideoPosition >= mVideoModels.size()) return;
-            playNext();
-            resetPlayer();
-            startPrepare();
-        }
-    }
-
-    /**
-     * 设置静音
-     */
-    @Override
-    public void setMute() {
-        if (isMute) {
-            mMediaPlayer.setVolume(1, 1);
-            isMute = false;
-        } else {
-            mMediaPlayer.setVolume(0, 0);
-            isMute = true;
-        }
-    }
-
-    @Override
-    public boolean isMute() {
-        return isMute;
-    }
-
-    @Override
-    public void setLock(boolean isLocked) {
-        this.isLocked = isLocked;
     }
 
     @Override
@@ -674,15 +325,10 @@ public class IjkVideoView extends FrameLayout implements BaseVideoController.Med
         return isFullScreen;
     }
 
-    @Override
-    public String getTitle() {
-        return mCurrentTitle;
-    }
-
-
     /**
      * 设置控制器
      */
+    @Override
     public IjkVideoView setVideoController(@Nullable BaseVideoController mediaController) {
         playerContainer.removeView(mVideoController);
         if (mediaController != null) {
@@ -696,284 +342,50 @@ public class IjkVideoView extends FrameLayout implements BaseVideoController.Med
         return this;
     }
 
-    private IMediaPlayer.OnErrorListener onErrorListener = new IMediaPlayer.OnErrorListener() {
-        @Override
-        public boolean onError(IMediaPlayer iMediaPlayer, int framework_err, int impl_err) {
-            mCurrentState = STATE_ERROR;
-            if (listener != null) listener.onError();
-            if (mVideoController != null) mVideoController.setPlayState(mCurrentState);
-            mCurrentPosition = getCurrentPosition();
+    @Override
+    public void onError() {
+        super.onError();
+        playerContainer.removeView(statusView);
+        if (statusView == null) {
+            statusView = new StatusView(getContext());
+        }
+        statusView.setMessage(getResources().getString(R.string.error_message));
+        statusView.setButtonTextAndAction(getResources().getString(R.string.retry), v -> {
             playerContainer.removeView(statusView);
-            if (statusView == null) {
-                statusView = new StatusView(getContext());
-            }
-            statusView.setMessage(getResources().getString(R.string.error_message));
-            statusView.setButtonTextAndAction(getResources().getString(R.string.retry), v -> {
-                playerContainer.removeView(statusView);
-                resetPlayer();
-                startPrepare();
-            });
-            playerContainer.addView(statusView);
-            return true;
-        }
-    };
+            resetPlayer();
+            startPrepare();
+        });
+        playerContainer.addView(statusView);
+    }
 
-    private IMediaPlayer.OnCompletionListener onCompletionListener = new IMediaPlayer.OnCompletionListener() {
-        @Override
-        public void onCompletion(IMediaPlayer iMediaPlayer) {
-            mCurrentState = STATE_PLAYBACK_COMPLETED;
-            if (listener != null) listener.onComplete();
-            if (mVideoController != null) mVideoController.setPlayState(mCurrentState);
-            setKeepScreenOn(false);
-            mCurrentVideoPosition++;
-            if (mVideoModels != null && mVideoModels.size() > 1) {
-                if (mCurrentVideoPosition >= mVideoModels.size()) {
-                    return;
-                }
-                playNext();
-                resetPlayer();
-                startPrepare();
-            }
-        }
-    };
-
-    private void resetPlayer() {
-        mMediaPlayer.reset();
-        if (mMediaPlayer instanceof IjkMediaPlayer) {
-            initPlayer();
-        } else {
-            mMediaPlayer.setVolume(1, 1);
-            mMediaPlayer.setOnErrorListener(onErrorListener);
-            mMediaPlayer.setOnCompletionListener(onCompletionListener);
-            mMediaPlayer.setOnInfoListener(onInfoListener);
-            mMediaPlayer.setOnBufferingUpdateListener(onBufferingUpdateListener);
-            mMediaPlayer.setOnPreparedListener(onPreparedListener);
-            mMediaPlayer.setOnVideoSizeChangedListener(onVideoSizeChangedListener);
+    @Override
+    public void onInfo(int what, int extra) {
+        super.onInfo(what, extra);
+        switch (what) {
+            case IjkMediaPlayer.MEDIA_INFO_VIDEO_ROTATION_CHANGED:
+                if (mTextureView != null)
+                    mTextureView.setRotation(extra);
+                break;
         }
     }
 
-    private IMediaPlayer.OnInfoListener onInfoListener = new IMediaPlayer.OnInfoListener() {
-        @Override
-        public boolean onInfo(IMediaPlayer iMediaPlayer, int what, int extra) {
-            if (listener != null) listener.onInfo(what, extra);
-            switch (what) {
-                case IMediaPlayer.MEDIA_INFO_BUFFERING_START:
-                    mCurrentState = STATE_BUFFERING;
-                    if (mVideoController != null) mVideoController.setPlayState(mCurrentState);
-                    break;
-                case IMediaPlayer.MEDIA_INFO_BUFFERING_END:
-                    mCurrentState = STATE_BUFFERED;
-                    if (mVideoController != null) mVideoController.setPlayState(mCurrentState);
-                    break;
-                case IjkMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START: // 视频开始渲染
-                    if (getWindowVisibility() != VISIBLE) pause();
-                    break;
-                case IjkMediaPlayer.MEDIA_INFO_VIDEO_ROTATION_CHANGED:
-                    if (mTextureView != null)
-                        mTextureView.setRotation(extra);
-                    break;
-            }
-            return true;
+    @Override
+    public void onVideoSizeChanged(int videoWidth, int videoHeight) {
+        super.onVideoSizeChanged(videoWidth, videoHeight);
+        if (useSurfaceView) {
+            mSurfaceView.setScreenScale(mCurrentScreenScale);
+            mSurfaceView.setVideoSize(videoWidth, videoHeight);
+        } else {
+            mTextureView.setScreenScale(mCurrentScreenScale);
+            mTextureView.setVideoSize(videoWidth, videoHeight);
         }
-    };
-
-    private IMediaPlayer.OnBufferingUpdateListener onBufferingUpdateListener = new IMediaPlayer.OnBufferingUpdateListener() {
-        @Override
-        public void onBufferingUpdate(IMediaPlayer iMediaPlayer, int i) {
-            if (!isCache) bufferPercentage = i;
-        }
-    };
-
-    private IMediaPlayer.OnPreparedListener onPreparedListener = new IMediaPlayer.OnPreparedListener() {
-        @Override
-        public void onPrepared(IMediaPlayer iMediaPlayer) {
-            mCurrentState = STATE_PREPARED;
-            if (listener != null) listener.onPrepared();
-            if (mVideoController != null) mVideoController.setPlayState(mCurrentState);
-            if (mCurrentPosition > 0) {
-                seekTo(mCurrentPosition);
-            }
-            start();
-        }
-    };
-
-    private IMediaPlayer.OnVideoSizeChangedListener onVideoSizeChangedListener = new IMediaPlayer.OnVideoSizeChangedListener() {
-        @Override
-        public void onVideoSizeChanged(IMediaPlayer iMediaPlayer, int i, int i1, int i2, int i3) {
-            int videoWidth = iMediaPlayer.getVideoWidth();
-            int videoHeight = iMediaPlayer.getVideoHeight();
-            if (videoWidth != 0 && videoHeight != 0) {
-                if (useSurfaceView) {
-                    mSurfaceView.setScreenScale(mCurrentScreenScale);
-                    mSurfaceView.setVideoSize(videoWidth, videoHeight);
-                } else {
-                    mTextureView.setScreenScale(mCurrentScreenScale);
-                    mTextureView.setVideoSize(videoWidth, videoHeight);
-                }
-
-            }
-        }
-    };
-
-    private CacheListener cacheListener = new CacheListener() {
-        @Override
-        public void onCacheAvailable(File cacheFile, String url, int percentsAvailable) {
-            bufferPercentage = percentsAvailable;
-        }
-    };
+    }
 
     /**
      * 改变返回键逻辑，用于activity
      */
+    @Override
     public boolean onBackPressed() {
-        if (mVideoController != null && isLocked) {
-            mVideoController.show();
-            Toast.makeText(getContext(), R.string.lock_tip, Toast.LENGTH_SHORT).show();
-            return true;
-        }
-        if (mAlwaysFullScreen) return false;
-        if (isFullScreen) {
-            WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            stopFullScreen();
-            if (mVideoController != null)
-                mVideoController.setPlayerState(PLAYER_NORMAL);
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * 音频焦点改变监听
-     */
-    private class AudioFocusHelper implements AudioManager.OnAudioFocusChangeListener {
-        boolean startRequested = false;
-        boolean pausedForLoss = false;
-        int currentFocus = 0;
-
-        @Override
-        public void onAudioFocusChange(int focusChange) {
-            if (currentFocus == focusChange) {
-                return;
-            }
-
-            currentFocus = focusChange;
-            switch (focusChange) {
-                case AudioManager.AUDIOFOCUS_GAIN:
-                case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT:
-                    if (startRequested || pausedForLoss) {
-                        start();
-                        startRequested = false;
-                        pausedForLoss = false;
-                    }
-                    break;
-                case AudioManager.AUDIOFOCUS_LOSS:
-                    if (isPlaying()) {
-                        pausedForLoss = true;
-                        pause();
-                    }
-                    break;
-                case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
-                case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
-                    if (isPlaying()) {
-                        pausedForLoss = true;
-                        pause();
-                    }
-                    break;
-            }
-        }
-
-        /**
-         * Requests to obtain the audio focus
-         *
-         * @return True if the focus was granted
-         */
-        boolean requestFocus() {
-            if (currentFocus == AudioManager.AUDIOFOCUS_GAIN) {
-                return true;
-            }
-
-            if (mAudioManager == null) {
-                return false;
-            }
-
-            int status = mAudioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
-            if (AudioManager.AUDIOFOCUS_REQUEST_GRANTED == status) {
-                currentFocus = AudioManager.AUDIOFOCUS_GAIN;
-                return true;
-            }
-
-            startRequested = true;
-            return false;
-        }
-
-        /**
-         * Requests the system to drop the audio focus
-         *
-         * @return True if the focus was lost
-         */
-        boolean abandonFocus() {
-
-            if (mAudioManager == null) {
-                return false;
-            }
-
-            startRequested = false;
-            int status = mAudioManager.abandonAudioFocus(this);
-            return AudioManager.AUDIOFOCUS_REQUEST_GRANTED == status;
-        }
-    }
-
-    /**
-     * 设置自动旋转
-     */
-    public IjkVideoView autoRotate() {
-        this.mAutoRotate = true;
-        if (orientationEventListener == null) {
-            orientationEventListener = new OrientationEventListener(getContext()) { // 加速度传感器监听，用于自动旋转屏幕
-
-                private int CurrentOrientation = 0;
-                private static final int PORTRAIT = 1;
-                private static final int LANDSCAPE = 2;
-                private static final int REVERSE_LANDSCAPE = 3;
-
-                @Override
-                public void onOrientationChanged(int orientation) {
-                    if (orientation >= 340) { //屏幕顶部朝上
-                        if (isLocked || mAlwaysFullScreen) return;
-                        if (CurrentOrientation == PORTRAIT) return;
-                        if ((CurrentOrientation == LANDSCAPE || CurrentOrientation == REVERSE_LANDSCAPE) && !isFullScreen()) {
-                            CurrentOrientation = PORTRAIT;
-                            return;
-                        }
-                        CurrentOrientation = PORTRAIT;
-                        WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                        stopFullScreen();
-                    } else if (orientation >= 260 && orientation <= 280) { //屏幕左边朝上
-                        if (CurrentOrientation == LANDSCAPE) return;
-                        if (CurrentOrientation == PORTRAIT && isFullScreen()) {
-                            CurrentOrientation = LANDSCAPE;
-                            return;
-                        }
-                        CurrentOrientation = LANDSCAPE;
-                        if (!isFullScreen()) {
-                            startFullScreen();
-                        }
-                        WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                    } else if (orientation >= 70 && orientation <= 90) { //屏幕右边朝上
-                        if (CurrentOrientation == REVERSE_LANDSCAPE) return;
-                        if (CurrentOrientation == PORTRAIT && isFullScreen()) {
-                            CurrentOrientation = REVERSE_LANDSCAPE;
-                            return;
-                        }
-                        CurrentOrientation = REVERSE_LANDSCAPE;
-                        if (!isFullScreen()) {
-                            startFullScreen();
-                        }
-                        WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
-                    }
-                }
-            };
-        }
-        return this;
+        return mVideoController != null && mVideoController.onBackPressed();
     }
 }

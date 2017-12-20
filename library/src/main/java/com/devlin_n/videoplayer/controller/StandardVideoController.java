@@ -3,6 +3,7 @@ package com.devlin_n.videoplayer.controller;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -23,6 +24,7 @@ import com.devlin_n.videoplayer.R;
 import com.devlin_n.videoplayer.player.IjkVideoView;
 import com.devlin_n.videoplayer.util.BatteryReceiver;
 import com.devlin_n.videoplayer.util.L;
+import com.devlin_n.videoplayer.util.WindowUtil;
 
 /**
  * 直播/点播控制器
@@ -397,5 +399,21 @@ public class StandardVideoController extends BaseVideoController implements View
 
     public ImageView getThumb() {
         return thumb;
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if (isLocked) {
+            show();
+            Toast.makeText(getContext(), R.string.lock_tip, Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        if (mediaPlayer.isFullScreen()) {
+            WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            mediaPlayer.stopFullScreen();
+            setPlayerState(IjkVideoView.PLAYER_NORMAL);
+            return true;
+        }
+        return super.onBackPressed();
     }
 }

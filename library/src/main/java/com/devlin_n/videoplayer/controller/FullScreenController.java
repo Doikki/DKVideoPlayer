@@ -329,4 +329,14 @@ public class FullScreenController extends BaseVideoController implements View.On
             super.slideToChangePosition(deltaX);
         }
     }
+
+    @Override
+    public boolean onBackPressed() {
+        if (isLocked) {
+            show();
+            Toast.makeText(getContext(), R.string.lock_tip, Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return super.onBackPressed();
+    }
 }
