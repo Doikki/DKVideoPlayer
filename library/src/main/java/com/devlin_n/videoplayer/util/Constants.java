@@ -14,4 +14,8 @@ public class Constants {
     public static boolean IS_START_FLOAT_WINDOW = false;
 
     public static boolean IS_PLAY_ON_MOBILE_NETWORK = false;//记录是否在移动网络下播放视频
+
+    public static final String COMMAND_START = "start";
+
+    public static final String COMMAND_STOP = "stop";
 }

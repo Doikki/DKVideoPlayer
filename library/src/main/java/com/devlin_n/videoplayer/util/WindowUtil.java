@@ -6,8 +6,6 @@ import android.content.ContextWrapper;
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.os.Build;
-import android.os.Handler;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ContextThemeWrapper;
@@ -15,11 +13,10 @@ import android.util.TypedValue;
 import android.view.Display;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.view.Window;
 import android.view.WindowManager;
-import android.widget.DatePicker;
 
 /**
  * Window工具类
@@ -86,17 +83,15 @@ public class WindowUtil {
     }
 
     /**
-     * 隐藏ActionBar和StatusBar
+     * 隐藏ActionBar，StatusBar，NavigationBar
      */
-    public static void hideSupportActionBar(Context context, boolean actionBar, boolean statusBar) {
-        if (actionBar) {
-            AppCompatActivity appCompatActivity = getAppCompActivity(context);
-            if (appCompatActivity != null) {
-                ActionBar ab = appCompatActivity.getSupportActionBar();
-                if (ab != null) {
-                    ab.setShowHideAnimationEnabled(false);
-                    ab.hide();
-                }
+    public static void hideSystemBar(Context context) {
+        AppCompatActivity appCompatActivity = getAppCompActivity(context);
+        if (appCompatActivity != null) {
+            ActionBar ab = appCompatActivity.getSupportActionBar();
+            if (ab != null) {
+                ab.setShowHideAnimationEnabled(false);
+                ab.hide();
             }
         }
         scanForActivity(context).getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -104,22 +99,19 @@ public class WindowUtil {
     }
 
     /**
-     * 显示ActionBar和StatusBar
+     * 显示ActionBar，StatusBar，NavigationBar
      */
-    public static void showSupportActionBar(final Context context, final boolean actionBar, boolean statusBar) {
-            scanForActivity(context).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            showNavigationBar(context);
-            if (actionBar) {
-                AppCompatActivity appCompatActivity = getAppCompActivity(context);
-                if (appCompatActivity != null) {
-                    ActionBar ab = appCompatActivity.getSupportActionBar();
-                    if (ab != null) {
-                        ab.setShowHideAnimationEnabled(false);
-                        ab.show();
-                    }
-                }
+    public static void showSystemBar(final Context context) {
+        scanForActivity(context).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        showNavigationBar(context);
+        AppCompatActivity appCompatActivity = getAppCompActivity(context);
+        if (appCompatActivity != null) {
+            ActionBar ab = appCompatActivity.getSupportActionBar();
+            if (ab != null) {
+                ab.setShowHideAnimationEnabled(false);
+                ab.show();
             }
-
+        }
     }
 
     /**
@@ -129,7 +121,7 @@ public class WindowUtil {
         return context == null ? null : (context instanceof Activity ? (Activity) context : (context instanceof ContextWrapper ? scanForActivity(((ContextWrapper) context).getBaseContext()) : null));
     }
 
-    public static void hideNavigationBar(Context context) {
+    private static void hideNavigationBar(Context context) {
         View decorView = scanForActivity(context).getWindow().getDecorView();
         decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN);
@@ -139,7 +131,7 @@ public class WindowUtil {
         View decorView = scanForActivity(context).getWindow().getDecorView();
         int systemUiVisibility = decorView.getSystemUiVisibility();
         int flags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
         systemUiVisibility &= ~flags;
         decorView.setSystemUiVisibility(systemUiVisibility);
     }
@@ -177,5 +169,16 @@ public class WindowUtil {
      */
     public static WindowManager getWindowManager(Context context) {
         return (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+    }
+
+    /**
+     * 边缘检测
+     */
+    public static boolean isEdge(Context context, MotionEvent e) {
+        int edgeSize = dp2px(context, 50);
+        return e.getRawX() < edgeSize
+                || e.getRawX() > getScreenWidth(context) - edgeSize
+                || e.getRawY() < edgeSize
+                || e.getRawY() > getScreenHeight(context, true) - edgeSize;
     }
 }

@@ -4,10 +4,7 @@ import android.content.Context;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.PopupMenu;
 import android.util.AttributeSet;
-import android.view.Gravity;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -32,7 +29,6 @@ public class FullScreenController extends BaseVideoController implements View.On
     protected TextView totalTime, currTime;
     protected LinearLayout bottomContainer, topContainer;
     protected SeekBar videoProgress;
-    protected ImageView moreMenu;
     protected ImageView backButton;
     protected ImageView lock;
     protected TextView title;
@@ -45,7 +41,6 @@ public class FullScreenController extends BaseVideoController implements View.On
     private LinearLayout completeContainer;
     private Animation showAnim = AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_in);
     private Animation hideAnim = AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_out);
-    private PopupMenu popupMenu;
 
 
     public FullScreenController(@NonNull Context context) {
@@ -68,50 +63,25 @@ public class FullScreenController extends BaseVideoController implements View.On
     @Override
     protected void initView() {
         super.initView();
-        moreMenu = (ImageView) controllerView.findViewById(R.id.more_menu);
-        moreMenu.setOnClickListener(this);
-        bottomContainer = (LinearLayout) controllerView.findViewById(R.id.bottom_container);
-        topContainer = (LinearLayout) controllerView.findViewById(R.id.top_container);
-        videoProgress = (SeekBar) controllerView.findViewById(R.id.seekBar);
+        bottomContainer = controllerView.findViewById(R.id.bottom_container);
+        topContainer = controllerView.findViewById(R.id.top_container);
+        videoProgress = controllerView.findViewById(R.id.seekBar);
         videoProgress.setOnSeekBarChangeListener(this);
-        totalTime = (TextView) controllerView.findViewById(R.id.total_time);
-        currTime = (TextView) controllerView.findViewById(R.id.curr_time);
-        backButton = (ImageView) controllerView.findViewById(R.id.back);
+        totalTime = controllerView.findViewById(R.id.total_time);
+        currTime = controllerView.findViewById(R.id.curr_time);
+        backButton = controllerView.findViewById(R.id.back);
         backButton.setOnClickListener(this);
-        lock = (ImageView) controllerView.findViewById(R.id.lock);
+        lock = controllerView.findViewById(R.id.lock);
         lock.setOnClickListener(this);
-        playButton = (ImageView) controllerView.findViewById(R.id.iv_play);
+        playButton = controllerView.findViewById(R.id.iv_play);
         playButton.setOnClickListener(this);
-        loadingProgress = (ProgressBar) controllerView.findViewById(R.id.loading);
-        bottomProgress = (ProgressBar) controllerView.findViewById(R.id.bottom_progress);
-        ImageView rePlayButton = (ImageView) controllerView.findViewById(R.id.iv_replay);
+        loadingProgress = controllerView.findViewById(R.id.loading);
+        bottomProgress = controllerView.findViewById(R.id.bottom_progress);
+        ImageView rePlayButton = controllerView.findViewById(R.id.iv_replay);
         rePlayButton.setOnClickListener(this);
-        completeContainer = (LinearLayout) controllerView.findViewById(R.id.complete_container);
+        completeContainer = controllerView.findViewById(R.id.complete_container);
         completeContainer.setOnClickListener(this);
-        title = (TextView) controllerView.findViewById(R.id.title);
-//        popupMenu = new PopupMenu(getContext(), moreMenu, Gravity.END);
-//        popupMenu.getMenuInflater().inflate(R.menu.controller_menu, popupMenu.getMenu());
-//        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-//            @Override
-//            public boolean onMenuItemClick(MenuItem item) {
-//                int itemId = item.getItemId();
-//                if (itemId == R.id.float_window) {
-//                    mediaPlayer.startFloatWindow();
-//                } else if (itemId == R.id.scale_default) {
-//                    mediaPlayer.setScreenScale(IjkVideoView.SCREEN_SCALE_DEFAULT);
-//                } else if (itemId == R.id.scale_original) {
-//                    mediaPlayer.setScreenScale(IjkVideoView.SCREEN_SCALE_ORIGINAL);
-//                } else if (itemId == R.id.scale_match) {
-//                    mediaPlayer.setScreenScale(IjkVideoView.SCREEN_SCALE_MATCH_PARENT);
-//                } else if (itemId == R.id.scale_16_9) {
-//                    mediaPlayer.setScreenScale(IjkVideoView.SCREEN_SCALE_16_9);
-//                } else if (itemId == R.id.scale_4_3) {
-//                    mediaPlayer.setScreenScale(IjkVideoView.SCREEN_SCALE_4_3);
-//                }
-//                popupMenu.dismiss();
-//                return false;
-//            }
-//        });
+        title = controllerView.findViewById(R.id.title);
     }
 
     @Override
@@ -121,9 +91,6 @@ public class FullScreenController extends BaseVideoController implements View.On
             doLockUnlock();
         } else if (i == R.id.iv_play || i == R.id.iv_replay) {
             doPauseResume();
-        } else if (i == R.id.more_menu) {
-            popupMenu.show();
-            show();
         } else if (i == R.id.back) {
             WindowUtil.scanForActivity(getContext()).finish();
         }
@@ -133,6 +100,16 @@ public class FullScreenController extends BaseVideoController implements View.On
         title.setVisibility(VISIBLE);
     }
 
+
+    @Override
+    public void setPlayerState(int playerState) {
+        super.setPlayerState(playerState);
+        switch (playerState) {
+            case IjkVideoView.PLAYER_FULL_SCREEN:
+                gestureEnabled = true;
+                break;
+        }
+    }
 
     @Override
     public void setPlayState(int playState) {
@@ -212,12 +189,11 @@ public class FullScreenController extends BaseVideoController implements View.On
     /**
      * 设置是否为直播视频
      */
-    public void setLive(boolean live) {
-        isLive = live;
+    public void setLive() {
+        isLive = true;
         bottomProgress.setVisibility(GONE);
         videoProgress.setVisibility(INVISIBLE);
         totalTime.setVisibility(INVISIBLE);
-//        moreMenu.setVisibility(VISIBLE);
     }
 
     @Override

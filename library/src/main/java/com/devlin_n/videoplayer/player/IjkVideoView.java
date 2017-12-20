@@ -15,7 +15,6 @@ import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.TextureView;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
@@ -30,9 +29,9 @@ import com.devlin_n.videoplayer.util.Constants;
 import com.devlin_n.videoplayer.util.KeyUtil;
 import com.devlin_n.videoplayer.util.NetworkUtil;
 import com.devlin_n.videoplayer.util.WindowUtil;
-import com.devlin_n.videoplayer.widget.StatusView;
 import com.devlin_n.videoplayer.widget.ResizeSurfaceView;
 import com.devlin_n.videoplayer.widget.ResizeTextureView;
+import com.devlin_n.videoplayer.widget.StatusView;
 
 import java.io.File;
 import java.io.IOException;
@@ -313,14 +312,11 @@ public class IjkVideoView extends FrameLayout implements BaseVideoController.Med
                 statusView = new StatusView(getContext());
             }
             statusView.setMessage(getResources().getString(R.string.wifi_tip));
-            statusView.setButtonTextAndAction(getResources().getString(R.string.continue_play), new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Constants.IS_PLAY_ON_MOBILE_NETWORK = true;
-                    playerContainer.removeView(statusView);
-                    initPlayer();
-                    startPrepare();
-                }
+            statusView.setButtonTextAndAction(getResources().getString(R.string.continue_play), v -> {
+                Constants.IS_PLAY_ON_MOBILE_NETWORK = true;
+                playerContainer.removeView(statusView);
+                initPlayer();
+                startPrepare();
             });
             playerContainer.addView(statusView);
             return true;
@@ -372,13 +368,10 @@ public class IjkVideoView extends FrameLayout implements BaseVideoController.Med
     public void release() {
         if (mMediaPlayer != null) {
             //启动一个线程来释放播放器，解决列表播放卡顿问题
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    mMediaPlayer.reset();
-                    mMediaPlayer.release();
-                    mMediaPlayer = null;
-                }
+            new Thread(() -> {
+                mMediaPlayer.reset();
+                mMediaPlayer.release();
+                mMediaPlayer = null;
             }).start();
             mCurrentState = STATE_IDLE;
             if (mVideoController != null) mVideoController.setPlayState(mCurrentState);
@@ -579,6 +572,7 @@ public class IjkVideoView extends FrameLayout implements BaseVideoController.Med
         getCurrentPosition();
         intent.putExtra(KeyUtil.POSITION, getDuration() <= 0 ? 0 : mCurrentPosition);
         intent.putExtra(KeyUtil.ENABLE_CACHE, isCache);
+        intent.putExtra(KeyUtil.ACTION, Constants.COMMAND_START);
         getContext().getApplicationContext().startService(intent);
         WindowUtil.scanForActivity(getContext()).finish();
     }
@@ -589,7 +583,8 @@ public class IjkVideoView extends FrameLayout implements BaseVideoController.Med
     @Override
     public void stopFloatWindow() {
         Intent intent = new Intent(getContext(), BackgroundPlayService.class);
-        getContext().getApplicationContext().stopService(intent);
+        intent.putExtra(KeyUtil.ACTION, Constants.COMMAND_STOP);
+        getContext().getApplicationContext().startService(intent);
     }
 
     /**
@@ -647,9 +642,9 @@ public class IjkVideoView extends FrameLayout implements BaseVideoController.Med
     @Override
     public void startFullScreen() {
         if (isFullScreen) return;
-        WindowUtil.hideSupportActionBar(getContext(), true, true);
+        WindowUtil.hideSystemBar(getContext());
         this.removeView(playerContainer);
-        ViewGroup contentView = (ViewGroup) WindowUtil.scanForActivity(getContext())
+        ViewGroup contentView = WindowUtil.scanForActivity(getContext())
                 .findViewById(android.R.id.content);
         LayoutParams params = new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -662,8 +657,8 @@ public class IjkVideoView extends FrameLayout implements BaseVideoController.Med
     @Override
     public void stopFullScreen() {
         if (!isFullScreen) return;
-        WindowUtil.showSupportActionBar(getContext(), true, true);
-        ViewGroup contentView = (ViewGroup) WindowUtil.scanForActivity(getContext())
+        WindowUtil.showSystemBar(getContext());
+        ViewGroup contentView = WindowUtil.scanForActivity(getContext())
                 .findViewById(android.R.id.content);
         contentView.removeView(playerContainer);
         LayoutParams params = new LayoutParams(
@@ -688,7 +683,7 @@ public class IjkVideoView extends FrameLayout implements BaseVideoController.Med
     /**
      * 设置控制器
      */
-    public IjkVideoView setVideoController(BaseVideoController mediaController) {
+    public IjkVideoView setVideoController(@Nullable BaseVideoController mediaController) {
         playerContainer.removeView(mVideoController);
         if (mediaController != null) {
             mediaController.setMediaPlayer(this);
@@ -713,13 +708,10 @@ public class IjkVideoView extends FrameLayout implements BaseVideoController.Med
                 statusView = new StatusView(getContext());
             }
             statusView.setMessage(getResources().getString(R.string.error_message));
-            statusView.setButtonTextAndAction(getResources().getString(R.string.retry), new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    playerContainer.removeView(statusView);
-                    resetPlayer();
-                    startPrepare();
-                }
+            statusView.setButtonTextAndAction(getResources().getString(R.string.retry), v -> {
+                playerContainer.removeView(statusView);
+                resetPlayer();
+                startPrepare();
             });
             playerContainer.addView(statusView);
             return true;

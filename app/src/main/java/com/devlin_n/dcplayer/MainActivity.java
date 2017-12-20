@@ -26,6 +26,8 @@ import com.devlin_n.dcplayer.activity.RecyclerViewAutoPlayActivity;
 import com.devlin_n.dcplayer.activity.VodPlayerActivity;
 import com.devlin_n.videoplayer.player.BackgroundPlayService;
 import com.devlin_n.videoplayer.player.VideoCacheManager;
+import com.devlin_n.videoplayer.util.Constants;
+import com.devlin_n.videoplayer.util.KeyUtil;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -64,7 +66,8 @@ public class MainActivity extends AppCompatActivity {
         switch (itemId) {
             case R.id.close_float_window:
                 Intent intent = new Intent(this, BackgroundPlayService.class);
-                getApplicationContext().stopService(intent);
+                intent.putExtra(KeyUtil.ACTION, Constants.COMMAND_STOP);
+                getApplicationContext().startService(intent);
                 break;
             case R.id.clear_cache:
                 if (VideoCacheManager.clearAllCache(this)) {

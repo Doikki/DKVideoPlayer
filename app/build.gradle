@@ -12,8 +12,8 @@ android {
         applicationId "com.devlin_n.dcplayer"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 7
-        versionName "1.3"
+        versionCode 8
+        versionName "1.4"
     }
 
 
@@ -49,6 +49,10 @@ android {
         variant.outputs.all { output ->
             outputFileName = "${variant.name}-${variant.versionName}-${releaseTime()}(${variant.versionCode}).apk"
         }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 

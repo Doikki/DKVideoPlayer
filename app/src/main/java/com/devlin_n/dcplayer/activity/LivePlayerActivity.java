@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -98,5 +99,9 @@ public class LivePlayerActivity extends AppCompatActivity {
                 Toast.makeText(LivePlayerActivity.this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    public void startFloatWindow(View view) {
+        ijkVideoView.startFloatWindow();
     }
 }

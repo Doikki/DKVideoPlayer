@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.devlin_n.videoplayer.R;
 import com.devlin_n.videoplayer.player.BackgroundPlayService;
 import com.devlin_n.videoplayer.util.Constants;
+import com.devlin_n.videoplayer.util.KeyUtil;
 
 /**
  * 错误提示，网络提示
@@ -40,18 +41,17 @@ public class StatusView extends LinearLayout {
 
     private void init() {
         View root = LayoutInflater.from(getContext()).inflate(R.layout.layout_status_view, this);
-        tvMessage = (TextView) root.findViewById(R.id.message);
-        btnAction = (TextView) root.findViewById(R.id.status_btn);
-        ivClose = (ImageView) root.findViewById(R.id.btn_close);
+        tvMessage = root.findViewById(R.id.message);
+        btnAction = root.findViewById(R.id.status_btn);
+        ivClose = root.findViewById(R.id.btn_close);
         this.setBackgroundResource(android.R.color.black);
         setClickable(true);
         if (Constants.IS_START_FLOAT_WINDOW) {
             ivClose.setVisibility(VISIBLE);
-            ivClose.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    getContext().getApplicationContext().stopService(new Intent(getContext(), BackgroundPlayService.class));
-                }
+            ivClose.setOnClickListener(v -> {
+                Intent intent = new Intent(getContext(), BackgroundPlayService.class);
+                intent.putExtra(KeyUtil.ACTION, Constants.COMMAND_STOP);
+                getContext().getApplicationContext().startService(intent);
             });
         }
     }

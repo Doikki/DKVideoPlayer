@@ -2,15 +2,13 @@ package com.devlin_n.videoplayer.player;
 
 import android.app.Service;
 import android.content.Intent;
-import android.graphics.PixelFormat;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.view.Gravity;
-import android.view.WindowManager;
 
 import com.devlin_n.videoplayer.controller.FloatController;
 import com.devlin_n.videoplayer.util.Constants;
 import com.devlin_n.videoplayer.util.KeyUtil;
+import com.devlin_n.videoplayer.util.L;
 import com.devlin_n.videoplayer.util.WindowUtil;
 import com.devlin_n.videoplayer.widget.FloatView;
 
@@ -20,8 +18,6 @@ import com.devlin_n.videoplayer.widget.FloatView;
  */
 
 public class BackgroundPlayService extends Service {
-    private WindowManager wm;
-    private WindowManager.LayoutParams wmParams;
     private IjkVideoView videoView;
     private String url;
     private FloatView floatView;
@@ -36,50 +32,48 @@ public class BackgroundPlayService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        url = intent.getStringExtra(KeyUtil.URL);
-        position = intent.getIntExtra(KeyUtil.POSITION, 0);
-        isCache = intent.getBooleanExtra(KeyUtil.ENABLE_CACHE, false);
-        Constants.IS_START_FLOAT_WINDOW = true;
-        startPlay();
+        String action = intent.getStringExtra(KeyUtil.ACTION);
+
+        switch (action) {
+            case Constants.COMMAND_START:
+                L.d("start");
+                url = intent.getStringExtra(KeyUtil.URL);
+                position = intent.getIntExtra(KeyUtil.POSITION, 0);
+                isCache = intent.getBooleanExtra(KeyUtil.ENABLE_CACHE, false);
+                startPlay();
+                Constants.IS_START_FLOAT_WINDOW = true;
+                break;
+            case Constants.COMMAND_STOP:
+                L.d("stop");
+                Constants.IS_START_FLOAT_WINDOW = false;
+                if (floatView != null) floatView.removeFromWindow();
+                videoView.release();
+                break;
+        }
         return START_NOT_STICKY;
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        initWindow();
+        int startX = WindowUtil.getScreenWidth(getApplicationContext()) - WindowUtil.dp2px(getApplicationContext(), 200);
+        int startY = WindowUtil.getScreenHeight(getApplicationContext(), false) / 2;
+        floatView = new FloatView(getApplicationContext(), startX, startY);
+        videoView = new IjkVideoView(getApplicationContext());
+        floatView.addView(videoView);
     }
 
     private void startPlay() {
         if (isCache) videoView.enableCache();
         videoView.skipPositionWhenPlay(url, position).setVideoController(new FloatController(getApplicationContext())).start();
-        wm.addView(floatView, wmParams);
-    }
-
-
-    private void initWindow() {
-        wm = WindowUtil.getWindowManager(getApplicationContext());
-        wmParams = new WindowManager.LayoutParams();
-        wmParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT; // 设置window type
-        // 设置图片格式，效果为背景透明
-        wmParams.format = PixelFormat.RGBA_8888;
-        wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-        wmParams.gravity = Gravity.START | Gravity.TOP; // 调整悬浮窗口至右下角
-        // 设置悬浮窗口长宽数据
-        int width = WindowUtil.dp2px(getApplicationContext(), 250);
-        wmParams.width = width;
-        wmParams.height = width * 9 / 16;
-        wmParams.x = WindowUtil.getScreenWidth(getApplicationContext()) - width;
-        wmParams.y = WindowUtil.getScreenHeight(getApplicationContext(), false) / 2;
-        floatView = new FloatView(getApplicationContext(), wm, wmParams);
-        videoView = floatView.magicVideoView;
+        floatView.addToWindow();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         Constants.IS_START_FLOAT_WINDOW = false;
-        if (floatView != null) wm.removeView(floatView);
+        if (floatView != null) floatView.removeFromWindow();
         videoView.release();
     }
 }

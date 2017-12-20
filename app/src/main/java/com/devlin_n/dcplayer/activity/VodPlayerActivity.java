@@ -46,7 +46,7 @@ public class VodPlayerActivity extends AppCompatActivity {
 
         List<VideoModel> videos = new ArrayList<>();
         videos.add(new VideoModel(URL_AD, "广告", new AdController(this)));
-        videos.add(new VideoModel(URL_VOD, "奥斯卡", new StandardVideoController(this)));
+        videos.add(new VideoModel(URL_VOD, "这是一个标题", new StandardVideoController(this)));
 
         ijkVideoView
                 .autoRotate()

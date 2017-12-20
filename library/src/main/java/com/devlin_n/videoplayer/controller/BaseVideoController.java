@@ -23,6 +23,8 @@ import com.devlin_n.videoplayer.util.Constants;
 import com.devlin_n.videoplayer.util.WindowUtil;
 import com.devlin_n.videoplayer.widget.CenterView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Formatter;
 import java.util.Locale;
 
@@ -75,12 +77,7 @@ public abstract class BaseVideoController extends FrameLayout {
         setClickable(true);
         setFocusable(true);
         mGestureDetector = new GestureDetector(getContext(), new MyGestureListener());
-        this.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return mGestureDetector.onTouchEvent(event);
-            }
-        });
+        this.setOnTouchListener((v, event) -> mGestureDetector.onTouchEvent(event));
     }
 
     /**
@@ -144,15 +141,19 @@ public abstract class BaseVideoController extends FrameLayout {
         }
     };
 
-    protected final Runnable mFadeOut = new Runnable() {
-        @Override
-        public void run() {
-            hide();
-        }
-    };
+    protected final Runnable mFadeOut = this::hide;
 
     protected int setProgress() {
         return 0;
+    }
+
+    /**
+     * 获取当前系统时间
+     */
+    protected String getCurrentSystemTime() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.CHINA);
+        Date date = new Date();
+        return simpleDateFormat.format(date);
     }
 
     @Override
@@ -194,7 +195,7 @@ public abstract class BaseVideoController extends FrameLayout {
 
         @Override
         public boolean onDown(MotionEvent e) {
-            if (!gestureEnabled) return super.onDown(e);
+            if (!gestureEnabled || WindowUtil.isEdge(getContext(), e)) return super.onDown(e);
             streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
             mBrightness = WindowUtil.scanForActivity(getContext()).getWindow().getAttributes().screenBrightness;
             firstTouch = true;
@@ -216,7 +217,7 @@ public abstract class BaseVideoController extends FrameLayout {
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            if (!gestureEnabled) return super.onScroll(e1, e2, distanceX, distanceY);
+            if (!gestureEnabled || WindowUtil.isEdge(getContext(), e1)) return super.onScroll(e1, e2, distanceX, distanceY);
             float deltaX = e1.getX() - e2.getX();
             float deltaY = e1.getY() - e2.getY();
             if (firstTouch) {

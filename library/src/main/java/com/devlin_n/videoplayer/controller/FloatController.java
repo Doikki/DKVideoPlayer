@@ -41,8 +41,8 @@ public class FloatController extends BaseVideoController implements View.OnClick
         super.initView();
         this.setOnClickListener(this);
         controllerView.findViewById(R.id.btn_close).setOnClickListener(this);
-        proLoading = (ProgressBar) controllerView.findViewById(R.id.loading);
-        playButton = (ImageView) controllerView.findViewById(R.id.start_play);
+        proLoading = controllerView.findViewById(R.id.loading);
+        playButton = controllerView.findViewById(R.id.start_play);
         playButton.setOnClickListener(this);
     }
 

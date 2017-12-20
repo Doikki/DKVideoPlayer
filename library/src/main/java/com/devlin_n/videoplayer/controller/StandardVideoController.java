@@ -1,13 +1,12 @@
 package com.devlin_n.videoplayer.controller;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.PopupMenu;
 import android.util.AttributeSet;
-import android.view.Gravity;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -22,9 +21,8 @@ import android.widget.Toast;
 
 import com.devlin_n.videoplayer.R;
 import com.devlin_n.videoplayer.player.IjkVideoView;
-import com.devlin_n.videoplayer.util.Constants;
+import com.devlin_n.videoplayer.util.BatteryReceiver;
 import com.devlin_n.videoplayer.util.L;
-import com.devlin_n.videoplayer.util.WindowUtil;
 
 /**
  * 直播/点播控制器
@@ -36,13 +34,12 @@ public class StandardVideoController extends BaseVideoController implements View
     protected ImageView fullScreenButton;
     protected LinearLayout bottomContainer, topContainer;
     protected SeekBar videoProgress;
-    protected ImageView moreMenu;
+//    protected ImageView moreMenu;
     protected ImageView backButton;
     protected ImageView lock;
     protected TextView title;
     private boolean isLive;
     private boolean isDragging;
-//    private View statusHolder;
 
     private ProgressBar bottomProgress;
     private ImageView playButton;
@@ -50,8 +47,11 @@ public class StandardVideoController extends BaseVideoController implements View
     private ProgressBar loadingProgress;
     private ImageView thumb;
     private LinearLayout completeContainer;
+    private TextView sysTime;//系统当前时间
+    private ImageView batteryLevel;//电量
     private Animation showAnim = AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_in);
     private Animation hideAnim = AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_out);
+    private BatteryReceiver mBatteryReceiver;
 
 
     public StandardVideoController(@NonNull Context context) {
@@ -74,57 +74,47 @@ public class StandardVideoController extends BaseVideoController implements View
     @Override
     protected void initView() {
         super.initView();
-        moreMenu = (ImageView) controllerView.findViewById(R.id.more_menu);
-        moreMenu.setOnClickListener(this);
-        fullScreenButton = (ImageView) controllerView.findViewById(R.id.fullscreen);
+//        moreMenu = controllerView.findViewById(R.id.more_menu);
+//        moreMenu.setOnClickListener(this);
+        fullScreenButton = controllerView.findViewById(R.id.fullscreen);
         fullScreenButton.setOnClickListener(this);
-        bottomContainer = (LinearLayout) controllerView.findViewById(R.id.bottom_container);
-        topContainer = (LinearLayout) controllerView.findViewById(R.id.top_container);
-        videoProgress = (SeekBar) controllerView.findViewById(R.id.seekBar);
+        bottomContainer = controllerView.findViewById(R.id.bottom_container);
+        topContainer = controllerView.findViewById(R.id.top_container);
+        videoProgress = controllerView.findViewById(R.id.seekBar);
         videoProgress.setOnSeekBarChangeListener(this);
-        totalTime = (TextView) controllerView.findViewById(R.id.total_time);
-        currTime = (TextView) controllerView.findViewById(R.id.curr_time);
-        backButton = (ImageView) controllerView.findViewById(R.id.back);
+        totalTime = controllerView.findViewById(R.id.total_time);
+        currTime = controllerView.findViewById(R.id.curr_time);
+        backButton = controllerView.findViewById(R.id.back);
         backButton.setOnClickListener(this);
-        lock = (ImageView) controllerView.findViewById(R.id.lock);
+        lock = controllerView.findViewById(R.id.lock);
         lock.setOnClickListener(this);
-        thumb = (ImageView) controllerView.findViewById(R.id.thumb);
+        thumb = controllerView.findViewById(R.id.thumb);
         thumb.setOnClickListener(this);
-        playButton = (ImageView) controllerView.findViewById(R.id.iv_play);
+        playButton = controllerView.findViewById(R.id.iv_play);
         playButton.setOnClickListener(this);
-        startPlayButton = (ImageView) controllerView.findViewById(R.id.start_play);
-        loadingProgress = (ProgressBar) controllerView.findViewById(R.id.loading);
-        bottomProgress = (ProgressBar) controllerView.findViewById(R.id.bottom_progress);
-        ImageView rePlayButton = (ImageView) controllerView.findViewById(R.id.iv_replay);
+        startPlayButton = controllerView.findViewById(R.id.start_play);
+        loadingProgress = controllerView.findViewById(R.id.loading);
+        bottomProgress = controllerView.findViewById(R.id.bottom_progress);
+        ImageView rePlayButton = controllerView.findViewById(R.id.iv_replay);
         rePlayButton.setOnClickListener(this);
-        completeContainer = (LinearLayout) controllerView.findViewById(R.id.complete_container);
+        completeContainer = controllerView.findViewById(R.id.complete_container);
         completeContainer.setOnClickListener(this);
-        title = (TextView) controllerView.findViewById(R.id.title);
-//        statusHolder = controllerView.findViewById(R.id.status_holder);
-//        statusHolder.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) WindowUtil.getStatusBarHeight(getContext())));
-//        popupMenu = new PopupMenu(getContext(), moreMenu, Gravity.END);
-//        popupMenu.getMenuInflater().inflate(R.menu.controller_menu, popupMenu.getMenu());
-//        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-//            @Override
-//            public boolean onMenuItemClick(MenuItem item) {
-//                int itemId = item.getItemId();
-//                if (itemId == R.id.float_window) {
-//                    mediaPlayer.startFloatWindow();
-//                } else if (itemId == R.id.scale_default) {
-//                    mediaPlayer.setScreenScale(IjkVideoView.SCREEN_SCALE_DEFAULT);
-//                } else if (itemId == R.id.scale_original) {
-//                    mediaPlayer.setScreenScale(IjkVideoView.SCREEN_SCALE_ORIGINAL);
-//                } else if (itemId == R.id.scale_match) {
-//                    mediaPlayer.setScreenScale(IjkVideoView.SCREEN_SCALE_MATCH_PARENT);
-//                } else if (itemId == R.id.scale_16_9) {
-//                    mediaPlayer.setScreenScale(IjkVideoView.SCREEN_SCALE_16_9);
-//                } else if (itemId == R.id.scale_4_3) {
-//                    mediaPlayer.setScreenScale(IjkVideoView.SCREEN_SCALE_4_3);
-//                }
-//                popupMenu.dismiss();
-//                return false;
-//            }
-//        });
+        title = controllerView.findViewById(R.id.title);
+        sysTime = controllerView.findViewById(R.id.sys_time);
+        batteryLevel = controllerView.findViewById(R.id.iv_battery);
+        mBatteryReceiver = new BatteryReceiver(batteryLevel);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        getContext().unregisterReceiver(mBatteryReceiver);
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        getContext().registerReceiver(mBatteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
     }
 
     @Override
@@ -156,25 +146,19 @@ public class StandardVideoController extends BaseVideoController implements View
                 fullScreenButton.setSelected(false);
                 backButton.setVisibility(GONE);
                 lock.setVisibility(GONE);
-//                statusHolder.setVisibility(GONE);
                 title.setVisibility(INVISIBLE);
+                sysTime.setVisibility(GONE);
+                batteryLevel.setVisibility(GONE);
                 break;
             case IjkVideoView.PLAYER_FULL_SCREEN:
                 L.e("PLAYER_FULL_SCREEN");
                 if (isLocked) return;
-//                postDelayed(new Runnable() {//解决ListView无效问题
-//                    @Override
-//                    public void run() {
-//                        setLayoutParams(new FrameLayout.LayoutParams(
-//                                Constants.SCREEN_HEIGHT,
-//                                Constants.SCREEN_WIDTH));
-//                    }
-//                }, 300);
                 gestureEnabled = true;
                 fullScreenButton.setSelected(true);
-//                statusHolder.setVisibility(VISIBLE);
                 backButton.setVisibility(VISIBLE);
                 title.setVisibility(VISIBLE);
+                sysTime.setVisibility(VISIBLE);
+                batteryLevel.setVisibility(VISIBLE);
                 if (mShowing) {
                     lock.setVisibility(VISIBLE);
                 } else {
@@ -396,6 +380,8 @@ public class StandardVideoController extends BaseVideoController implements View
             currTime.setText(stringForTime(position));
         if (title != null)
             title.setText(mediaPlayer.getTitle());
+        if (sysTime != null)
+            sysTime.setText(getCurrentSystemTime());
         return position;
     }
 
