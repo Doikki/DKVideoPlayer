@@ -1,6 +1,7 @@
 package com.devlin_n.videoplayer.player;
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.SurfaceTexture;
@@ -8,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.TextureView;
@@ -22,6 +24,8 @@ import com.devlin_n.videoplayer.util.WindowUtil;
 import com.devlin_n.videoplayer.widget.ResizeSurfaceView;
 import com.devlin_n.videoplayer.widget.ResizeTextureView;
 import com.devlin_n.videoplayer.widget.StatusView;
+
+import java.util.List;
 
 import master.flame.danmaku.danmaku.model.android.DanmakuContext;
 import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
@@ -61,16 +65,19 @@ public class IjkVideoView extends BaseIjkVideoView {
     }
 
     public IjkVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
+    }
+
+    public IjkVideoView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
         initView();
     }
+
 
     /**
      * 初始化播放器视图
      */
-    @Override
     protected void initView() {
-        super.initView();
         Constants.SCREEN_HEIGHT = WindowUtil.getScreenHeight(getContext(), false);
         Constants.SCREEN_WIDTH = WindowUtil.getScreenWidth(getContext());
         playerContainer = new FrameLayout(getContext());
@@ -87,14 +94,18 @@ public class IjkVideoView extends BaseIjkVideoView {
     @Override
     protected void initPlayer() {
         super.initPlayer();
+        addDisplay();
+        if (mDanmakuView != null) {
+            playerContainer.removeView(mDanmakuView);
+            playerContainer.addView(mDanmakuView, 1);
+        }
+    }
+
+    private void addDisplay() {
         if (useSurfaceView) {
             addSurfaceView();
         } else {
             addTextureView();
-        }
-        if (mDanmakuView != null) {
-            playerContainer.removeView(mDanmakuView);
-            playerContainer.addView(mDanmakuView, 1);
         }
     }
 
@@ -106,6 +117,15 @@ public class IjkVideoView extends BaseIjkVideoView {
     @Override
     protected void setPlayerState(int playerState) {
         if (mVideoController != null) mVideoController.setPlayerState(playerState);
+    }
+
+    @Override
+    protected void startPlay() {
+        super.startPlay();
+        if (addToPlayerManager) {
+            VideoViewManager.instance().releaseVideoPlayer();
+            VideoViewManager.instance().setCurrentVideoPlayer(this);
+        }
     }
 
     @Override
@@ -206,12 +226,10 @@ public class IjkVideoView extends BaseIjkVideoView {
     }
 
     @Override
-    public void start() {
-        super.start();
-        if (isInPlaybackState()) {
-            if (mDanmakuView != null && mDanmakuView.isPrepared() && mDanmakuView.isPaused()) {
-                mDanmakuView.resume();
-            }
+    protected void startInPlaybackState() {
+        super.startInPlaybackState();
+        if (mDanmakuView != null && mDanmakuView.isPrepared() && mDanmakuView.isPaused()) {
+            mDanmakuView.resume();
         }
     }
 
@@ -249,37 +267,6 @@ public class IjkVideoView extends BaseIjkVideoView {
             mSurfaceTexture.release();
             mSurfaceTexture = null;
         }
-    }
-
-    /**
-     * 添加弹幕
-     */
-    public IjkVideoView addDanmukuView(DanmakuView danmakuView, DanmakuContext context, BaseDanmakuParser parser) {
-        this.mDanmakuView = danmakuView;
-        this.mContext = context;
-        this.mParser = parser;
-        return this;
-    }
-
-
-    /**
-     * 设置视频比例
-     */
-    @Override
-    public IjkVideoView setScreenScale(int screenScale) {
-        this.mCurrentScreenScale = screenScale;
-        if (mSurfaceView != null) mSurfaceView.setScreenScale(screenScale);
-        if (mTextureView != null) mTextureView.setScreenScale(screenScale);
-        return this;
-    }
-
-    /**
-     * 启用SurfaceView
-     */
-    @Override
-    public IjkVideoView useSurfaceView() {
-        this.useSurfaceView = true;
-        return this;
     }
 
     @Override
@@ -325,23 +312,6 @@ public class IjkVideoView extends BaseIjkVideoView {
         return isFullScreen;
     }
 
-    /**
-     * 设置控制器
-     */
-    @Override
-    public IjkVideoView setVideoController(@Nullable BaseVideoController mediaController) {
-        playerContainer.removeView(mVideoController);
-        if (mediaController != null) {
-            mediaController.setMediaPlayer(this);
-            mVideoController = mediaController;
-            LayoutParams params = new LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT);
-            playerContainer.addView(mVideoController, params);
-        }
-        return this;
-    }
-
     @Override
     public void onError() {
         super.onError();
@@ -352,7 +322,7 @@ public class IjkVideoView extends BaseIjkVideoView {
         statusView.setMessage(getResources().getString(R.string.error_message));
         statusView.setButtonTextAndAction(getResources().getString(R.string.retry), v -> {
             playerContainer.removeView(statusView);
-            resetPlayer();
+            mMediaPlayer.reset();
             startPrepare();
         });
         playerContainer.addView(statusView);
@@ -371,7 +341,6 @@ public class IjkVideoView extends BaseIjkVideoView {
 
     @Override
     public void onVideoSizeChanged(int videoWidth, int videoHeight) {
-        super.onVideoSizeChanged(videoWidth, videoHeight);
         if (useSurfaceView) {
             mSurfaceView.setScreenScale(mCurrentScreenScale);
             mSurfaceView.setVideoSize(videoWidth, videoHeight);
@@ -381,11 +350,224 @@ public class IjkVideoView extends BaseIjkVideoView {
         }
     }
 
+    @Override
+    public void onCompletion() {
+        super.onCompletion();
+        mCurrentVideoPosition++;
+        if (mVideoModels != null && mVideoModels.size() > 1) {
+            if (mCurrentVideoPosition >= mVideoModels.size()) {
+                return;
+            }
+            playNext();
+            mMediaPlayer.reset();
+            addDisplay();
+            startPrepare();
+        }
+    }
+
+
+
+    /**
+     * 设置控制器
+     */
+    public IjkVideoView setVideoController(@Nullable BaseVideoController mediaController) {
+        playerContainer.removeView(mVideoController);
+        if (mediaController != null) {
+            mediaController.setMediaPlayer(this);
+            mVideoController = mediaController;
+            LayoutParams params = new LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT);
+            playerContainer.addView(mVideoController, params);
+        }
+        return this;
+    }
+
+    /**
+     * 播放下一条视频，可用于跳过广告
+     */
+    @Override
+    public void skipToNext() {
+        mCurrentVideoPosition++;
+        if (mVideoModels != null && mVideoModels.size() > 1) {
+            if (mCurrentVideoPosition >= mVideoModels.size()) return;
+            playNext();
+            mMediaPlayer.reset();
+            addDisplay();
+            startPrepare();
+        }
+    }
+
     /**
      * 改变返回键逻辑，用于activity
      */
-    @Override
     public boolean onBackPressed() {
         return mVideoController != null && mVideoController.onBackPressed();
+    }
+
+    /**
+     * 设置视频地址
+     */
+    public IjkVideoView setUrl(String url) {
+        this.mCurrentUrl = url;
+        return this;
+    }
+
+    /**
+     * 一开始播放就seek到预先设置好的位置
+     */
+    public IjkVideoView skipPositionWhenPlay(String url, int position) {
+        this.mCurrentUrl = url;
+        this.mCurrentPosition = position;
+        return this;
+    }
+
+    /**
+     * 设置一个列表的视频
+     */
+    public IjkVideoView setVideos(List<VideoModel> videoModels) {
+        this.mVideoModels = videoModels;
+        playNext();
+        return this;
+    }
+
+    /**
+     * 设置标题
+     */
+    public IjkVideoView setTitle(String title) {
+        if (title != null) {
+            this.mCurrentTitle = title;
+        }
+        return this;
+    }
+
+    /**
+     * 开启缓存
+     */
+    public IjkVideoView enableCache() {
+        isCache = true;
+        return this;
+    }
+
+    /**
+     * 添加到{@link VideoViewManager},如需集成到RecyclerView或ListView请开启此选项
+     */
+    public IjkVideoView addToPlayerManager() {
+        addToPlayerManager = true;
+        return this;
+    }
+
+    /**
+     * 播放下一条视频
+     */
+    private void playNext() {
+        VideoModel videoModel = mVideoModels.get(mCurrentVideoPosition);
+        if (videoModel != null) {
+            mCurrentUrl = videoModel.url;
+            mCurrentTitle = videoModel.title;
+            mCurrentPosition = 0;
+            setVideoController(videoModel.controller);
+        }
+    }
+
+
+    /**
+     * 添加弹幕
+     */
+    public IjkVideoView addDanmukuView(DanmakuView danmakuView, DanmakuContext context, BaseDanmakuParser parser) {
+        this.mDanmakuView = danmakuView;
+        this.mContext = context;
+        this.mParser = parser;
+        return this;
+    }
+
+
+    /**
+     * 设置视频比例
+     */
+    @Override
+    public IjkVideoView setScreenScale(int screenScale) {
+        this.mCurrentScreenScale = screenScale;
+        if (mSurfaceView != null) mSurfaceView.setScreenScale(screenScale);
+        if (mTextureView != null) mTextureView.setScreenScale(screenScale);
+        return this;
+    }
+
+    /**
+     * 启用SurfaceView
+     */
+    public IjkVideoView useSurfaceView() {
+        this.useSurfaceView = true;
+        return this;
+    }
+
+    /**
+     * 启用{@link android.media.MediaPlayer},如不调用默认使用 {@link IjkMediaPlayer}
+     */
+    public IjkVideoView useAndroidMediaPlayer() {
+        this.useAndroidMediaPlayer = true;
+        return this;
+    }
+
+    /**
+     * 锁定全屏播放
+     */
+    public IjkVideoView alwaysFullScreen() {
+        mAlwaysFullScreen = true;
+        return this;
+    }
+
+    /**
+     * 设置自动旋转
+     */
+    public IjkVideoView autoRotate() {
+        this.mAutoRotate = true;
+        if (orientationEventListener == null) {
+            orientationEventListener = new OrientationEventListener(getContext()) { // 加速度传感器监听，用于自动旋转屏幕
+
+                private int CurrentOrientation = 0;
+                private static final int PORTRAIT = 1;
+                private static final int LANDSCAPE = 2;
+                private static final int REVERSE_LANDSCAPE = 3;
+
+                @Override
+                public void onOrientationChanged(int orientation) {
+                    if (orientation >= 340) { //屏幕顶部朝上
+                        if (isLocked || mAlwaysFullScreen) return;
+                        if (CurrentOrientation == PORTRAIT) return;
+                        if ((CurrentOrientation == LANDSCAPE || CurrentOrientation == REVERSE_LANDSCAPE) && !isFullScreen()) {
+                            CurrentOrientation = PORTRAIT;
+                            return;
+                        }
+                        CurrentOrientation = PORTRAIT;
+                        WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                        stopFullScreen();
+                    } else if (orientation >= 260 && orientation <= 280) { //屏幕左边朝上
+                        if (CurrentOrientation == LANDSCAPE) return;
+                        if (CurrentOrientation == PORTRAIT && isFullScreen()) {
+                            CurrentOrientation = LANDSCAPE;
+                            return;
+                        }
+                        CurrentOrientation = LANDSCAPE;
+                        if (!isFullScreen()) {
+                            startFullScreen();
+                        }
+                        WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                    } else if (orientation >= 70 && orientation <= 90) { //屏幕右边朝上
+                        if (CurrentOrientation == REVERSE_LANDSCAPE) return;
+                        if (CurrentOrientation == PORTRAIT && isFullScreen()) {
+                            CurrentOrientation = REVERSE_LANDSCAPE;
+                            return;
+                        }
+                        CurrentOrientation = REVERSE_LANDSCAPE;
+                        if (!isFullScreen()) {
+                            startFullScreen();
+                        }
+                        WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+                    }
+                }
+            };
+        }
+        return this;
     }
 }

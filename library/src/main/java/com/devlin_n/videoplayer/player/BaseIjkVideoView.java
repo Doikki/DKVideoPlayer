@@ -3,44 +3,26 @@ package com.devlin_n.videoplayer.player;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.graphics.Color;
-import android.graphics.PixelFormat;
-import android.graphics.SurfaceTexture;
 import android.media.AudioManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.OrientationEventListener;
-import android.view.Surface;
-import android.view.SurfaceHolder;
-import android.view.TextureView;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.danikula.videocache.CacheListener;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.devlin_n.floatWindowPermission.FloatWindowManager;
-import com.devlin_n.videoplayer.R;
 import com.devlin_n.videoplayer.controller.BaseVideoController;
-import com.devlin_n.videoplayer.listener.IjkPlayerInterface;
+import com.devlin_n.videoplayer.listener.MediaEngineInterface;
 import com.devlin_n.videoplayer.listener.VideoListener;
 import com.devlin_n.videoplayer.util.Constants;
 import com.devlin_n.videoplayer.util.KeyUtil;
-import com.devlin_n.videoplayer.util.NetworkUtil;
 import com.devlin_n.videoplayer.util.WindowUtil;
-import com.devlin_n.videoplayer.widget.ResizeSurfaceView;
-import com.devlin_n.videoplayer.widget.ResizeTextureView;
-import com.devlin_n.videoplayer.widget.StatusView;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
-import master.flame.danmaku.danmaku.model.android.DanmakuContext;
-import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
-import master.flame.danmaku.ui.widget.DanmakuView;
-import tv.danmaku.ijk.media.player.AndroidMediaPlayer;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
@@ -49,13 +31,13 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
  * Created by Devlin_n on 2017/4/7.
  */
 
-public abstract class BaseIjkVideoView extends FrameLayout implements BaseVideoController.MediaPlayerControl, IjkPlayerInterface {
+public abstract class BaseIjkVideoView extends FrameLayout implements BaseVideoController.MediaPlayerControl, MediaEngineInterface {
 
-    protected IjkMediaEngine mMediaPlayer;//ijkPlayer
+    protected BaseMediaEngine mMediaPlayer;//ijkPlayer
     protected VideoListener listener;
     protected int bufferPercentage;//缓冲百分比
     protected boolean isMute;//是否静音
-//    protected boolean useAndroidMediaPlayer;//是否使用AndroidMediaPlayer
+    protected boolean useAndroidMediaPlayer;//是否使用AndroidMediaPlayer
 
     protected String mCurrentUrl;//当前播放视频的地址
     protected List<VideoModel> mVideoModels;//列表播放数据
@@ -100,23 +82,24 @@ public abstract class BaseIjkVideoView extends FrameLayout implements BaseVideoC
 
 
     public BaseIjkVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-        initView();
+        this(context, attrs, 0);
+    }
+
+    public BaseIjkVideoView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
     }
 
     protected void initPlayer() {
         if (mMediaPlayer == null) {
-            mMediaPlayer = new IjkMediaEngine();
-            mMediaPlayer.setIjkPlayerInterface(this);
+            if (useAndroidMediaPlayer) {
+                mMediaPlayer = new AndroidMediaEngine();
+                ((AndroidMediaEngine)mMediaPlayer).setMediaEngineInterface(this);
+            } else {
+                mMediaPlayer = new IjkMediaEngine();
+                ((IjkMediaEngine)mMediaPlayer).setMediaEngineInterface(this);
+            }
+            mMediaPlayer.initPlayer();
         }
-        mMediaPlayer.initPlayer();
-    }
-
-    /**
-     * 初始化播放器视图
-     */
-    protected void initView() {
-
     }
 
     protected abstract void setPlayState(int playState);
@@ -124,21 +107,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements BaseVideoC
     protected abstract void setPlayerState(int playerState);
 
     protected abstract boolean checkNetwork();
-
-    protected abstract boolean onBackPressed();
-
-    /**
-     * 设置控制器
-     */
-    public abstract BaseIjkVideoView setVideoController(@Nullable BaseVideoController mediaController);
-
-    public abstract BaseIjkVideoView addDanmukuView(DanmakuView danmakuView, DanmakuContext context, BaseDanmakuParser parser);
-
-    public abstract BaseIjkVideoView setScreenScale(int screenScale);
-
-    public abstract BaseIjkVideoView useSurfaceView();
-
-
 
     /**
      * 开始准备播放（直接播放）
@@ -175,22 +143,26 @@ public abstract class BaseIjkVideoView extends FrameLayout implements BaseVideoC
     @Override
     public void start() {
         if (mCurrentState == STATE_IDLE) {
-            if (mAlwaysFullScreen) startFullScreenDirectly();
-            if (addToPlayerManager) {
-                VideoViewManager.instance().releaseVideoPlayer();
-                VideoViewManager.instance().setCurrentVideoPlayer(this);
-            }
-            if (mAutoRotate && orientationEventListener != null) orientationEventListener.enable();
-            if (checkNetwork()) return;
-            initPlayer();
-            startPrepare();
+            startPlay();
         } else if (isInPlaybackState()) {
-            mMediaPlayer.start();
-            mCurrentState = STATE_PLAYING;
-            setPlayState(mCurrentState);
+            startInPlaybackState();
         }
         setKeepScreenOn(true);
         mAudioFocusHelper.requestFocus();
+    }
+
+    protected void startPlay() {
+        if (mAlwaysFullScreen) startFullScreenDirectly();
+        if (mAutoRotate && orientationEventListener != null) orientationEventListener.enable();
+        if (checkNetwork()) return;
+        initPlayer();
+        startPrepare();
+    }
+
+    protected void startInPlaybackState() {
+        mMediaPlayer.start();
+        mCurrentState = STATE_PLAYING;
+        setPlayState(mCurrentState);
     }
 
     @Override
@@ -249,79 +221,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements BaseVideoC
 
         isLocked = false;
         mCurrentPosition = 0;
-    }
-
-//        /**
-//         * 启用{@link AndroidMediaPlayer},如不调用默认使用 {@link IjkMediaPlayer}
-//         */
-//    public BaseIjkVideoView useAndroidMediaPlayer() {
-//        this.useAndroidMediaPlayer = true;
-//        return this;
-//    }
-
-    /**
-     * 设置视频地址
-     */
-    public BaseIjkVideoView setUrl(String url) {
-        this.mCurrentUrl = url;
-        return this;
-    }
-
-    /**
-     * 一开始播放就seek到预先设置好的位置
-     */
-    public BaseIjkVideoView skipPositionWhenPlay(String url, int position) {
-        this.mCurrentUrl = url;
-        this.mCurrentPosition = position;
-        return this;
-    }
-
-    /**
-     * 设置一个列表的视频
-     */
-    public BaseIjkVideoView setVideos(List<VideoModel> videoModels) {
-        this.mVideoModels = videoModels;
-        playNext();
-        return this;
-    }
-
-    /**
-     * 设置标题
-     */
-    public BaseIjkVideoView setTitle(String title) {
-        if (title != null) {
-            this.mCurrentTitle = title;
-        }
-        return this;
-    }
-
-    /**
-     * 开启缓存
-     */
-    public BaseIjkVideoView enableCache() {
-        isCache = true;
-        return this;
-    }
-
-    /**
-     * 添加到{@link VideoViewManager},如需集成到RecyclerView或ListView请开启此选项
-     */
-    public BaseIjkVideoView addToPlayerManager() {
-        addToPlayerManager = true;
-        return this;
-    }
-
-    /**
-     * 播放下一条视频
-     */
-    private void playNext() {
-        VideoModel videoModel = mVideoModels.get(mCurrentVideoPosition);
-        if (videoModel != null) {
-            mCurrentUrl = videoModel.url;
-            mCurrentTitle = videoModel.title;
-            mCurrentPosition = 0;
-            setVideoController(videoModel.controller);
-        }
     }
 
     public void setVideoListener(VideoListener listener) {
@@ -417,25 +316,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements BaseVideoC
         startFullScreen();
     }
 
-    public BaseIjkVideoView alwaysFullScreen() {
-        mAlwaysFullScreen = true;
-        return this;
-    }
-
-    /**
-     * 播放下一条视频，可用于跳过广告
-     */
-    @Override
-    public void skipToNext() {
-        mCurrentVideoPosition++;
-        if (mVideoModels != null && mVideoModels.size() > 1) {
-            if (mCurrentVideoPosition >= mVideoModels.size()) return;
-            playNext();
-            resetPlayer();
-            startPrepare();
-        }
-    }
-
     /**
      * 设置静音
      */
@@ -461,16 +341,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements BaseVideoC
     }
 
     @Override
-    public void startFullScreen() {
-
-    }
-
-    @Override
-    public void stopFullScreen() {
-
-    }
-
-    @Override
     public boolean isFullScreen() {
         return false;
     }
@@ -480,20 +350,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements BaseVideoC
         return mCurrentTitle;
     }
 
-    protected void resetPlayer() {
-        mMediaPlayer.reset();
-//        if (mMediaPlayer instanceof IjkMediaPlayer) {
-        initPlayer();
-//        } else {
-//            mMediaPlayer.setVolume(1, 1);
-//            mMediaPlayer.setOnErrorListener(onErrorListener);
-//            mMediaPlayer.setOnCompletionListener(onCompletionListener);
-//            mMediaPlayer.setOnInfoListener(onInfoListener);
-//            mMediaPlayer.setOnBufferingUpdateListener(onBufferingUpdateListener);
-//            mMediaPlayer.setOnPreparedListener(onPreparedListener);
-//            mMediaPlayer.setOnVideoSizeChangedListener(onVideoSizeChangedListener);
-//        }
-    }
 
     private CacheListener cacheListener = new CacheListener() {
         @Override
@@ -516,15 +372,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements BaseVideoC
         if (listener != null) listener.onComplete();
         setPlayState(mCurrentState);
         setKeepScreenOn(false);
-        mCurrentVideoPosition++;
-        if (mVideoModels != null && mVideoModels.size() > 1) {
-            if (mCurrentVideoPosition >= mVideoModels.size()) {
-                return;
-            }
-            playNext();
-            resetPlayer();
-            startPrepare();
-        }
     }
 
     @Override
@@ -560,12 +407,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements BaseVideoC
         }
         start();
     }
-
-    @Override
-    public void onVideoSizeChanged(int width, int height) {
-
-    }
-
 
     /**
      * 音频焦点改变监听
@@ -646,59 +487,5 @@ public abstract class BaseIjkVideoView extends FrameLayout implements BaseVideoC
             int status = mAudioManager.abandonAudioFocus(this);
             return AudioManager.AUDIOFOCUS_REQUEST_GRANTED == status;
         }
-    }
-
-    /**
-     * 设置自动旋转
-     */
-    public BaseIjkVideoView autoRotate() {
-        this.mAutoRotate = true;
-        if (orientationEventListener == null) {
-            orientationEventListener = new OrientationEventListener(getContext()) { // 加速度传感器监听，用于自动旋转屏幕
-
-                private int CurrentOrientation = 0;
-                private static final int PORTRAIT = 1;
-                private static final int LANDSCAPE = 2;
-                private static final int REVERSE_LANDSCAPE = 3;
-
-                @Override
-                public void onOrientationChanged(int orientation) {
-                    if (orientation >= 340) { //屏幕顶部朝上
-                        if (isLocked || mAlwaysFullScreen) return;
-                        if (CurrentOrientation == PORTRAIT) return;
-                        if ((CurrentOrientation == LANDSCAPE || CurrentOrientation == REVERSE_LANDSCAPE) && !isFullScreen()) {
-                            CurrentOrientation = PORTRAIT;
-                            return;
-                        }
-                        CurrentOrientation = PORTRAIT;
-                        WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                        stopFullScreen();
-                    } else if (orientation >= 260 && orientation <= 280) { //屏幕左边朝上
-                        if (CurrentOrientation == LANDSCAPE) return;
-                        if (CurrentOrientation == PORTRAIT && isFullScreen()) {
-                            CurrentOrientation = LANDSCAPE;
-                            return;
-                        }
-                        CurrentOrientation = LANDSCAPE;
-                        if (!isFullScreen()) {
-                            startFullScreen();
-                        }
-                        WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                    } else if (orientation >= 70 && orientation <= 90) { //屏幕右边朝上
-                        if (CurrentOrientation == REVERSE_LANDSCAPE) return;
-                        if (CurrentOrientation == PORTRAIT && isFullScreen()) {
-                            CurrentOrientation = REVERSE_LANDSCAPE;
-                            return;
-                        }
-                        CurrentOrientation = REVERSE_LANDSCAPE;
-                        if (!isFullScreen()) {
-                            startFullScreen();
-                        }
-                        WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
-                    }
-                }
-            };
-        }
-        return this;
     }
 }

@@ -1,6 +1,7 @@
 package com.devlin_n.videoplayer.player;
 
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
@@ -8,12 +9,9 @@ import com.devlin_n.videoplayer.listener.MediaEngineInterface;
 
 import java.io.IOException;
 
-import tv.danmaku.ijk.media.player.IMediaPlayer;
-import tv.danmaku.ijk.media.player.IjkMediaPlayer;
+public class AndroidMediaEngine extends BaseMediaEngine {
 
-public class IjkMediaEngine extends BaseMediaEngine {
-
-    public IjkMediaPlayer mMediaPlayer;
+    public MediaPlayer mMediaPlayer;
     private MediaEngineInterface mMediaEngineInterface;
 
     @Override
@@ -24,10 +22,7 @@ public class IjkMediaEngine extends BaseMediaEngine {
     @Override
     public void initPlayer() {
         if (mMediaPlayer == null) {
-            mMediaPlayer = new IjkMediaPlayer();
-            mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 1);//开启硬解码
-            mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 1);
-            mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", 1);
+            mMediaPlayer = new MediaPlayer();
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mMediaPlayer.setOnErrorListener(onErrorListener);
             mMediaPlayer.setOnCompletionListener(onCompletionListener);
@@ -61,7 +56,6 @@ public class IjkMediaEngine extends BaseMediaEngine {
     @Override
     public void reset() {
         mMediaPlayer.reset();
-        mMediaPlayer.setOnVideoSizeChangedListener(onVideoSizeChangedListener);
     }
 
     @Override
@@ -105,32 +99,32 @@ public class IjkMediaEngine extends BaseMediaEngine {
         mMediaPlayer.setVolume(v1, v2);
     }
 
-    private IMediaPlayer.OnErrorListener onErrorListener = (iMediaPlayer, framework_err, impl_err) -> {
+    private MediaPlayer.OnErrorListener onErrorListener = (mp, framework_err, impl_err) -> {
         if (mMediaEngineInterface != null) mMediaEngineInterface.onError();
         return true;
     };
 
-    private IMediaPlayer.OnCompletionListener onCompletionListener = iMediaPlayer -> {
+    private MediaPlayer.OnCompletionListener onCompletionListener = mp -> {
         if (mMediaEngineInterface != null) mMediaEngineInterface.onCompletion();
     };
 
-    private IMediaPlayer.OnInfoListener onInfoListener = (iMediaPlayer, what, extra) -> {
+    private MediaPlayer.OnInfoListener onInfoListener = (mp, what, extra) -> {
         if (mMediaEngineInterface != null) mMediaEngineInterface.onInfo(what, extra);
         return true;
     };
 
-    private IMediaPlayer.OnBufferingUpdateListener onBufferingUpdateListener = (iMediaPlayer, percent) -> {
+    private MediaPlayer.OnBufferingUpdateListener onBufferingUpdateListener = (mp, percent) -> {
         if (mMediaEngineInterface != null) mMediaEngineInterface.onBufferingUpdate(percent);
     };
 
 
-    private IMediaPlayer.OnPreparedListener onPreparedListener = iMediaPlayer -> {
+    private MediaPlayer.OnPreparedListener onPreparedListener = mp -> {
         if (mMediaEngineInterface != null) mMediaEngineInterface.onPrepared();
     };
 
-    private IMediaPlayer.OnVideoSizeChangedListener onVideoSizeChangedListener = (iMediaPlayer, i, i1, i2, i3) -> {
-        int videoWidth = iMediaPlayer.getVideoWidth();
-        int videoHeight = iMediaPlayer.getVideoHeight();
+    private MediaPlayer.OnVideoSizeChangedListener onVideoSizeChangedListener = (mp, width, height) -> {
+        int videoWidth = mp.getVideoWidth();
+        int videoHeight = mp.getVideoHeight();
         if (videoWidth != 0 && videoHeight != 0) {
             if (mMediaEngineInterface != null)
                 mMediaEngineInterface.onVideoSizeChanged(videoWidth, videoHeight);

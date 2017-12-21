@@ -4,7 +4,7 @@ package com.devlin_n.videoplayer.listener;
  * Created by xinyu on 2017/12/21.
  */
 
-public interface IjkPlayerInterface {
+public interface MediaEngineInterface {
 
     void onError();
 
@@ -12,7 +12,7 @@ public interface IjkPlayerInterface {
 
     void onInfo(int what, int extra);
 
-    void onBufferingUpdate(int position);
+    void onBufferingUpdate(int percent);
 
     void onPrepared();
 

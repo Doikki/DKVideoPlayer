@@ -66,11 +66,11 @@ public class DanmakuActivity extends AppCompatActivity {
 
         initDanMuView();
         ijkVideoView
-                .autoRotate()
 //                .enableCache()
 //                .useSurfaceView()
 //                .useAndroidMediaPlayer()
                 .addDanmukuView(mDanmakuView, mContext, mParser)
+                .autoRotate()
                 .setVideoController(new StandardVideoController(this))
                 .setUrl(URL_VOD)
                 .setTitle("网易公开课-如何掌控你的自由时间")
