@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.devlin_n.dcplayer.widget.DanmukuVideoView
+    <com.dueeeke.dkplayer.widget.DanmukuVideoView
         android:id="@+id/player"
         android:layout_width="match_parent"
         android:layout_height="300dp" />

@@ -1,7 +1,7 @@
 # DCPlayer
 A video player based on [IjkPlayer](https://github.com/Bilibili/ijkplayer).
 
-[![](https://www.jitpack.io/v/DevlinChiu/dcplayer.svg)](https://www.jitpack.io/#DevlinChiu/dcplayer)
+[![](https://www.jitpack.io/v/dueeeke/dkplayer.svg)](https://www.jitpack.io/#dueeeke/dkplayer)
 [![API](https://img.shields.io/badge/API-16%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=16)
 
 
@@ -23,7 +23,7 @@ A video player based on [IjkPlayer](https://github.com/Bilibili/ijkplayer).
 * **支持广告播放。**
 * **支持弹幕，使用了[DanmakuFlameMaster](https://github.com/Bilibili/DanmakuFlameMaster)。**
 
-[demo下载](https://fir.im/l4gn)
+[demo下载](https://fir.im/1r3u)
 ## 使用
 
 1.添加类库
@@ -40,14 +40,14 @@ Step 1.Add it in your root build.gradle at the end of repositories:
 Step 2. Add the dependency
 
 	dependencies {
-	        compile 'com.github.DevlinChiu:dcplayer:1.4'
+	        compile 'com.github.dueeeke:dkplayer:1.4'
 	}
 ```
 或者将library下载并导入项目中使用
 
 2.添加布局
 ```xml
-<com.devlin_n.videoplayer.player.IjkVideoView
+<com.dueeeke.videoplayer.player.IjkVideoView
         android:id="@+id/player"
         android:layout_width="match_parent"
         android:layout_height="300dp" />
@@ -109,20 +109,20 @@ ijkVideoView
 
 ## 截图
 <div>
-<img src="https://github.com/DevlinChiu/dcplayer/blob/master/art/1.jpg" width="240px" height="426px"/>
-<img src="https://github.com/DevlinChiu/dcplayer/blob/master/art/2.jpg" width="240px" height="426px"/>
-<img src="https://github.com/DevlinChiu/dcplayer/blob/master/art/3.jpg" width="240px" height="426px"/>
-<img src="https://github.com/DevlinChiu/dcplayer/blob/master/art/5.jpg" width="240px" height="426px"/>
-<img src="https://github.com/DevlinChiu/dcplayer/blob/master/art/6.jpg" width="240px" height="426px"/>
-<img src="https://github.com/DevlinChiu/dcplayer/blob/master/art/7.jpg" width="240px" height="426px"/>
-<img src="https://github.com/DevlinChiu/dcplayer/blob/master/art/8.jpg" width="240px" height="426px"/>
-<img src="https://github.com/DevlinChiu/dcplayer/blob/master/art/9.jpg" width="240px" height="426px"/>
-<img src="https://github.com/DevlinChiu/dcplayer/blob/master/art/10.jpg" width="240px" height="426px"/>
-<img src="https://github.com/DevlinChiu/dcplayer/blob/master/art/4.jpg" width="426px" height="240px"/>
+<img src="https://github.com/dueeeke/dkplayer/blob/master/art/1.jpg" width="240px" height="426px"/>
+<img src="https://github.com/dueeeke/dkplayer/blob/master/art/2.jpg" width="240px" height="426px"/>
+<img src="https://github.com/dueeeke/dkplayer/blob/master/art/3.jpg" width="240px" height="426px"/>
+<img src="https://github.com/dueeeke/dkplayer/blob/master/art/5.jpg" width="240px" height="426px"/>
+<img src="https://github.com/dueeeke/dkplayer/blob/master/art/6.jpg" width="240px" height="426px"/>
+<img src="https://github.com/dueeeke/dkplayer/blob/master/art/7.jpg" width="240px" height="426px"/>
+<img src="https://github.com/dueeeke/dkplayer/blob/master/art/8.jpg" width="240px" height="426px"/>
+<img src="https://github.com/dueeeke/dkplayer/blob/master/art/9.jpg" width="240px" height="426px"/>
+<img src="https://github.com/dueeeke/dkplayer/blob/master/art/10.jpg" width="240px" height="426px"/>
+<img src="https://github.com/dueeeke/dkplayer/blob/master/art/4.jpg" width="426px" height="240px"/>
 </div>
 
 ## 混淆
 	-keep class tv.danmaku.ijk.** { *; }
     -dontwarn tv.danmaku.ijk.**
-    -keep class com.devlin_n.videoplayer.** { *; }
-    -dontwarn com.devlin_n.videoplayer.**
+    -keep class com.dueeeke.videoplayer.** { *; }
+    -dontwarn com.dueeeke.videoplayer.**

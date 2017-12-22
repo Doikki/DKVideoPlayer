@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">magic_player</string>
+    <string name="app_name">dk_player</string>
     <string name="float_window_warning">当前无权限使用悬浮窗，请授权！</string>
     <string name="error_message">出了点小问题，稍后重试</string>
     <string name="retry">重    试</string>
