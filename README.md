@@ -1,4 +1,4 @@
-# DCPlayer
+# DKPlayer
 A video player based on [IjkPlayer](https://github.com/Bilibili/ijkplayer).
 
 [![](https://www.jitpack.io/v/dueeeke/dkplayer.svg)](https://www.jitpack.io/#dueeeke/dkplayer)
