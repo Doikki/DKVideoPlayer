@@ -49,7 +49,7 @@ public class VodPlayerActivity extends AppCompatActivity {
         videos.add(new VideoModel(URL_VOD, "这是一个标题", new StandardVideoController(this)));
 
         ijkVideoView
-                .autoRotate()
+//                .autoRotate()
 //                .enableCache()
 //                .useSurfaceView()
                 .useAndroidMediaPlayer()

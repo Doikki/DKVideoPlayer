@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.devlin_n.dcplayer.widget.DanmukuVideoView;
 import com.devlin_n.floatWindowPermission.FloatWindowManager;
 import com.devlin_n.videoplayer.controller.StandardVideoController;
 import com.devlin_n.videoplayer.player.IjkVideoView;
@@ -49,7 +50,7 @@ public class DanmakuActivity extends AppCompatActivity {
     private DanmakuView mDanmakuView;
     private DanmakuContext mContext;
     private BaseDanmakuParser mParser;
-    private IjkVideoView ijkVideoView;
+    private DanmukuVideoView danmukuVideoView;
     private static final String URL_VOD = "http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv";
     //    private static final String URL_VOD = "http://uploads.cutv.com:8088/video/data/201703/10/encode_file/515b6a95601ba6b39620358f2677a17358c2472411d53.mp4";
 
@@ -62,14 +63,14 @@ public class DanmakuActivity extends AppCompatActivity {
             actionBar.setTitle("弹幕");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        ijkVideoView = (IjkVideoView) findViewById(R.id.player);
+        danmukuVideoView = findViewById(R.id.player);
 
         initDanMuView();
-        ijkVideoView
+        danmukuVideoView
+                .addDanmukuView(mDanmakuView, mContext, mParser)
 //                .enableCache()
 //                .useSurfaceView()
 //                .useAndroidMediaPlayer()
-                .addDanmukuView(mDanmakuView, mContext, mParser)
                 .autoRotate()
                 .setVideoController(new StandardVideoController(this))
                 .setUrl(URL_VOD)
@@ -88,25 +89,25 @@ public class DanmakuActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        ijkVideoView.pause();
+        danmukuVideoView.pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        ijkVideoView.stopFloatWindow();
+        danmukuVideoView.stopFloatWindow();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ijkVideoView.release();
+        danmukuVideoView.release();
     }
 
 
     @Override
     public void onBackPressed() {
-        if (!ijkVideoView.onBackPressed()) {
+        if (!danmukuVideoView.onBackPressed()) {
             super.onBackPressed();
         }
     }
@@ -115,7 +116,7 @@ public class DanmakuActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == FloatWindowManager.PERMISSION_REQUEST_CODE) {
             if (FloatWindowManager.getInstance().checkPermission(this)) {
-                ijkVideoView.startFloatWindow();
+                danmukuVideoView.startFloatWindow();
             } else {
                 Toast.makeText(DanmakuActivity.this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
             }
@@ -209,7 +210,7 @@ public class DanmakuActivity extends AppCompatActivity {
         }
         // for(int i=0;i<100;i++){
         // }
-        Drawable drawable = ContextCompat.getDrawable(this, R.mipmap.ic_launcher);
+        Drawable drawable = ContextCompat.getDrawable(this, R.mipmap.ic_launcher_round);
         int size = WindowUtil.dp2px(this, 20);
         drawable.setBounds(0, 0, size, size);
 

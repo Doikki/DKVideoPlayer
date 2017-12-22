@@ -22,7 +22,7 @@ import com.devlin_n.dcplayer.activity.ListViewActivity;
 import com.devlin_n.dcplayer.activity.LivePlayerActivity;
 import com.devlin_n.dcplayer.activity.PlayerActivity;
 import com.devlin_n.dcplayer.activity.RecyclerViewActivity;
-import com.devlin_n.dcplayer.activity.RecyclerViewAutoPlayActivity;
+import com.devlin_n.dcplayer.activity.AutoPlayRecyclerViewActivity;
 import com.devlin_n.dcplayer.activity.VodPlayerActivity;
 import com.devlin_n.videoplayer.player.BackgroundPlayService;
 import com.devlin_n.videoplayer.player.VideoCacheManager;
@@ -122,6 +122,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void recyclerAutoPlay(View view) {
-        startActivity(new Intent(this, RecyclerViewAutoPlayActivity.class));
+        startActivity(new Intent(this, AutoPlayRecyclerViewActivity.class));
     }
 }

@@ -38,7 +38,7 @@
 
         <ImageView
             android:id="@+id/iv_battery"
-            android:layout_width="18dp"
+            android:layout_width="26dp"
             android:layout_height="20dp"
             tools:src="@drawable/ic_action_battery"/>
 

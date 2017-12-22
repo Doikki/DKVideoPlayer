@@ -52,7 +52,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.devlin_n.dcplayer.activity.RecyclerViewAutoPlayActivity"
+            android:name="com.devlin_n.dcplayer.activity.AutoPlayRecyclerViewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
     </application>

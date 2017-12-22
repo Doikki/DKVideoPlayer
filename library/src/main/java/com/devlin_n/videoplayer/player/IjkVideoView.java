@@ -1,5 +1,6 @@
 package com.devlin_n.videoplayer.player;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
@@ -40,17 +41,14 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 public class IjkVideoView extends BaseIjkVideoView {
 
     @Nullable
-    private BaseVideoController mVideoController;//控制器
-    private ResizeSurfaceView mSurfaceView;
-    private ResizeTextureView mTextureView;
-    private SurfaceTexture mSurfaceTexture;
-    private DanmakuView mDanmakuView;
-    private DanmakuContext mContext;
-    private BaseDanmakuParser mParser;
-    private FrameLayout playerContainer;
-    private StatusView statusView;//显示错误信息的一个view
-    private boolean useSurfaceView;//是否使用TextureView
-    private boolean isFullScreen;//是否处于全屏状态
+    protected BaseVideoController mVideoController;//控制器
+    protected ResizeSurfaceView mSurfaceView;
+    protected ResizeTextureView mTextureView;
+    protected SurfaceTexture mSurfaceTexture;
+    protected FrameLayout playerContainer;
+    protected StatusView statusView;//显示错误信息的一个view
+    protected boolean useSurfaceView;//是否使用TextureView
+    protected boolean isFullScreen;//是否处于全屏状态
 
     public static final int SCREEN_SCALE_DEFAULT = 0;
     public static final int SCREEN_SCALE_16_9 = 1;
@@ -58,7 +56,7 @@ public class IjkVideoView extends BaseIjkVideoView {
     public static final int SCREEN_SCALE_MATCH_PARENT = 3;
     public static final int SCREEN_SCALE_ORIGINAL = 4;
 
-    private int mCurrentScreenScale = SCREEN_SCALE_DEFAULT;
+    protected int mCurrentScreenScale = SCREEN_SCALE_DEFAULT;
 
     public IjkVideoView(@NonNull Context context) {
         this(context, null);
@@ -95,10 +93,6 @@ public class IjkVideoView extends BaseIjkVideoView {
     protected void initPlayer() {
         super.initPlayer();
         addDisplay();
-        if (mDanmakuView != null) {
-            playerContainer.removeView(mDanmakuView);
-            playerContainer.addView(mDanmakuView, 1);
-        }
     }
 
     private void addDisplay() {
@@ -128,13 +122,6 @@ public class IjkVideoView extends BaseIjkVideoView {
         }
     }
 
-    @Override
-    protected void startPrepare() {
-        super.startPrepare();
-        if (mDanmakuView != null) {
-            mDanmakuView.prepare(mParser, mContext);
-        }
-    }
     /**
      * 添加SurfaceView
      */
@@ -226,40 +213,8 @@ public class IjkVideoView extends BaseIjkVideoView {
     }
 
     @Override
-    protected void startInPlaybackState() {
-        super.startInPlaybackState();
-        if (mDanmakuView != null && mDanmakuView.isPrepared() && mDanmakuView.isPaused()) {
-            mDanmakuView.resume();
-        }
-    }
-
-    @Override
-    public void pause() {
-        super.pause();
-        if (isInPlaybackState()) {
-            if (mDanmakuView != null && mDanmakuView.isPrepared()) {
-                mDanmakuView.pause();
-            }
-        }
-    }
-
-    @Override
-    public void resume() {
-        super.resume();
-        if (mDanmakuView != null && mDanmakuView.isPrepared() && mDanmakuView.isPaused()) {
-            mDanmakuView.resume();
-        }
-    }
-
-
-    @Override
     public void release() {
         super.release();
-        if (mDanmakuView != null) {
-            // dont forget release!
-            mDanmakuView.release();
-            mDanmakuView = null;
-        }
         playerContainer.removeView(mTextureView);
         playerContainer.removeView(mSurfaceView);
         playerContainer.removeView(statusView);
@@ -270,33 +225,31 @@ public class IjkVideoView extends BaseIjkVideoView {
     }
 
     @Override
-    public void seekTo(int pos) {
-        super.seekTo(pos);
-        if (isInPlaybackState()) {
-            if (mDanmakuView != null) mDanmakuView.seekTo((long) pos);
-        }
-    }
-
-    @Override
     public void startFullScreen() {
+        Activity activity = WindowUtil.scanForActivity(getContext());
+        if (activity == null) return;
         if (isFullScreen) return;
         WindowUtil.hideSystemBar(getContext());
         this.removeView(playerContainer);
-        ViewGroup contentView = WindowUtil.scanForActivity(getContext())
+        ViewGroup contentView = activity
                 .findViewById(android.R.id.content);
         LayoutParams params = new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
         contentView.addView(playerContainer, params);
+        orientationEventListener.enable();
         isFullScreen = true;
         if (mVideoController != null) mVideoController.setPlayerState(PLAYER_FULL_SCREEN);
     }
 
     @Override
     public void stopFullScreen() {
+        Activity activity = WindowUtil.scanForActivity(getContext());
+        if (activity == null) return;
         if (!isFullScreen) return;
+        if (!mAutoRotate) orientationEventListener.disable();
         WindowUtil.showSystemBar(getContext());
-        ViewGroup contentView = WindowUtil.scanForActivity(getContext())
+        ViewGroup contentView = activity
                 .findViewById(android.R.id.content);
         contentView.removeView(playerContainer);
         LayoutParams params = new LayoutParams(
@@ -470,18 +423,6 @@ public class IjkVideoView extends BaseIjkVideoView {
         }
     }
 
-
-    /**
-     * 添加弹幕
-     */
-    public IjkVideoView addDanmukuView(DanmakuView danmakuView, DanmakuContext context, BaseDanmakuParser parser) {
-        this.mDanmakuView = danmakuView;
-        this.mContext = context;
-        this.mParser = parser;
-        return this;
-    }
-
-
     /**
      * 设置视频比例
      */
@@ -513,7 +454,7 @@ public class IjkVideoView extends BaseIjkVideoView {
      * 锁定全屏播放
      */
     public IjkVideoView alwaysFullScreen() {
-        mAlwaysFullScreen = true;
+        this.mAlwaysFullScreen = true;
         return this;
     }
 
@@ -522,52 +463,6 @@ public class IjkVideoView extends BaseIjkVideoView {
      */
     public IjkVideoView autoRotate() {
         this.mAutoRotate = true;
-        if (orientationEventListener == null) {
-            orientationEventListener = new OrientationEventListener(getContext()) { // 加速度传感器监听，用于自动旋转屏幕
-
-                private int CurrentOrientation = 0;
-                private static final int PORTRAIT = 1;
-                private static final int LANDSCAPE = 2;
-                private static final int REVERSE_LANDSCAPE = 3;
-
-                @Override
-                public void onOrientationChanged(int orientation) {
-                    if (orientation >= 340) { //屏幕顶部朝上
-                        if (isLocked || mAlwaysFullScreen) return;
-                        if (CurrentOrientation == PORTRAIT) return;
-                        if ((CurrentOrientation == LANDSCAPE || CurrentOrientation == REVERSE_LANDSCAPE) && !isFullScreen()) {
-                            CurrentOrientation = PORTRAIT;
-                            return;
-                        }
-                        CurrentOrientation = PORTRAIT;
-                        WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                        stopFullScreen();
-                    } else if (orientation >= 260 && orientation <= 280) { //屏幕左边朝上
-                        if (CurrentOrientation == LANDSCAPE) return;
-                        if (CurrentOrientation == PORTRAIT && isFullScreen()) {
-                            CurrentOrientation = LANDSCAPE;
-                            return;
-                        }
-                        CurrentOrientation = LANDSCAPE;
-                        if (!isFullScreen()) {
-                            startFullScreen();
-                        }
-                        WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                    } else if (orientation >= 70 && orientation <= 90) { //屏幕右边朝上
-                        if (CurrentOrientation == REVERSE_LANDSCAPE) return;
-                        if (CurrentOrientation == PORTRAIT && isFullScreen()) {
-                            CurrentOrientation = REVERSE_LANDSCAPE;
-                            return;
-                        }
-                        CurrentOrientation = REVERSE_LANDSCAPE;
-                        if (!isFullScreen()) {
-                            startFullScreen();
-                        }
-                        WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
-                    }
-                }
-            };
-        }
         return this;
     }
 }

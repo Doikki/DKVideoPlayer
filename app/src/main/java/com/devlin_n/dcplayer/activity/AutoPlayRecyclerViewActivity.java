@@ -29,7 +29,7 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
  * Created by Devlin_n on 2017/5/31.
  */
 
-public class RecyclerViewAutoPlayActivity extends AppCompatActivity {
+public class AutoPlayRecyclerViewActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,7 +37,7 @@ public class RecyclerViewAutoPlayActivity extends AppCompatActivity {
         setContentView(R.layout.activity_recycler_view);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle("RECYCLER");
+            actionBar.setTitle("AUTO PLAY RECYCLER VIEW");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         initView();
