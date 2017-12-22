@@ -11,6 +11,7 @@ A video player based on [IjkPlayer](https://github.com/Bilibili/ijkplayer).
 * **支持重力感应自动进入/退出全屏。**
 * **支持边播边缓存，使用了[AndroidVideoCache](https://github.com/danikula/AndroidVideoCache)。**
 * **完美实现列表播放（RecyclerView和ListView）。**
+* **支持列表自动播放。**
 * **支持封面。**
 * **支持锁定/解锁全屏。**
 * **支持调整显示比例:默认、原始大小、16:9、4:3、铺满屏幕。**
@@ -39,7 +40,7 @@ Step 1.Add it in your root build.gradle at the end of repositories:
 Step 2. Add the dependency
 
 	dependencies {
-	        compile 'com.github.DevlinChiu:dcplayer:1.3'
+	        compile 'com.github.DevlinChiu:dcplayer:1.4'
 	}
 ```
 或者将library下载并导入项目中使用
