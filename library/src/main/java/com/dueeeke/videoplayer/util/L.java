@@ -9,7 +9,7 @@ import android.util.Log;
 
 public class L {
 
-    private static final String TAG = "DCPlayer";
+    private static final String TAG = "DKPlayer";
 
 
     public static void d(String msg) {

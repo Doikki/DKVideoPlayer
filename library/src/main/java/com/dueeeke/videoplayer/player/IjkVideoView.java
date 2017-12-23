@@ -110,11 +110,11 @@ public class IjkVideoView extends BaseIjkVideoView {
 
     @Override
     protected void startPlay() {
-        super.startPlay();
         if (addToPlayerManager) {
             VideoViewManager.instance().releaseVideoPlayer();
             VideoViewManager.instance().setCurrentVideoPlayer(this);
         }
+        super.startPlay();
     }
 
     /**

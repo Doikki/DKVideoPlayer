@@ -133,6 +133,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements BaseVideoC
 
     public BaseIjkVideoView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        mAudioManager = (AudioManager) getContext().getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
     }
 
     protected void initPlayer() {
@@ -251,9 +252,11 @@ public abstract class BaseIjkVideoView extends FrameLayout implements BaseVideoC
         if (mMediaPlayer != null) {
             //启动一个线程来释放播放器，解决列表播放卡顿问题
             new Thread(() -> {
-                mMediaPlayer.reset();
-                mMediaPlayer.release();
-                mMediaPlayer = null;
+                if (mMediaPlayer != null) {
+                    mMediaPlayer.reset();
+                    mMediaPlayer.release();
+                    mMediaPlayer = null;
+                }
             }).start();
             mCurrentState = STATE_IDLE;
             setPlayState(mCurrentState);
