@@ -12,8 +12,8 @@ android {
         applicationId "com.dueeeke.dkplayer"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 8
-        versionName "1.4"
+        versionCode 10
+        versionName "1.4.2"
     }
 
 

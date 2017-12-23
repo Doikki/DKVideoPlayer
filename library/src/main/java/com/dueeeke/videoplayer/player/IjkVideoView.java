@@ -34,9 +34,6 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
  */
 
 public class IjkVideoView extends BaseIjkVideoView {
-
-    @Nullable
-    protected BaseVideoController mVideoController;//控制器
     protected ResizeSurfaceView mSurfaceView;
     protected ResizeTextureView mTextureView;
     protected SurfaceTexture mSurfaceTexture;
@@ -221,7 +218,8 @@ public class IjkVideoView extends BaseIjkVideoView {
 
     @Override
     public void startFullScreen() {
-        Activity activity = WindowUtil.scanForActivity(getContext());
+        if (mVideoController == null) return;
+        Activity activity = WindowUtil.scanForActivity(mVideoController.getContext());
         if (activity == null) return;
         if (isFullScreen) return;
         WindowUtil.hideSystemBar(getContext());
@@ -234,12 +232,13 @@ public class IjkVideoView extends BaseIjkVideoView {
         contentView.addView(playerContainer, params);
         orientationEventListener.enable();
         isFullScreen = true;
-        if (mVideoController != null) mVideoController.setPlayerState(PLAYER_FULL_SCREEN);
+        mVideoController.setPlayerState(PLAYER_FULL_SCREEN);
     }
 
     @Override
     public void stopFullScreen() {
-        Activity activity = WindowUtil.scanForActivity(getContext());
+        if (mVideoController == null) return;
+        Activity activity = WindowUtil.scanForActivity(mVideoController.getContext());
         if (activity == null) return;
         if (!isFullScreen) return;
         if (!mAutoRotate) orientationEventListener.disable();

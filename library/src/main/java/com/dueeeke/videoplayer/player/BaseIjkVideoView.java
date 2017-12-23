@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.OrientationEventListener;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.danikula.videocache.CacheListener;
@@ -35,6 +36,8 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 public abstract class BaseIjkVideoView extends FrameLayout implements BaseVideoController.MediaPlayerControl, MediaEngineInterface {
 
     protected BaseMediaEngine mMediaPlayer;//播放引擎
+    @Nullable
+    protected BaseVideoController mVideoController;//控制器
     protected VideoListener listener;
     protected int bufferPercentage;//缓冲百分比
     protected boolean isMute;//是否静音
@@ -78,7 +81,8 @@ public abstract class BaseIjkVideoView extends FrameLayout implements BaseVideoC
 
         @Override
         public void onOrientationChanged(int orientation) {
-            Activity activity = WindowUtil.scanForActivity(getContext());
+            if (mVideoController == null) return;
+            Activity activity = WindowUtil.scanForActivity(mVideoController.getContext());
             if (activity == null) return;
             if (orientation >= 340) { //屏幕顶部朝上
                 if (mAlwaysFullScreen || isLockFullScreen || !mAutoRotate) return;
@@ -338,6 +342,8 @@ public abstract class BaseIjkVideoView extends FrameLayout implements BaseVideoC
         intent.putExtra(KeyUtil.ENABLE_CACHE, isCache);
         intent.putExtra(KeyUtil.ACTION, Constants.COMMAND_START);
         getContext().getApplicationContext().startService(intent);
+        Activity activity = WindowUtil.scanForActivity(getContext());
+        if (activity != null) activity.finish();
     }
 
     /**

@@ -103,6 +103,5 @@ public class LivePlayerActivity extends AppCompatActivity {
 
     public void startFloatWindow(View view) {
         ijkVideoView.startFloatWindow();
-        finish();
     }
 }
