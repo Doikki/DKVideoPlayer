@@ -16,7 +16,6 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.activity.DanmakuActivity;
 import com.dueeeke.dkplayer.activity.FullScreenActivity;
 import com.dueeeke.dkplayer.activity.ListViewActivity;
@@ -25,7 +24,6 @@ import com.dueeeke.dkplayer.activity.PlayerActivity;
 import com.dueeeke.dkplayer.activity.RecyclerViewActivity;
 import com.dueeeke.dkplayer.activity.AutoPlayRecyclerViewActivity;
 import com.dueeeke.dkplayer.activity.VodPlayerActivity;
-import com.dueeeke.videoplayer.player.BackgroundPlayService;
 import com.dueeeke.videoplayer.player.VideoCacheManager;
 import com.dueeeke.videoplayer.util.Constants;
 import com.dueeeke.videoplayer.util.KeyUtil;

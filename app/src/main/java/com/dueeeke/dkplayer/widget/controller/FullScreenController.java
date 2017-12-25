@@ -1,4 +1,4 @@
-package com.dueeeke.videoplayer.controller;
+package com.dueeeke.dkplayer.widget.controller;
 
 import android.content.Context;
 import android.support.annotation.AttrRes;
@@ -15,7 +15,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.dueeeke.videoplayer.R;
+import com.dueeeke.dkplayer.R;
+import com.dueeeke.videoplayer.controller.BaseVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.util.L;
 import com.dueeeke.videoplayer.util.WindowUtil;

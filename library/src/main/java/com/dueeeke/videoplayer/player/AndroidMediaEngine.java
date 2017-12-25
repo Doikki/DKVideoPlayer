@@ -55,6 +55,7 @@ public class AndroidMediaEngine extends BaseMediaEngine {
 
     @Override
     public void reset() {
+        mMediaPlayer.setVolume(1, 1);
         mMediaPlayer.reset();
     }
 

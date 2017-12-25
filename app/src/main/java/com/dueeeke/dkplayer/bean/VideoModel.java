@@ -1,4 +1,4 @@
-package com.dueeeke.videoplayer.player;
+package com.dueeeke.dkplayer.bean;
 
 import com.dueeeke.videoplayer.controller.BaseVideoController;
 

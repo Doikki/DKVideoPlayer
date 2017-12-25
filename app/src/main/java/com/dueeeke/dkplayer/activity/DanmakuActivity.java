@@ -1,6 +1,5 @@
 package com.dueeeke.dkplayer.activity;
 
-import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -17,14 +16,12 @@ import android.text.TextPaint;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
-import com.dueeeke.dkplayer.widget.DanmukuVideoView;
-import com.devlin_n.floatWindowPermission.FloatWindowManager;
-import com.dueeeke.videoplayer.controller.StandardVideoController;
-import com.dueeeke.videoplayer.util.WindowUtil;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.widget.CenteredImageSpan;
+import com.dueeeke.dkplayer.widget.videoview.DanmukuVideoView;
+import com.dueeeke.videoplayer.controller.StandardVideoController;
+import com.dueeeke.videoplayer.util.WindowUtil;
 
 import java.util.HashMap;
 
@@ -94,7 +91,6 @@ public class DanmakuActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        danmukuVideoView.stopFloatWindow();
     }
 
     @Override
@@ -108,17 +104,6 @@ public class DanmakuActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (!danmukuVideoView.onBackPressed()) {
             super.onBackPressed();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == FloatWindowManager.PERMISSION_REQUEST_CODE) {
-            if (FloatWindowManager.getInstance().checkPermission(this)) {
-                danmukuVideoView.startFloatWindow();
-            } else {
-                Toast.makeText(DanmakuActivity.this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
-            }
         }
     }
 

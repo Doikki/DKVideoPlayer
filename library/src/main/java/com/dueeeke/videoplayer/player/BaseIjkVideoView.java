@@ -2,28 +2,23 @@ package com.dueeeke.videoplayer.player;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.media.AudioManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.OrientationEventListener;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.danikula.videocache.CacheListener;
 import com.danikula.videocache.HttpProxyCacheServer;
-import com.devlin_n.floatWindowPermission.FloatWindowManager;
 import com.dueeeke.videoplayer.controller.BaseVideoController;
 import com.dueeeke.videoplayer.listener.MediaEngineInterface;
+import com.dueeeke.videoplayer.listener.MediaPlayerControl;
 import com.dueeeke.videoplayer.listener.VideoListener;
-import com.dueeeke.videoplayer.util.Constants;
-import com.dueeeke.videoplayer.util.KeyUtil;
 import com.dueeeke.videoplayer.util.WindowUtil;
 
 import java.io.File;
-import java.util.List;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
@@ -33,7 +28,7 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
  * Created by Devlin_n on 2017/4/7.
  */
 
-public abstract class BaseIjkVideoView extends FrameLayout implements BaseVideoController.MediaPlayerControl, MediaEngineInterface {
+public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlayerControl, MediaEngineInterface {
 
     protected BaseMediaEngine mMediaPlayer;//播放引擎
     @Nullable
@@ -44,8 +39,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements BaseVideoC
     protected boolean useAndroidMediaPlayer;//是否使用AndroidMediaPlayer
 
     protected String mCurrentUrl;//当前播放视频的地址
-    protected List<VideoModel> mVideoModels;//列表播放数据
-    protected int mCurrentVideoPosition = 0;//列表播放时当前播放视频的在List中的位置
     protected int mCurrentPosition;//当前正在播放视频的位置
     protected String mCurrentTitle = "";//当前正在播放视频的标题
 
@@ -69,62 +62,80 @@ public abstract class BaseIjkVideoView extends FrameLayout implements BaseVideoC
     @NonNull
     protected AudioFocusHelper mAudioFocusHelper = new AudioFocusHelper();
 
+    protected int currentOrientation = 0;
+    protected static final int PORTRAIT = 1;
+    protected static final int LANDSCAPE = 2;
+    protected static final int REVERSE_LANDSCAPE = 3;
+
+    protected boolean mAutoRotate;//是否旋转屏幕
+    protected boolean isLockFullScreen;//是否锁定屏幕
+    protected boolean isCache;//是否开启缓存
+    protected boolean addToPlayerManager;//是否添加到播放管理器
+
     /**
      * 加速度传感器监听
      */
     protected OrientationEventListener orientationEventListener = new OrientationEventListener(getContext()) { // 加速度传感器监听，用于自动旋转屏幕
-
-        private int CurrentOrientation = 0;
-        private static final int PORTRAIT = 1;
-        private static final int LANDSCAPE = 2;
-        private static final int REVERSE_LANDSCAPE = 3;
-
         @Override
         public void onOrientationChanged(int orientation) {
             if (mVideoController == null) return;
             Activity activity = WindowUtil.scanForActivity(mVideoController.getContext());
             if (activity == null) return;
             if (orientation >= 340) { //屏幕顶部朝上
-                if (mAlwaysFullScreen || isLockFullScreen || !mAutoRotate) return;
-                if (CurrentOrientation == PORTRAIT) return;
-                if ((CurrentOrientation == LANDSCAPE || CurrentOrientation == REVERSE_LANDSCAPE) && !isFullScreen()) {
-                    CurrentOrientation = PORTRAIT;
-                    return;
-                }
-                CurrentOrientation = PORTRAIT;
-                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                stopFullScreen();
+                onOrientationPortrait(activity);
             } else if (orientation >= 260 && orientation <= 280) { //屏幕左边朝上
-                if (CurrentOrientation == LANDSCAPE) return;
-                if (CurrentOrientation == PORTRAIT && isFullScreen()) {
-                    CurrentOrientation = LANDSCAPE;
-                    return;
-                }
-                CurrentOrientation = LANDSCAPE;
-                if (!isFullScreen()) {
-                    startFullScreen();
-                }
-                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                onOrientationLandscape(activity);
             } else if (orientation >= 70 && orientation <= 90) { //屏幕右边朝上
-                if (CurrentOrientation == REVERSE_LANDSCAPE) return;
-                if (CurrentOrientation == PORTRAIT && isFullScreen()) {
-                    CurrentOrientation = REVERSE_LANDSCAPE;
-                    return;
-                }
-                CurrentOrientation = REVERSE_LANDSCAPE;
-                if (!isFullScreen()) {
-                    startFullScreen();
-                }
-                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+                onOrientationReverseLandscape(activity);
             }
         }
     };
-    protected boolean mAutoRotate;//是否旋转屏幕
-    protected boolean isLockFullScreen;//是否锁定屏幕
-    protected boolean mAlwaysFullScreen;//总是全屏
-    protected boolean isCache;//是否开启缓存
-    protected boolean addToPlayerManager;//是否添加到播放管理器
 
+    /**
+     * 竖屏
+     */
+    protected void onOrientationPortrait(Activity activity) {
+        if (isLockFullScreen || !mAutoRotate || currentOrientation == PORTRAIT) return;
+        if ((currentOrientation == LANDSCAPE || currentOrientation == REVERSE_LANDSCAPE) && !isFullScreen()) {
+            currentOrientation = PORTRAIT;
+            return;
+        }
+        currentOrientation = PORTRAIT;
+        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        stopFullScreen();
+    }
+
+    /**
+     * 横屏
+     */
+    protected void onOrientationLandscape(Activity activity) {
+        if (currentOrientation == LANDSCAPE) return;
+        if (currentOrientation == PORTRAIT && isFullScreen()) {
+            currentOrientation = LANDSCAPE;
+            return;
+        }
+        currentOrientation = LANDSCAPE;
+        if (!isFullScreen()) {
+            startFullScreen();
+        }
+        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+    }
+
+    /**
+     * 反向横屏
+     */
+    protected void onOrientationReverseLandscape(Activity activity) {
+        if (currentOrientation == REVERSE_LANDSCAPE) return;
+        if (currentOrientation == PORTRAIT && isFullScreen()) {
+            currentOrientation = REVERSE_LANDSCAPE;
+            return;
+        }
+        currentOrientation = REVERSE_LANDSCAPE;
+        if (!isFullScreen()) {
+            startFullScreen();
+        }
+        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+    }
 
     public BaseIjkVideoView(@NonNull Context context) {
         this(context, null);
@@ -202,14 +213,19 @@ public abstract class BaseIjkVideoView extends FrameLayout implements BaseVideoC
         mAudioFocusHelper.requestFocus();
     }
 
+    /**
+     * 第一次播放
+     */
     protected void startPlay() {
-        if (mAlwaysFullScreen) startFullScreenDirectly();
         if (mAutoRotate) orientationEventListener.enable();
         if (checkNetwork()) return;
         initPlayer();
         startPrepare();
     }
 
+    /**
+     * 播放状态下开始播放
+     */
     protected void startInPlaybackState() {
         mMediaPlayer.start();
         mCurrentState = STATE_PLAYING;
@@ -315,56 +331,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements BaseVideoC
     @Override
     public int getBufferPercentage() {
         return mMediaPlayer != null ? bufferPercentage : 0;
-    }
-
-    /**
-     * 开始画中画播放，点播视频会记录播放位置
-     */
-    @Override
-    public void startFloatWindow() {
-
-        if (FloatWindowManager.getInstance().checkPermission(getContext())) {
-            startBackgroundService();
-        } else {
-            FloatWindowManager.getInstance().applyPermission(getContext());
-        }
-    }
-
-    /**
-     * 启动画中画播放的后台服务
-     */
-    private void startBackgroundService() {
-        if (!isInPlaybackState()) return;
-        Intent intent = new Intent(getContext(), BackgroundPlayService.class);
-        intent.putExtra(KeyUtil.URL, mCurrentUrl);
-        getCurrentPosition();
-        intent.putExtra(KeyUtil.POSITION, getDuration() <= 0 ? 0 : mCurrentPosition);
-        intent.putExtra(KeyUtil.ENABLE_CACHE, isCache);
-        intent.putExtra(KeyUtil.ACTION, Constants.COMMAND_START);
-        getContext().getApplicationContext().startService(intent);
-        Activity activity = WindowUtil.scanForActivity(getContext());
-        if (activity != null) activity.finish();
-    }
-
-    /**
-     * 关闭画中画
-     */
-    @Override
-    public void stopFloatWindow() {
-        Intent intent = new Intent(getContext(), BackgroundPlayService.class);
-        intent.putExtra(KeyUtil.ACTION, Constants.COMMAND_STOP);
-        getContext().getApplicationContext().startService(intent);
-    }
-
-    /**
-     * 直接开始全屏播放
-     */
-    @Override
-    public void startFullScreenDirectly() {
-        Activity activity = WindowUtil.scanForActivity(getContext());
-        if (activity == null) return;
-        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        startFullScreen();
     }
 
     /**

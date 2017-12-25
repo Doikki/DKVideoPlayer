@@ -1,4 +1,4 @@
-package com.dueeeke.videoplayer.controller;
+package com.dueeeke.dkplayer.widget.controller;
 
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -10,7 +10,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.dueeeke.videoplayer.R;
+import com.dueeeke.dkplayer.R;
+import com.dueeeke.dkplayer.interf.ListMediaPlayerControl;
+import com.dueeeke.videoplayer.controller.BaseVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.util.WindowUtil;
 
@@ -39,14 +41,14 @@ public class AdController extends BaseVideoController implements View.OnClickLis
     @Override
     protected void initView() {
         super.initView();
-        adTime = (TextView) controllerView.findViewById(R.id.ad_time);
-        adDetail = (TextView) controllerView.findViewById(R.id.ad_detail);
+        adTime = controllerView.findViewById(R.id.ad_time);
+        adDetail = controllerView.findViewById(R.id.ad_detail);
         adDetail.setText("了解详情>");
-        back = (ImageView) controllerView.findViewById(R.id.back);
+        back = controllerView.findViewById(R.id.back);
         back.setVisibility(GONE);
-        volume = (ImageView) controllerView.findViewById(R.id.iv_volume);
-        fullScreen = (ImageView) controllerView.findViewById(R.id.fullscreen);
-        playButton = (ImageView) controllerView.findViewById(R.id.iv_play);
+        volume = controllerView.findViewById(R.id.iv_volume);
+        fullScreen = controllerView.findViewById(R.id.fullscreen);
+        playButton = controllerView.findViewById(R.id.iv_play);
         playButton.setOnClickListener(this);
         adTime.setOnClickListener(this);
         adDetail.setOnClickListener(this);
@@ -66,7 +68,7 @@ public class AdController extends BaseVideoController implements View.OnClickLis
         } else if (id == R.id.ad_detail) {
             if (listener != null) listener.onAdClick();
         } else if (id == R.id.ad_time) {
-            mediaPlayer.skipToNext();
+            ((ListMediaPlayerControl) mediaPlayer).skipToNext();
         } else if (id == R.id.iv_play) {
             doPauseResume();
         }

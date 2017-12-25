@@ -3,6 +3,8 @@
     package="com.dueeeke.dkplayer">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
 
     <application
         android:name=".app.MyApplication"
@@ -55,6 +57,9 @@
             android:name=".activity.AutoPlayRecyclerViewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
+
+        <service android:name="com.dueeeke.dkplayer.BackgroundPlayService"/>
+
     </application>
 
 </manifest>

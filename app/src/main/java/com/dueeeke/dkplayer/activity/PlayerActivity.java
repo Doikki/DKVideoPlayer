@@ -6,12 +6,10 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.widget.Toast;
 
-import com.devlin_n.floatWindowPermission.FloatWindowManager;
+import com.dueeeke.dkplayer.R;
 import com.dueeeke.videoplayer.controller.StandardVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
-import com.dueeeke.dkplayer.R;
 
 /**
  * 播放其他链接
@@ -66,7 +64,6 @@ public class PlayerActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        ijkVideoView.stopFloatWindow();
     }
 
     @Override
@@ -80,17 +77,6 @@ public class PlayerActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (!ijkVideoView.onBackPressed()) {
             super.onBackPressed();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == FloatWindowManager.PERMISSION_REQUEST_CODE) {
-            if (FloatWindowManager.getInstance().checkPermission(this)) {
-                ijkVideoView.startFloatWindow();
-            } else {
-                Toast.makeText(PlayerActivity.this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
-            }
         }
     }
 }

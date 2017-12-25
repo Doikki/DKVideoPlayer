@@ -1,4 +1,4 @@
-package com.dueeeke.dkplayer.widget;
+package com.dueeeke.dkplayer.widget.videoview;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

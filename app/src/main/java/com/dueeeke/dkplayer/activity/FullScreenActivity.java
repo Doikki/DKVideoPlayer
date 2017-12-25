@@ -1,13 +1,11 @@
 package com.dueeeke.dkplayer.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
 
-import com.devlin_n.floatWindowPermission.FloatWindowManager;
-import com.dueeeke.videoplayer.controller.FullScreenController;
+import com.dueeeke.dkplayer.widget.controller.FullScreenController;
+import com.dueeeke.dkplayer.widget.videoview.FullScreenIjkVideoView;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 
 /**
@@ -17,17 +15,16 @@ import com.dueeeke.videoplayer.player.IjkVideoView;
 
 public class FullScreenActivity extends AppCompatActivity{
 
-    private IjkVideoView ijkVideoView;
+    private FullScreenIjkVideoView ijkVideoView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ijkVideoView = new IjkVideoView(this);
+        ijkVideoView = new FullScreenIjkVideoView(this);
         setContentView(ijkVideoView);
         ijkVideoView
-                .autoRotate()
-                .alwaysFullScreen()
 //                .useAndroidMediaPlayer()
+                .autoRotate()
                 .setTitle("这是一个标题")
                 .setUrl("http://flv2.bn.netease.com/videolib3/1611/28/GbgsL3639/HD/movie_index.m3u8")
                 .setVideoController(new FullScreenController(this))
@@ -45,7 +42,6 @@ public class FullScreenActivity extends AppCompatActivity{
     protected void onResume() {
         super.onResume();
         ijkVideoView.resume();
-        ijkVideoView.stopFloatWindow();
     }
 
     @Override
@@ -58,17 +54,6 @@ public class FullScreenActivity extends AppCompatActivity{
     public void onBackPressed() {
         if (!ijkVideoView.onBackPressed()){
             super.onBackPressed();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == FloatWindowManager.PERMISSION_REQUEST_CODE) {
-            if (FloatWindowManager.getInstance().checkPermission(this)) {
-                ijkVideoView.startFloatWindow();
-            } else {
-                Toast.makeText(FullScreenActivity.this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
-            }
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.dueeeke.dkplayer.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
@@ -10,14 +9,12 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
-import com.devlin_n.floatWindowPermission.FloatWindowManager;
+import com.dueeeke.dkplayer.R;
+import com.dueeeke.dkplayer.adapter.VideoRecyclerViewAdapter;
+import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.player.VideoViewManager;
-import com.dueeeke.dkplayer.R;
-import com.dueeeke.dkplayer.bean.VideoBean;
-import com.dueeeke.dkplayer.adapter.VideoRecyclerViewAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -137,17 +134,6 @@ public class RecyclerViewActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (!VideoViewManager.instance().onBackPressed()){
             super.onBackPressed();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == FloatWindowManager.PERMISSION_REQUEST_CODE) {
-            if (FloatWindowManager.getInstance().checkPermission(this)) {
-                VideoViewManager.instance().getCurrentVideoPlayer().startFloatWindow();
-            } else {
-                Toast.makeText(this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
-            }
         }
     }
 }

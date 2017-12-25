@@ -21,7 +21,6 @@ import com.dueeeke.videoplayer.util.WindowUtil;
 @SuppressLint("ViewConstructor")
 public class FloatView extends FrameLayout{
 
-
     private WindowManager mWindowManager;
     private WindowManager.LayoutParams mParams;
 

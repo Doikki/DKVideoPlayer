@@ -18,6 +18,7 @@ import android.widget.FrameLayout;
 
 import com.dueeeke.videoplayer.R;
 import com.dueeeke.videoplayer.listener.ControllerListener;
+import com.dueeeke.videoplayer.listener.MediaPlayerControl;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.util.Constants;
 import com.dueeeke.videoplayer.util.WindowUtil;
@@ -360,46 +361,6 @@ public abstract class BaseVideoController extends FrameLayout {
      */
     public boolean onBackPressed() {
         return false;
-    }
-
-    public interface MediaPlayerControl {
-        void start();
-
-        void pause();
-
-        int getDuration();
-
-        int getCurrentPosition();
-
-        void seekTo(int pos);
-
-        boolean isPlaying();
-
-        int getBufferPercentage();
-
-        void startFloatWindow();
-
-        void stopFloatWindow();
-
-        void startFullScreen();
-
-        void stopFullScreen();
-
-        boolean isFullScreen();
-
-        String getTitle();
-
-        void startFullScreenDirectly();
-
-        void skipToNext();
-
-        void setMute();
-
-        boolean isMute();
-
-        void setLock(boolean isLocked);
-
-        MediaPlayerControl setScreenScale(int screenScale);
     }
 
     public void setMediaPlayer(MediaPlayerControl mediaPlayer) {

@@ -1,7 +1,6 @@
 package com.dueeeke.videoplayer.widget;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -13,9 +12,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dueeeke.videoplayer.R;
-import com.dueeeke.videoplayer.player.BackgroundPlayService;
-import com.dueeeke.videoplayer.util.Constants;
-import com.dueeeke.videoplayer.util.KeyUtil;
 
 /**
  * 错误提示，网络提示
@@ -46,14 +42,14 @@ public class StatusView extends LinearLayout {
         ivClose = root.findViewById(R.id.btn_close);
         this.setBackgroundResource(android.R.color.black);
         setClickable(true);
-        if (Constants.IS_START_FLOAT_WINDOW) {
-            ivClose.setVisibility(VISIBLE);
-            ivClose.setOnClickListener(v -> {
-                Intent intent = new Intent(getContext(), BackgroundPlayService.class);
-                intent.putExtra(KeyUtil.ACTION, Constants.COMMAND_STOP);
-                getContext().getApplicationContext().startService(intent);
-            });
-        }
+//        if (Constants.IS_START_FLOAT_WINDOW) {
+//            ivClose.setVisibility(VISIBLE);
+//            ivClose.setOnClickListener(v -> {
+//                Intent intent = new Intent(getContext(), BackgroundPlayService.class);
+//                intent.putExtra(KeyUtil.ACTION, Constants.COMMAND_STOP);
+//                getContext().getApplicationContext().startService(intent);
+//            });
+//        }
     }
 
     public void setMessage(String msg) {

@@ -24,8 +24,6 @@ import com.dueeeke.videoplayer.widget.ResizeSurfaceView;
 import com.dueeeke.videoplayer.widget.ResizeTextureView;
 import com.dueeeke.videoplayer.widget.StatusView;
 
-import java.util.List;
-
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 /**
@@ -87,7 +85,7 @@ public class IjkVideoView extends BaseIjkVideoView {
         addDisplay();
     }
 
-    private void addDisplay() {
+    protected void addDisplay() {
         if (useSurfaceView) {
             addSurfaceView();
         } else {
@@ -297,23 +295,6 @@ public class IjkVideoView extends BaseIjkVideoView {
         }
     }
 
-    @Override
-    public void onCompletion() {
-        super.onCompletion();
-        mCurrentVideoPosition++;
-        if (mVideoModels != null && mVideoModels.size() > 1) {
-            if (mCurrentVideoPosition >= mVideoModels.size()) {
-                return;
-            }
-            playNext();
-            mMediaPlayer.reset();
-            addDisplay();
-            startPrepare();
-        }
-    }
-
-
-
     /**
      * 设置控制器
      */
@@ -329,22 +310,6 @@ public class IjkVideoView extends BaseIjkVideoView {
         }
         return this;
     }
-
-    /**
-     * 播放下一条视频，可用于跳过广告
-     */
-    @Override
-    public void skipToNext() {
-        mCurrentVideoPosition++;
-        if (mVideoModels != null && mVideoModels.size() > 1) {
-            if (mCurrentVideoPosition >= mVideoModels.size()) return;
-            playNext();
-            mMediaPlayer.reset();
-            addDisplay();
-            startPrepare();
-        }
-    }
-
     /**
      * 改变返回键逻辑，用于activity
      */
@@ -366,15 +331,6 @@ public class IjkVideoView extends BaseIjkVideoView {
     public IjkVideoView skipPositionWhenPlay(String url, int position) {
         this.mCurrentUrl = url;
         this.mCurrentPosition = position;
-        return this;
-    }
-
-    /**
-     * 设置一个列表的视频
-     */
-    public IjkVideoView setVideos(List<VideoModel> videoModels) {
-        this.mVideoModels = videoModels;
-        playNext();
         return this;
     }
 
@@ -405,22 +361,8 @@ public class IjkVideoView extends BaseIjkVideoView {
     }
 
     /**
-     * 播放下一条视频
-     */
-    private void playNext() {
-        VideoModel videoModel = mVideoModels.get(mCurrentVideoPosition);
-        if (videoModel != null) {
-            mCurrentUrl = videoModel.url;
-            mCurrentTitle = videoModel.title;
-            mCurrentPosition = 0;
-            setVideoController(videoModel.controller);
-        }
-    }
-
-    /**
      * 设置视频比例
      */
-    @Override
     public IjkVideoView setScreenScale(int screenScale) {
         this.mCurrentScreenScale = screenScale;
         if (mSurfaceView != null) mSurfaceView.setScreenScale(screenScale);
@@ -441,14 +383,6 @@ public class IjkVideoView extends BaseIjkVideoView {
      */
     public IjkVideoView useAndroidMediaPlayer() {
         this.useAndroidMediaPlayer = true;
-        return this;
-    }
-
-    /**
-     * 锁定全屏播放
-     */
-    public IjkVideoView alwaysFullScreen() {
-        this.mAlwaysFullScreen = true;
         return this;
     }
 

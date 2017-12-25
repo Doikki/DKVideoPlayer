@@ -1,6 +1,5 @@
 package com.dueeeke.dkplayer.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
@@ -9,9 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import com.devlin_n.floatWindowPermission.FloatWindowManager;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.player.VideoViewManager;
 import com.dueeeke.dkplayer.R;
@@ -118,18 +115,6 @@ public class ListViewActivity extends AppCompatActivity {
             super.onBackPressed();
         }
     }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == FloatWindowManager.PERMISSION_REQUEST_CODE) {
-            if (FloatWindowManager.getInstance().checkPermission(this)) {
-                VideoViewManager.instance().getCurrentVideoPlayer().startFloatWindow();
-            } else {
-                Toast.makeText(this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
 
     public List<VideoBean> getVideoList() {
         List<VideoBean> videoList = new ArrayList<>();

@@ -11,9 +11,9 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.devlin_n.floatWindowPermission.FloatWindowManager;
-import com.dueeeke.videoplayer.controller.StandardVideoController;
-import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.dkplayer.R;
+import com.dueeeke.dkplayer.widget.videoview.FloatIjkVideoView;
+import com.dueeeke.videoplayer.controller.StandardVideoController;
 
 /**
  * 直播播放
@@ -22,8 +22,8 @@ import com.dueeeke.dkplayer.R;
 
 public class LivePlayerActivity extends AppCompatActivity {
 
-    private IjkVideoView ijkVideoView;
-    private static final String URL = "http://ivi.bupt.edu.cn/hls/sztv.m3u8";
+    private FloatIjkVideoView ijkVideoView;
+    private static final String URL = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,14 +34,14 @@ public class LivePlayerActivity extends AppCompatActivity {
             actionBar.setTitle("LIVE");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        ijkVideoView = (IjkVideoView) findViewById(R.id.player);
+        ijkVideoView = findViewById(R.id.player);
 //        int widthPixels = getResources().getDisplayMetrics().widthPixels;
 //        ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 4 * 3));
 
         StandardVideoController controller = new StandardVideoController(this);
         controller.setLive();
         Glide.with(this)
-                .load("http://img.9ku.com/geshoutuji/singertuji/5/50815/50815_1.jpg")
+                .load("http://sh.people.com.cn/NMediaFile/2016/0112/LOCAL201601121344000138197365721.jpg")
                 .asBitmap()
                 .animate(R.anim.anim_alpha_in)
                 .placeholder(android.R.color.darker_gray)
@@ -50,7 +50,7 @@ public class LivePlayerActivity extends AppCompatActivity {
                 .autoRotate()
 //                .useAndroidMediaPlayer()
                 .setUrl(URL)
-                .setTitle("深圳卫视")
+                .setTitle("香港卫视")
                 .setVideoController(controller);
 //                .start();
     }

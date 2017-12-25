@@ -1,11 +1,12 @@
-package com.dueeeke.videoplayer.player;
+package com.dueeeke.dkplayer;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-import com.dueeeke.videoplayer.controller.FloatController;
+import com.dueeeke.dkplayer.widget.controller.FloatController;
+import com.dueeeke.dkplayer.widget.videoview.FloatIjkVideoView;
 import com.dueeeke.videoplayer.util.Constants;
 import com.dueeeke.videoplayer.util.KeyUtil;
 import com.dueeeke.videoplayer.util.L;
@@ -18,7 +19,7 @@ import com.dueeeke.videoplayer.widget.FloatView;
  */
 
 public class BackgroundPlayService extends Service {
-    private IjkVideoView videoView;
+    private FloatIjkVideoView videoView;
     private String url;
     private FloatView floatView;
     private int position;
@@ -59,7 +60,7 @@ public class BackgroundPlayService extends Service {
         int startX = WindowUtil.getScreenWidth(getApplicationContext()) - WindowUtil.dp2px(getApplicationContext(), 200);
         int startY = WindowUtil.getScreenHeight(getApplicationContext(), false) / 2;
         floatView = new FloatView(getApplicationContext(), startX, startY);
-        videoView = new IjkVideoView(getApplicationContext());
+        videoView = new FloatIjkVideoView(getApplicationContext());
         floatView.addView(videoView);
     }
 

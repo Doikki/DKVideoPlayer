@@ -1,4 +1,4 @@
-package com.dueeeke.videoplayer.controller;
+package com.dueeeke.dkplayer.widget.controller;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -8,7 +8,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.dueeeke.videoplayer.R;
+import com.dueeeke.dkplayer.R;
+import com.dueeeke.dkplayer.interf.FloatMediaControl;
+import com.dueeeke.videoplayer.controller.BaseVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 
 /**
@@ -50,7 +52,7 @@ public class FloatController extends BaseVideoController implements View.OnClick
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.btn_close) {
-            mediaPlayer.stopFloatWindow();
+            ((FloatMediaControl)mediaPlayer).stopFloatWindow();
         } else if (id == R.id.start_play) {
             doPauseResume();
         }

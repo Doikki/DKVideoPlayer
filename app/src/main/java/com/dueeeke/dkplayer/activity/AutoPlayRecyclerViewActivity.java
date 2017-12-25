@@ -1,6 +1,5 @@
 package com.dueeeke.dkplayer.activity;
 
-import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,12 +10,10 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.adapter.VideoRecyclerViewAdapter;
 import com.dueeeke.dkplayer.bean.VideoBean;
-import com.devlin_n.floatWindowPermission.FloatWindowManager;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.player.VideoViewManager;
 
@@ -26,6 +23,7 @@ import java.util.List;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
 /**
+ * 自动播放
  * Created by Devlin_n on 2017/5/31.
  */
 
@@ -52,7 +50,7 @@ public class AutoPlayRecyclerViewActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv);
+        RecyclerView recyclerView = findViewById(R.id.rv);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(new VideoRecyclerViewAdapter(getVideoList(), this));
@@ -64,7 +62,7 @@ public class AutoPlayRecyclerViewActivity extends AppCompatActivity {
 
             @Override
             public void onChildViewDetachedFromWindow(View view) {
-                IjkVideoView ijkVideoView = (IjkVideoView) view.findViewById(R.id.video_player);
+                IjkVideoView ijkVideoView = view.findViewById(R.id.video_player);
                 if (ijkVideoView != null && !ijkVideoView.isFullScreen()) {
                     Log.d("@@@@@@", "onChildViewDetachedFromWindow: called");
                     int tag = (int) ijkVideoView.getTag();
@@ -76,7 +74,7 @@ public class AutoPlayRecyclerViewActivity extends AppCompatActivity {
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
-            public int firstVisibleItem, lastVisibleItem, visibleCount;
+            int firstVisibleItem, lastVisibleItem, visibleCount;
 
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -172,7 +170,7 @@ public class AutoPlayRecyclerViewActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        IjkVideoView currentVideoPlayer = (IjkVideoView) VideoViewManager.instance().getCurrentVideoPlayer();
+        IjkVideoView currentVideoPlayer = VideoViewManager.instance().getCurrentVideoPlayer();
         if (currentVideoPlayer != null){
             currentVideoPlayer.release();
         }
@@ -182,17 +180,6 @@ public class AutoPlayRecyclerViewActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (!VideoViewManager.instance().onBackPressed()){
             super.onBackPressed();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == FloatWindowManager.PERMISSION_REQUEST_CODE) {
-            if (FloatWindowManager.getInstance().checkPermission(this)) {
-                VideoViewManager.instance().getCurrentVideoPlayer().startFloatWindow();
-            } else {
-                Toast.makeText(this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
-            }
         }
     }
 }
