@@ -46,7 +46,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv);
+        RecyclerView recyclerView = findViewById(R.id.rv);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new VideoRecyclerViewAdapter(getVideoList(), this));
         recyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
@@ -57,7 +57,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
 
             @Override
             public void onChildViewDetachedFromWindow(View view) {
-                IjkVideoView ijkVideoView = (IjkVideoView) view.findViewById(R.id.video_player);
+                IjkVideoView ijkVideoView = view.findViewById(R.id.video_player);
                 if (ijkVideoView != null && !ijkVideoView.isFullScreen()) {
                     Log.d("@@@@@@", "onChildViewDetachedFromWindow: called");
                     int tag = (int) ijkVideoView.getTag();
@@ -124,10 +124,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        IjkVideoView currentVideoPlayer = (IjkVideoView) VideoViewManager.instance().getCurrentVideoPlayer();
-        if (currentVideoPlayer != null){
-            currentVideoPlayer.release();
-        }
+        VideoViewManager.instance().releaseVideoPlayer();
     }
 
     @Override

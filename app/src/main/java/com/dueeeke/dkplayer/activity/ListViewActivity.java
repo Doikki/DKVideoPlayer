@@ -34,7 +34,7 @@ public class ListViewActivity extends AppCompatActivity {
             actionBar.setTitle("LIST");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        ListView listView = (ListView) findViewById(R.id.lv);
+        ListView listView = findViewById(R.id.lv);
         listView.setAdapter(new VideoListViewAdapter(getVideoList(), this));
 
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -83,7 +83,7 @@ public class ListViewActivity extends AppCompatActivity {
 
             private void gcView(View gcView) {
                 if (gcView != null) {
-                    IjkVideoView ijkVideoView = (IjkVideoView) gcView.findViewById(R.id.video_player);
+                    IjkVideoView ijkVideoView = gcView.findViewById(R.id.video_player);
                     if (ijkVideoView != null && !ijkVideoView.isFullScreen()) {
                         ijkVideoView.release();
                     }
@@ -103,10 +103,7 @@ public class ListViewActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        IjkVideoView currentVideoPlayer = (IjkVideoView) VideoViewManager.instance().getCurrentVideoPlayer();
-        if (currentVideoPlayer != null) {
-            currentVideoPlayer.release();
-        }
+        VideoViewManager.instance().releaseVideoPlayer();
     }
 
     @Override

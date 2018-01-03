@@ -16,14 +16,10 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.dueeeke.dkplayer.activity.DanmakuActivity;
-import com.dueeeke.dkplayer.activity.FullScreenActivity;
-import com.dueeeke.dkplayer.activity.ListViewActivity;
-import com.dueeeke.dkplayer.activity.LivePlayerActivity;
+import com.dueeeke.dkplayer.activity.ApiActivity;
+import com.dueeeke.dkplayer.activity.ExtendActivity;
+import com.dueeeke.dkplayer.activity.ListActivity;
 import com.dueeeke.dkplayer.activity.PlayerActivity;
-import com.dueeeke.dkplayer.activity.RecyclerViewActivity;
-import com.dueeeke.dkplayer.activity.AutoPlayRecyclerViewActivity;
-import com.dueeeke.dkplayer.activity.VodPlayerActivity;
 import com.dueeeke.videoplayer.player.VideoCacheManager;
 import com.dueeeke.videoplayer.util.Constants;
 import com.dueeeke.videoplayer.util.KeyUtil;
@@ -38,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        editText = (EditText) findViewById(R.id.et);
+        editText = findViewById(R.id.et);
 
         ((RadioGroup) findViewById(R.id.rg)).setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -83,22 +79,6 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    public void skipToVodPlayer(View view) {
-        startActivity(new Intent(this, VodPlayerActivity.class));
-    }
-
-    public void skipToLivePlayer(View view) {
-        startActivity(new Intent(this, LivePlayerActivity.class));
-    }
-
-    public void startFullScreen(View view) {
-        startActivity(new Intent(this, FullScreenActivity.class));
-    }
-
-    public void recycler(View view) {
-        startActivity(new Intent(this, RecyclerViewActivity.class));
-    }
-
     public void playOther(View view) {
         String url = editText.getText().toString();
         if (TextUtils.isEmpty(url)) return;
@@ -112,15 +92,15 @@ public class MainActivity extends AppCompatActivity {
         editText.setText("");
     }
 
-    public void danmaku(View view) {
-        startActivity(new Intent(this, DanmakuActivity.class));
+    public void api(View view) {
+        startActivity(new Intent(this, ApiActivity.class));
+    }
+
+    public void extend(View view) {
+        startActivity(new Intent(this, ExtendActivity.class));
     }
 
     public void list(View view) {
-        startActivity(new Intent(this, ListViewActivity.class));
-    }
-
-    public void recyclerAutoPlay(View view) {
-        startActivity(new Intent(this, AutoPlayRecyclerViewActivity.class));
+        startActivity(new Intent(this, ListActivity.class));
     }
 }

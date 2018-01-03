@@ -13,48 +13,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="skipToVodPlayer"
-                android:text="VOD" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="skipToLivePlayer"
-                android:text="LIVE" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="startFullScreen"
-                android:text="ALWAYS ON FULLSCREEN" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="recycler"
-                android:text="RECYCLER VIEW" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="recyclerAutoPlay"
-                android:text="AUTO PLAY RECYCLER VIEW" />
-
+                android:onClick="api"
+                android:text="API" />
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:onClick="list"
-                android:text="LIST VIEW" />
-
+                android:text="LIST" />
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="danmaku"
-                android:text="DANMU" />
+                android:onClick="extend"
+                android:text="EXTEND" />
         </LinearLayout>
 
     </ScrollView>

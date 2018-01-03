@@ -363,11 +363,11 @@ public class IjkVideoView extends BaseIjkVideoView {
     /**
      * 设置视频比例
      */
-    public IjkVideoView setScreenScale(int screenScale) {
+    @Override
+    public void setScreenScale(int screenScale) {
         this.mCurrentScreenScale = screenScale;
         if (mSurfaceView != null) mSurfaceView.setScreenScale(screenScale);
         if (mTextureView != null) mTextureView.setScreenScale(screenScale);
-        return this;
     }
 
     /**

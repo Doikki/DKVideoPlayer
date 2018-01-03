@@ -1,5 +1,6 @@
 package com.dueeeke.videoplayer.util;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -29,7 +30,14 @@ public class WindowUtil {
      * 获取状态栏高度
      */
     public static double getStatusBarHeight(Context context) {
-        return Math.ceil(25 * context.getResources().getDisplayMetrics().density);
+        int statusBarHeight = 0;
+        //获取status_bar_height资源的ID
+        int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            //根据资源ID获取响应的尺寸值
+            statusBarHeight = context.getResources().getDimensionPixelSize(resourceId);
+        }
+        return statusBarHeight;
     }
 
     /**
@@ -85,6 +93,7 @@ public class WindowUtil {
     /**
      * 隐藏ActionBar，StatusBar，NavigationBar
      */
+    @SuppressLint("RestrictedApi")
     public static void hideSystemBar(Context context) {
         AppCompatActivity appCompatActivity = getAppCompActivity(context);
         if (appCompatActivity != null) {
@@ -101,6 +110,7 @@ public class WindowUtil {
     /**
      * 显示ActionBar，StatusBar，NavigationBar
      */
+    @SuppressLint("RestrictedApi")
     public static void showSystemBar(final Context context) {
         scanForActivity(context).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         showNavigationBar(context);

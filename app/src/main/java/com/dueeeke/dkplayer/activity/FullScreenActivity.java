@@ -28,8 +28,9 @@ public class FullScreenActivity extends AppCompatActivity{
                 .setTitle("这是一个标题")
                 .setUrl("http://flv2.bn.netease.com/videolib3/1611/28/GbgsL3639/HD/movie_index.m3u8")
                 .setVideoController(new FullScreenController(this))
-                .setScreenScale(IjkVideoView.SCREEN_SCALE_16_9)
                 .start();
+        ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_16_9);
+
     }
 
     @Override

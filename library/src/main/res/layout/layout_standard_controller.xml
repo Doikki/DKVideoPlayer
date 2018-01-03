@@ -25,13 +25,18 @@
             android:visibility="gone"
             tools:visibility="visible" />
 
-        <TextView
+        <com.dueeeke.videoplayer.widget.MarqueeTextView
             android:id="@+id/title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:paddingLeft="6dp"
             android:paddingRight="6dp"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:textColor="@android:color/white"
             android:textSize="@dimen/controller_text_size"
             tools:text="这是一个标题" />

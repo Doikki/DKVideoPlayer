@@ -28,6 +28,10 @@ public class NetworkUtil {
         ConnectivityManager connectMgr = (ConnectivityManager) context.getApplicationContext()
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
 
+        if (connectMgr == null) {
+            return NO_NETWORK;
+        }
+
         NetworkInfo networkInfo = connectMgr.getActiveNetworkInfo();
         if (networkInfo == null) {
             // 没有任何网络

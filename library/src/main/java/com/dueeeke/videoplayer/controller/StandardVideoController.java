@@ -7,6 +7,7 @@ import android.content.pm.ActivityInfo;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.util.BatteryReceiver;
 import com.dueeeke.videoplayer.util.L;
 import com.dueeeke.videoplayer.util.WindowUtil;
+import com.dueeeke.videoplayer.widget.MarqueeTextView;
 
 /**
  * 直播/点播控制器
@@ -39,7 +41,7 @@ public class StandardVideoController extends BaseVideoController implements View
     //    protected ImageView moreMenu;
     protected ImageView backButton;
     protected ImageView lock;
-    protected TextView title;
+    protected MarqueeTextView title;
     private boolean isLive;
     private boolean isDragging;
 
@@ -192,10 +194,12 @@ public class StandardVideoController extends BaseVideoController implements View
                 playButton.setSelected(true);
                 completeContainer.setVisibility(GONE);
                 thumb.setVisibility(GONE);
+                startPlayButton.setVisibility(GONE);
                 break;
             case IjkVideoView.STATE_PAUSED:
                 L.e("STATE_PAUSED");
                 playButton.setSelected(false);
+                startPlayButton.setVisibility(GONE);
                 break;
             case IjkVideoView.STATE_PREPARING:
                 L.e("STATE_PREPARING");
@@ -207,9 +211,11 @@ public class StandardVideoController extends BaseVideoController implements View
                 L.e("STATE_PREPARED");
                 if (!isLive) bottomProgress.setVisibility(VISIBLE);
                 loadingProgress.setVisibility(GONE);
+                startPlayButton.setVisibility(GONE);
                 break;
             case IjkVideoView.STATE_ERROR:
                 L.e("STATE_ERROR");
+                startPlayButton.setVisibility(GONE);
                 break;
             case IjkVideoView.STATE_BUFFERING:
                 L.e("STATE_BUFFERING");
@@ -218,11 +224,13 @@ public class StandardVideoController extends BaseVideoController implements View
                 break;
             case IjkVideoView.STATE_BUFFERED:
                 loadingProgress.setVisibility(GONE);
+                startPlayButton.setVisibility(GONE);
                 L.e("STATE_BUFFERED");
                 break;
             case IjkVideoView.STATE_PLAYBACK_COMPLETED:
                 L.e("STATE_PLAYBACK_COMPLETED");
                 hide();
+                startPlayButton.setVisibility(GONE);
                 thumb.setVisibility(VISIBLE);
                 completeContainer.setVisibility(VISIBLE);
                 bottomProgress.setProgress(0);
@@ -380,10 +388,11 @@ public class StandardVideoController extends BaseVideoController implements View
             totalTime.setText(stringForTime(duration));
         if (currTime != null)
             currTime.setText(stringForTime(position));
-        if (title != null)
-            title.setText(mediaPlayer.getTitle());
         if (sysTime != null)
             sysTime.setText(getCurrentSystemTime());
+        if (title != null && TextUtils.isEmpty(title.getText())) {
+            title.setText(mediaPlayer.getTitle());
+        }
         return position;
     }
 

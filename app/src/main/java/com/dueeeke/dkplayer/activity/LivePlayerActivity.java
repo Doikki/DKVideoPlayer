@@ -14,6 +14,7 @@ import com.devlin_n.floatWindowPermission.FloatWindowManager;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.widget.videoview.FloatIjkVideoView;
 import com.dueeeke.videoplayer.controller.StandardVideoController;
+import com.dueeeke.videoplayer.player.IjkVideoView;
 
 /**
  * 直播播放
@@ -103,5 +104,25 @@ public class LivePlayerActivity extends AppCompatActivity {
 
     public void startFloatWindow(View view) {
         ijkVideoView.startFloatWindow();
+    }
+
+    public void screenScaleDefault(View view) {
+        ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_DEFAULT);
+    }
+
+    public void screenScale169(View view) {
+        ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_16_9);
+    }
+
+    public void screenScale43(View view) {
+        ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_4_3);
+    }
+
+    public void screenScaleOriginal(View view) {
+        ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_ORIGINAL);
+    }
+
+    public void screenScaleMatch(View view) {
+        ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_MATCH_PARENT);
     }
 }

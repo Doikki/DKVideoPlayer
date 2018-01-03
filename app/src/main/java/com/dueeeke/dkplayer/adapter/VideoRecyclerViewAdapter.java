@@ -61,7 +61,7 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
             return videos.size();
         }
 
-        class VideoHolder extends RecyclerView.ViewHolder {
+        public class VideoHolder extends RecyclerView.ViewHolder {
 
             private IjkVideoView ijkVideoView;
             private StandardVideoController controller;
@@ -69,7 +69,7 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
 
             VideoHolder(View itemView) {
                 super(itemView);
-                ijkVideoView = (IjkVideoView) itemView.findViewById(R.id.video_player);
+                ijkVideoView = itemView.findViewById(R.id.video_player);
                 int widthPixels = context.getResources().getDisplayMetrics().widthPixels;
                 ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 16 * 9));
                 controller = new StandardVideoController(context);

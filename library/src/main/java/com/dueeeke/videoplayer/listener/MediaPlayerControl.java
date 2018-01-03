@@ -28,4 +28,6 @@ public interface MediaPlayerControl {
     boolean isMute();
 
     void setLock(boolean isLocked);
+
+    void setScreenScale(int screenScale);
 }
