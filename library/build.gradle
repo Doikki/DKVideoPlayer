@@ -1,6 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
-group='com.github.DevlinChiu'
+group='com.github.dueeeke'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -9,8 +9,8 @@ android {
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 8
-        versionName "1.4"
+        versionCode 11
+        versionName "1.4.3"
     }
 
     sourceSets {
@@ -30,5 +30,5 @@ dependencies {
     compile "tv.danmaku.ijk.media:ijkplayer-java:$rootProject.ijkPlayerVersion"
     //    compile "tv.danmaku.ijk.media:ijkplayer-armv7a:$rootProject.ijkPlayerVersion"
     compile 'com.danikula:videocache:2.7.0'
-    compile 'tv.danmaku.ijk.media:ijkplayer-x86:0.8.4'
+//    compile 'tv.danmaku.ijk.media:ijkplayer-x86:0.8.4'
 }
