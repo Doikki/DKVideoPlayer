@@ -25,9 +25,6 @@ public class IjkMediaEngine extends BaseMediaEngine {
     public void initPlayer() {
         if (mMediaPlayer == null) {
             mMediaPlayer = new IjkMediaPlayer();
-            mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 1);//开启硬解码
-            mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 1);
-            mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", 1);
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mMediaPlayer.setOnErrorListener(onErrorListener);
             mMediaPlayer.setOnCompletionListener(onCompletionListener);
@@ -103,6 +100,19 @@ public class IjkMediaEngine extends BaseMediaEngine {
     @Override
     public void setVolume(int v1, int v2) {
         mMediaPlayer.setVolume(v1, v2);
+    }
+
+    @Override
+    public void setLooping(boolean isLooping) {
+        mMediaPlayer.setLooping(isLooping);
+    }
+
+    @Override
+    public void setEnableMediaCodec(boolean isEnable) {
+        int value = isEnable ? 1 : 0;
+        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", value);//开启硬解码
+        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", value);
+        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", value);
     }
 
     private IMediaPlayer.OnErrorListener onErrorListener = (iMediaPlayer, framework_err, impl_err) -> {

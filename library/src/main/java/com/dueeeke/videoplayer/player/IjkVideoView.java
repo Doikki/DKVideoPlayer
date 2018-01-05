@@ -47,6 +47,8 @@ public class IjkVideoView extends BaseIjkVideoView {
     public static final int SCREEN_SCALE_ORIGINAL = 4;
 
     protected int mCurrentScreenScale = SCREEN_SCALE_DEFAULT;
+    private boolean isLooping;
+    private boolean enableMediaCodec;
 
     public IjkVideoView(@NonNull Context context) {
         this(context, null);
@@ -82,6 +84,8 @@ public class IjkVideoView extends BaseIjkVideoView {
     @Override
     protected void initPlayer() {
         super.initPlayer();
+        mMediaPlayer.setLooping(isLooping);
+        mMediaPlayer.setEnableMediaCodec(enableMediaCodec);
         addDisplay();
     }
 
@@ -391,6 +395,22 @@ public class IjkVideoView extends BaseIjkVideoView {
      */
     public IjkVideoView autoRotate() {
         this.mAutoRotate = true;
+        return this;
+    }
+
+    /**
+     * 开启循环播放
+     */
+    public IjkVideoView setLooping() {
+        this.isLooping = true;
+        return this;
+    }
+
+    /**
+     * 开启硬解码，只对IjkPlayer有效
+     */
+    public IjkVideoView enableMediaCodec() {
+        this.enableMediaCodec = true;
         return this;
     }
 }

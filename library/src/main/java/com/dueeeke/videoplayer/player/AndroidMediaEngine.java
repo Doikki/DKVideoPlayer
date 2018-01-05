@@ -100,6 +100,16 @@ public class AndroidMediaEngine extends BaseMediaEngine {
         mMediaPlayer.setVolume(v1, v2);
     }
 
+    @Override
+    public void setLooping(boolean isLooping) {
+        mMediaPlayer.setLooping(isLooping);
+    }
+
+    @Override
+    public void setEnableMediaCodec(boolean isEnable) {
+
+    }
+
     private MediaPlayer.OnErrorListener onErrorListener = (mp, framework_err, impl_err) -> {
         if (mMediaEngineInterface != null) mMediaEngineInterface.onError();
         return true;

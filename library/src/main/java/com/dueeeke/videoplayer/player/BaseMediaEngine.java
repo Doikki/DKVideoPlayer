@@ -41,4 +41,8 @@ public abstract class BaseMediaEngine {
 
     public abstract void setVolume(int v1, int v2);
 
+    public abstract void setLooping(boolean isLooping);
+
+    public abstract void setEnableMediaCodec(boolean isEnable);
+
 }

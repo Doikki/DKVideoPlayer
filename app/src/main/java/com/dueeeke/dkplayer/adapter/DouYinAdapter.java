@@ -42,7 +42,8 @@ public class DouYinAdapter extends RecyclerView.Adapter<DouYinAdapter.VideoHolde
             holder.ijkVideoView
                     .addToPlayerManager()
                     .setUrl(videoBean.getUrl())
-                    .setScreenScale(IjkVideoView.SCREEN_SCALE_MATCH_PARENT);
+                    .setLooping()
+                    .setVideoController(holder.mDouYinController);
             holder.ijkVideoView.setTag(position);
 
         }
@@ -61,7 +62,6 @@ public class DouYinAdapter extends RecyclerView.Adapter<DouYinAdapter.VideoHolde
                 super(itemView);
                 ijkVideoView = itemView.findViewById(R.id.video_player);
                 mDouYinController = new DouYinController(context);
-                ijkVideoView.setVideoController(mDouYinController);
             }
         }
     }
