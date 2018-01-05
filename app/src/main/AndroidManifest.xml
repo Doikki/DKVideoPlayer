@@ -70,9 +70,14 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.ExtendActivity"
+        android:name=".activity.ExtendActivity"
+        android:configChanges="keyboardHidden|orientation|screenSize"
+        android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.DouYinActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
 
         <service android:name="com.dueeeke.dkplayer.BackgroundPlayService"/>
 

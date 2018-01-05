@@ -404,6 +404,8 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
                 setPlayState(mCurrentState);
                 break;
             case IjkMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START: // 视频开始渲染
+                mCurrentState = STATE_PLAYING;
+                setPlayState(mCurrentState);
                 if (getWindowVisibility() != VISIBLE) pause();
                 break;
         }

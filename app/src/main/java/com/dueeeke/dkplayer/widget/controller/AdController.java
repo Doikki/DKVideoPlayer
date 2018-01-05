@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.interf.ListMediaPlayerControl;
-import com.dueeeke.videoplayer.controller.BaseVideoController;
+import com.dueeeke.videoplayer.controller.GestureVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.util.WindowUtil;
 
@@ -21,7 +21,7 @@ import com.dueeeke.videoplayer.util.WindowUtil;
  * Created by Devlin_n on 2017/4/12.
  */
 
-public class AdController extends BaseVideoController implements View.OnClickListener {
+public class AdController extends GestureVideoController implements View.OnClickListener {
     protected TextView adTime, adDetail;
     protected ImageView back, volume, fullScreen, playButton;
 

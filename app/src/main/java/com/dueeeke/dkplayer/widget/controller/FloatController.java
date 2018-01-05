@@ -10,7 +10,7 @@ import android.widget.ProgressBar;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.interf.FloatMediaControl;
-import com.dueeeke.videoplayer.controller.BaseVideoController;
+import com.dueeeke.videoplayer.controller.GestureVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 
 /**
@@ -18,7 +18,7 @@ import com.dueeeke.videoplayer.player.IjkVideoView;
  * Created by Devlin_n on 2017/6/1.
  */
 
-public class FloatController extends BaseVideoController implements View.OnClickListener {
+public class FloatController extends GestureVideoController implements View.OnClickListener {
 
 
     private ProgressBar proLoading;

@@ -33,7 +33,7 @@ import com.dueeeke.videoplayer.widget.MarqueeTextView;
  * Created by Devlin_n on 2017/4/7.
  */
 
-public class StandardVideoController extends BaseVideoController implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+public class StandardVideoController extends GestureVideoController implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
     protected TextView totalTime, currTime;
     protected ImageView fullScreenButton;
     protected LinearLayout bottomContainer, topContainer;

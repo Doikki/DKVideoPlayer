@@ -68,5 +68,6 @@ dependencies {
     compile 'com.github.ctiao:DanmakuFlameMaster:0.8.3'
     compile 'com.github.ctiao:ndkbitmap-armv7a:0.8.3'
     implementation "com.android.support:design:$rootProject.supportLibraryVersion"
+    implementation 'com.github.rubensousa:gravitysnaphelper:1.5'
 }
 

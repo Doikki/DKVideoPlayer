@@ -16,7 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dueeeke.dkplayer.R;
-import com.dueeeke.videoplayer.controller.BaseVideoController;
+import com.dueeeke.videoplayer.controller.GestureVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.util.L;
 import com.dueeeke.videoplayer.util.WindowUtil;
@@ -26,7 +26,7 @@ import com.dueeeke.videoplayer.util.WindowUtil;
  * Created by Devlin_n on 2017/4/7.
  */
 
-public class FullScreenController extends BaseVideoController implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+public class FullScreenController extends GestureVideoController implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
     protected TextView totalTime, currTime;
     protected LinearLayout bottomContainer, topContainer;
     protected SeekBar videoProgress;

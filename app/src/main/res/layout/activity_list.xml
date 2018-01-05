@@ -27,4 +27,10 @@
         android:onClick="list"
         android:text="LIST VIEW" />
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="douYin"
+        android:text="抖音" />
+
 </LinearLayout>
