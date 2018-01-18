@@ -113,6 +113,7 @@ public class IjkVideoView extends BaseIjkVideoView {
             VideoViewManager.instance().releaseVideoPlayer();
             VideoViewManager.instance().setCurrentVideoPlayer(this);
         }
+        if (checkNetwork()) return;
         super.startPlay();
     }
 
@@ -186,7 +187,6 @@ public class IjkVideoView extends BaseIjkVideoView {
     }
 
 
-    @Override
     protected boolean checkNetwork() {
         if (NetworkUtil.getNetworkType(getContext()) == NetworkUtil.NETWORK_MOBILE && !Constants.IS_PLAY_ON_MOBILE_NETWORK) {
             playerContainer.removeView(statusView);

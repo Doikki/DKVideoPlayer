@@ -168,8 +168,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
 
     protected abstract void setPlayerState(int playerState);
 
-    protected abstract boolean checkNetwork();
-
     /**
      * 开始准备播放（直接播放）
      */
@@ -218,7 +216,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      */
     protected void startPlay() {
         if (mAutoRotate) orientationEventListener.enable();
-        if (checkNetwork()) return;
         initPlayer();
         startPrepare();
     }
