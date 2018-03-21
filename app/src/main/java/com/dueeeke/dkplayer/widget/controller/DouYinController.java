@@ -56,7 +56,7 @@ public class DouYinController extends BaseVideoController {
                     public void run() {
                         thumb.setVisibility(GONE);
                     }
-                }, 500);
+                }, 400);
                 break;
         }
     }

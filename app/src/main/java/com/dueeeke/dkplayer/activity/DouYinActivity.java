@@ -50,6 +50,7 @@ public class DouYinActivity extends AppCompatActivity {
         setStatusBarTransparent();
 
         mIjkVideoView = new IjkVideoView(this);
+        mIjkVideoView.enableMediaCodec();
         mDouYinController = new DouYinController(this);
         mIjkVideoView.setVideoController(mDouYinController);
         mVerticalViewPager = findViewById(R.id.vvp);
@@ -65,29 +66,39 @@ public class DouYinActivity extends AppCompatActivity {
         mVerticalViewPager.setAdapter(mDouYinAdapter);
 
         mVerticalViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+            private int mCurrentPosition;
+            private int mPlayingPosition;
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
+//                Log.e(TAG, "mCurrentId == " + position + ", positionOffset == " + positionOffset +
+//                        ", positionOffsetPixels == " + positionOffsetPixels);
             }
 
             @Override
             public void onPageSelected(int position) {
                 Log.d(TAG, "position: " + position);
-                mIjkVideoView.stopPlayback();
-                ViewParent parent = mIjkVideoView.getParent();
-                if (parent != null && parent instanceof FrameLayout) {
-                    ((FrameLayout) parent).removeView(mIjkVideoView);
-                }
-                View view = mViews.get(position);
-                FrameLayout frameLayout = view.findViewById(R.id.container);
-                frameLayout.addView(mIjkVideoView);
-                Glide.with(DouYinActivity.this).load(mVideoList.get(position).getThumb()).into(mDouYinController.getThumb());
-                mIjkVideoView.setUrl(mVideoList.get(position).getUrl()).start();
+                mCurrentPosition = position;
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
+                Log.d(TAG, "onPageScrollStateChanged: " + state);
+                if (mPlayingPosition == mCurrentPosition) return;
+                if (state == VerticalViewPager.SCROLL_STATE_IDLE) {
+                    mIjkVideoView.stopPlayback();
+                    ViewParent parent = mIjkVideoView.getParent();
+                    if (parent != null && parent instanceof FrameLayout) {
+                        ((FrameLayout) parent).removeView(mIjkVideoView);
+                    }
+                    View view = mViews.get(mCurrentPosition);
+                    FrameLayout frameLayout = view.findViewById(R.id.container);
+                    ImageView imageView = view.findViewById(R.id.thumb);
+                    mDouYinController.getThumb().setImageDrawable(imageView.getDrawable());
+                    frameLayout.addView(mIjkVideoView);
+                    mIjkVideoView.setUrl(mVideoList.get(mCurrentPosition).getUrl()).start();
+                    mPlayingPosition = mCurrentPosition;
+                }
             }
         });
 //        mRecyclerView.post(() -> {
@@ -184,6 +195,18 @@ public class DouYinActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        mIjkVideoView.pause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mIjkVideoView.resume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
         mIjkVideoView.release();
     }
 }
