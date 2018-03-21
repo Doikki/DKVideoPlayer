@@ -173,6 +173,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      */
     protected void startPrepare() {
         if (mCurrentUrl == null || mCurrentUrl.trim().equals("")) return;
+        mMediaPlayer.reset();
         try {
             if (isCache) {
                 HttpProxyCacheServer cacheServer = getCacheServer();
@@ -256,25 +257,24 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     public void stopPlayback() {
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
-            mMediaPlayer.release();
-            mMediaPlayer = null;
             mCurrentState = STATE_IDLE;
             setPlayState(mCurrentState);
             mAudioFocusHelper.abandonFocus();
             setKeepScreenOn(false);
         }
+
+        orientationEventListener.disable();
+        if (isCache) getCacheServer().unregisterCacheListener(cacheListener);
+
+        isLockFullScreen = false;
+        mCurrentPosition = 0;
     }
 
     public void release() {
         if (mMediaPlayer != null) {
-            //启动一个线程来释放播放器，解决列表播放卡顿问题
-            new Thread(() -> {
-                if (mMediaPlayer != null) {
-                    mMediaPlayer.reset();
-                    mMediaPlayer.release();
-                    mMediaPlayer = null;
-                }
-            }).start();
+            mMediaPlayer.reset();
+            mMediaPlayer.release();
+            mMediaPlayer = null;
             mCurrentState = STATE_IDLE;
             setPlayState(mCurrentState);
             mAudioFocusHelper.abandonFocus();

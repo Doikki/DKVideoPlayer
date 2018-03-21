@@ -32,7 +32,7 @@ public class VideoViewManager {
 
     public void releaseVideoPlayer() {
         if (mPlayer != null && mPlayer.get() != null) {
-            mPlayer.get().release();
+            mPlayer.get().stopPlayback();
             mPlayer = null;
         }
     }

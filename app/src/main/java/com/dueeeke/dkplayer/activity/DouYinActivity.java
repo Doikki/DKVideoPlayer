@@ -5,23 +5,27 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewParent;
 import android.view.WindowInsets;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.adapter.DouYinAdapter;
 import com.dueeeke.dkplayer.bean.VideoBean;
+import com.dueeeke.dkplayer.widget.controller.DouYinController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
-import com.dueeeke.videoplayer.player.VideoViewManager;
-import com.github.rubensousa.gravitysnaphelper.GravityPagerSnapHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import fr.castorflex.android.verticalviewpager.VerticalViewPager;
 
 /**
  * 模仿抖音短视频
@@ -30,10 +34,13 @@ import java.util.List;
 
 public class DouYinActivity extends AppCompatActivity {
 
-    private RecyclerView mRecyclerView;
     private static final String TAG = "DouYinActivity";
     private IjkVideoView mIjkVideoView;
-    private int mCurrentPosition;
+    private DouYinController mDouYinController;
+    private VerticalViewPager mVerticalViewPager;
+    private DouYinAdapter mDouYinAdapter;
+    private List<VideoBean> mVideoList;
+    private List<View> mViews = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,36 +49,53 @@ public class DouYinActivity extends AppCompatActivity {
 
         setStatusBarTransparent();
 
-        mRecyclerView = findViewById(R.id.rv);
+        mIjkVideoView = new IjkVideoView(this);
+        mDouYinController = new DouYinController(this);
+        mIjkVideoView.setVideoController(mDouYinController);
+        mVerticalViewPager = findViewById(R.id.vvp);
+        mVideoList = getVideoList();
+        for (VideoBean item : mVideoList) {
+            View view = LayoutInflater.from(this).inflate(R.layout.item_douyin, null);
+            ImageView imageView = view.findViewById(R.id.thumb);
+            Glide.with(this).load(item.getThumb()).into(imageView);
+            mViews.add(view);
+        }
 
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setAdapter(new DouYinAdapter(getVideoList(), this));
-        new GravityPagerSnapHelper(Gravity.BOTTOM, true, position -> {
-            Log.d(TAG, "onSnap: " + position);
-            if (position == mCurrentPosition) return;
-            if (mIjkVideoView != null) mIjkVideoView.start();
-            mCurrentPosition = position;
-        }).attachToRecyclerView(mRecyclerView);
+        mDouYinAdapter = new DouYinAdapter(mViews);
+        mVerticalViewPager.setAdapter(mDouYinAdapter);
 
-        mRecyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
+        mVerticalViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void onChildViewAttachedToWindow(View view) {
-                Log.d(TAG, "onChildViewAttachedToWindow: ");
-                mIjkVideoView = view.findViewById(R.id.video_player);
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
             }
 
             @Override
-            public void onChildViewDetachedFromWindow(View view) {
-                Log.d(TAG, "onChildViewDetachedFromWindow: ");
+            public void onPageSelected(int position) {
+                Log.d(TAG, "position: " + position);
+                mIjkVideoView.stopPlayback();
+                ViewParent parent = mIjkVideoView.getParent();
+                if (parent != null && parent instanceof FrameLayout) {
+                    ((FrameLayout) parent).removeView(mIjkVideoView);
+                }
+                View view = mViews.get(position);
+                FrameLayout frameLayout = view.findViewById(R.id.container);
+                frameLayout.addView(mIjkVideoView);
+                Glide.with(DouYinActivity.this).load(mVideoList.get(position).getThumb()).into(mDouYinController.getThumb());
+                mIjkVideoView.setUrl(mVideoList.get(position).getUrl()).start();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
             }
         });
-        mRecyclerView.post(() -> {
-            View view = mRecyclerView.getChildAt(0);
-            IjkVideoView ijkVideoView = view.findViewById(R.id.video_player);
-            ijkVideoView.start();
-
-        });
+//        mRecyclerView.post(() -> {
+//            View view = mRecyclerView.getChildAt(0);
+//            IjkVideoView ijkVideoView = view.findViewById(R.id.video_player);
+//            ijkVideoView.start();
+//
+//        });
     }
 
     /**
@@ -160,6 +184,6 @@ public class DouYinActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        VideoViewManager.instance().releaseVideoPlayer();
+        mIjkVideoView.release();
     }
 }
