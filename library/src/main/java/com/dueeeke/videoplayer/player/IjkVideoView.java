@@ -207,6 +207,18 @@ public class IjkVideoView extends BaseIjkVideoView {
     }
 
     @Override
+    public void stopPlayback() {
+        super.stopPlayback();
+        playerContainer.removeView(mTextureView);
+        playerContainer.removeView(mSurfaceView);
+        playerContainer.removeView(statusView);
+        if (mSurfaceTexture != null) {
+            mSurfaceTexture.release();
+            mSurfaceTexture = null;
+        }
+    }
+
+    @Override
     public void release() {
         super.release();
         playerContainer.removeView(mTextureView);
