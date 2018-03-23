@@ -41,6 +41,8 @@ public class DouYinActivity extends AppCompatActivity {
     private DouYinAdapter mDouYinAdapter;
     private List<VideoBean> mVideoList;
     private List<View> mViews = new ArrayList<>();
+    private int mCurrentPosition;
+    private int mPlayingPosition;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,8 +69,7 @@ public class DouYinActivity extends AppCompatActivity {
 
         mVerticalViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
-            private int mCurrentPosition;
-            private int mPlayingPosition;
+
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 //                Log.e(TAG, "mCurrentId == " + position + ", positionOffset == " + positionOffset +
@@ -91,22 +92,22 @@ public class DouYinActivity extends AppCompatActivity {
                     if (parent != null && parent instanceof FrameLayout) {
                         ((FrameLayout) parent).removeView(mIjkVideoView);
                     }
-                    View view = mViews.get(mCurrentPosition);
-                    FrameLayout frameLayout = view.findViewById(R.id.container);
-                    ImageView imageView = view.findViewById(R.id.thumb);
-                    mDouYinController.getThumb().setImageDrawable(imageView.getDrawable());
-                    frameLayout.addView(mIjkVideoView);
-                    mIjkVideoView.setUrl(mVideoList.get(mCurrentPosition).getUrl()).start();
-                    mPlayingPosition = mCurrentPosition;
+                    startPlay();
                 }
             }
         });
-//        mRecyclerView.post(() -> {
-//            View view = mRecyclerView.getChildAt(0);
-//            IjkVideoView ijkVideoView = view.findViewById(R.id.video_player);
-//            ijkVideoView.start();
-//
-//        });
+        //自动播放第一条
+        mVerticalViewPager.post(this::startPlay);
+    }
+
+    private void startPlay() {
+        View view = mViews.get(mCurrentPosition);
+        FrameLayout frameLayout = view.findViewById(R.id.container);
+        ImageView imageView = view.findViewById(R.id.thumb);
+        mDouYinController.getThumb().setImageDrawable(imageView.getDrawable());
+        frameLayout.addView(mIjkVideoView);
+        mIjkVideoView.setUrl(mVideoList.get(mCurrentPosition).getUrl()).start();
+        mPlayingPosition = mCurrentPosition;
     }
 
     /**

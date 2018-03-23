@@ -34,5 +34,5 @@ ext {
 
     // App dependencies
     supportLibraryVersion = '27.0.2'
-    ijkPlayerVersion = '0.8.4'
+    ijkPlayerVersion = '0.8.8'
 }
