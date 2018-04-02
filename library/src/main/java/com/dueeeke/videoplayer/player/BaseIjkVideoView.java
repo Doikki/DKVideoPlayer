@@ -421,7 +421,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         if (mCurrentPosition > 0) {
             seekTo(mCurrentPosition);
         }
-        start();
     }
 
     /**

@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videoplayer.controller.BaseVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.util.L;
 
 /**
  * 抖音
@@ -48,15 +49,15 @@ public class DouYinController extends BaseVideoController {
 
         switch (playState) {
             case IjkVideoView.STATE_IDLE:
+                L.e("STATE_IDLE");
                 thumb.setVisibility(VISIBLE);
                 break;
             case IjkVideoView.STATE_PLAYING:
-                postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        thumb.setVisibility(GONE);
-                    }
-                }, 400);
+                L.e("STATE_PLAYING");
+                thumb.setVisibility(GONE);
+                break;
+            case IjkVideoView.STATE_PREPARED:
+                L.e("STATE_PREPARED");
                 break;
         }
     }

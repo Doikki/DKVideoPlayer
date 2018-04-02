@@ -52,7 +52,8 @@ public class DouYinActivity extends AppCompatActivity {
         setStatusBarTransparent();
 
         mIjkVideoView = new IjkVideoView(this);
-        mIjkVideoView.enableMediaCodec();
+        mIjkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_MATCH_PARENT);
+        mIjkVideoView.setLooping();
         mDouYinController = new DouYinController(this);
         mIjkVideoView.setVideoController(mDouYinController);
         mVerticalViewPager = findViewById(R.id.vvp);

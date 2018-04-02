@@ -262,6 +262,12 @@ public class IjkVideoView extends BaseIjkVideoView {
     }
 
     @Override
+    public void onPrepared() {
+        super.onPrepared();
+        if (useAndroidMediaPlayer) mMediaPlayer.start();
+    }
+
+    @Override
     public void onError() {
         super.onError();
         playerContainer.removeView(statusView);

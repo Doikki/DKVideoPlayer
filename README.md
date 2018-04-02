@@ -22,6 +22,7 @@ A video player based on [IjkPlayer](https://github.com/Bilibili/ijkplayer).
 * **支持悬浮窗播放。**
 * **支持广告播放。**
 * **支持弹幕，使用了[DanmakuFlameMaster](https://github.com/Bilibili/DanmakuFlameMaster)。**
+* **抖音demo。**
 
 [demo下载](https://fir.im/1r3u)
 ## 使用
@@ -40,7 +41,7 @@ Step 1.Add it in your root build.gradle at the end of repositories:
 Step 2. Add the dependency
 
 	dependencies {
-	        compile 'com.github.dueeeke:dkplayer:1.4.3'
+	        compile 'com.github.dueeeke:dkplayer:1.5'
 	}
 ```
 或者将library下载并导入项目中使用
