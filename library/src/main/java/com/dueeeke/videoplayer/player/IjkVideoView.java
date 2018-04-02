@@ -47,7 +47,7 @@ public class IjkVideoView extends BaseIjkVideoView {
     public static final int SCREEN_SCALE_ORIGINAL = 4;
 
     protected int mCurrentScreenScale = SCREEN_SCALE_DEFAULT;
-    private boolean isLooping;
+
     private boolean enableMediaCodec;
 
     public IjkVideoView(@NonNull Context context) {
@@ -84,7 +84,6 @@ public class IjkVideoView extends BaseIjkVideoView {
     @Override
     protected void initPlayer() {
         super.initPlayer();
-        mMediaPlayer.setLooping(isLooping);
         mMediaPlayer.setEnableMediaCodec(enableMediaCodec);
         addDisplay();
     }

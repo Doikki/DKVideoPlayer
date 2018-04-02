@@ -37,6 +37,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     protected int bufferPercentage;//缓冲百分比
     protected boolean isMute;//是否静音
     protected boolean useAndroidMediaPlayer;//是否使用AndroidMediaPlayer
+    protected boolean isLooping;//是否循环播放
 
     protected String mCurrentUrl;//当前播放视频的地址
     protected int mCurrentPosition;//当前正在播放视频的位置
@@ -174,6 +175,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     protected void startPrepare() {
         if (mCurrentUrl == null || mCurrentUrl.trim().equals("")) return;
         mMediaPlayer.reset();
+        mMediaPlayer.setLooping(isLooping);
         try {
             if (isCache) {
                 HttpProxyCacheServer cacheServer = getCacheServer();
