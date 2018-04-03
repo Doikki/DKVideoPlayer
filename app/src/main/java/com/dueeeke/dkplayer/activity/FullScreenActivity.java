@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.dueeeke.dkplayer.widget.controller.FullScreenController;
 import com.dueeeke.dkplayer.widget.videoview.FullScreenIjkVideoView;
 import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.PlayerConfig;
 
 /**
  * 全屏播放
@@ -22,14 +23,13 @@ public class FullScreenActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         ijkVideoView = new FullScreenIjkVideoView(this);
         setContentView(ijkVideoView);
-        ijkVideoView
-//                .useAndroidMediaPlayer()
-                .autoRotate()
-                .setTitle("这是一个标题")
-                .setUrl("http://flv2.bn.netease.com/videolib3/1611/28/GbgsL3639/HD/movie_index.m3u8")
-                .setVideoController(new FullScreenController(this))
-                .start();
+        PlayerConfig config = new PlayerConfig.Builder().autoRotate().build();
+        ijkVideoView.setPlayerConfig(config);
+        ijkVideoView.setTitle("这是一个标题");
+        ijkVideoView.setUrl("http://flv2.bn.netease.com/videolib3/1611/28/GbgsL3639/HD/movie_index.m3u8");
+        ijkVideoView.setVideoController(new FullScreenController(this));
         ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_16_9);
+        ijkVideoView.start();
 
     }
 

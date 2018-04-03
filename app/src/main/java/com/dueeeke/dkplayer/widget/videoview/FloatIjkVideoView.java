@@ -56,7 +56,7 @@ public class FloatIjkVideoView extends IjkVideoView implements FloatMediaControl
         intent.putExtra(KeyUtil.URL, mCurrentUrl);
         getCurrentPosition();
         intent.putExtra(KeyUtil.POSITION, getDuration() <= 0 ? 0 : mCurrentPosition);
-        intent.putExtra(KeyUtil.ENABLE_CACHE, isCache);
+        intent.putExtra(KeyUtil.ENABLE_CACHE, mPlayerConfig.isCache);
         intent.putExtra(KeyUtil.ACTION, Constants.COMMAND_START);
         getContext().getApplicationContext().startService(intent);
         Activity activity = WindowUtil.scanForActivity(getContext());

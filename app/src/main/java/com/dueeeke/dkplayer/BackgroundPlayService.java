@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 
 import com.dueeeke.dkplayer.widget.controller.FloatController;
 import com.dueeeke.dkplayer.widget.videoview.FloatIjkVideoView;
+import com.dueeeke.videoplayer.player.PlayerConfig;
 import com.dueeeke.videoplayer.util.Constants;
 import com.dueeeke.videoplayer.util.KeyUtil;
 import com.dueeeke.videoplayer.util.L;
@@ -65,8 +66,13 @@ public class BackgroundPlayService extends Service {
     }
 
     private void startPlay() {
-        if (isCache) videoView.enableCache();
-        videoView.skipPositionWhenPlay(url, position).setVideoController(new FloatController(getApplicationContext())).start();
+        if (isCache) {
+            PlayerConfig config = new PlayerConfig.Builder().enableCache().build();
+            videoView.setPlayerConfig(config);
+        }
+        videoView.skipPositionWhenPlay(url, position);
+        videoView.setVideoController(new FloatController(getApplicationContext()));
+        videoView.start();
         floatView.addToWindow();
     }
 

@@ -20,14 +20,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * ListViewFragment
+ * RecyclerViewFragment
  * Created by xinyu on 2018/1/3.
  */
 
-public class ListViewFragment extends Fragment{
+public class RecyclerViewFragment extends Fragment{
 
-    public static ListViewFragment newInstance() {
-        return new ListViewFragment();
+    public static RecyclerViewFragment newInstance() {
+        return new RecyclerViewFragment();
     }
 
     @Nullable

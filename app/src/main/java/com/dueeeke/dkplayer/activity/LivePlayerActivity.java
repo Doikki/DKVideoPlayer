@@ -15,6 +15,7 @@ import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.widget.videoview.FloatIjkVideoView;
 import com.dueeeke.videoplayer.controller.StandardVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.PlayerConfig;
 
 /**
  * 直播播放
@@ -47,13 +48,13 @@ public class LivePlayerActivity extends AppCompatActivity {
                 .animate(R.anim.anim_alpha_in)
                 .placeholder(android.R.color.darker_gray)
                 .into(controller.getThumb());
-        ijkVideoView
+        ijkVideoView.setUrl(URL);
+        ijkVideoView.setTitle("香港卫视");
+        ijkVideoView.setVideoController(controller);
+        PlayerConfig config = new PlayerConfig.Builder()
                 .autoRotate()
-//                .useAndroidMediaPlayer()
-                .setUrl(URL)
-                .setTitle("香港卫视")
-                .setVideoController(controller);
-//                .start();
+                .build();
+        ijkVideoView.setPlayerConfig(config);
     }
 
     @Override

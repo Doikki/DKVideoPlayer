@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videoplayer.controller.StandardVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.PlayerConfig;
 
 /**
  * 播放其他链接
@@ -29,7 +30,7 @@ public class PlayerActivity extends AppCompatActivity {
             actionBar.setTitle("Player");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        ijkVideoView = (IjkVideoView) findViewById(R.id.player);
+        ijkVideoView = findViewById(R.id.player);
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -38,12 +39,11 @@ public class PlayerActivity extends AppCompatActivity {
             if (isLive) {
                 controller.setLive();
             }
-            ijkVideoView
-                    .autoRotate()
-//                    .useAndroidMediaPlayer()
-                    .setUrl(intent.getStringExtra("url"))
-                    .setVideoController(controller)
-                    .start();
+            PlayerConfig config = new PlayerConfig.Builder().autoRotate().build();
+            ijkVideoView.setPlayerConfig(config);
+            ijkVideoView.setUrl(intent.getStringExtra("url"));
+            ijkVideoView.setVideoController(controller);
+            ijkVideoView.start();
         }
     }
 

@@ -37,7 +37,6 @@ public class IjkVideoView extends BaseIjkVideoView {
     protected SurfaceTexture mSurfaceTexture;
     protected FrameLayout playerContainer;
     protected StatusView statusView;//显示错误信息的一个view
-    protected boolean useSurfaceView;//是否使用TextureView
     protected boolean isFullScreen;//是否处于全屏状态
 
     public static final int SCREEN_SCALE_DEFAULT = 0;
@@ -47,8 +46,6 @@ public class IjkVideoView extends BaseIjkVideoView {
     public static final int SCREEN_SCALE_ORIGINAL = 4;
 
     protected int mCurrentScreenScale = SCREEN_SCALE_DEFAULT;
-    private boolean isLooping;
-    private boolean enableMediaCodec;
 
     public IjkVideoView(@NonNull Context context) {
         this(context, null);
@@ -84,13 +81,12 @@ public class IjkVideoView extends BaseIjkVideoView {
     @Override
     protected void initPlayer() {
         super.initPlayer();
-        mMediaPlayer.setLooping(isLooping);
-        mMediaPlayer.setEnableMediaCodec(enableMediaCodec);
+        mMediaPlayer.setEnableMediaCodec(mPlayerConfig.enableMediaCodec);
         addDisplay();
     }
 
     protected void addDisplay() {
-        if (useSurfaceView) {
+        if (mPlayerConfig.useSurfaceView) {
             addSurfaceView();
         } else {
             addTextureView();
@@ -109,7 +105,7 @@ public class IjkVideoView extends BaseIjkVideoView {
 
     @Override
     protected void startPlay() {
-        if (addToPlayerManager) {
+        if (mPlayerConfig.addToPlayerManager) {
             VideoViewManager.instance().releaseVideoPlayer();
             VideoViewManager.instance().setCurrentVideoPlayer(this);
         }
@@ -243,7 +239,7 @@ public class IjkVideoView extends BaseIjkVideoView {
         Activity activity = WindowUtil.scanForActivity(mVideoController.getContext());
         if (activity == null) return;
         if (!isFullScreen) return;
-        if (!mAutoRotate) orientationEventListener.disable();
+        if (!mPlayerConfig.mAutoRotate) orientationEventListener.disable();
         WindowUtil.showSystemBar(getContext());
         ViewGroup contentView = activity
                 .findViewById(android.R.id.content);
@@ -264,7 +260,7 @@ public class IjkVideoView extends BaseIjkVideoView {
     @Override
     public void onPrepared() {
         super.onPrepared();
-        if (useAndroidMediaPlayer) mMediaPlayer.start();
+        if (mPlayerConfig.useAndroidMediaPlayer) mMediaPlayer.start();
     }
 
     @Override
@@ -296,7 +292,7 @@ public class IjkVideoView extends BaseIjkVideoView {
 
     @Override
     public void onVideoSizeChanged(int videoWidth, int videoHeight) {
-        if (useSurfaceView) {
+        if (mPlayerConfig.useSurfaceView) {
             mSurfaceView.setScreenScale(mCurrentScreenScale);
             mSurfaceView.setVideoSize(videoWidth, videoHeight);
         } else {
@@ -308,7 +304,7 @@ public class IjkVideoView extends BaseIjkVideoView {
     /**
      * 设置控制器
      */
-    public IjkVideoView setVideoController(@Nullable BaseVideoController mediaController) {
+    public void setVideoController(@Nullable BaseVideoController mediaController) {
         playerContainer.removeView(mVideoController);
         if (mediaController != null) {
             mediaController.setMediaPlayer(this);
@@ -318,7 +314,6 @@ public class IjkVideoView extends BaseIjkVideoView {
                     ViewGroup.LayoutParams.MATCH_PARENT);
             playerContainer.addView(mVideoController, params);
         }
-        return this;
     }
     /**
      * 改变返回键逻辑，用于activity
@@ -330,44 +325,25 @@ public class IjkVideoView extends BaseIjkVideoView {
     /**
      * 设置视频地址
      */
-    public IjkVideoView setUrl(String url) {
+    public void setUrl(String url) {
         this.mCurrentUrl = url;
-        return this;
     }
 
     /**
      * 一开始播放就seek到预先设置好的位置
      */
-    public IjkVideoView skipPositionWhenPlay(String url, int position) {
+    public void skipPositionWhenPlay(String url, int position) {
         this.mCurrentUrl = url;
         this.mCurrentPosition = position;
-        return this;
     }
 
     /**
      * 设置标题
      */
-    public IjkVideoView setTitle(String title) {
+    public void setTitle(String title) {
         if (title != null) {
             this.mCurrentTitle = title;
         }
-        return this;
-    }
-
-    /**
-     * 开启缓存
-     */
-    public IjkVideoView enableCache() {
-        isCache = true;
-        return this;
-    }
-
-    /**
-     * 添加到{@link VideoViewManager},如需集成到RecyclerView或ListView请开启此选项
-     */
-    public IjkVideoView addToPlayerManager() {
-        addToPlayerManager = true;
-        return this;
     }
 
     /**
@@ -378,45 +354,5 @@ public class IjkVideoView extends BaseIjkVideoView {
         this.mCurrentScreenScale = screenScale;
         if (mSurfaceView != null) mSurfaceView.setScreenScale(screenScale);
         if (mTextureView != null) mTextureView.setScreenScale(screenScale);
-    }
-
-    /**
-     * 启用SurfaceView
-     */
-    public IjkVideoView useSurfaceView() {
-        this.useSurfaceView = true;
-        return this;
-    }
-
-    /**
-     * 启用{@link android.media.MediaPlayer},如不调用默认使用 {@link IjkMediaPlayer}
-     */
-    public IjkVideoView useAndroidMediaPlayer() {
-        this.useAndroidMediaPlayer = true;
-        return this;
-    }
-
-    /**
-     * 设置自动旋转
-     */
-    public IjkVideoView autoRotate() {
-        this.mAutoRotate = true;
-        return this;
-    }
-
-    /**
-     * 开启循环播放
-     */
-    public IjkVideoView setLooping() {
-        this.isLooping = true;
-        return this;
-    }
-
-    /**
-     * 开启硬解码，只对IjkPlayer有效
-     */
-    public IjkVideoView enableMediaCodec() {
-        this.enableMediaCodec = true;
-        return this;
     }
 }

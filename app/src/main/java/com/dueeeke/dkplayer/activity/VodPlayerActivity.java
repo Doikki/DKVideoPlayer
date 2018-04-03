@@ -45,15 +45,8 @@ public class VodPlayerActivity extends AppCompatActivity {
         videos.add(new VideoModel(URL_AD, "广告", new AdController(this)));
         videos.add(new VideoModel(URL_VOD, "这是一个标题", new StandardVideoController(this)));
 
-        ijkVideoView
-                .setVideos(videos)
-//                .autoRotate()
-//                .enableCache()
-//                .useSurfaceView()
-//                .useAndroidMediaPlayer()
-//                .setUrl(URL_VOD)
-//                .setTitle("网易公开课-如何掌控你的自由时间")
-                .start();
+        ijkVideoView.setVideos(videos);
+        ijkVideoView.start();
     }
 
     @Override

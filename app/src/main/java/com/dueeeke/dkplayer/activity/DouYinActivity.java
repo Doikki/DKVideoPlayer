@@ -21,6 +21,7 @@ import com.dueeeke.dkplayer.adapter.DouYinAdapter;
 import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.dkplayer.widget.controller.DouYinController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.PlayerConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,8 +53,9 @@ public class DouYinActivity extends AppCompatActivity {
         setStatusBarTransparent();
 
         mIjkVideoView = new IjkVideoView(this);
+        PlayerConfig config = new PlayerConfig.Builder().setLooping().build();
+        mIjkVideoView.setPlayerConfig(config);
         mIjkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_MATCH_PARENT);
-        mIjkVideoView.setLooping();
         mDouYinController = new DouYinController(this);
         mIjkVideoView.setVideoController(mDouYinController);
         mVerticalViewPager = findViewById(R.id.vvp);
@@ -107,7 +109,8 @@ public class DouYinActivity extends AppCompatActivity {
         ImageView imageView = view.findViewById(R.id.thumb);
         mDouYinController.getThumb().setImageDrawable(imageView.getDrawable());
         frameLayout.addView(mIjkVideoView);
-        mIjkVideoView.setUrl(mVideoList.get(mCurrentPosition).getUrl()).start();
+        mIjkVideoView.setUrl(mVideoList.get(mCurrentPosition).getUrl());
+        mIjkVideoView.start();
         mPlayingPosition = mCurrentPosition;
     }
 

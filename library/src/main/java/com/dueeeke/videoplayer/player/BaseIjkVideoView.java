@@ -36,7 +36,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     protected VideoListener listener;
     protected int bufferPercentage;//缓冲百分比
     protected boolean isMute;//是否静音
-    protected boolean useAndroidMediaPlayer;//是否使用AndroidMediaPlayer
 
     protected String mCurrentUrl;//当前播放视频的地址
     protected int mCurrentPosition;//当前正在播放视频的位置
@@ -67,10 +66,8 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     protected static final int LANDSCAPE = 2;
     protected static final int REVERSE_LANDSCAPE = 3;
 
-    protected boolean mAutoRotate;//是否旋转屏幕
     protected boolean isLockFullScreen;//是否锁定屏幕
-    protected boolean isCache;//是否开启缓存
-    protected boolean addToPlayerManager;//是否添加到播放管理器
+    protected PlayerConfig mPlayerConfig;//播放器配置
 
     /**
      * 加速度传感器监听
@@ -95,7 +92,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      * 竖屏
      */
     protected void onOrientationPortrait(Activity activity) {
-        if (isLockFullScreen || !mAutoRotate || currentOrientation == PORTRAIT) return;
+        if (isLockFullScreen || !mPlayerConfig.mAutoRotate || currentOrientation == PORTRAIT) return;
         if ((currentOrientation == LANDSCAPE || currentOrientation == REVERSE_LANDSCAPE) && !isFullScreen()) {
             currentOrientation = PORTRAIT;
             return;
@@ -149,11 +146,12 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     public BaseIjkVideoView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mAudioManager = (AudioManager) getContext().getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+        mPlayerConfig = new PlayerConfig.Builder().build();
     }
 
     protected void initPlayer() {
         if (mMediaPlayer == null) {
-            if (useAndroidMediaPlayer) {
+            if (mPlayerConfig.useAndroidMediaPlayer) {
                 mMediaPlayer = new AndroidMediaEngine();
                 ((AndroidMediaEngine)mMediaPlayer).setMediaEngineInterface(this);
             } else {
@@ -174,8 +172,9 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     protected void startPrepare() {
         if (mCurrentUrl == null || mCurrentUrl.trim().equals("")) return;
         mMediaPlayer.reset();
+        mMediaPlayer.setLooping(mPlayerConfig.isLooping);
         try {
-            if (isCache) {
+            if (mPlayerConfig.isCache) {
                 HttpProxyCacheServer cacheServer = getCacheServer();
                 String proxyPath = cacheServer.getProxyUrl(mCurrentUrl);
                 cacheServer.registerCacheListener(cacheListener, mCurrentUrl);
@@ -216,7 +215,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      * 第一次播放
      */
     protected void startPlay() {
-        if (mAutoRotate) orientationEventListener.enable();
+        if (mPlayerConfig.mAutoRotate) orientationEventListener.enable();
         initPlayer();
         startPrepare();
     }
@@ -264,7 +263,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         }
 
         orientationEventListener.disable();
-        if (isCache) getCacheServer().unregisterCacheListener(cacheListener);
+        if (mPlayerConfig.isCache) getCacheServer().unregisterCacheListener(cacheListener);
 
         isLockFullScreen = false;
         mCurrentPosition = 0;
@@ -281,7 +280,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
             setKeepScreenOn(false);
         }
         orientationEventListener.disable();
-        if (isCache) getCacheServer().unregisterCacheListener(cacheListener);
+        if (mPlayerConfig.isCache) getCacheServer().unregisterCacheListener(cacheListener);
 
         isLockFullScreen = false;
         mCurrentPosition = 0;
@@ -410,7 +409,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
 
     @Override
     public void onBufferingUpdate(int position) {
-        if (!isCache) bufferPercentage = position;
+        if (!mPlayerConfig.isCache) bufferPercentage = position;
     }
 
     @Override
@@ -421,6 +420,10 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         if (mCurrentPosition > 0) {
             seekTo(mCurrentPosition);
         }
+    }
+
+    public void setPlayerConfig(PlayerConfig config) {
+        this.mPlayerConfig = config;
     }
 
     /**

@@ -99,10 +99,9 @@ public class DanmukuVideoView extends IjkVideoView {
     /**
      * 添加弹幕
      */
-    public IjkVideoView addDanmukuView(DanmakuView danmakuView, DanmakuContext context, BaseDanmakuParser parser) {
+    public void addDanmukuView(DanmakuView danmakuView, DanmakuContext context, BaseDanmakuParser parser) {
         this.mDanmakuView = danmakuView;
         this.mContext = context;
         this.mParser = parser;
-        return this;
     }
 }

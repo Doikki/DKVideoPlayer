@@ -21,6 +21,7 @@ import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.widget.CenteredImageSpan;
 import com.dueeeke.dkplayer.widget.videoview.DanmukuVideoView;
 import com.dueeeke.videoplayer.controller.StandardVideoController;
+import com.dueeeke.videoplayer.player.PlayerConfig;
 import com.dueeeke.videoplayer.util.WindowUtil;
 
 import java.util.HashMap;
@@ -62,16 +63,13 @@ public class DanmakuActivity extends AppCompatActivity {
         danmukuVideoView = findViewById(R.id.player);
 
         initDanMuView();
-        danmukuVideoView
-                .addDanmukuView(mDanmakuView, mContext, mParser)
-//                .enableCache()
-//                .useSurfaceView()
-//                .useAndroidMediaPlayer()
-                .autoRotate()
-                .setVideoController(new StandardVideoController(this))
-                .setUrl(URL_VOD)
-                .setTitle("网易公开课-如何掌控你的自由时间")
-                .start();
+        danmukuVideoView.addDanmukuView(mDanmakuView, mContext, mParser);
+        PlayerConfig config = new PlayerConfig.Builder().setLooping().build();
+        danmukuVideoView.setPlayerConfig(config);
+        danmukuVideoView.setVideoController(new StandardVideoController(this));
+        danmukuVideoView.setUrl(URL_VOD);
+        danmukuVideoView.setTitle("网易公开课-如何掌控你的自由时间");
+        danmukuVideoView.start();
     }
 
     @Override
