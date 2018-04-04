@@ -1,4 +1,4 @@
-package com.dueeeke.dkplayer.activity;
+package com.dueeeke.dkplayer.activity.pip;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,27 +7,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.dueeeke.dkplayer.R;
+import com.dueeeke.dkplayer.activity.api.LivePlayerActivity;
 
-/**
- * 基础API相关Demo
- * Created by xinyu on 2018/1/3.
- */
-
-public class ApiActivity extends AppCompatActivity {
+public class PIPDemoActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_api);
+        setContentView(R.layout.acitivity_pip);
     }
 
-    public void skipToVodPlayer(View view) {
-        startActivity(new Intent(this, VodPlayerActivity.class));
-    }
 
-    public void skipToLivePlayer(View view) {
+    public void pip(View view) {
         startActivity(new Intent(this, LivePlayerActivity.class));
     }
 
-
+    public void pipInList(View view) {
+        startActivity(new Intent(this, PIPListActivity.class));
+    }
 }

@@ -1,4 +1,4 @@
-package com.dueeeke.dkplayer.activity;
+package com.dueeeke.dkplayer.activity.list;
 
 import android.content.Intent;
 import android.os.Bundle;

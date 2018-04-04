@@ -1,4 +1,4 @@
-package com.dueeeke.dkplayer.activity;
+package com.dueeeke.dkplayer.activity.list;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

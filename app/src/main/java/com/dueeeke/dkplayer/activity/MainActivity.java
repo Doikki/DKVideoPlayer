@@ -1,10 +1,9 @@
-package com.dueeeke.dkplayer;
+package com.dueeeke.dkplayer.activity;
 
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -16,13 +15,14 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.dueeeke.dkplayer.activity.ApiActivity;
-import com.dueeeke.dkplayer.activity.ExtendActivity;
-import com.dueeeke.dkplayer.activity.ListActivity;
-import com.dueeeke.dkplayer.activity.PlayerActivity;
+import com.dueeeke.dkplayer.PIPManager;
+import com.dueeeke.dkplayer.R;
+import com.dueeeke.dkplayer.activity.api.ApiActivity;
+import com.dueeeke.dkplayer.activity.extend.ExtendActivity;
+import com.dueeeke.dkplayer.activity.list.ListActivity;
+import com.dueeeke.dkplayer.activity.api.PlayerActivity;
+import com.dueeeke.dkplayer.activity.pip.PIPDemoActivity;
 import com.dueeeke.videoplayer.player.VideoCacheManager;
-import com.dueeeke.videoplayer.util.Constants;
-import com.dueeeke.videoplayer.util.KeyUtil;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,17 +36,14 @@ public class MainActivity extends AppCompatActivity {
 
         editText = findViewById(R.id.et);
 
-        ((RadioGroup) findViewById(R.id.rg)).setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
-                switch (checkedId) {
-                    case R.id.vod:
-                        isLive = false;
-                        break;
-                    case R.id.live:
-                        isLive = true;
-                        break;
-                }
+        ((RadioGroup) findViewById(R.id.rg)).setOnCheckedChangeListener((group, checkedId) -> {
+            switch (checkedId) {
+                case R.id.vod:
+                    isLive = false;
+                    break;
+                case R.id.live:
+                    isLive = true;
+                    break;
             }
         });
         //用于将视频缓存到SDCard，如不授权将缓存到/data/data目录
@@ -60,9 +57,8 @@ public class MainActivity extends AppCompatActivity {
         int itemId = item.getItemId();
         switch (itemId) {
             case R.id.close_float_window:
-                Intent intent = new Intent(this, BackgroundPlayService.class);
-                intent.putExtra(KeyUtil.ACTION, Constants.COMMAND_STOP);
-                getApplicationContext().startService(intent);
+                PIPManager.getInstance().stopFloatWindow();
+                PIPManager.getInstance().reset();
                 break;
             case R.id.clear_cache:
                 if (VideoCacheManager.clearAllCache(this)) {
@@ -102,5 +98,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void list(View view) {
         startActivity(new Intent(this, ListActivity.class));
+    }
+
+    public void pip(View view) {
+        startActivity(new Intent(this, PIPDemoActivity.class));
     }
 }

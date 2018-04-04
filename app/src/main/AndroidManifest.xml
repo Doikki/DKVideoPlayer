@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden">
@@ -26,60 +26,70 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.VodPlayerActivity"
+            android:name=".activity.api.VodPlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.LivePlayerActivity"
+            android:name=".activity.api.LivePlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.FullScreenActivity"
+            android:name=".activity.extend.FullScreenActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.RecyclerViewActivity"
+            android:name=".activity.list.RecyclerViewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.PlayerActivity"
+            android:name=".activity.api.PlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.DanmakuActivity"
+            android:name=".activity.extend.DanmakuActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.ListViewActivity"
+            android:name=".activity.list.ListViewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.AutoPlayRecyclerViewActivity"
+            android:name=".activity.list.AutoPlayRecyclerViewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.ListFragmentViewPagerActivity"
+            android:name=".activity.list.ListFragmentViewPagerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.ApiActivity"
+            android:name=".activity.api.ApiActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.ListActivity"
+            android:name=".activity.list.ListActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-        android:name=".activity.ExtendActivity"
-        android:configChanges="keyboardHidden|orientation|screenSize"
-        android:screenOrientation="portrait" />
+            android:name=".activity.extend.ExtendActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.DouYinActivity"
+            android:name=".activity.list.DouYinActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar"/>
-
-        <service android:name="com.dueeeke.dkplayer.BackgroundPlayService"/>
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name=".activity.pip.PIPListActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.pip.PIPDemoActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.extend.ADActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
 
     </application>
 

@@ -1,4 +1,4 @@
-package com.dueeeke.dkplayer.activity;
+package com.dueeeke.dkplayer.activity.extend;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,5 +27,9 @@ public class ExtendActivity extends AppCompatActivity{
 
     public void danmaku(View view) {
         startActivity(new Intent(this, DanmakuActivity.class));
+    }
+
+    public void ad(View view) {
+        startActivity(new Intent(this, ADActivity.class));
     }
 }

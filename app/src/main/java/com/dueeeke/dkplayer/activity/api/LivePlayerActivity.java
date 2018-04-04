@@ -1,4 +1,4 @@
-package com.dueeeke.dkplayer.activity;
+package com.dueeeke.dkplayer.activity.api;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,12 +7,13 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.devlin_n.floatWindowPermission.FloatWindowManager;
+import com.dueeeke.dkplayer.PIPManager;
 import com.dueeeke.dkplayer.R;
-import com.dueeeke.dkplayer.widget.videoview.FloatIjkVideoView;
 import com.dueeeke.videoplayer.controller.StandardVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.player.PlayerConfig;
@@ -24,7 +25,8 @@ import com.dueeeke.videoplayer.player.PlayerConfig;
 
 public class LivePlayerActivity extends AppCompatActivity {
 
-    private FloatIjkVideoView ijkVideoView;
+    private IjkVideoView ijkVideoView;
+    private PIPManager mPIPManager;
     private static final String URL = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
 
     @Override
@@ -36,25 +38,34 @@ public class LivePlayerActivity extends AppCompatActivity {
             actionBar.setTitle("LIVE");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        ijkVideoView = findViewById(R.id.player);
-//        int widthPixels = getResources().getDisplayMetrics().widthPixels;
-//        ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 4 * 3));
-
+        FrameLayout playerContainer = findViewById(R.id.player_container);
+        mPIPManager = PIPManager.getInstance();
+        ijkVideoView = mPIPManager.getIjkVideoView();
         StandardVideoController controller = new StandardVideoController(this);
         controller.setLive();
-        Glide.with(this)
-                .load("http://sh.people.com.cn/NMediaFile/2016/0112/LOCAL201601121344000138197365721.jpg")
-                .asBitmap()
-                .animate(R.anim.anim_alpha_in)
-                .placeholder(android.R.color.darker_gray)
-                .into(controller.getThumb());
-        ijkVideoView.setUrl(URL);
-        ijkVideoView.setTitle("香港卫视");
+        if (mPIPManager.isStartFloatWindow()) {
+            mPIPManager.stopFloatWindow();
+            controller.setPlayerState(ijkVideoView.getCurrentPlayerState());
+            controller.setPlayState(ijkVideoView.getCurrentPlayState());
+        } else {
+            mPIPManager.setActClass(LivePlayerActivity.class);
+//        int widthPixels = getResources().getDisplayMetrics().widthPixels;
+//        ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 4 * 3));
+            Glide.with(this)
+                    .load("http://sh.people.com.cn/NMediaFile/2016/0112/LOCAL201601121344000138197365721.jpg")
+                    .asBitmap()
+                    .animate(R.anim.anim_alpha_in)
+                    .placeholder(android.R.color.darker_gray)
+                    .into(controller.getThumb());
+            ijkVideoView.setUrl(URL);
+            ijkVideoView.setTitle("香港卫视");
+            PlayerConfig config = new PlayerConfig.Builder()
+                    .autoRotate()
+                    .build();
+            ijkVideoView.setPlayerConfig(config);
+        }
         ijkVideoView.setVideoController(controller);
-        PlayerConfig config = new PlayerConfig.Builder()
-                .autoRotate()
-                .build();
-        ijkVideoView.setPlayerConfig(config);
+        playerContainer.addView(ijkVideoView);
     }
 
     @Override
@@ -68,35 +79,34 @@ public class LivePlayerActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        ijkVideoView.pause();
+        mPIPManager.pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        ijkVideoView.resume();
-        ijkVideoView.stopFloatWindow();
+        mPIPManager.resume();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ijkVideoView.release();
+        mPIPManager.reset();
     }
 
 
     @Override
     public void onBackPressed() {
-        if (!ijkVideoView.onBackPressed()) {
-            super.onBackPressed();
-        }
+        if (mPIPManager.onBackPress()) return;
+        super.onBackPressed();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == FloatWindowManager.PERMISSION_REQUEST_CODE) {
             if (FloatWindowManager.getInstance().checkPermission(this)) {
-                ijkVideoView.startFloatWindow();
+                mPIPManager.startFloatWindow();
+                finish();
             } else {
                 Toast.makeText(LivePlayerActivity.this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
             }
@@ -104,7 +114,12 @@ public class LivePlayerActivity extends AppCompatActivity {
     }
 
     public void startFloatWindow(View view) {
-        ijkVideoView.startFloatWindow();
+        if (FloatWindowManager.getInstance().checkPermission(this)) {
+            mPIPManager.startFloatWindow();
+            finish();
+        } else {
+            FloatWindowManager.getInstance().applyPermission(this);
+        }
     }
 
     public void screenScaleDefault(View view) {

@@ -11,12 +11,19 @@ import com.squareup.leakcanary.LeakCanary;
 
 public class MyApplication extends Application{
 
+    public static MyApplication instance;
+
     @Override
     public void onCreate() {
         super.onCreate();
+        instance = this;
         if (LeakCanary.isInAnalyzerProcess(this)) {
             return;
         }
         LeakCanary.install(this);
+    }
+
+    public static MyApplication getInstance() {
+        return instance;
     }
 }

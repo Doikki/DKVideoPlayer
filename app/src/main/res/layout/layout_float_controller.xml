@@ -27,5 +27,11 @@
         android:layout_gravity="end"
         android:layout_margin="4dp"
         android:src="@drawable/ic_action_close" />
+    <ImageView
+        android:id="@+id/btn_skip"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_margin="4dp"
+        android:src="@drawable/ic_action_fullscreen" />
 
 </FrameLayout>

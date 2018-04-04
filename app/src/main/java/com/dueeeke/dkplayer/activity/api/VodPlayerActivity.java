@@ -1,6 +1,5 @@
-package com.dueeeke.dkplayer.activity;
+package com.dueeeke.dkplayer.activity.api;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
@@ -13,13 +12,14 @@ import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.player.PlayerConfig;
 
 /**
- * 播放其他链接
+ * 点播播放
  * Created by Devlin_n on 2017/4/7.
  */
 
-public class PlayerActivity extends AppCompatActivity {
+public class VodPlayerActivity extends AppCompatActivity {
 
     private IjkVideoView ijkVideoView;
+    private static final String URL_VOD = "http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -27,24 +27,21 @@ public class PlayerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_vod_player);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle("Player");
+            actionBar.setTitle("VOD");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         ijkVideoView = findViewById(R.id.player);
-
-        Intent intent = getIntent();
-        if (intent != null) {
-            StandardVideoController controller = new StandardVideoController(this);
-            boolean isLive = intent.getBooleanExtra("isLive", false);
-            if (isLive) {
-                controller.setLive();
-            }
-            PlayerConfig config = new PlayerConfig.Builder().autoRotate().build();
-            ijkVideoView.setPlayerConfig(config);
-            ijkVideoView.setUrl(intent.getStringExtra("url"));
-            ijkVideoView.setVideoController(controller);
-            ijkVideoView.start();
-        }
+        ijkVideoView.setUrl(URL_VOD);
+        ijkVideoView.setTitle("这是一个标题");
+        ijkVideoView.setVideoController(new StandardVideoController(this));
+        ijkVideoView.setPlayerConfig(new PlayerConfig.Builder()
+                .autoRotate()//自动旋转屏幕
+                .enableCache()//启用边播边存
+//                .enableMediaCodec()//启动硬解码
+//                .useAndroidMediaPlayer()//使用AndroidMediaPlayer
+//                .useSurfaceView()//使用SurfaceView
+                .build());
+        ijkVideoView.start();//不调用则不自动播放
     }
 
     @Override

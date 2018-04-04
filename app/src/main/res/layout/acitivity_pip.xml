@@ -2,20 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="startFullScreen"
-        android:text="FULLSCREEN DIRECTLY" />
+        android:onClick="pip"
+        android:text="PIP" />
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="danmaku"
-        android:text="DANMU" />
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="ad"
-        android:text="AD" />
+        android:onClick="pipInList"
+        android:text="PIP IN LIST" />
 </LinearLayout>

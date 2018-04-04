@@ -212,6 +212,7 @@ public class IjkVideoView extends BaseIjkVideoView {
             mSurfaceTexture.release();
             mSurfaceTexture = null;
         }
+        mCurrentScreenScale = SCREEN_SCALE_DEFAULT;
     }
 
     @Override
@@ -220,7 +221,7 @@ public class IjkVideoView extends BaseIjkVideoView {
         Activity activity = WindowUtil.scanForActivity(mVideoController.getContext());
         if (activity == null) return;
         if (isFullScreen) return;
-        WindowUtil.hideSystemBar(getContext());
+        WindowUtil.hideSystemBar(mVideoController.getContext());
         this.removeView(playerContainer);
         ViewGroup contentView = activity
                 .findViewById(android.R.id.content);
@@ -231,6 +232,7 @@ public class IjkVideoView extends BaseIjkVideoView {
         orientationEventListener.enable();
         isFullScreen = true;
         mVideoController.setPlayerState(PLAYER_FULL_SCREEN);
+        mCurrentPlayerState = PLAYER_FULL_SCREEN;
     }
 
     @Override
@@ -240,7 +242,7 @@ public class IjkVideoView extends BaseIjkVideoView {
         if (activity == null) return;
         if (!isFullScreen) return;
         if (!mPlayerConfig.mAutoRotate) orientationEventListener.disable();
-        WindowUtil.showSystemBar(getContext());
+        WindowUtil.showSystemBar(mVideoController.getContext());
         ViewGroup contentView = activity
                 .findViewById(android.R.id.content);
         contentView.removeView(playerContainer);
@@ -249,7 +251,8 @@ public class IjkVideoView extends BaseIjkVideoView {
                 ViewGroup.LayoutParams.MATCH_PARENT);
         this.addView(playerContainer, params);
         isFullScreen = false;
-        if (mVideoController != null) mVideoController.setPlayerState(PLAYER_NORMAL);
+        mVideoController.setPlayerState(PLAYER_NORMAL);
+        mCurrentPlayerState = PLAYER_NORMAL;
     }
 
     @Override
@@ -315,6 +318,7 @@ public class IjkVideoView extends BaseIjkVideoView {
             playerContainer.addView(mVideoController, params);
         }
     }
+
     /**
      * 改变返回键逻辑，用于activity
      */

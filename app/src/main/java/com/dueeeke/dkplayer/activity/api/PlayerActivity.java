@@ -1,5 +1,6 @@
-package com.dueeeke.dkplayer.activity;
+package com.dueeeke.dkplayer.activity.api;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
@@ -7,26 +8,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.dueeeke.dkplayer.R;
-import com.dueeeke.dkplayer.bean.VideoModel;
-import com.dueeeke.dkplayer.widget.controller.AdController;
-import com.dueeeke.dkplayer.widget.videoview.ListIjkVideoView;
 import com.dueeeke.videoplayer.controller.StandardVideoController;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.PlayerConfig;
 
 /**
- * 点播播放
+ * 播放其他链接
  * Created by Devlin_n on 2017/4/7.
  */
 
-public class VodPlayerActivity extends AppCompatActivity {
+public class PlayerActivity extends AppCompatActivity {
 
-    private ListIjkVideoView ijkVideoView;
-    private static final String URL_VOD = "http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv";
-//    private static final String URL_VOD = "http://baobab.wdjcdn.com/14564977406580.mp4";
-    //    private static final String URL_VOD = "http://uploads.cutv.com:8088/video/data/201703/10/encode_file/515b6a95601ba6b39620358f2677a17358c2472411d53.mp4";
-    private static final String URL_AD = "http://gslb.miaopai.com/stream/FQXM04zrW1dcXGiPdJ6Q3KAq2Fpv4TLV.mp4";
+    private IjkVideoView ijkVideoView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,19 +27,24 @@ public class VodPlayerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_vod_player);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle("VOD");
+            actionBar.setTitle("Player");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         ijkVideoView = findViewById(R.id.player);
-//        int widthPixels = getResources().getDisplayMetrics().widthPixels;
-//        ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 16 * 9));
 
-        List<VideoModel> videos = new ArrayList<>();
-        videos.add(new VideoModel(URL_AD, "广告", new AdController(this)));
-        videos.add(new VideoModel(URL_VOD, "这是一个标题", new StandardVideoController(this)));
-
-        ijkVideoView.setVideos(videos);
-        ijkVideoView.start();
+        Intent intent = getIntent();
+        if (intent != null) {
+            StandardVideoController controller = new StandardVideoController(this);
+            boolean isLive = intent.getBooleanExtra("isLive", false);
+            if (isLive) {
+                controller.setLive();
+            }
+            PlayerConfig config = new PlayerConfig.Builder().autoRotate().build();
+            ijkVideoView.setPlayerConfig(config);
+            ijkVideoView.setUrl(intent.getStringExtra("url"));
+            ijkVideoView.setVideoController(controller);
+            ijkVideoView.start();
+        }
     }
 
     @Override

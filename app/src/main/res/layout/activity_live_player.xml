@@ -4,11 +4,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.dueeeke.dkplayer.widget.videoview.FloatIjkVideoView
-        android:id="@+id/player"
+    <FrameLayout
+        android:id="@+id/player_container"
         android:layout_width="match_parent"
-        android:layout_height="300dp" />
+        android:layout_height="300dp">
 
+    </FrameLayout>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

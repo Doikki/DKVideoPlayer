@@ -1,6 +1,7 @@
 package com.dueeeke.dkplayer.widget.controller;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -11,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.dueeeke.dkplayer.R;
-import com.dueeeke.dkplayer.interf.FloatMediaControl;
+import com.dueeeke.dkplayer.PIPManager;
 import com.dueeeke.videoplayer.controller.GestureVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 
@@ -45,6 +46,7 @@ public class FloatController extends GestureVideoController implements View.OnCl
         super.initView();
         this.setOnClickListener(this);
         controllerView.findViewById(R.id.btn_close).setOnClickListener(this);
+        controllerView.findViewById(R.id.btn_skip).setOnClickListener(this);
         proLoading = controllerView.findViewById(R.id.loading);
         playButton = controllerView.findViewById(R.id.start_play);
         playButton.setOnClickListener(this);
@@ -54,9 +56,13 @@ public class FloatController extends GestureVideoController implements View.OnCl
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.btn_close) {
-            ((FloatMediaControl) mediaPlayer).stopFloatWindow();
+            PIPManager.getInstance().stopFloatWindow();
+            PIPManager.getInstance().reset();
         } else if (id == R.id.start_play) {
             doPauseResume();
+        } else if (id == R.id.btn_skip) {
+            if (PIPManager.getInstance().getActClass() != null)
+                getContext().startActivity(new Intent(getContext(), PIPManager.getInstance().getActClass()));
         }
     }
 

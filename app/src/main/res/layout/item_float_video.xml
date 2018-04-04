@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp">
+        <FrameLayout
+            android:id="@+id/player_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/layout_thumb"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/thumb"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+            <ImageView
+                android:layout_width="@dimen/player_play_btn_size"
+                android:layout_height="@dimen/player_play_btn_size"
+                android:layout_gravity="center"
+                android:background="@drawable/shape_play_bg"
+                android:padding="@dimen/default_spacing"
+                android:src="@drawable/selector_play_button" />
+        </FrameLayout>
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:gravity="center_vertical"
+        android:padding="10dp"
+        tools:text="这是一个标题"/>
+
+</LinearLayout>

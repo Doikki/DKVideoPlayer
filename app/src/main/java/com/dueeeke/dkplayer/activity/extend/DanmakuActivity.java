@@ -1,4 +1,4 @@
-package com.dueeeke.dkplayer.activity;
+package com.dueeeke.dkplayer.activity.extend;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
