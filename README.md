@@ -12,6 +12,7 @@ A video player based on [IjkPlayer](https://github.com/Bilibili/ijkplayer).
 * **支持边播边缓存，使用了[AndroidVideoCache](https://github.com/danikula/AndroidVideoCache)。**
 * **完美实现列表播放（RecyclerView和ListView）。**
 * **支持列表自动播放。**
+* **支持列表小窗悬浮播放。**
 * **支持封面。**
 * **支持锁定/解锁全屏。**
 * **支持调整显示比例:默认、原始大小、16:9、4:3、铺满屏幕。**
@@ -41,7 +42,7 @@ Step 1.Add it in your root build.gradle at the end of repositories:
 Step 2. Add the dependency
 
 	dependencies {
-	        compile 'com.github.dueeeke:dkplayer:1.5'
+	        compile 'com.github.dueeeke:dkplayer:2.0'
 	}
 ```
 或者将library下载并导入项目中使用

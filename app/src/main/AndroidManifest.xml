@@ -26,14 +26,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.api.VodPlayerActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.api.LivePlayerActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".activity.extend.FullScreenActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
@@ -88,6 +80,10 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.extend.ADActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.pip.PIPActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
 

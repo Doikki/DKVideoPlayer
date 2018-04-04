@@ -7,19 +7,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.dueeeke.dkplayer.R;
-import com.dueeeke.dkplayer.activity.api.LivePlayerActivity;
 
 public class PIPDemoActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.acitivity_pip);
+        setContentView(R.layout.activity_pip_demo);
     }
 
 
     public void pip(View view) {
-        startActivity(new Intent(this, LivePlayerActivity.class));
+        startActivity(new Intent(this, PIPActivity.class));
     }
 
     public void pipInList(View view) {

@@ -276,7 +276,6 @@ public class IjkVideoView extends BaseIjkVideoView {
         statusView.setMessage(getResources().getString(R.string.error_message));
         statusView.setButtonTextAndAction(getResources().getString(R.string.retry), v -> {
             playerContainer.removeView(statusView);
-            mMediaPlayer.reset();
             startPrepare();
         });
         playerContainer.addView(statusView);

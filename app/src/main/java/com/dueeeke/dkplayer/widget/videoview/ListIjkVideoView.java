@@ -42,7 +42,6 @@ public class ListIjkVideoView extends IjkVideoView implements ListMediaPlayerCon
                 return;
             }
             playNext();
-            mMediaPlayer.reset();
             addDisplay();
             startPrepare();
         }
@@ -79,7 +78,6 @@ public class ListIjkVideoView extends IjkVideoView implements ListMediaPlayerCon
         if (mVideoModels != null && mVideoModels.size() > 1) {
             if (mCurrentVideoPosition >= mVideoModels.size()) return;
             playNext();
-            mMediaPlayer.reset();
             addDisplay();
             startPrepare();
         }
