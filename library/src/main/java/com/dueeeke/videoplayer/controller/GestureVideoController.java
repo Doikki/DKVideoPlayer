@@ -8,7 +8,6 @@ import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -26,8 +25,6 @@ public abstract class GestureVideoController extends BaseVideoController{
 
     protected GestureDetector mGestureDetector;
     protected boolean gestureEnabled;
-    private float downX;
-    private float downY;
     protected CenterView mCenterView;
     protected AudioManager mAudioManager;
 
@@ -52,28 +49,6 @@ public abstract class GestureVideoController extends BaseVideoController{
         mAudioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
         mGestureDetector = new GestureDetector(getContext(), new MyGestureListener());
         this.setOnTouchListener((v, event) -> mGestureDetector.onTouchEvent(event));
-    }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        switch (ev.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                downX = ev.getX();
-                downY = ev.getY();
-                // True if the child does not want the parent to intercept touch events.
-                getParent().requestDisallowInterceptTouchEvent(true);
-                break;
-            case MotionEvent.ACTION_MOVE:
-                float absDeltaX = Math.abs(ev.getX() - downX);
-                float absDeltaY = Math.abs(ev.getY() - downY);
-                if (absDeltaX > ViewConfiguration.get(getContext()).getScaledTouchSlop() ||
-                        absDeltaY > ViewConfiguration.get(getContext()).getScaledTouchSlop()) {
-                    getParent().requestDisallowInterceptTouchEvent(false);
-                }
-            case MotionEvent.ACTION_UP:
-                break;
-        }
-        return super.dispatchTouchEvent(ev);
     }
 
     protected int streamVolume;

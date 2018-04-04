@@ -1,4 +1,4 @@
-package com.dueeeke.dkplayer.activity;
+package com.dueeeke.dkplayer.activity.api;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +15,9 @@ import com.dueeeke.dkplayer.R;
 
 public class ApiActivity extends AppCompatActivity {
 
+    private static final String VOD_URL = "http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv";
+    private static final String LIVE_URL = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,12 +25,16 @@ public class ApiActivity extends AppCompatActivity {
     }
 
     public void skipToVodPlayer(View view) {
-        startActivity(new Intent(this, VodPlayerActivity.class));
+        Intent intent = new Intent(this, PlayerActivity.class);
+        intent.putExtra("url", VOD_URL);
+        intent.putExtra("isLive", false);
+        startActivity(intent);
     }
 
     public void skipToLivePlayer(View view) {
-        startActivity(new Intent(this, LivePlayerActivity.class));
+        Intent intent = new Intent(this, PlayerActivity.class);
+        intent.putExtra("url", LIVE_URL);
+        intent.putExtra("isLive", true);
+        startActivity(intent);
     }
-
-
 }

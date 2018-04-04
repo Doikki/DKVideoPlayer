@@ -42,7 +42,6 @@ public class ListIjkVideoView extends IjkVideoView implements ListMediaPlayerCon
                 return;
             }
             playNext();
-            mMediaPlayer.reset();
             addDisplay();
             startPrepare();
         }
@@ -65,10 +64,9 @@ public class ListIjkVideoView extends IjkVideoView implements ListMediaPlayerCon
     /**
      * 设置一个列表的视频
      */
-    public IjkVideoView setVideos(List<VideoModel> videoModels) {
+    public void setVideos(List<VideoModel> videoModels) {
         this.mVideoModels = videoModels;
         playNext();
-        return this;
     }
 
     /**
@@ -80,7 +78,6 @@ public class ListIjkVideoView extends IjkVideoView implements ListMediaPlayerCon
         if (mVideoModels != null && mVideoModels.size() > 1) {
             if (mCurrentVideoPosition >= mVideoModels.size()) return;
             playNext();
-            mMediaPlayer.reset();
             addDisplay();
             startPrepare();
         }

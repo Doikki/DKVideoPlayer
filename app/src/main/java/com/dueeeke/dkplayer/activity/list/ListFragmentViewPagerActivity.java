@@ -1,4 +1,4 @@
-package com.dueeeke.dkplayer.activity;
+package com.dueeeke.dkplayer.activity.list;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,7 +10,7 @@ import android.view.MenuItem;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.adapter.MyPagerAdapter;
-import com.dueeeke.dkplayer.fragment.ListViewFragment;
+import com.dueeeke.dkplayer.fragment.RecyclerViewFragment;
 import com.dueeeke.videoplayer.player.VideoViewManager;
 
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ public class ListFragmentViewPagerActivity extends AppCompatActivity implements 
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
     private List<String> titles = new ArrayList<>();
-    private List<ListViewFragment> mFragmentList = new ArrayList<>();
+    private List<RecyclerViewFragment> mFragmentList = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,7 +59,7 @@ public class ListFragmentViewPagerActivity extends AppCompatActivity implements 
         titles.add("List3");
 
         for (int i = 0; i < titles.size(); i++) {
-            mFragmentList.add(ListViewFragment.newInstance());
+            mFragmentList.add(RecyclerViewFragment.newInstance());
         }
 
         mViewPager.setAdapter(new MyPagerAdapter(getSupportFragmentManager(), mFragmentList, titles));

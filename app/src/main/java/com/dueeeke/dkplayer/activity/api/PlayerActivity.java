@@ -1,4 +1,4 @@
-package com.dueeeke.dkplayer.activity;
+package com.dueeeke.dkplayer.activity.api;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,10 +6,12 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videoplayer.controller.StandardVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.PlayerConfig;
 
 /**
  * 播放其他链接
@@ -23,13 +25,13 @@ public class PlayerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_vod_player);
+        setContentView(R.layout.activity_player);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle("Player");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        ijkVideoView = (IjkVideoView) findViewById(R.id.player);
+        ijkVideoView = findViewById(R.id.player);
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -38,12 +40,16 @@ public class PlayerActivity extends AppCompatActivity {
             if (isLive) {
                 controller.setLive();
             }
-            ijkVideoView
-                    .autoRotate()
-//                    .useAndroidMediaPlayer()
-                    .setUrl(intent.getStringExtra("url"))
-                    .setVideoController(controller)
-                    .start();
+            ijkVideoView.setPlayerConfig(new PlayerConfig.Builder()
+                    .autoRotate()//自动旋转屏幕
+//                    .enableCache()//启用边播边存
+//                .enableMediaCodec()//启动硬解码
+//                .useAndroidMediaPlayer()//使用AndroidMediaPlayer
+//                .useSurfaceView()//使用SurfaceView
+                    .build());
+            ijkVideoView.setUrl(intent.getStringExtra("url"));
+            ijkVideoView.setVideoController(controller);
+            ijkVideoView.start();
         }
     }
 
@@ -78,5 +84,25 @@ public class PlayerActivity extends AppCompatActivity {
         if (!ijkVideoView.onBackPressed()) {
             super.onBackPressed();
         }
+    }
+
+    public void screenScaleDefault(View view) {
+        ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_DEFAULT);
+    }
+
+    public void screenScale169(View view) {
+        ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_16_9);
+    }
+
+    public void screenScale43(View view) {
+        ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_4_3);
+    }
+
+    public void screenScaleOriginal(View view) {
+        ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_ORIGINAL);
+    }
+
+    public void screenScaleMatch(View view) {
+        ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_MATCH_PARENT);
     }
 }

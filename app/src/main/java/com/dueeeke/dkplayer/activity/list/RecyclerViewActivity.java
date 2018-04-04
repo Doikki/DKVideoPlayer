@@ -1,6 +1,5 @@
-package com.dueeeke.dkplayer.activity;
+package com.dueeeke.dkplayer.activity.list;
 
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
@@ -20,14 +19,11 @@ import com.dueeeke.videoplayer.player.VideoViewManager;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
-
 /**
- * 自动播放
  * Created by Devlin_n on 2017/5/31.
  */
 
-public class AutoPlayRecyclerViewActivity extends AppCompatActivity {
+public class RecyclerViewActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -35,7 +31,7 @@ public class AutoPlayRecyclerViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_recycler_view);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle("AUTO PLAY RECYCLER VIEW");
+            actionBar.setTitle("RECYCLER");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         initView();
@@ -51,8 +47,7 @@ public class AutoPlayRecyclerViewActivity extends AppCompatActivity {
 
     private void initView() {
         RecyclerView recyclerView = findViewById(R.id.rv);
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new VideoRecyclerViewAdapter(getVideoList(), this));
         recyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
             @Override
@@ -71,55 +66,6 @@ public class AutoPlayRecyclerViewActivity extends AppCompatActivity {
                 }
             }
         });
-
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-
-            int firstVisibleItem, lastVisibleItem, visibleCount;
-
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-
-                switch (newState) {
-                    case SCROLL_STATE_IDLE: //滚动停止
-                        autoPlayVideo(recyclerView);
-                        break;
-                }
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                firstVisibleItem = layoutManager.findFirstVisibleItemPosition();
-                lastVisibleItem = layoutManager.findLastVisibleItemPosition();
-                visibleCount = lastVisibleItem - firstVisibleItem;//记录可视区域item个数
-            }
-
-            private void autoPlayVideo(RecyclerView view) {
-                //循环遍历可视区域videoview,如果完全可见就开始播放
-                for (int i = 0; i < visibleCount; i++) {
-                    if (view == null || view.getChildAt(i) == null) continue;
-                    IjkVideoView ijkVideoView = view.getChildAt(i).findViewById(R.id.video_player);
-                    if (ijkVideoView != null) {
-                        Rect rect = new Rect();
-                        ijkVideoView.getLocalVisibleRect(rect);
-                        int videoHeight = ijkVideoView.getHeight();
-                        if (rect.top == 0 && rect.bottom == videoHeight) {
-                            ijkVideoView.start();
-                            return;
-                        }
-                    }
-                }
-            }
-        });
-
-        recyclerView.post(() -> {
-            //自动播放第一个
-            View view = recyclerView.getChildAt(0);
-            IjkVideoView ijkVideoView = view.findViewById(R.id.video_player);
-            ijkVideoView.start();
-        });
-
     }
 
     public List<VideoBean> getVideoList() {
@@ -178,10 +124,7 @@ public class AutoPlayRecyclerViewActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        IjkVideoView currentVideoPlayer = VideoViewManager.instance().getCurrentVideoPlayer();
-        if (currentVideoPlayer != null){
-            currentVideoPlayer.release();
-        }
+        VideoViewManager.instance().releaseVideoPlayer();
     }
 
     @Override

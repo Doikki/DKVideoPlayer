@@ -11,6 +11,7 @@ import com.dueeeke.videoplayer.controller.StandardVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.bean.VideoBean;
+import com.dueeeke.videoplayer.player.PlayerConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,14 +53,10 @@ public class VideoListViewAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        viewHolder.ijkVideoView
-                .enableCache()
-                .autoRotate()
-//                    .useAndroidMediaPlayer()
-                .addToPlayerManager()
-                .setUrl(videoBean.getUrl())
-                .setTitle(videoBean.getTitle())
-                .setVideoController(viewHolder.controller);
+        viewHolder.ijkVideoView.setPlayerConfig(viewHolder.mPlayerConfig);
+        viewHolder.ijkVideoView.setUrl(videoBean.getUrl());
+        viewHolder.ijkVideoView.setTitle(videoBean.getTitle());
+        viewHolder.ijkVideoView.setVideoController(viewHolder.controller);
         Glide.with(context)
                 .load(videoBean.getThumb())
                 .crossFade()
@@ -73,10 +70,16 @@ public class VideoListViewAdapter extends BaseAdapter {
     private class ViewHolder {
         private IjkVideoView ijkVideoView;
         private StandardVideoController controller;
+        private PlayerConfig mPlayerConfig;
 
         ViewHolder(View itemView) {
-            this.ijkVideoView = (IjkVideoView) itemView.findViewById(R.id.video_player);
+            this.ijkVideoView = itemView.findViewById(R.id.video_player);
             controller = new StandardVideoController(context);
+            mPlayerConfig = new PlayerConfig.Builder()
+                    .enableCache()
+                    .autoRotate()
+                    .addToPlayerManager()
+                    .build();
         }
     }
 }

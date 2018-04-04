@@ -9,10 +9,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.dueeeke.videoplayer.controller.StandardVideoController;
-import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.bean.VideoBean;
+import com.dueeeke.videoplayer.controller.StandardVideoController;
+import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.PlayerConfig;
 
 import java.util.List;
 
@@ -43,17 +44,12 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
                     .crossFade()
                     .placeholder(android.R.color.darker_gray)
                     .into(holder.controller.getThumb());
-            holder.ijkVideoView
-                    .enableCache()
-                    .autoRotate()
-                    .useAndroidMediaPlayer()
-                    .addToPlayerManager()
-                    .setUrl(videoBean.getUrl())
-                    .setTitle(videoBean.getTitle())
-                    .setVideoController(holder.controller);
+            holder.ijkVideoView.setPlayerConfig(holder.mPlayerConfig);
+            holder.ijkVideoView.setUrl(videoBean.getUrl());
+            holder.ijkVideoView.setTitle(videoBean.getTitle());
+            holder.ijkVideoView.setVideoController(holder.controller);
             holder.title.setText(videoBean.getTitle());
             holder.ijkVideoView.setTag(position);
-
         }
 
         @Override
@@ -66,6 +62,7 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
             private IjkVideoView ijkVideoView;
             private StandardVideoController controller;
             private TextView title;
+            private PlayerConfig mPlayerConfig;
 
             VideoHolder(View itemView) {
                 super(itemView);
@@ -75,6 +72,12 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
                 controller = new StandardVideoController(context);
                 ijkVideoView.setVideoController(controller);
                 title = itemView.findViewById(R.id.tv_title);
+                mPlayerConfig = new PlayerConfig.Builder()
+                        .enableCache()
+                        .autoRotate()
+                        .addToPlayerManager()
+                        .useAndroidMediaPlayer()
+                        .build();
             }
         }
     }

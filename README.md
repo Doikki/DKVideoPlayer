@@ -12,6 +12,7 @@ A video player based on [IjkPlayer](https://github.com/Bilibili/ijkplayer).
 * **支持边播边缓存，使用了[AndroidVideoCache](https://github.com/danikula/AndroidVideoCache)。**
 * **完美实现列表播放（RecyclerView和ListView）。**
 * **支持列表自动播放。**
+* **支持列表小窗悬浮播放。**
 * **支持封面。**
 * **支持锁定/解锁全屏。**
 * **支持调整显示比例:默认、原始大小、16:9、4:3、铺满屏幕。**
@@ -41,7 +42,7 @@ Step 1.Add it in your root build.gradle at the end of repositories:
 Step 2. Add the dependency
 
 	dependencies {
-	        compile 'com.github.dueeeke:dkplayer:1.5'
+	        compile 'com.github.dueeeke:dkplayer:2.0'
 	}
 ```
 或者将library下载并导入项目中使用
@@ -56,17 +57,20 @@ Step 2. Add the dependency
 
 3.设置视频地址、标题、Controller等
 ```java
-ijkVideoView = (IjkVideoView) findViewById(R.id.player);
+ijkVideoView.setUrl(URL_VOD); //设置视频地址
+ijkVideoView.setTitle("网易公开课-如何掌控你的自由时间"); //设置视频标题
 StandardVideoController controller = new StandardVideoController(this);
-ijkVideoView
-        .autoRotate() //启用重力感应自动进入/推出全屏功能
+ijkVideoView.setVideoController(controller); //设置控制器，如需定制可继承BaseVideoController
+ijkVideoView.start(); //开始播放，不调用则不自动播放
+
+//高级设置（可选，须在start()之前调用方可生效）
+PlayerConfig playerConfig = new PlayerConfig.Builder()
         .enableCache() //启用边播边缓存功能
+        .autoRotate() //启用重力感应自动进入/退出全屏功能
+        .useAndroidMediaPlayer()//启动AndroidMediaPlayer，不调用此方法默认使用IjkPlayer
         .useSurfaceView() //启用SurfaceView显示视频，不调用默认使用TextureView
-        .useAndroidMediaPlayer() //启动AndroidMediaPlayer，不调用此方法默认使用IjkPlayer
-        .setUrl(URL_VOD) //设置视频地址
-        .setTitle("网易公开课-如何掌控你的自由时间") //设置视频标题
-        .setVideoController(controller) //设置控制器，如需定制可继承BaseVideoController
-        .start(); //开始播放，不调用则不自动播放
+        .build();
+ijkVideoView.setPlayerConfig(playerConfig);
 ```
 
 4.在`Activity`中

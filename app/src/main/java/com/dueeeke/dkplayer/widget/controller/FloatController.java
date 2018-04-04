@@ -1,15 +1,18 @@
 package com.dueeeke.dkplayer.widget.controller;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.dueeeke.dkplayer.R;
-import com.dueeeke.dkplayer.interf.FloatMediaControl;
+import com.dueeeke.dkplayer.PIPManager;
 import com.dueeeke.videoplayer.controller.GestureVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 
@@ -43,6 +46,7 @@ public class FloatController extends GestureVideoController implements View.OnCl
         super.initView();
         this.setOnClickListener(this);
         controllerView.findViewById(R.id.btn_close).setOnClickListener(this);
+        controllerView.findViewById(R.id.btn_skip).setOnClickListener(this);
         proLoading = controllerView.findViewById(R.id.loading);
         playButton = controllerView.findViewById(R.id.start_play);
         playButton.setOnClickListener(this);
@@ -52,9 +56,13 @@ public class FloatController extends GestureVideoController implements View.OnCl
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.btn_close) {
-            ((FloatMediaControl)mediaPlayer).stopFloatWindow();
+            PIPManager.getInstance().stopFloatWindow();
+            PIPManager.getInstance().reset();
         } else if (id == R.id.start_play) {
             doPauseResume();
+        } else if (id == R.id.btn_skip) {
+            if (PIPManager.getInstance().getActClass() != null)
+                getContext().startActivity(new Intent(getContext(), PIPManager.getInstance().getActClass()));
         }
     }
 
@@ -130,5 +138,30 @@ public class FloatController extends GestureVideoController implements View.OnCl
             playButton.setVisibility(GONE);
             mShowing = false;
         }
+    }
+
+    private float downX;
+    private float downY;
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                downX = ev.getX();
+                downY = ev.getY();
+                // True if the child does not want the parent to intercept touch events.
+                getParent().requestDisallowInterceptTouchEvent(true);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                float absDeltaX = Math.abs(ev.getX() - downX);
+                float absDeltaY = Math.abs(ev.getY() - downY);
+                if (absDeltaX > ViewConfiguration.get(getContext()).getScaledTouchSlop() ||
+                        absDeltaY > ViewConfiguration.get(getContext()).getScaledTouchSlop()) {
+                    getParent().requestDisallowInterceptTouchEvent(false);
+                }
+            case MotionEvent.ACTION_UP:
+                break;
+        }
+        return super.dispatchTouchEvent(ev);
     }
 }

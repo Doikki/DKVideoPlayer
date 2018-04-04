@@ -153,6 +153,7 @@ public class StandardVideoController extends GestureVideoController implements V
                 title.setVisibility(INVISIBLE);
                 sysTime.setVisibility(GONE);
                 batteryLevel.setVisibility(GONE);
+                topContainer.setVisibility(GONE);
                 break;
             case IjkVideoView.PLAYER_FULL_SCREEN:
                 L.e("PLAYER_FULL_SCREEN");
@@ -165,6 +166,7 @@ public class StandardVideoController extends GestureVideoController implements V
                 batteryLevel.setVisibility(VISIBLE);
                 if (mShowing) {
                     lock.setVisibility(VISIBLE);
+                    topContainer.setVisibility(VISIBLE);
                 } else {
                     lock.setVisibility(GONE);
                 }
@@ -307,7 +309,8 @@ public class StandardVideoController extends GestureVideoController implements V
                     hideAllViews();
                 }
             } else {
-                hideAllViews();
+                bottomContainer.setVisibility(GONE);
+                bottomContainer.startAnimation(hideAnim);
             }
             if (!isLive && !isLocked) {
                 bottomProgress.setVisibility(VISIBLE);
@@ -332,7 +335,8 @@ public class StandardVideoController extends GestureVideoController implements V
                     showAllViews();
                 }
             } else {
-                showAllViews();
+                bottomContainer.setVisibility(VISIBLE);
+                bottomContainer.startAnimation(showAnim);
             }
             if (!isLocked && !isLive) {
                 bottomProgress.setVisibility(GONE);
