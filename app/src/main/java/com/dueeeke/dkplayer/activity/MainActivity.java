@@ -15,7 +15,7 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.dueeeke.dkplayer.PIPManager;
+import com.dueeeke.dkplayer.util.PIPManager;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.activity.api.ApiActivity;
 import com.dueeeke.dkplayer.activity.extend.ExtendActivity;

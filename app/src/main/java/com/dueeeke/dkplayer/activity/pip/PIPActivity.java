@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.devlin_n.floatWindowPermission.FloatWindowManager;
-import com.dueeeke.dkplayer.PIPManager;
+import com.dueeeke.dkplayer.util.PIPManager;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videoplayer.controller.StandardVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
@@ -36,6 +36,7 @@ public class PIPActivity extends AppCompatActivity{
         IjkVideoView ijkVideoView = mPIPManager.getIjkVideoView();
         StandardVideoController controller = new StandardVideoController(this);
         controller.setLive();
+        ijkVideoView.setVideoController(controller);
         if (mPIPManager.isStartFloatWindow()) {
             mPIPManager.stopFloatWindow();
             controller.setPlayerState(ijkVideoView.getCurrentPlayerState());
@@ -57,7 +58,6 @@ public class PIPActivity extends AppCompatActivity{
                     .build();
             ijkVideoView.setPlayerConfig(config);
         }
-        ijkVideoView.setVideoController(controller);
         playerContainer.addView(ijkVideoView);
     }
 

@@ -1,4 +1,4 @@
-package com.dueeeke.dkplayer;
+package com.dueeeke.dkplayer.util;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

@@ -1,6 +1,7 @@
 package com.dueeeke.videoplayer.player;
 
 import android.media.AudioManager;
+import android.os.Bundle;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
@@ -32,6 +33,12 @@ public class IjkMediaEngine extends BaseMediaEngine {
             mMediaPlayer.setOnBufferingUpdateListener(onBufferingUpdateListener);
             mMediaPlayer.setOnPreparedListener(onPreparedListener);
             mMediaPlayer.setOnVideoSizeChangedListener(onVideoSizeChangedListener);
+            mMediaPlayer.setOnNativeInvokeListener(new IjkMediaPlayer.OnNativeInvokeListener() {
+                @Override
+                public boolean onNativeInvoke(int i, Bundle bundle) {
+                    return true;
+                }
+            });
         }
     }
 
@@ -115,35 +122,53 @@ public class IjkMediaEngine extends BaseMediaEngine {
         mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", value);
     }
 
-    private IMediaPlayer.OnErrorListener onErrorListener = (iMediaPlayer, framework_err, impl_err) -> {
-        if (mMediaEngineInterface != null) mMediaEngineInterface.onError();
-        return true;
+    private IMediaPlayer.OnErrorListener onErrorListener = new IMediaPlayer.OnErrorListener() {
+        @Override
+        public boolean onError(IMediaPlayer iMediaPlayer, int framework_err, int impl_err) {
+            if (mMediaEngineInterface != null) mMediaEngineInterface.onError();
+            return true;
+        }
     };
 
-    private IMediaPlayer.OnCompletionListener onCompletionListener = iMediaPlayer -> {
-        if (mMediaEngineInterface != null) mMediaEngineInterface.onCompletion();
+    private IMediaPlayer.OnCompletionListener onCompletionListener = new IMediaPlayer.OnCompletionListener() {
+        @Override
+        public void onCompletion(IMediaPlayer iMediaPlayer) {
+            if (mMediaEngineInterface != null) mMediaEngineInterface.onCompletion();
+        }
     };
 
-    private IMediaPlayer.OnInfoListener onInfoListener = (iMediaPlayer, what, extra) -> {
-        if (mMediaEngineInterface != null) mMediaEngineInterface.onInfo(what, extra);
-        return true;
+    private IMediaPlayer.OnInfoListener onInfoListener = new IMediaPlayer.OnInfoListener() {
+        @Override
+        public boolean onInfo(IMediaPlayer iMediaPlayer, int what, int extra) {
+            if (mMediaEngineInterface != null) mMediaEngineInterface.onInfo(what, extra);
+            return true;
+        }
     };
 
-    private IMediaPlayer.OnBufferingUpdateListener onBufferingUpdateListener = (iMediaPlayer, percent) -> {
-        if (mMediaEngineInterface != null) mMediaEngineInterface.onBufferingUpdate(percent);
+    private IMediaPlayer.OnBufferingUpdateListener onBufferingUpdateListener = new IMediaPlayer.OnBufferingUpdateListener() {
+        @Override
+        public void onBufferingUpdate(IMediaPlayer iMediaPlayer, int percent) {
+            if (mMediaEngineInterface != null) mMediaEngineInterface.onBufferingUpdate(percent);
+        }
     };
 
 
-    private IMediaPlayer.OnPreparedListener onPreparedListener = iMediaPlayer -> {
-        if (mMediaEngineInterface != null) mMediaEngineInterface.onPrepared();
+    private IMediaPlayer.OnPreparedListener onPreparedListener = new IMediaPlayer.OnPreparedListener() {
+        @Override
+        public void onPrepared(IMediaPlayer iMediaPlayer) {
+            if (mMediaEngineInterface != null) mMediaEngineInterface.onPrepared();
+        }
     };
 
-    private IMediaPlayer.OnVideoSizeChangedListener onVideoSizeChangedListener = (iMediaPlayer, i, i1, i2, i3) -> {
-        int videoWidth = iMediaPlayer.getVideoWidth();
-        int videoHeight = iMediaPlayer.getVideoHeight();
-        if (videoWidth != 0 && videoHeight != 0) {
-            if (mMediaEngineInterface != null)
-                mMediaEngineInterface.onVideoSizeChanged(videoWidth, videoHeight);
+    private IMediaPlayer.OnVideoSizeChangedListener onVideoSizeChangedListener = new IMediaPlayer.OnVideoSizeChangedListener() {
+        @Override
+        public void onVideoSizeChanged(IMediaPlayer iMediaPlayer, int i, int i1, int i2, int i3) {
+            int videoWidth = iMediaPlayer.getVideoWidth();
+            int videoHeight = iMediaPlayer.getVideoHeight();
+            if (videoWidth != 0 && videoHeight != 0) {
+                if (mMediaEngineInterface != null)
+                    mMediaEngineInterface.onVideoSizeChanged(videoWidth, videoHeight);
+            }
         }
     };
 

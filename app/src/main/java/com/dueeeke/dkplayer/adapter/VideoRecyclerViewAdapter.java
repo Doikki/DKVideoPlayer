@@ -76,7 +76,7 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
                         .enableCache()
                         .autoRotate()
                         .addToPlayerManager()
-                        .useAndroidMediaPlayer()
+                        .usingAndroidMediaPlayer()
                         .build();
             }
         }

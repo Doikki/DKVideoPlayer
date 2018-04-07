@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.dueeeke.dkplayer.R;
-import com.dueeeke.dkplayer.PIPManager;
+import com.dueeeke.dkplayer.util.PIPManager;
 import com.dueeeke.videoplayer.controller.GestureVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 

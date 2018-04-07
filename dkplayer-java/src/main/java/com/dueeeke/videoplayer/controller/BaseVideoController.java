@@ -121,7 +121,12 @@ public abstract class BaseVideoController extends FrameLayout {
         }
     };
 
-    protected final Runnable mFadeOut = this::hide;
+    protected final Runnable mFadeOut = new Runnable() {
+        @Override
+        public void run() {
+            hide();
+        }
+    };
 
     protected int setProgress() {
         return 0;

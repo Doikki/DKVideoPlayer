@@ -48,7 +48,12 @@ public abstract class GestureVideoController extends BaseVideoController{
         addView(mCenterView);
         mAudioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
         mGestureDetector = new GestureDetector(getContext(), new MyGestureListener());
-        this.setOnTouchListener((v, event) -> mGestureDetector.onTouchEvent(event));
+        this.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return mGestureDetector.onTouchEvent(event);
+            }
+        });
     }
 
     protected int streamVolume;

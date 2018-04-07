@@ -9,8 +9,6 @@ android {
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 13
-        versionName "2.0"
     }
 
     sourceSets {
@@ -18,17 +16,13 @@ android {
             jniLibs.srcDirs = ['libs']
         }
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
-    compile "tv.danmaku.ijk.media:ijkplayer-java:$rootProject.ijkPlayerVersion"
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+    implementation "tv.danmaku.ijk.media:ijkplayer-java:$rootProject.ijkPlayerVersion"
     //    compile "tv.danmaku.ijk.media:ijkplayer-armv7a:$rootProject.ijkPlayerVersion"
-    compile 'com.danikula:videocache:2.7.0'
-//    compile 'tv.danmaku.ijk.media:ijkplayer-x86:0.8.4'
+    implementation 'com.danikula:videocache:2.7.0'
+    //    compile 'tv.danmaku.ijk.media:ijkplayer-x86:0.8.4'
 }

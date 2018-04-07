@@ -12,6 +12,7 @@ import android.view.Gravity;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.TextureView;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
@@ -86,7 +87,7 @@ public class IjkVideoView extends BaseIjkVideoView {
     }
 
     protected void addDisplay() {
-        if (mPlayerConfig.useSurfaceView) {
+        if (mPlayerConfig.usingSurfaceView) {
             addSurfaceView();
         } else {
             addTextureView();
@@ -190,11 +191,14 @@ public class IjkVideoView extends BaseIjkVideoView {
                 statusView = new StatusView(getContext());
             }
             statusView.setMessage(getResources().getString(R.string.wifi_tip));
-            statusView.setButtonTextAndAction(getResources().getString(R.string.continue_play), v -> {
-                Constants.IS_PLAY_ON_MOBILE_NETWORK = true;
-                playerContainer.removeView(statusView);
-                initPlayer();
-                startPrepare();
+            statusView.setButtonTextAndAction(getResources().getString(R.string.continue_play), new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Constants.IS_PLAY_ON_MOBILE_NETWORK = true;
+                    playerContainer.removeView(statusView);
+                    initPlayer();
+                    startPrepare();
+                }
             });
             playerContainer.addView(statusView);
             return true;
@@ -263,7 +267,7 @@ public class IjkVideoView extends BaseIjkVideoView {
     @Override
     public void onPrepared() {
         super.onPrepared();
-        if (mPlayerConfig.useAndroidMediaPlayer) mMediaPlayer.start();
+        if (mPlayerConfig.usingAndroidMediaPlayer) mMediaPlayer.start();
     }
 
     @Override
@@ -274,10 +278,13 @@ public class IjkVideoView extends BaseIjkVideoView {
             statusView = new StatusView(getContext());
         }
         statusView.setMessage(getResources().getString(R.string.error_message));
-        statusView.setButtonTextAndAction(getResources().getString(R.string.retry), v -> {
-            playerContainer.removeView(statusView);
-            addDisplay();
-            startPrepare();
+        statusView.setButtonTextAndAction(getResources().getString(R.string.retry), new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playerContainer.removeView(statusView);
+                addDisplay();
+                startPrepare();
+            }
         });
         playerContainer.addView(statusView);
     }
@@ -295,7 +302,7 @@ public class IjkVideoView extends BaseIjkVideoView {
 
     @Override
     public void onVideoSizeChanged(int videoWidth, int videoHeight) {
-        if (mPlayerConfig.useSurfaceView) {
+        if (mPlayerConfig.usingSurfaceView) {
             mSurfaceView.setScreenScale(mCurrentScreenScale);
             mSurfaceView.setVideoSize(videoWidth, videoHeight);
         } else {

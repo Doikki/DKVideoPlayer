@@ -9,22 +9,22 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 public class PlayerConfig {
 
-    public boolean useAndroidMediaPlayer;//是否使用AndroidMediaPlayer
+    public boolean usingAndroidMediaPlayer;//是否使用AndroidMediaPlayer
     public boolean isLooping;//是否循环播放
     public boolean mAutoRotate;//是否旋转屏幕
     public boolean isCache;//是否开启缓存
     public boolean addToPlayerManager;//是否添加到播放管理器
-    public boolean useSurfaceView;//是否使用TextureView
+    public boolean usingSurfaceView;//是否使用TextureView
     public boolean enableMediaCodec;//是否启用硬解码
 
 
     private PlayerConfig(PlayerConfig origin) {
-        this.useAndroidMediaPlayer = origin.useAndroidMediaPlayer;
+        this.usingAndroidMediaPlayer = origin.usingAndroidMediaPlayer;
         this.isLooping = origin.isLooping;
         this.mAutoRotate = origin.mAutoRotate;
         this.isCache = origin.isCache;
         this.addToPlayerManager = origin.addToPlayerManager;
-        this.useSurfaceView = origin.useSurfaceView;
+        this.usingSurfaceView = origin.usingSurfaceView;
         this.enableMediaCodec = origin.enableMediaCodec;
     }
 
@@ -59,16 +59,16 @@ public class PlayerConfig {
         /**
          * 启用SurfaceView
          */
-        public Builder useSurfaceView() {
-            target.useSurfaceView = true;
+        public Builder usingSurfaceView() {
+            target.usingSurfaceView = true;
             return this;
         }
 
         /**
          * 启用{@link android.media.MediaPlayer},如不调用默认使用 {@link IjkMediaPlayer}
          */
-        public Builder useAndroidMediaPlayer() {
-            target.useAndroidMediaPlayer = true;
+        public Builder usingAndroidMediaPlayer() {
+            target.usingAndroidMediaPlayer = true;
             return this;
         }
 
