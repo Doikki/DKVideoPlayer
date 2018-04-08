@@ -58,7 +58,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation project(':dkplayer-java')
+//    implementation project(':dkplayer-java')
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
     testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
@@ -70,6 +70,10 @@ dependencies {
     implementation "com.android.support:design:$rootProject.supportLibraryVersion"
     implementation 'com.github.rubensousa:gravitysnaphelper:1.5'
     implementation 'com.github.castorflex.verticalviewpager:library:19.0.1'
-    implementation project(':dkplayer-armv7a')
+//    implementation project(':dkplayer-armv7a')
+    implementation "tv.danmaku.ijk.media:ijkplayer-java:$rootProject.ijkPlayerVersion"
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-java:2.1'
+//    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv7a:2.1'
+//    implementation 'com.danikula:videocache:2.7.0'
 }
 
