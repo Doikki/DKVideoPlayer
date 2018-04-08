@@ -31,19 +31,25 @@ A video player based on [IjkPlayer](https://github.com/Bilibili/ijkplayer).
 1.添加类库
 ```
 gradle
-Step 1.Add it in your root build.gradle at the end of repositories:
 
-	allprojects {
-		repositories {
-			...
-			maven { url 'https://jitpack.io' }
-		}
-	}
-Step 2. Add the dependency
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
 
-	dependencies {
-	        compile 'com.github.dueeeke:dkplayer:2.0'
-	}
+dependencies {
+    # required, enough for most devices.
+    compile 'com.github.dueeeke.dkplayer:dkplayer-java:2.1'
+    compile 'com.github.dueeeke.dkplayer:dkplayer-armv7a:2.1'
+
+    # Other ABIs: optional
+    compile 'com.github.dueeeke.dkplayer:dkplayer-armv5:2.1'
+    compile 'com.github.dueeeke.dkplayer:dkplayer-arm64:2.1'
+    compile 'com.github.dueeeke.dkplayer:dkplayer-x86:2.1'
+    compile 'com.github.dueeeke.dkplayer:dkplayer-x86_64:2.1'
+}
 ```
 或者将library下载并导入项目中使用
 
