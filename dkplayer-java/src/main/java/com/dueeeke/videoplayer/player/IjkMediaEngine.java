@@ -26,6 +26,9 @@ public class IjkMediaEngine extends BaseMediaEngine {
     public void initPlayer() {
         if (mMediaPlayer == null) {
             mMediaPlayer = new IjkMediaPlayer();
+            mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT,"safe",0);
+            mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "protocol_whitelist", "ffconcat,file,http,https");
+            mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "protocol_whitelist", "concat,http,tcp,https,tls,file");
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mMediaPlayer.setOnErrorListener(onErrorListener);
             mMediaPlayer.setOnCompletionListener(onCompletionListener);
