@@ -73,8 +73,9 @@ ijkVideoView.start(); //开始播放，不调用则不自动播放
 PlayerConfig playerConfig = new PlayerConfig.Builder()
         .enableCache() //启用边播边缓存功能
         .autoRotate() //启用重力感应自动进入/退出全屏功能
-        .useAndroidMediaPlayer()//启动AndroidMediaPlayer，不调用此方法默认使用IjkPlayer
-        .useSurfaceView() //启用SurfaceView显示视频，不调用默认使用TextureView
+        .enableMediaCodec()//启动硬解码，启用后可能导致视频黑屏，音画不同步
+        .usingAndroidMediaPlayer()//启动AndroidMediaPlayer，不调用此方法默认使用IjkPlayer
+        .usingSurfaceView() //启用SurfaceView显示视频，不调用默认使用TextureView
         .build();
 ijkVideoView.setPlayerConfig(playerConfig);
 ```

@@ -25,6 +25,9 @@ public class ApiActivity extends AppCompatActivity {
     }
 
     public void skipToVodPlayer(View view) {
+//        String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath();
+//        String url = "file://" + absolutePath + File.separator + "test.mp4";
+//        L.e(url);
         Intent intent = new Intent(this, PlayerActivity.class);
         intent.putExtra("url", VOD_URL);
         intent.putExtra("isLive", false);

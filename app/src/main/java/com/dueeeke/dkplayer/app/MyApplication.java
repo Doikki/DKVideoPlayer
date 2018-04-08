@@ -11,7 +11,7 @@ import com.squareup.leakcanary.LeakCanary;
 
 public class MyApplication extends Application{
 
-    public static MyApplication instance;
+    private static MyApplication instance;
 
     @Override
     public void onCreate() {

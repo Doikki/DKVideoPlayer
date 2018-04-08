@@ -14,7 +14,7 @@ import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.player.PlayerConfig;
 
 /**
- * 播放其他链接
+ * 播放器演示
  * Created by Devlin_n on 2017/4/7.
  */
 
@@ -70,6 +70,7 @@ public class PlayerActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        ijkVideoView.resume();
     }
 
     @Override
