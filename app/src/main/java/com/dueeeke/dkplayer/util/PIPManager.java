@@ -1,18 +1,13 @@
 package com.dueeeke.dkplayer.util;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
 import com.dueeeke.dkplayer.app.MyApplication;
-import com.dueeeke.dkplayer.widget.controller.FloatController;
-import com.dueeeke.videoplayer.listener.MyVideoListener;
-import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.dkplayer.widget.FloatView;
+import com.dueeeke.dkplayer.widget.controller.FloatController;
+import com.dueeeke.videoplayer.player.IjkVideoView;
 
 /**
  * 悬浮播放
@@ -26,16 +21,16 @@ public class PIPManager {
     private FloatView floatView;
     private FloatController mFloatController;
     private boolean isShowing;
-    private KeyReceiver mKeyReceiver;
+//    private KeyReceiver mKeyReceiver;
     private int mPlayingPosition = -1;
     private Class mActClass;
-    private MyVideoListener mMyVideoListener = new MyVideoListener() {
-        @Override
-        public void onComplete() {
-            super.onComplete();
-            reset();
-        }
-    };
+//    private MyVideoListener mMyVideoListener = new MyVideoListener() {
+//        @Override
+//        public void onComplete() {
+//            super.onComplete();
+//            reset();
+//        }
+//    };
 
 
     private PIPManager() {
@@ -43,8 +38,8 @@ public class PIPManager {
 //        ijkVideoView.setVideoListener(mMyVideoListener);
 //        mKeyReceiver = new KeyReceiver();
         mFloatController = new FloatController(MyApplication.getInstance());
-        IntentFilter homeFilter = new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
-        MyApplication.getInstance().registerReceiver(mKeyReceiver, homeFilter);
+//        IntentFilter homeFilter = new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+//        MyApplication.getInstance().registerReceiver(mKeyReceiver, homeFilter);
         floatView = new FloatView(MyApplication.getInstance(), 0, 0);
     }
 
@@ -140,40 +135,40 @@ public class PIPManager {
         return mActClass;
     }
 
-    private class KeyReceiver extends BroadcastReceiver {
-
-        private final String SYSTEM_DIALOG_REASON_KEY = "reason";
-        private final String SYSTEM_DIALOG_REASON_HOME_KEY = "homekey";
-        private final String SYSTEM_DIALOG_REASON_RECENT_APPS = "recentapps";
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (action == null) return;
-            if (action.equals(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)) {
-                String reason = intent.getStringExtra(SYSTEM_DIALOG_REASON_KEY);
-
-                if (reason == null)
-                    return;
-
-                // Home键
-                if (reason.equals(SYSTEM_DIALOG_REASON_HOME_KEY)) {
-                    if (isShowing) {
-                        ijkVideoView.pause();
-                        floatView.setVisibility(View.GONE);
-                    }
-                }
-
-                // 最近任务列表键
-                if (reason.equals(SYSTEM_DIALOG_REASON_RECENT_APPS)) {
-                    if (isShowing) {
-                        ijkVideoView.pause();
-                        floatView.setVisibility(View.GONE);
-                    }
-                }
-            }
-        }
-    }
+//    private class KeyReceiver extends BroadcastReceiver {
+//
+//        private final String SYSTEM_DIALOG_REASON_KEY = "reason";
+//        private final String SYSTEM_DIALOG_REASON_HOME_KEY = "homekey";
+//        private final String SYSTEM_DIALOG_REASON_RECENT_APPS = "recentapps";
+//
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            String action = intent.getAction();
+//            if (action == null) return;
+//            if (action.equals(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)) {
+//                String reason = intent.getStringExtra(SYSTEM_DIALOG_REASON_KEY);
+//
+//                if (reason == null)
+//                    return;
+//
+//                // Home键
+//                if (reason.equals(SYSTEM_DIALOG_REASON_HOME_KEY)) {
+//                    if (isShowing) {
+//                        ijkVideoView.pause();
+//                        floatView.setVisibility(View.GONE);
+//                    }
+//                }
+//
+//                // 最近任务列表键
+//                if (reason.equals(SYSTEM_DIALOG_REASON_RECENT_APPS)) {
+//                    if (isShowing) {
+//                        ijkVideoView.pause();
+//                        floatView.setVisibility(View.GONE);
+//                    }
+//                }
+//            }
+//        }
+//    }
 
 
 }

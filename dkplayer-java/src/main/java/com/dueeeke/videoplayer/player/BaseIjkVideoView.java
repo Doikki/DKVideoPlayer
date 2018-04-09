@@ -159,6 +159,8 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
                 ((IjkMediaEngine)mMediaPlayer).setMediaEngineInterface(this);
             }
             mMediaPlayer.initPlayer();
+            mMediaPlayer.setEnableMediaCodec(mPlayerConfig.enableMediaCodec);
+            mMediaPlayer.setLooping(mPlayerConfig.isLooping);
         }
     }
 
@@ -171,7 +173,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      */
     protected void startPrepare() {
         if (mCurrentUrl == null || mCurrentUrl.trim().equals("")) return;
-        mMediaPlayer.setLooping(mPlayerConfig.isLooping);
         try {
             if (mPlayerConfig.isCache) {
                 HttpProxyCacheServer cacheServer = getCacheServer();
@@ -190,8 +191,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
             mCurrentPlayerState = isFullScreen() ? PLAYER_FULL_SCREEN : PLAYER_NORMAL;
             setPlayerState(mCurrentPlayerState);
         } catch (Exception e) {
-            mCurrentPlayState = STATE_ERROR;
-            setPlayState(mCurrentPlayState);
+            onError();
             e.printStackTrace();
         }
     }

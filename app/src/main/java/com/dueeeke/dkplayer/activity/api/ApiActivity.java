@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.dueeeke.dkplayer.R;
-import com.dueeeke.videoplayer.util.L;
 
 import java.io.File;
 
@@ -20,7 +19,11 @@ import java.io.File;
 public class ApiActivity extends AppCompatActivity {
 
     private static final String VOD_URL = "http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv";
+    //断线自动重连,需加上ijkhttphook:
+//    private static final String VOD_URL = "ijkhttphook:http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv";
     private static final String LIVE_URL = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
+    //断线自动重连,需加上ijklivehook:
+//    private static final String LIVE_URL = "ijklivehook:rtmp://live.hkstv.hk.lxdns.com/live/hks";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,7 +34,6 @@ public class ApiActivity extends AppCompatActivity {
     public void skipToVodPlayer(View view) {
         String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath();
         String url = "file://" + absolutePath + File.separator + "test.ffconcat";
-        L.e(url);
         Intent intent = new Intent(this, PlayerActivity.class);
         intent.putExtra("url", url);
         intent.putExtra("isLive", false);

@@ -82,7 +82,6 @@ public class IjkVideoView extends BaseIjkVideoView {
     @Override
     protected void initPlayer() {
         super.initPlayer();
-        mMediaPlayer.setEnableMediaCodec(mPlayerConfig.enableMediaCodec);
         addDisplay();
     }
 
