@@ -171,7 +171,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      */
     protected void startPrepare() {
         if (mCurrentUrl == null || mCurrentUrl.trim().equals("")) return;
-        mMediaPlayer.reset();
         mMediaPlayer.setLooping(mPlayerConfig.isLooping);
         try {
             if (mPlayerConfig.isCache) {

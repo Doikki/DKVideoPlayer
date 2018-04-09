@@ -54,6 +54,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/main/assets/'] } }
 }
 
 dependencies {
@@ -75,4 +76,3 @@ dependencies {
 //    implementation 'com.github.dueeeke.dkplayer:dkplayer-java:2.1.1'
 //    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv7a:2.1.1'
 }
-

@@ -1,0 +1,9 @@
+ffconcat version 1.0
+#视频地址
+file 'http://gslb.miaopai.com/stream/FQXM04zrW1dcXGiPdJ6Q3KAq2Fpv4TLV.mp4'
+#时长，单位为秒
+duration 30
+file 'http://gslb.miaopai.com/stream/FQXM04zrW1dcXGiPdJ6Q3KAq2Fpv4TLV.mp4'
+duration 30
+file 'http://gslb.miaopai.com/stream/FQXM04zrW1dcXGiPdJ6Q3KAq2Fpv4TLV.mp4'
+duration 30

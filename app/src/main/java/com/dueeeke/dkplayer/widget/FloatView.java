@@ -1,4 +1,4 @@
-package com.dueeeke.videoplayer.widget;
+package com.dueeeke.dkplayer.widget;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -10,7 +10,7 @@ import android.view.MotionEvent;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
-import com.dueeeke.videoplayer.R;
+import com.dueeeke.dkplayer.R;
 import com.dueeeke.videoplayer.util.WindowUtil;
 
 /**
@@ -44,8 +44,9 @@ public class FloatView extends FrameLayout{
         mParams = new WindowManager.LayoutParams();
         mParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT; // 设置window type
         // 设置图片格式，效果为背景透明
-        mParams.format = PixelFormat.RGBA_8888;
+        mParams.format = PixelFormat.TRANSLUCENT;
         mParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+        mParams.windowAnimations = R.style.FloatWindowAnimation;
         mParams.gravity = Gravity.START | Gravity.TOP; // 调整悬浮窗口至右下角
         // 设置悬浮窗口长宽数据
         int width = WindowUtil.dp2px(getContext(), 250);

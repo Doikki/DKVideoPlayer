@@ -12,7 +12,7 @@ import com.dueeeke.dkplayer.app.MyApplication;
 import com.dueeeke.dkplayer.widget.controller.FloatController;
 import com.dueeeke.videoplayer.listener.MyVideoListener;
 import com.dueeeke.videoplayer.player.IjkVideoView;
-import com.dueeeke.videoplayer.widget.FloatView;
+import com.dueeeke.dkplayer.widget.FloatView;
 
 /**
  * 悬浮播放

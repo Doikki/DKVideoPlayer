@@ -91,7 +91,7 @@ public class DouYinActivity extends AppCompatActivity {
                 Log.d(TAG, "onPageScrollStateChanged: " + state);
                 if (mPlayingPosition == mCurrentPosition) return;
                 if (state == VerticalViewPager.SCROLL_STATE_IDLE) {
-                    mIjkVideoView.stopPlayback();
+                    mIjkVideoView.release();
                     ViewParent parent = mIjkVideoView.getParent();
                     if (parent != null && parent instanceof FrameLayout) {
                         ((FrameLayout) parent).removeView(mIjkVideoView);
