@@ -21,7 +21,6 @@ A video player based on [IjkPlayer](https://github.com/Bilibili/ijkplayer).
 * **支持Https协议。**
 * **支持rtsp，concat协议。**
 * **支持连续播放一个列表的视频。**
-* **支持悬浮窗播放。**
 * **支持广告播放。**
 * **支持弹幕，使用了[DanmakuFlameMaster](https://github.com/Bilibili/DanmakuFlameMaster)。**
 * **抖音demo。**
@@ -42,14 +41,14 @@ allprojects {
 
 dependencies {
     # required, enough for most devices.
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-java:2.2'
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv7a:2.2'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-java:2.2.1'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv7a:2.2.1'
 
     # Other ABIs: optional
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv5:2.2'
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-arm64:2.2'
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86:2.2'
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86_64:2.2'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv5:2.2.1'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-arm64:2.2.1'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86:2.2.1'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86_64:2.2.1'
 }
 ```
 或者将library下载并导入项目中使用
