@@ -38,7 +38,7 @@ public class CustomMediaEngineActivity extends AppCompatActivity {
 //        String url = "rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov";
         String url = "rtsp://ajj:12345678@218.21.217.122:65523/h264/ch40/sub/av_stream";
 //        String url = "http://storage.gzstv.net/uploads/media/huangmeiyan/jr05-09.mp4";
-        //测试concat
+        //测试concat,将项目根目录的other文件夹中的test.ffconcat文件复制到sd卡根目录测试
 //        String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath();
 //        String url = "file://" + absolutePath + File.separator + "test.ffconcat";
 
