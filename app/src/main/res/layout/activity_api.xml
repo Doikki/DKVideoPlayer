@@ -15,4 +15,9 @@
         android:layout_height="wrap_content"
         android:onClick="skipToLivePlayer"
         android:text="LIVE" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="skipToCustomPlayer"
+        android:text="CUSTOM" />
 </LinearLayout>

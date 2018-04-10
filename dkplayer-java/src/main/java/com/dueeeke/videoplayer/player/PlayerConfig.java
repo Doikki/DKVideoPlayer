@@ -16,6 +16,7 @@ public class PlayerConfig {
     public boolean addToPlayerManager;//是否添加到播放管理器
     public boolean usingSurfaceView;//是否使用TextureView
     public boolean enableMediaCodec;//是否启用硬解码
+    public BaseMediaEngine mBaseMediaEngine = null;//自定义播放核心
 
 
     private PlayerConfig(PlayerConfig origin) {
@@ -26,6 +27,7 @@ public class PlayerConfig {
         this.addToPlayerManager = origin.addToPlayerManager;
         this.usingSurfaceView = origin.usingSurfaceView;
         this.enableMediaCodec = origin.enableMediaCodec;
+        this.mBaseMediaEngine = origin.mBaseMediaEngine;
     }
 
     private PlayerConfig() {
@@ -93,6 +95,14 @@ public class PlayerConfig {
          */
         public Builder enableMediaCodec() {
             target.enableMediaCodec = true;
+            return this;
+        }
+
+        /**
+         * 设置自定义播放核心
+         */
+        public Builder setCustomMediaEngine(BaseMediaEngine baseMediaEngine) {
+            target.mBaseMediaEngine = baseMediaEngine;
             return this;
         }
 

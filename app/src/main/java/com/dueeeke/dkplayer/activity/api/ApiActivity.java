@@ -2,14 +2,11 @@ package com.dueeeke.dkplayer.activity.api;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.dueeeke.dkplayer.R;
-
-import java.io.File;
 
 /**
  * 基础API相关Demo
@@ -32,10 +29,8 @@ public class ApiActivity extends AppCompatActivity {
     }
 
     public void skipToVodPlayer(View view) {
-        String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath();
-        String url = "file://" + absolutePath + File.separator + "test.ffconcat";
         Intent intent = new Intent(this, PlayerActivity.class);
-        intent.putExtra("url", url);
+        intent.putExtra("url", VOD_URL);
         intent.putExtra("isLive", false);
         startActivity(intent);
     }
@@ -45,5 +40,9 @@ public class ApiActivity extends AppCompatActivity {
         intent.putExtra("url", LIVE_URL);
         intent.putExtra("isLive", true);
         startActivity(intent);
+    }
+
+    public void skipToCustomPlayer(View view) {
+        startActivity(new Intent(this, CustomMediaEngineActivity.class));
     }
 }

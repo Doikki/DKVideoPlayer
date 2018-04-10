@@ -3,6 +3,8 @@ package com.dueeeke.videoplayer.player;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
+import com.dueeeke.videoplayer.listener.MediaEngineInterface;
+
 import java.io.IOException;
 
 /**
@@ -10,6 +12,7 @@ import java.io.IOException;
  */
 
 public abstract class BaseMediaEngine {
+    protected MediaEngineInterface mMediaEngineInterface;
 
     public abstract void initPlayer();
 
@@ -44,5 +47,9 @@ public abstract class BaseMediaEngine {
     public abstract void setLooping(boolean isLooping);
 
     public abstract void setEnableMediaCodec(boolean isEnable);
+
+    public void setMediaEngineInterface(MediaEngineInterface mediaEngineInterface) {
+        this.mMediaEngineInterface = mediaEngineInterface;
+    }
 
 }

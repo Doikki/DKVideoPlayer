@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
-import com.dueeeke.videoplayer.listener.MediaEngineInterface;
-
 import java.io.IOException;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
@@ -14,8 +12,7 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 public class IjkMediaEngine extends BaseMediaEngine {
 
-    public IjkMediaPlayer mMediaPlayer;
-    private MediaEngineInterface mMediaEngineInterface;
+    protected IjkMediaPlayer mMediaPlayer;
 
     @Override
     public void start() {
@@ -24,25 +21,20 @@ public class IjkMediaEngine extends BaseMediaEngine {
 
     @Override
     public void initPlayer() {
-        if (mMediaPlayer == null) {
-            mMediaPlayer = new IjkMediaPlayer();
-            mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT,"safe",0);
-            mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "protocol_whitelist",
-                    "rtmp,concat,ffconcat,file,subfile,http,https,tls,rtp,tcp,udp,crypto");
-            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            mMediaPlayer.setOnErrorListener(onErrorListener);
-            mMediaPlayer.setOnCompletionListener(onCompletionListener);
-            mMediaPlayer.setOnInfoListener(onInfoListener);
-            mMediaPlayer.setOnBufferingUpdateListener(onBufferingUpdateListener);
-            mMediaPlayer.setOnPreparedListener(onPreparedListener);
-            mMediaPlayer.setOnVideoSizeChangedListener(onVideoSizeChangedListener);
-            mMediaPlayer.setOnNativeInvokeListener(new IjkMediaPlayer.OnNativeInvokeListener() {
-                @Override
-                public boolean onNativeInvoke(int i, Bundle bundle) {
-                    return true;
-                }
-            });
-        }
+        mMediaPlayer = new IjkMediaPlayer();
+        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mMediaPlayer.setOnErrorListener(onErrorListener);
+        mMediaPlayer.setOnCompletionListener(onCompletionListener);
+        mMediaPlayer.setOnInfoListener(onInfoListener);
+        mMediaPlayer.setOnBufferingUpdateListener(onBufferingUpdateListener);
+        mMediaPlayer.setOnPreparedListener(onPreparedListener);
+        mMediaPlayer.setOnVideoSizeChangedListener(onVideoSizeChangedListener);
+        mMediaPlayer.setOnNativeInvokeListener(new IjkMediaPlayer.OnNativeInvokeListener() {
+            @Override
+            public boolean onNativeInvoke(int i, Bundle bundle) {
+                return true;
+            }
+        });
     }
 
     @Override
@@ -174,8 +166,4 @@ public class IjkMediaEngine extends BaseMediaEngine {
             }
         }
     };
-
-    public void setMediaEngineInterface(MediaEngineInterface mediaEngineInterface) {
-        this.mMediaEngineInterface = mediaEngineInterface;
-    }
 }

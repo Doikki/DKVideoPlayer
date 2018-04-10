@@ -59,7 +59,6 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
     testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
@@ -73,6 +72,11 @@ dependencies {
     implementation 'com.github.castorflex.verticalviewpager:library:19.0.1'
     implementation project(':dkplayer-java')
     implementation project(':dkplayer-armv7a')
-//    implementation 'com.github.dueeeke.dkplayer:dkplayer-java:2.1.1'
-//    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv7a:2.1.1'
+//    implementation project(':dkplayer-arm64')
+//    implementation project(':dkplayer-armv5')
+//    implementation project(':dkplayer-x86')
+//    implementation project(':dkplayer-x86_64')
+    //    implementation 'com.github.dueeeke.dkplayer:dkplayer-java:2.1.1'
+    //    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv7a:2.1.1'
+//    compile 'com.shuyu:gsyVideoPlayer-ex_so:4.1.1'
 }

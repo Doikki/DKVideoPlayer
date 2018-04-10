@@ -151,13 +151,16 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
 
     protected void initPlayer() {
         if (mMediaPlayer == null) {
-            if (mPlayerConfig.usingAndroidMediaPlayer) {
-                mMediaPlayer = new AndroidMediaEngine();
-                ((AndroidMediaEngine)mMediaPlayer).setMediaEngineInterface(this);
+            if (mPlayerConfig.mBaseMediaEngine != null) {
+                mMediaPlayer = mPlayerConfig.mBaseMediaEngine;
             } else {
-                mMediaPlayer = new IjkMediaEngine();
-                ((IjkMediaEngine)mMediaPlayer).setMediaEngineInterface(this);
+                if (mPlayerConfig.usingAndroidMediaPlayer) {
+                    mMediaPlayer = new AndroidMediaEngine();
+                } else {
+                    mMediaPlayer = new IjkMediaEngine();
+                }
             }
+            mMediaPlayer.setMediaEngineInterface(this);
             mMediaPlayer.initPlayer();
             mMediaPlayer.setEnableMediaCodec(mPlayerConfig.enableMediaCodec);
             mMediaPlayer.setLooping(mPlayerConfig.isLooping);
