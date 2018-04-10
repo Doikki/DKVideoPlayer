@@ -18,7 +18,7 @@ import android.widget.FrameLayout;
 
 import com.dueeeke.videoplayer.R;
 import com.dueeeke.videoplayer.controller.BaseVideoController;
-import com.dueeeke.videoplayer.util.Constants;
+import com.dueeeke.videoplayer.util.PlayerConstants;
 import com.dueeeke.videoplayer.util.NetworkUtil;
 import com.dueeeke.videoplayer.util.WindowUtil;
 import com.dueeeke.videoplayer.widget.ResizeSurfaceView;
@@ -66,8 +66,6 @@ public class IjkVideoView extends BaseIjkVideoView {
      * 初始化播放器视图
      */
     protected void initView() {
-        Constants.SCREEN_HEIGHT = WindowUtil.getScreenHeight(getContext(), false);
-        Constants.SCREEN_WIDTH = WindowUtil.getScreenWidth(getContext());
         playerContainer = new FrameLayout(getContext());
         playerContainer.setBackgroundColor(Color.BLACK);
         LayoutParams params = new LayoutParams(
@@ -184,7 +182,7 @@ public class IjkVideoView extends BaseIjkVideoView {
 
 
     protected boolean checkNetwork() {
-        if (NetworkUtil.getNetworkType(getContext()) == NetworkUtil.NETWORK_MOBILE && !Constants.IS_PLAY_ON_MOBILE_NETWORK) {
+        if (NetworkUtil.getNetworkType(getContext()) == NetworkUtil.NETWORK_MOBILE && !PlayerConstants.IS_PLAY_ON_MOBILE_NETWORK) {
             playerContainer.removeView(statusView);
             if (statusView == null) {
                 statusView = new StatusView(getContext());
@@ -193,7 +191,7 @@ public class IjkVideoView extends BaseIjkVideoView {
             statusView.setButtonTextAndAction(getResources().getString(R.string.continue_play), new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Constants.IS_PLAY_ON_MOBILE_NETWORK = true;
+                    PlayerConstants.IS_PLAY_ON_MOBILE_NETWORK = true;
                     playerContainer.removeView(statusView);
                     initPlayer();
                     startPrepare();

@@ -12,7 +12,6 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.dueeeke.videoplayer.R;
-import com.dueeeke.videoplayer.util.Constants;
 import com.dueeeke.videoplayer.util.WindowUtil;
 import com.dueeeke.videoplayer.widget.CenterView;
 
@@ -101,7 +100,7 @@ public abstract class GestureVideoController extends BaseVideoController{
             if (firstTouch) {
                 mChangePosition = Math.abs(distanceX) >= Math.abs(distanceY);
                 if (!mChangePosition) {
-                    if (e2.getX() > Constants.SCREEN_HEIGHT / 2) {
+                    if (e2.getX() > WindowUtil.getScreenHeight(getContext(), false) / 2) {
                         mChangeBrightness = true;
                     } else {
                         mChangeVolume = true;

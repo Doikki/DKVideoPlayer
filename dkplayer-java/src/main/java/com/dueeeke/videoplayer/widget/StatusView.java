@@ -42,11 +42,11 @@ public class StatusView extends LinearLayout {
         ivClose = root.findViewById(R.id.btn_close);
         this.setBackgroundResource(android.R.color.black);
         setClickable(true);
-//        if (Constants.IS_START_FLOAT_WINDOW) {
+//        if (PlayerConstants.IS_START_FLOAT_WINDOW) {
 //            ivClose.setVisibility(VISIBLE);
 //            ivClose.setOnClickListener(v -> {
 //                Intent intent = new Intent(getContext(), BackgroundPlayService.class);
-//                intent.putExtra(KeyUtil.ACTION, Constants.COMMAND_STOP);
+//                intent.putExtra(KeyUtil.ACTION, PlayerConstants.COMMAND_STOP);
 //                getContext().getApplicationContext().startService(intent);
 //            });
 //        }
