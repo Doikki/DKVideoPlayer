@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.adapter.MyPagerAdapter;
 import com.dueeeke.dkplayer.fragment.RecyclerViewFragment;
+import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.player.VideoViewManager;
 
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ public class ListFragmentViewPagerActivity extends AppCompatActivity implements 
     private ViewPager mViewPager;
     private List<String> titles = new ArrayList<>();
     private List<RecyclerViewFragment> mFragmentList = new ArrayList<>();
+    private VideoViewManager mVideoViewManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,6 +40,8 @@ public class ListFragmentViewPagerActivity extends AppCompatActivity implements 
             actionBar.setTitle("LIST FRAGMENT VIEWPAGER");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+
+        mVideoViewManager = VideoViewManager.instance();
         initView();
     }
 
@@ -69,12 +73,12 @@ public class ListFragmentViewPagerActivity extends AppCompatActivity implements 
     @Override
     protected void onPause() {
         super.onPause();
-        VideoViewManager.instance().releaseVideoPlayer();
+        mVideoViewManager.releaseVideoPlayer();
     }
 
     @Override
     public void onBackPressed() {
-        if (!VideoViewManager.instance().onBackPressed()){
+        if (!mVideoViewManager.onBackPressed()){
             super.onBackPressed();
         }
     }
@@ -86,7 +90,8 @@ public class ListFragmentViewPagerActivity extends AppCompatActivity implements 
 
     @Override
     public void onPageSelected(int position) {
-        VideoViewManager.instance().releaseVideoPlayer();
+        IjkVideoView currentVideoPlayer = mVideoViewManager.getCurrentVideoPlayer();
+        if (currentVideoPlayer != null) currentVideoPlayer.stopPlayback();
     }
 
     @Override

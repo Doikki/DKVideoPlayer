@@ -14,9 +14,13 @@ public class VideoViewManager {
 
     private static VideoViewManager sInstance;
 
-    public static synchronized VideoViewManager instance() {
+    public static VideoViewManager instance() {
         if (sInstance == null) {
-            sInstance = new VideoViewManager();
+            synchronized (VideoViewManager.class) {
+                if (sInstance == null) {
+                    sInstance = new VideoViewManager();
+                }
+            }
         }
         return sInstance;
     }

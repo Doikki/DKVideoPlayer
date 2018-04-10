@@ -56,7 +56,6 @@ public class DouYinActivity extends AppCompatActivity {
         mIjkVideoView = new IjkVideoView(this);
         PlayerConfig config = new PlayerConfig.Builder().setLooping().build();
         mIjkVideoView.setPlayerConfig(config);
-        mIjkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_MATCH_PARENT);
         mDouYinController = new DouYinController(this);
         mIjkVideoView.setVideoController(mDouYinController);
         mVerticalViewPager = findViewById(R.id.vvp);
@@ -111,6 +110,7 @@ public class DouYinActivity extends AppCompatActivity {
         mDouYinController.getThumb().setImageDrawable(imageView.getDrawable());
         frameLayout.addView(mIjkVideoView);
         mIjkVideoView.setUrl(mVideoList.get(mCurrentPosition).getUrl());
+        mIjkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_MATCH_PARENT);
         mIjkVideoView.start();
         mPlayingPosition = mCurrentPosition;
     }
