@@ -194,7 +194,7 @@ public class IjkVideoView extends BaseIjkVideoView {
                     PlayerConstants.IS_PLAY_ON_MOBILE_NETWORK = true;
                     playerContainer.removeView(statusView);
                     initPlayer();
-                    startPrepare();
+                    startPrepare(true);
                 }
             });
             playerContainer.addView(statusView);
@@ -280,7 +280,8 @@ public class IjkVideoView extends BaseIjkVideoView {
             public void onClick(View v) {
                 playerContainer.removeView(statusView);
                 addDisplay();
-                startPrepare();
+                mMediaPlayer.reset();
+                startPrepare(true);
             }
         });
         playerContainer.addView(statusView);

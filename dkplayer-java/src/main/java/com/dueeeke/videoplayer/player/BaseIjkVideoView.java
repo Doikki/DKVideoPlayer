@@ -174,8 +174,9 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     /**
      * 开始准备播放（直接播放）
      */
-    protected void startPrepare() {
+    protected void startPrepare(boolean needReset) {
         if (mCurrentUrl == null || mCurrentUrl.trim().equals("")) return;
+        if (needReset) mMediaPlayer.reset();
         try {
             if (mPlayerConfig.isCache) {
                 HttpProxyCacheServer cacheServer = getCacheServer();
@@ -220,7 +221,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     protected void startPlay() {
         if (mPlayerConfig.mAutoRotate) orientationEventListener.enable();
         initPlayer();
-        startPrepare();
+        startPrepare(false);
     }
 
     /**

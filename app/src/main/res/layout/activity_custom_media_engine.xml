@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.dueeeke.dkplayer.widget.videoview.ListIjkVideoView
+        android:id="@+id/player"
+        android:layout_width="match_parent"
+        android:layout_height="240dp" />
+
+    <RadioGroup
+        android:id="@+id/rg_type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <RadioButton
+            android:id="@+id/concat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="分段视频concat"/>
+        <RadioButton
+            android:id="@+id/rtsp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="rtsp"/>
+    </RadioGroup>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="startPlay"
+        android:text="开始播放"/>
+</LinearLayout>

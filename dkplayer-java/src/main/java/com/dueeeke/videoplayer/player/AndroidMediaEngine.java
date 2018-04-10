@@ -10,6 +10,7 @@ import java.io.IOException;
 public class AndroidMediaEngine extends BaseMediaEngine {
 
     protected MediaPlayer mMediaPlayer;
+    private boolean isLooping;
 
     @Override
     public void start() {
@@ -52,6 +53,7 @@ public class AndroidMediaEngine extends BaseMediaEngine {
     public void reset() {
         mMediaPlayer.setVolume(1, 1);
         mMediaPlayer.reset();
+        mMediaPlayer.setLooping(isLooping);
     }
 
     @Override
@@ -97,11 +99,17 @@ public class AndroidMediaEngine extends BaseMediaEngine {
 
     @Override
     public void setLooping(boolean isLooping) {
+        this.isLooping = isLooping;
         mMediaPlayer.setLooping(isLooping);
     }
 
     @Override
     public void setEnableMediaCodec(boolean isEnable) {
+
+    }
+
+    @Override
+    public void setOptions() {
 
     }
 

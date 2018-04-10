@@ -13,6 +13,7 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 public class IjkMediaEngine extends BaseMediaEngine {
 
     protected IjkMediaPlayer mMediaPlayer;
+    private boolean isLooping;
 
     @Override
     public void start() {
@@ -22,6 +23,7 @@ public class IjkMediaEngine extends BaseMediaEngine {
     @Override
     public void initPlayer() {
         mMediaPlayer = new IjkMediaPlayer();
+        setOptions();
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mMediaPlayer.setOnErrorListener(onErrorListener);
         mMediaPlayer.setOnCompletionListener(onCompletionListener);
@@ -61,6 +63,8 @@ public class IjkMediaEngine extends BaseMediaEngine {
     public void reset() {
         mMediaPlayer.reset();
         mMediaPlayer.setOnVideoSizeChangedListener(onVideoSizeChangedListener);
+        mMediaPlayer.setLooping(isLooping);
+        setOptions();
     }
 
     @Override
@@ -106,6 +110,7 @@ public class IjkMediaEngine extends BaseMediaEngine {
 
     @Override
     public void setLooping(boolean isLooping) {
+        this.isLooping = isLooping;
         mMediaPlayer.setLooping(isLooping);
     }
 
@@ -115,6 +120,11 @@ public class IjkMediaEngine extends BaseMediaEngine {
         mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", value);//开启硬解码
         mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", value);
         mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", value);
+    }
+
+    @Override
+    public void setOptions() {
+
     }
 
     private IMediaPlayer.OnErrorListener onErrorListener = new IMediaPlayer.OnErrorListener() {

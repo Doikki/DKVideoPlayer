@@ -43,7 +43,7 @@ public class ListIjkVideoView extends IjkVideoView implements ListMediaPlayerCon
             }
             playNext();
             addDisplay();
-            startPrepare();
+            startPrepare(true);
         }
 
     }
@@ -79,9 +79,7 @@ public class ListIjkVideoView extends IjkVideoView implements ListMediaPlayerCon
             if (mCurrentVideoPosition >= mVideoModels.size()) return;
             playNext();
             addDisplay();
-            //调用reset方法会重置looping，option等参数
-            mMediaPlayer.reset();
-            startPrepare();
+            startPrepare(true);
         }
     }
 }

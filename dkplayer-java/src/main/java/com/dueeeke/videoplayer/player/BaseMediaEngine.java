@@ -48,6 +48,8 @@ public abstract class BaseMediaEngine {
 
     public abstract void setEnableMediaCodec(boolean isEnable);
 
+    public abstract void setOptions();
+
     public void setMediaEngineInterface(MediaEngineInterface mediaEngineInterface) {
         this.mMediaEngineInterface = mediaEngineInterface;
     }

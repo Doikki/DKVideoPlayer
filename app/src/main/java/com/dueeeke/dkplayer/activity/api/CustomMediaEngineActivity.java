@@ -6,6 +6,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RadioGroup;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videoplayer.controller.StandardVideoController;
@@ -27,7 +28,7 @@ public class CustomMediaEngineActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_player);
+        setContentView(R.layout.activity_custom_media_engine);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle("CustomPlayer");
@@ -36,14 +37,29 @@ public class CustomMediaEngineActivity extends AppCompatActivity {
 
 
 //        String url = "rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov";
-        String url = "rtsp://ajj:12345678@218.21.217.122:65523/h264/ch40/sub/av_stream";
+        String rtspUrl = "rtsp://ajj:12345678@218.21.217.122:65523/h264/ch40/sub/av_stream";
+//        String rtspUrl = "rtsp://live.3gv.ifeng.com/live/71";
 //        String url = "http://storage.gzstv.net/uploads/media/huangmeiyan/jr05-09.mp4";
         //测试concat,将项目根目录的other文件夹中的test.ffconcat文件复制到sd卡根目录测试
 //        String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath();
 //        String url = "file://" + absolutePath + File.separator + "test.ffconcat";
+        //concat测试地址
+        String concatUrl = "http://pl.feixiong.tv/Admin/Service/plconcat?url=http%3A%2F%2Fv.youku.com%2Fv_show%2Fid_XMjg4ODUzMDQyNA%3D%3D.html&source_id=1&sel_type=FLV&stream_type=SD";
 
         ijkVideoView = findViewById(R.id.player);
         StandardVideoController controller = new StandardVideoController(this);
+        ijkVideoView.setVideoController(controller);
+        RadioGroup radioGroup = findViewById(R.id.rg_type);
+        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            switch (checkedId) {
+                case R.id.concat:
+                    ijkVideoView.setUrl(concatUrl);
+                    break;
+                case R.id.rtsp:
+                    ijkVideoView.setUrl(rtspUrl);
+                    break;
+            }
+        });
         ijkVideoView.setPlayerConfig(new PlayerConfig.Builder()
                 .autoRotate()//自动旋转屏幕
 //                    .enableCache()//启用边播边存
@@ -52,8 +68,8 @@ public class CustomMediaEngineActivity extends AppCompatActivity {
 //                .usingSurfaceView()//使用SurfaceView
                 .setCustomMediaEngine(new IjkMediaEngine() {
                     @Override
-                    public void initPlayer() {
-                        super.initPlayer();
+                    public void setOptions() {
+                        super.setOptions();
                         //支持concat
                         mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "safe", 0);
                         mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "protocol_whitelist",
@@ -63,8 +79,11 @@ public class CustomMediaEngineActivity extends AppCompatActivity {
                     }
                 })
                 .build());
-        ijkVideoView.setUrl(url);
-        ijkVideoView.setVideoController(controller);
+    }
+
+
+    public void startPlay(View view) {
+        ijkVideoView.release();
         ijkVideoView.start();
     }
 
@@ -100,25 +119,5 @@ public class CustomMediaEngineActivity extends AppCompatActivity {
         if (!ijkVideoView.onBackPressed()) {
             super.onBackPressed();
         }
-    }
-
-    public void screenScaleDefault(View view) {
-        ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_DEFAULT);
-    }
-
-    public void screenScale169(View view) {
-        ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_16_9);
-    }
-
-    public void screenScale43(View view) {
-        ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_4_3);
-    }
-
-    public void screenScaleOriginal(View view) {
-        ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_ORIGINAL);
-    }
-
-    public void screenScaleMatch(View view) {
-        ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_MATCH_PARENT);
     }
 }
