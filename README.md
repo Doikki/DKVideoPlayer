@@ -41,14 +41,14 @@ allprojects {
 
 dependencies {
     # required, enough for most devices.
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-java:2.2.1'
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv7a:2.2.1'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-java:2.3'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv7a:2.3'
 
     # Other ABIs: optional
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv5:2.2.1'
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-arm64:2.2.1'
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86:2.2.1'
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86_64:2.2.1'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv5:2.3'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-arm64:2.3'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86:2.3'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86_64:2.3'
 }
 ```
 或者将library下载并导入项目中使用
