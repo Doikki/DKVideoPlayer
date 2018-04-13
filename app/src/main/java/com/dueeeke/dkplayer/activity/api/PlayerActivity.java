@@ -106,4 +106,8 @@ public class PlayerActivity extends AppCompatActivity {
     public void screenScaleMatch(View view) {
         ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_MATCH_PARENT);
     }
+
+    public void screenScaleCenterCrop(View view) {
+        ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_CENTER_CROP);
+    }
 }

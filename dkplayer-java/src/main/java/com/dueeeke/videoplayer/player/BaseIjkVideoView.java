@@ -380,7 +380,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         mCurrentPlayState = STATE_ERROR;
         if (listener != null) listener.onError();
         setPlayState(mCurrentPlayState);
-        mCurrentPosition = getCurrentPosition();
     }
 
     @Override
