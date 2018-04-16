@@ -68,15 +68,15 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
                 super(itemView);
                 ijkVideoView = itemView.findViewById(R.id.video_player);
                 int widthPixels = context.getResources().getDisplayMetrics().widthPixels;
-                ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 16 * 9));
+                ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels * 9 / 16 + 1));
                 controller = new StandardVideoController(context);
                 ijkVideoView.setVideoController(controller);
                 title = itemView.findViewById(R.id.tv_title);
                 mPlayerConfig = new PlayerConfig.Builder()
                         .enableCache()
                         .autoRotate()
-                        .addToPlayerManager()
-                        .usingAndroidMediaPlayer()
+                        .addToPlayerManager()//required
+//                        .usingAndroidMediaPlayer()
                         .build();
             }
         }
