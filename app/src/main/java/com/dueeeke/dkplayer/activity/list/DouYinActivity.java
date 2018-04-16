@@ -110,7 +110,7 @@ public class DouYinActivity extends AppCompatActivity {
         mDouYinController.getThumb().setImageDrawable(imageView.getDrawable());
         frameLayout.addView(mIjkVideoView);
         mIjkVideoView.setUrl(mVideoList.get(mCurrentPosition).getUrl());
-        mIjkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_MATCH_PARENT);
+        mIjkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_CENTER_CROP);
         mIjkVideoView.start();
         mPlayingPosition = mCurrentPosition;
     }

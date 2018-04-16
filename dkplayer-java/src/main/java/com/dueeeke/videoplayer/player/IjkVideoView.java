@@ -45,6 +45,7 @@ public class IjkVideoView extends BaseIjkVideoView {
     public static final int SCREEN_SCALE_4_3 = 2;
     public static final int SCREEN_SCALE_MATCH_PARENT = 3;
     public static final int SCREEN_SCALE_ORIGINAL = 4;
+    public static final int SCREEN_SCALE_CENTER_CROP = 5;
 
     protected int mCurrentScreenScale = SCREEN_SCALE_DEFAULT;
 

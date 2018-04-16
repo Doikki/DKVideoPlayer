@@ -15,7 +15,7 @@ A video player based on [IjkPlayer](https://github.com/Bilibili/ijkplayer).
 * **支持列表小窗悬浮播放。**
 * **支持封面。**
 * **支持锁定/解锁全屏。**
-* **支持调整显示比例:默认、原始大小、16:9、4:3、铺满屏幕。**
+* **支持调整显示比例:默认、原始大小、16:9、4:3、铺满屏幕、居中裁剪。**
 * **暂停时前后台切换不黑屏**
 * **支持IJKPlayer和MediaPlayer切换。**
 * **支持Https协议。**
@@ -41,14 +41,14 @@ allprojects {
 
 dependencies {
     # required, enough for most devices.
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-java:2.3'
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv7a:2.3'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-java:2.2.3'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv7a:2.2.3'
 
     # Other ABIs: optional
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv5:2.3'
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-arm64:2.3'
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86:2.3'
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86_64:2.3'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv5:2.2.3'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-arm64:2.2.3'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86:2.2.3'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86_64:2.2.3'
 }
 ```
 或者将library下载并导入项目中使用
@@ -99,7 +99,7 @@ ijkVideoView.setPlayerConfig(playerConfig);
         super.onDestroy();
         ijkVideoView.release();
     }
-
+    
 
     @Override
     public void onBackPressed() {
@@ -121,16 +121,15 @@ ijkVideoView.setPlayerConfig(playerConfig);
 
 ## 截图
 <div>
-<img src="https://github.com/dueeeke/dkplayer/blob/master/art/1.jpg" width="240px" height="426px"/>
-<img src="https://github.com/dueeeke/dkplayer/blob/master/art/2.jpg" width="240px" height="426px"/>
-<img src="https://github.com/dueeeke/dkplayer/blob/master/art/3.jpg" width="240px" height="426px"/>
-<img src="https://github.com/dueeeke/dkplayer/blob/master/art/5.jpg" width="240px" height="426px"/>
-<img src="https://github.com/dueeeke/dkplayer/blob/master/art/6.jpg" width="240px" height="426px"/>
-<img src="https://github.com/dueeeke/dkplayer/blob/master/art/7.jpg" width="240px" height="426px"/>
-<img src="https://github.com/dueeeke/dkplayer/blob/master/art/8.jpg" width="240px" height="426px"/>
-<img src="https://github.com/dueeeke/dkplayer/blob/master/art/9.jpg" width="240px" height="426px"/>
-<img src="https://github.com/dueeeke/dkplayer/blob/master/art/10.jpg" width="240px" height="426px"/>
-<img src="https://github.com/dueeeke/dkplayer/blob/master/art/4.jpg" width="426px" height="240px"/>
+<img src="https://github.com/dueeeke/dkplayer/blob/master/art/1.png" width="240px" height="426px"/>
+<img src="https://github.com/dueeeke/dkplayer/blob/master/art/2.png" width="240px" height="426px"/>
+<img src="https://github.com/dueeeke/dkplayer/blob/master/art/3.png" width="240px" height="426px"/>
+<img src="https://github.com/dueeeke/dkplayer/blob/master/art/4.png" width="240px" height="426px"/>
+<img src="https://github.com/dueeeke/dkplayer/blob/master/art/5.png" width="240px" height="426px"/>
+<img src="https://github.com/dueeeke/dkplayer/blob/master/art/6.png" width="240px" height="426px"/>
+<img src="https://github.com/dueeeke/dkplayer/blob/master/art/7.png" width="240px" height="426px"/>
+<img src="https://github.com/dueeeke/dkplayer/blob/master/art/8.png" width="240px" height="426px"/>
+<img src="https://github.com/dueeeke/dkplayer/blob/master/art/9.png" width="426px" height="240px"/>
 </div>
 
 ## 混淆
