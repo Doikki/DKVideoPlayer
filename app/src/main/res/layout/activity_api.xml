@@ -20,4 +20,9 @@
         android:layout_height="wrap_content"
         android:onClick="skipToCustomPlayer"
         android:text="CUSTOM" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="skipToMultiRatePlayer"
+        android:text="Multi-Rate" />
 </LinearLayout>

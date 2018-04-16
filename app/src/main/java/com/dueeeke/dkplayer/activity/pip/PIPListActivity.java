@@ -17,7 +17,7 @@ import com.dueeeke.dkplayer.adapter.FloatRecyclerViewAdapter;
 import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.dkplayer.util.PIPManager;
-import com.dueeeke.videoplayer.controller.StandardVideoController;
+import com.dueeeke.dkplayer.widget.controller.StandardVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 
 import java.util.List;

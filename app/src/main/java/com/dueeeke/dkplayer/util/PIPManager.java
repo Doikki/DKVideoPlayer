@@ -103,8 +103,9 @@ public class PIPManager {
 
     public void reset() {
         if (isShowing) return;
-        ijkVideoView.release();
         removePlayerFormParent();
+        ijkVideoView.setVideoController(null);
+        ijkVideoView.release();
         mPlayingPosition = -1;
         mActClass = null;
     }

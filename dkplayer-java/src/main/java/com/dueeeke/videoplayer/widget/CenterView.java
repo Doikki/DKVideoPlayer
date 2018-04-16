@@ -33,9 +33,9 @@ public class CenterView extends LinearLayout {
     private void init() {
         setGravity(Gravity.CENTER);
         View view = LayoutInflater.from(getContext()).inflate(R.layout.layout_center_window, this);
-        ivIcon = (ImageView) view.findViewById(R.id.iv_icon);
-        tvPercent = (TextView) view.findViewById(R.id.tv_percent);
-        proPercent = (ProgressBar) view.findViewById(R.id.pro_percent);
+        ivIcon = view.findViewById(R.id.iv_icon);
+        tvPercent = view.findViewById(R.id.tv_percent);
+        proPercent = view.findViewById(R.id.pro_percent);
     }
 
     public void setIcon(int icon) {

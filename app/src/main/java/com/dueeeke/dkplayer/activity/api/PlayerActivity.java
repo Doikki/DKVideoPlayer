@@ -9,7 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.dueeeke.dkplayer.R;
-import com.dueeeke.videoplayer.controller.StandardVideoController;
+import com.dueeeke.dkplayer.widget.controller.StandardVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.player.PlayerConfig;
 

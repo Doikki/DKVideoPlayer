@@ -46,4 +46,8 @@ public class ApiActivity extends AppCompatActivity {
     public void skipToCustomPlayer(View view) {
         startActivity(new Intent(this, CustomMediaEngineActivity.class));
     }
+
+    public void skipToMultiRatePlayer(View view) {
+        startActivity(new Intent(this, MultiRatePlayerActivity.class));
+    }
 }

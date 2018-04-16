@@ -315,9 +315,9 @@ public class IjkVideoView extends BaseIjkVideoView {
      */
     public void setVideoController(@Nullable BaseVideoController mediaController) {
         playerContainer.removeView(mVideoController);
+        mVideoController = mediaController;
         if (mediaController != null) {
             mediaController.setMediaPlayer(this);
-            mVideoController = mediaController;
             LayoutParams params = new LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT);

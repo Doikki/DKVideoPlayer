@@ -10,19 +10,13 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
     }
-
-    sourceSets {
-        main {
-            jniLibs.srcDirs = ['libs']
-        }
-    }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
-    compile "tv.danmaku.ijk.media:ijkplayer-java:$rootProject.ijkPlayerVersion"
+    api "tv.danmaku.ijk.media:ijkplayer-java:$rootProject.ijkPlayerVersion"
     //    compile "tv.danmaku.ijk.media:ijkplayer-armv7a:$rootProject.ijkPlayerVersion"
-    compile 'com.danikula:videocache:2.7.0'
+    api 'com.danikula:videocache:2.7.0'
     //    compile 'tv.danmaku.ijk.media:ijkplayer-x86:0.8.4'
 }

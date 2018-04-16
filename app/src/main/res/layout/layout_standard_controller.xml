@@ -104,7 +104,7 @@
             android:background="@null"
             android:max="1000"
             android:maxHeight="2dp"
-            android:progressDrawable="@drawable/seekbar_progress"
+            android:progressDrawable="@drawable/layer_progress_bar"
             android:thumb="@drawable/seekbar_thumb" />
 
         <TextView
@@ -116,6 +116,16 @@
             android:textColor="@android:color/white"
             android:textSize="@dimen/controller_time_text_size"
             tools:text="00:00" />
+
+        <TextView
+            android:id="@+id/tv_multi_rate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/default_spacing"
+            android:layout_marginRight="@dimen/default_spacing"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/controller_time_text_size"
+            tools:text="高清" />
 
         <ImageView
             android:id="@+id/fullscreen"
@@ -144,7 +154,7 @@
         android:layout_height="1dp"
         android:layout_gravity="bottom"
         android:max="1000"
-        android:progressDrawable="@drawable/seekbar_progress"
+        android:progressDrawable="@drawable/layer_progress_bar"
         android:visibility="gone" />
 
     <ImageView

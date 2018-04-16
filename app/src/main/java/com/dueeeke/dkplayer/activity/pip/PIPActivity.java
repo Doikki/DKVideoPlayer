@@ -14,7 +14,7 @@ import com.bumptech.glide.Glide;
 import com.devlin_n.floatWindowPermission.FloatWindowManager;
 import com.dueeeke.dkplayer.util.PIPManager;
 import com.dueeeke.dkplayer.R;
-import com.dueeeke.videoplayer.controller.StandardVideoController;
+import com.dueeeke.dkplayer.widget.controller.StandardVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.player.PlayerConfig;
 

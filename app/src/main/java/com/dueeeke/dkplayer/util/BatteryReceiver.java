@@ -1,4 +1,4 @@
-package com.dueeeke.videoplayer.util;
+package com.dueeeke.dkplayer.util;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -6,7 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
 
-import com.dueeeke.videoplayer.R;
+import com.dueeeke.dkplayer.R;
+
 
 public class BatteryReceiver extends BroadcastReceiver {
     private ImageView pow;

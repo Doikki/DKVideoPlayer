@@ -10,7 +10,7 @@ import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.bean.VideoModel;
 import com.dueeeke.dkplayer.widget.controller.AdController;
 import com.dueeeke.dkplayer.widget.videoview.ListIjkVideoView;
-import com.dueeeke.videoplayer.controller.StandardVideoController;
+import com.dueeeke.dkplayer.widget.controller.StandardVideoController;
 
 import java.util.ArrayList;
 import java.util.List;
