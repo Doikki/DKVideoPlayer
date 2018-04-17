@@ -11,8 +11,7 @@ import com.dueeeke.dkplayer.widget.controller.MultiRateController;
 import com.dueeeke.dkplayer.widget.videoview.MultiRateIjkVideoView;
 import com.dueeeke.videoplayer.player.PlayerConfig;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
 
 /**
  * 播放器演示
@@ -38,11 +37,10 @@ public class MultiRatePlayerActivity extends AppCompatActivity {
         ijkVideoView.setPlayerConfig(new PlayerConfig.Builder()
                 .autoRotate()//自动旋转屏幕
                 .build());
-        List<MultiRateIjkVideoView.MultiRateVideoModel> videos = new ArrayList<>();
 
-        videos.add(new MultiRateIjkVideoView.MultiRateVideoModel("高清", "http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4"));
-        videos.add(new MultiRateIjkVideoView.MultiRateVideoModel("超清", "http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f30.mp4"));
-
+        LinkedHashMap<String, String> videos = new LinkedHashMap<>();
+        videos.put("高清", "http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4");
+        videos.put("超清", "http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f30.mp4");
         ijkVideoView.setMultiRateVideos(videos);
         ijkVideoView.setVideoController(controller);
         ijkVideoView.start();

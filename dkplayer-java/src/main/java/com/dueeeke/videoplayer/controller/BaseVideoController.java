@@ -31,7 +31,7 @@ public abstract class BaseVideoController extends FrameLayout {
     protected MediaPlayerControl mediaPlayer;//播放器
     protected boolean mShowing;//控制器是否处于显示状态
     protected boolean isLocked;
-    protected int sDefaultTimeout = 3000;
+    protected int sDefaultTimeout = 4000;
     private StringBuilder mFormatBuilder;
     private Formatter mFormatter;
     protected ControllerListener listener;

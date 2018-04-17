@@ -9,7 +9,7 @@ import com.dueeeke.dkplayer.interf.MultiRateMediaPlayerControl;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.util.L;
 
-import java.util.List;
+import java.util.LinkedHashMap;
 
 /**
  * 多码率
@@ -17,7 +17,7 @@ import java.util.List;
  */
 
 public class MultiRateIjkVideoView extends IjkVideoView implements MultiRateMediaPlayerControl{
-    private List<MultiRateVideoModel> mMultiRateVideoModels;
+    private LinkedHashMap<String, String> mMultiRateVideoModels;
 
     public MultiRateIjkVideoView(@NonNull Context context) {
         super(context);
@@ -32,39 +32,35 @@ public class MultiRateIjkVideoView extends IjkVideoView implements MultiRateMedi
     }
 
     @Override
-    public List<MultiRateVideoModel> getMultiRateData() {
+    public LinkedHashMap<String, String> getMultiRateData() {
         return mMultiRateVideoModels;
     }
 
     @Override
     public void switchRate(String type) {
         L.d(type);
-        for (MultiRateVideoModel item : mMultiRateVideoModels) {
-            if (item.type.equals(type) && !item.url.equals(mCurrentUrl)) {
-                mCurrentUrl = item.url;
-                addDisplay();
-                getCurrentPosition();
-                startPrepare(true);
-                break;
-            }
-        }
+        String url = mMultiRateVideoModels.get(type);
+        if (url.equals(mCurrentUrl)) return;
+        mCurrentUrl = url;
+        addDisplay();
+        getCurrentPosition();
+        startPrepare(true);
     }
 
-    public void setMultiRateVideos(List<MultiRateVideoModel> videos) {
+    public void setMultiRateVideos(LinkedHashMap<String, String> videos) {
         this.mMultiRateVideoModels = videos;
-        MultiRateVideoModel multiRateVideoModel = videos.get(0);
-        if (multiRateVideoModel != null) {
-            this.mCurrentUrl = multiRateVideoModel.url;
-        }
+        this.mCurrentUrl = getValueFromLinkedMap(videos, 0);
     }
 
-    public static class MultiRateVideoModel {
-        public String type;
-        public String url;
-
-        public MultiRateVideoModel(String type, String url) {
-            this.type = type;
-            this.url = url;
+    public static String getValueFromLinkedMap(LinkedHashMap<String, String> map, int index) {
+        int currentIndex = 0;
+        for (String key : map.keySet()) {
+            if (currentIndex == index) {
+                return map.get(key);
+            }
+            currentIndex++;
         }
+        return null;
     }
+
 }
