@@ -17,6 +17,7 @@ import com.dueeeke.videoplayer.listener.MediaEngineInterface;
 import com.dueeeke.videoplayer.listener.MediaPlayerControl;
 import com.dueeeke.videoplayer.listener.VideoListener;
 import com.dueeeke.videoplayer.util.L;
+import com.dueeeke.videoplayer.util.ProgressUtil;
 import com.dueeeke.videoplayer.util.WindowUtil;
 
 import java.io.File;
@@ -93,7 +94,8 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      * 竖屏
      */
     protected void onOrientationPortrait(Activity activity) {
-        if (isLockFullScreen || !mPlayerConfig.mAutoRotate || currentOrientation == PORTRAIT) return;
+        if (isLockFullScreen || !mPlayerConfig.mAutoRotate || currentOrientation == PORTRAIT)
+            return;
         if ((currentOrientation == LANDSCAPE || currentOrientation == REVERSE_LANDSCAPE) && !isFullScreen()) {
             currentOrientation = PORTRAIT;
             return;
@@ -191,10 +193,8 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
                 mMediaPlayer.setDataSource(mCurrentUrl);
             }
             mMediaPlayer.prepareAsync();
-            mCurrentPlayState = STATE_PREPARING;
-            setPlayState(mCurrentPlayState);
-            mCurrentPlayerState = isFullScreen() ? PLAYER_FULL_SCREEN : PLAYER_NORMAL;
-            setPlayerState(mCurrentPlayerState);
+            setPlayState(STATE_PREPARING);
+            setPlayerState(isFullScreen() ? PLAYER_FULL_SCREEN : PLAYER_NORMAL);
         } catch (Exception e) {
             onError();
             e.printStackTrace();
@@ -220,7 +220,11 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      * 第一次播放
      */
     protected void startPlay() {
-        if (mPlayerConfig.mAutoRotate) orientationEventListener.enable();
+        if (mPlayerConfig.savingProgress) {
+            mCurrentPosition = ProgressUtil.getSavedProgress(getContext(), mCurrentUrl);
+        }
+        if (mPlayerConfig.mAutoRotate)
+            orientationEventListener.enable();
         initPlayer();
         startPrepare(false);
     }
@@ -230,8 +234,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      */
     protected void startInPlaybackState() {
         mMediaPlayer.start();
-        mCurrentPlayState = STATE_PLAYING;
-        setPlayState(mCurrentPlayState);
+        setPlayState(STATE_PLAYING);
     }
 
     @Override
@@ -239,8 +242,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         if (isInPlaybackState()) {
             if (mMediaPlayer.isPlaying()) {
                 mMediaPlayer.pause();
-                mCurrentPlayState = STATE_PAUSED;
-                setPlayState(mCurrentPlayState);
+                setPlayState(STATE_PAUSED);
                 setKeepScreenOn(false);
                 mAudioFocusHelper.abandonFocus();
             }
@@ -249,20 +251,30 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
 
 
     public void resume() {
-        if (isInPlaybackState() && !mMediaPlayer.isPlaying() && mCurrentPlayState != STATE_PLAYBACK_COMPLETED) {
+        if (isInPlaybackState()
+                && !mMediaPlayer.isPlaying()
+                && mCurrentPlayState != STATE_PLAYBACK_COMPLETED) {
             mMediaPlayer.start();
-            mCurrentPlayState = STATE_PLAYING;
-            setPlayState(mCurrentPlayState);
+            setPlayState(STATE_PLAYING);
             mAudioFocusHelper.requestFocus();
             setKeepScreenOn(true);
         }
     }
 
+    public void resetPlayer() {
+        if (mPlayerConfig.savingProgress && isInPlaybackState())
+            ProgressUtil.saveProgress(getContext(), mCurrentUrl, mCurrentPosition);
+        mMediaPlayer.reset();
+        setPlayState(STATE_IDLE);
+    }
+
     public void stopPlayback() {
+        L.d("stopPlayback");
+        if (mPlayerConfig.savingProgress && isInPlaybackState())
+            ProgressUtil.saveProgress(getContext(), mCurrentUrl, mCurrentPosition);
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
-            mCurrentPlayState = STATE_IDLE;
-            setPlayState(mCurrentPlayState);
+            setPlayState(STATE_IDLE);
             mAudioFocusHelper.abandonFocus();
             setKeepScreenOn(false);
         }
@@ -276,11 +288,9 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
 
     public void release() {
         if (mMediaPlayer != null) {
-            mMediaPlayer.reset();
             mMediaPlayer.release();
             mMediaPlayer = null;
-            mCurrentPlayState = STATE_IDLE;
-            setPlayState(mCurrentPlayState);
+            setPlayState(STATE_IDLE);
             mAudioFocusHelper.abandonFocus();
             setKeepScreenOn(false);
         }
@@ -312,7 +322,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     public long getCurrentPosition() {
         if (isInPlaybackState()) {
             mCurrentPosition = mMediaPlayer.getCurrentPosition();
-            L.d("current position:" + mCurrentPosition);
             return mCurrentPosition;
         }
         return 0;
@@ -356,7 +365,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
 
     @Override
     public void setLock(boolean isLocked) {
-            this.isLockFullScreen = isLocked;
+        this.isLockFullScreen = isLocked;
     }
 
     @Override
@@ -379,34 +388,31 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
 
     @Override
     public void onError() {
-        mCurrentPlayState = STATE_ERROR;
         if (listener != null) listener.onError();
-        setPlayState(mCurrentPlayState);
+        setPlayState(STATE_ERROR);
     }
 
     @Override
     public void onCompletion() {
-        mCurrentPlayState = STATE_PLAYBACK_COMPLETED;
         if (listener != null) listener.onComplete();
-        setPlayState(mCurrentPlayState);
+        setPlayState(STATE_PLAYBACK_COMPLETED);
         setKeepScreenOn(false);
+        mCurrentPosition = 0;
     }
 
     @Override
     public void onInfo(int what, int extra) {
+        L.d("what:" + what);
         if (listener != null) listener.onInfo(what, extra);
         switch (what) {
             case IMediaPlayer.MEDIA_INFO_BUFFERING_START:
-                mCurrentPlayState = STATE_BUFFERING;
-                setPlayState(mCurrentPlayState);
+                setPlayState(STATE_BUFFERING);
                 break;
             case IMediaPlayer.MEDIA_INFO_BUFFERING_END:
-                mCurrentPlayState = STATE_BUFFERED;
-                setPlayState(mCurrentPlayState);
+                setPlayState(STATE_BUFFERED);
                 break;
             case IjkMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START: // 视频开始渲染
-                mCurrentPlayState = STATE_PLAYING;
-                setPlayState(mCurrentPlayState);
+                setPlayState(STATE_PLAYING);
                 if (getWindowVisibility() != VISIBLE) pause();
                 break;
         }
@@ -419,9 +425,8 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
 
     @Override
     public void onPrepared() {
-        mCurrentPlayState = STATE_PREPARED;
         if (listener != null) listener.onPrepared();
-        setPlayState(mCurrentPlayState);
+        setPlayState(STATE_PREPARED);
         if (mCurrentPosition > 0) {
             L.d("seek to:" + mCurrentPosition);
             seekTo(mCurrentPosition);

@@ -18,8 +18,8 @@ import android.widget.FrameLayout;
 
 import com.dueeeke.videoplayer.R;
 import com.dueeeke.videoplayer.controller.BaseVideoController;
-import com.dueeeke.videoplayer.util.PlayerConstants;
 import com.dueeeke.videoplayer.util.NetworkUtil;
+import com.dueeeke.videoplayer.util.PlayerConstants;
 import com.dueeeke.videoplayer.util.WindowUtil;
 import com.dueeeke.videoplayer.widget.ResizeSurfaceView;
 import com.dueeeke.videoplayer.widget.ResizeTextureView;
@@ -94,18 +94,23 @@ public class IjkVideoView extends BaseIjkVideoView {
 
     @Override
     protected void setPlayState(int playState) {
+        mCurrentPlayState = playState;
         if (mVideoController != null) mVideoController.setPlayState(playState);
     }
 
     @Override
     protected void setPlayerState(int playerState) {
+        mCurrentPlayerState = playerState;
         if (mVideoController != null) mVideoController.setPlayerState(playerState);
     }
 
     @Override
     protected void startPlay() {
         if (mPlayerConfig.addToPlayerManager) {
-            VideoViewManager.instance().releaseVideoPlayer();
+            IjkVideoView currentVideoPlayer = VideoViewManager.instance().getCurrentVideoPlayer();
+            if (currentVideoPlayer != null) {
+                currentVideoPlayer.resetPlayer();
+            }
             VideoViewManager.instance().setCurrentVideoPlayer(this);
         }
         if (checkNetwork()) return;
@@ -205,6 +210,12 @@ public class IjkVideoView extends BaseIjkVideoView {
     }
 
     @Override
+    public void stopPlayback() {
+        super.stopPlayback();
+        playerContainer.removeView(statusView);
+    }
+
+    @Override
     public void release() {
         super.release();
         playerContainer.removeView(mTextureView);
@@ -233,8 +244,7 @@ public class IjkVideoView extends BaseIjkVideoView {
         contentView.addView(playerContainer, params);
         orientationEventListener.enable();
         isFullScreen = true;
-        mVideoController.setPlayerState(PLAYER_FULL_SCREEN);
-        mCurrentPlayerState = PLAYER_FULL_SCREEN;
+        setPlayerState(PLAYER_FULL_SCREEN);
     }
 
     @Override
@@ -253,8 +263,7 @@ public class IjkVideoView extends BaseIjkVideoView {
                 ViewGroup.LayoutParams.MATCH_PARENT);
         this.addView(playerContainer, params);
         isFullScreen = false;
-        mVideoController.setPlayerState(PLAYER_NORMAL);
-        mCurrentPlayerState = PLAYER_NORMAL;
+        setPlayerState(PLAYER_NORMAL);
     }
 
     @Override

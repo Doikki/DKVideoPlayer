@@ -15,6 +15,7 @@ import com.dueeeke.dkplayer.adapter.VideoRecyclerViewAdapter;
 import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.player.VideoViewManager;
+import com.dueeeke.videoplayer.util.ProgressUtil;
 
 /**
  * Created by Devlin_n on 2017/5/31.
@@ -69,6 +70,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         VideoViewManager.instance().releaseVideoPlayer();
+        ProgressUtil.clearAllSavedProgress(this);
     }
 
     @Override
