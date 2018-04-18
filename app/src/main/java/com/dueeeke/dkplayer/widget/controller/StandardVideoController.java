@@ -372,8 +372,8 @@ public class StandardVideoController extends GestureVideoController implements V
         if (mediaPlayer == null || isDragging) {
             return 0;
         }
-        int position = mediaPlayer.getCurrentPosition();
-        int duration = mediaPlayer.getDuration();
+        int position = (int) mediaPlayer.getCurrentPosition();
+        int duration = (int) mediaPlayer.getDuration();
         if (videoProgress != null) {
             if (duration > 0) {
                 videoProgress.setEnabled(true);

@@ -5,49 +5,49 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 
-import com.dueeeke.dkplayer.interf.MultiRateMediaPlayerControl;
+import com.dueeeke.dkplayer.interf.DefinitionMediaPlayerControl;
 import com.dueeeke.videoplayer.player.IjkVideoView;
-import com.dueeeke.videoplayer.util.L;
 
 import java.util.LinkedHashMap;
 
 /**
- * 多码率
+ * 清晰度切换
  * Created by xinyu on 2018/4/16.
  */
 
-public class MultiRateIjkVideoView extends IjkVideoView implements MultiRateMediaPlayerControl{
+public class DefinitionIjkVideoView extends IjkVideoView implements DefinitionMediaPlayerControl {
     private LinkedHashMap<String, String> mMultiRateVideoModels;
+    private String mCurrentDefinition;
 
-    public MultiRateIjkVideoView(@NonNull Context context) {
+    public DefinitionIjkVideoView(@NonNull Context context) {
         super(context);
     }
 
-    public MultiRateIjkVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public DefinitionIjkVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public MultiRateIjkVideoView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public DefinitionIjkVideoView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
     @Override
-    public LinkedHashMap<String, String> getMultiRateData() {
+    public LinkedHashMap<String, String> getDefinitionData() {
         return mMultiRateVideoModels;
     }
 
     @Override
-    public void switchRate(String type) {
-        L.d(type);
-        String url = mMultiRateVideoModels.get(type);
-        if (url.equals(mCurrentUrl)) return;
+    public void switchDefinition(String definition) {
+        String url = mMultiRateVideoModels.get(definition);
+        if (definition.equals(mCurrentDefinition)) return;
         mCurrentUrl = url;
         addDisplay();
         getCurrentPosition();
         startPrepare(true);
+        mCurrentDefinition = definition;
     }
 
-    public void setMultiRateVideos(LinkedHashMap<String, String> videos) {
+    public void setDefinitionVideos(LinkedHashMap<String, String> videos) {
         this.mMultiRateVideoModels = videos;
         this.mCurrentUrl = getValueFromLinkedMap(videos, 0);
     }

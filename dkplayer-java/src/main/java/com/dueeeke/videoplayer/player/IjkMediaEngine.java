@@ -124,7 +124,8 @@ public class IjkMediaEngine extends BaseMediaEngine {
 
     @Override
     public void setOptions() {
-
+        //精准seek
+        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "enable-accurate-seek", 1);
     }
 
     private IMediaPlayer.OnErrorListener onErrorListener = new IMediaPlayer.OnErrorListener() {

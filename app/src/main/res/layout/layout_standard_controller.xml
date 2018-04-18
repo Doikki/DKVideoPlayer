@@ -89,8 +89,6 @@
             android:id="@+id/curr_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/default_spacing"
-            android:layout_marginStart="@dimen/default_spacing"
             android:textColor="@android:color/white"
             android:textSize="@dimen/controller_time_text_size"
             tools:text="00:00" />
@@ -111,8 +109,6 @@
             android:id="@+id/total_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/default_spacing"
-            android:layout_marginRight="@dimen/default_spacing"
             android:textColor="@android:color/white"
             android:textSize="@dimen/controller_time_text_size"
             tools:text="00:00" />
@@ -121,10 +117,12 @@
             android:id="@+id/tv_multi_rate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/default_spacing"
-            android:layout_marginRight="@dimen/default_spacing"
             android:textColor="@android:color/white"
             android:textSize="@dimen/controller_time_text_size"
+            android:layout_marginLeft="@dimen/default_spacing"
+            android:layout_marginStart="@dimen/default_spacing"
+            android:visibility="gone"
+            tools:visibility="visible"
             tools:text="高清" />
 
         <ImageView

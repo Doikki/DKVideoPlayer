@@ -16,6 +16,7 @@ import com.dueeeke.videoplayer.controller.BaseVideoController;
 import com.dueeeke.videoplayer.listener.MediaEngineInterface;
 import com.dueeeke.videoplayer.listener.MediaPlayerControl;
 import com.dueeeke.videoplayer.listener.VideoListener;
+import com.dueeeke.videoplayer.util.L;
 import com.dueeeke.videoplayer.util.WindowUtil;
 
 import java.io.File;
@@ -38,7 +39,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     protected boolean isMute;//是否静音
 
     protected String mCurrentUrl;//当前播放视频的地址
-    protected int mCurrentPosition;//当前正在播放视频的位置
+    protected long mCurrentPosition;//当前正在播放视频的位置
     protected String mCurrentTitle = "";//当前正在播放视频的标题
 
     //播放器的各种状态
@@ -300,24 +301,25 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     }
 
     @Override
-    public int getDuration() {
+    public long getDuration() {
         if (isInPlaybackState()) {
-            return (int) mMediaPlayer.getDuration();
+            return mMediaPlayer.getDuration();
         }
         return 0;
     }
 
     @Override
-    public int getCurrentPosition() {
+    public long getCurrentPosition() {
         if (isInPlaybackState()) {
-            mCurrentPosition = (int) mMediaPlayer.getCurrentPosition();
+            mCurrentPosition = mMediaPlayer.getCurrentPosition();
+            L.d("current position:" + mCurrentPosition);
             return mCurrentPosition;
         }
         return 0;
     }
 
     @Override
-    public void seekTo(int pos) {
+    public void seekTo(long pos) {
         if (isInPlaybackState()) {
             mMediaPlayer.seekTo(pos);
         }
@@ -421,6 +423,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         if (listener != null) listener.onPrepared();
         setPlayState(mCurrentPlayState);
         if (mCurrentPosition > 0) {
+            L.d("seek to:" + mCurrentPosition);
             seekTo(mCurrentPosition);
         }
     }

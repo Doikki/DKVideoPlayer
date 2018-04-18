@@ -146,8 +146,8 @@ public abstract class GestureVideoController extends BaseVideoController{
         mCenterView.setProVisibility(View.GONE);
         deltaX = -deltaX;
         int width = getMeasuredWidth();
-        int duration = mediaPlayer.getDuration();
-        int currentPosition = mediaPlayer.getCurrentPosition();
+        int duration = (int) mediaPlayer.getDuration();
+        int currentPosition = (int) mediaPlayer.getCurrentPosition();
         int position = (int) (deltaX / width * duration + currentPosition);
         if (position > currentPosition) {
             mCenterView.setIcon(R.drawable.ic_action_fast_forward);

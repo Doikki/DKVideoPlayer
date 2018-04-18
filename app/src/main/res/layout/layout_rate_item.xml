@@ -10,4 +10,5 @@
     android:textSize="16sp"
     android:background="#fff"
     android:textColor="#000"
+    android:gravity="center"
     tools:text="高清" />

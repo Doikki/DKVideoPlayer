@@ -115,9 +115,8 @@ public class AdController extends GestureVideoController implements View.OnClick
         if (mediaPlayer == null) {
             return 0;
         }
-        int position = mediaPlayer.getCurrentPosition();
-        int duration = mediaPlayer.getDuration();
-
+        int position = (int) mediaPlayer.getCurrentPosition();
+        int duration = (int) mediaPlayer.getDuration();
 
         if (adTime != null)
             adTime.setText(String.format("%s | 跳过", (duration - position) / 1000));

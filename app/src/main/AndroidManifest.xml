@@ -91,7 +91,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.api.MultiRatePlayerActivity"
+            android:name=".activity.api.DefinitionPlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
 

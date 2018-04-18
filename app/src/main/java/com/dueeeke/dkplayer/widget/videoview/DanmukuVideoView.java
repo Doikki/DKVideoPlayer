@@ -89,10 +89,10 @@ public class DanmukuVideoView extends IjkVideoView {
     }
 
     @Override
-    public void seekTo(int pos) {
+    public void seekTo(long pos) {
         super.seekTo(pos);
         if (isInPlaybackState()) {
-            if (mDanmakuView != null) mDanmakuView.seekTo((long) pos);
+            if (mDanmakuView != null) mDanmakuView.seekTo(pos);
         }
     }
 

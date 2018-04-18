@@ -73,7 +73,7 @@ public class ResizeSurfaceView extends SurfaceView {
                 height = heightMeasureSpec;
                 break;
             case IjkVideoView.SCREEN_SCALE_CENTER_CROP:
-                if (mVideoWidth > mVideoHeight) {
+                if (mVideoWidth * height > width * mVideoHeight) {
                     width = height * mVideoWidth / mVideoHeight;
                 } else {
                     height = width * mVideoHeight / mVideoWidth;

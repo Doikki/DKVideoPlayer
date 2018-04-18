@@ -7,8 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.dueeeke.dkplayer.R;
-import com.dueeeke.dkplayer.widget.controller.MultiRateController;
-import com.dueeeke.dkplayer.widget.videoview.MultiRateIjkVideoView;
+import com.dueeeke.dkplayer.widget.controller.DefinitionController;
+import com.dueeeke.dkplayer.widget.videoview.DefinitionIjkVideoView;
 import com.dueeeke.videoplayer.player.PlayerConfig;
 
 import java.util.LinkedHashMap;
@@ -18,9 +18,9 @@ import java.util.LinkedHashMap;
  * Created by Devlin_n on 2017/4/7.
  */
 
-public class MultiRatePlayerActivity extends AppCompatActivity {
+public class DefinitionPlayerActivity extends AppCompatActivity {
 
-    private MultiRateIjkVideoView ijkVideoView;
+    private DefinitionIjkVideoView ijkVideoView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,16 +33,19 @@ public class MultiRatePlayerActivity extends AppCompatActivity {
         }
         ijkVideoView = findViewById(R.id.player);
 
-        MultiRateController controller = new MultiRateController(this);
+        DefinitionController controller = new DefinitionController(this);
         ijkVideoView.setPlayerConfig(new PlayerConfig.Builder()
                 .autoRotate()//自动旋转屏幕
+//                .usingAndroidMediaPlayer()
                 .build());
 
         LinkedHashMap<String, String> videos = new LinkedHashMap<>();
-        videos.put("高清", "http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4");
-        videos.put("超清", "http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f30.mp4");
-        ijkVideoView.setMultiRateVideos(videos);
+        videos.put("标清", "http://mov.bn.netease.com/open-movie/nos/flv/2017/07/24/SCP786QON_sd.flv");
+        videos.put("高清", "http://mov.bn.netease.com/open-movie/nos/flv/2017/07/24/SCP786QON_hd.flv");
+        videos.put("超清", "http://mov.bn.netease.com/open-movie/nos/flv/2017/07/24/SCP786QON_shd.flv");
+        ijkVideoView.setDefinitionVideos(videos);
         ijkVideoView.setVideoController(controller);
+        ijkVideoView.setTitle("韩雪：积极的悲观主义者");
         ijkVideoView.start();
     }
 

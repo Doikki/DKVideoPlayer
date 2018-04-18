@@ -17,7 +17,9 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.dueeeke.dkplayer.R;
-import com.dueeeke.dkplayer.interf.MultiRateMediaPlayerControl;
+import com.dueeeke.dkplayer.interf.DefinitionMediaPlayerControl;
+import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.util.L;
 import com.dueeeke.videoplayer.util.WindowUtil;
 
 import java.util.ArrayList;
@@ -27,11 +29,11 @@ import java.util.ListIterator;
 import java.util.Map;
 
 /**
- * 多码率控制器
+ * 清晰度切换控制器
  * Created by Devlin_n on 2018/4/16.
  */
 
-public class MultiRateController extends StandardVideoController {
+public class DefinitionController extends StandardVideoController {
     protected TextView multiRate;
     //    private PopupMenu mPopupMenu;
     private PopupWindow mPopupWindow;
@@ -40,15 +42,15 @@ public class MultiRateController extends StandardVideoController {
     private LinearLayout mPopLayout;
 
 
-    public MultiRateController(@NonNull Context context) {
+    public DefinitionController(@NonNull Context context) {
         this(context, null);
     }
 
-    public MultiRateController(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public DefinitionController(@NonNull Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public MultiRateController(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
+    public DefinitionController(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
@@ -65,6 +67,18 @@ public class MultiRateController extends StandardVideoController {
         mPopupWindow.setClippingEnabled(false);
     }
 
+    @Override
+    public void setPlayerState(int playerState) {
+        super.setPlayerState(playerState);
+        switch (playerState) {
+            case IjkVideoView.PLAYER_NORMAL:
+                multiRate.setVisibility(GONE);
+                break;
+            case IjkVideoView.PLAYER_FULL_SCREEN:
+                multiRate.setVisibility(VISIBLE);
+                break;
+        }
+    }
 
     @Override
     public void onClick(View v) {
@@ -94,9 +108,9 @@ public class MultiRateController extends StandardVideoController {
     @Override
     protected int setProgress() {
         if (multiRate != null && TextUtils.isEmpty(multiRate.getText())) {
-
-            LinkedHashMap<String, String> multiRateData = ((MultiRateMediaPlayerControl) mediaPlayer).getMultiRateData();
-
+            L.d("multiRate");
+            LinkedHashMap<String, String> multiRateData = ((DefinitionMediaPlayerControl) mediaPlayer).getDefinitionData();
+            if (multiRateData == null) return super.setProgress();
             mRateStr = new ArrayList<>();
             mRateItems = new ArrayList<>();
             int index = 0;
@@ -128,8 +142,9 @@ public class MultiRateController extends StandardVideoController {
             mRateItems.get(currentIndex).setTextColor(Color.BLACK);
             mRateItems.get(index).setTextColor(ContextCompat.getColor(getContext(), R.color.theme_color));
             multiRate.setText(mRateStr.get(index));
-            ((MultiRateMediaPlayerControl) mediaPlayer).switchRate(mRateStr.get(index));
+            ((DefinitionMediaPlayerControl) mediaPlayer).switchDefinition(mRateStr.get(index));
             mPopupWindow.dismiss();
+            hide();
             currentIndex = index;
         }
     };
