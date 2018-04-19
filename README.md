@@ -22,6 +22,7 @@ A video player based on [IjkPlayer](https://github.com/Bilibili/ijkplayer).
 * **支持连续播放一个列表的视频。**
 * **支持广告播放。**
 * **支持清晰度切换。**
+* **支持保存播放进度。**
 * **支持弹幕，使用了[DanmakuFlameMaster](https://github.com/Bilibili/DanmakuFlameMaster)。**
 * **抖音demo。**
 
@@ -41,14 +42,14 @@ allprojects {
 
 dependencies {
     # required, enough for most devices.
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-java:2.3'
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv7a:2.3'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-java:2.3.3'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv7a:2.3.3'
 
     # Other ABIs: optional
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv5:2.3'
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-arm64:2.3'
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86:2.3'
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86_64:2.3'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv5:2.3.3'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-arm64:2.3.3'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86:2.3.3'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86_64:2.3.3'
 }
 ```
 或者将library下载并导入项目中使用
@@ -76,6 +77,7 @@ PlayerConfig playerConfig = new PlayerConfig.Builder()
         .enableMediaCodec()//启动硬解码，启用后可能导致视频黑屏，音画不同步
         .usingAndroidMediaPlayer()//启动AndroidMediaPlayer，不调用此方法默认使用IjkPlayer
         .usingSurfaceView() //启用SurfaceView显示视频，不调用默认使用TextureView
+        .savingProgress() //保存播放进度
         .build();
 ijkVideoView.setPlayerConfig(playerConfig);
 ```
@@ -129,7 +131,8 @@ ijkVideoView.setPlayerConfig(playerConfig);
 <img src="https://github.com/dueeeke/dkplayer/blob/master/art/6.png" width="240px" height="426px"/>
 <img src="https://github.com/dueeeke/dkplayer/blob/master/art/7.png" width="240px" height="426px"/>
 <img src="https://github.com/dueeeke/dkplayer/blob/master/art/8.png" width="240px" height="426px"/>
-<img src="https://github.com/dueeeke/dkplayer/blob/master/art/9.png" width="426px" height="240px"/>
+<img src="https://github.com/dueeeke/dkplayer/blob/master/art/9.png" width="240px" height="426px"/>
+<img src="https://github.com/dueeeke/dkplayer/blob/master/art/10.png" width="426px" height="240px"/>
 </div>
 
 ## 混淆
