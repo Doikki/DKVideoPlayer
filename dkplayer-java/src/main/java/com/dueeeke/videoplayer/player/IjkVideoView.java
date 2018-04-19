@@ -105,10 +105,11 @@ public class IjkVideoView extends BaseIjkVideoView {
     @Override
     protected void startPlay() {
         if (mPlayerConfig.addToPlayerManager) {
-            IjkVideoView currentVideoPlayer = VideoViewManager.instance().getCurrentVideoPlayer();
-            if (currentVideoPlayer != null) {
-                currentVideoPlayer.resetPlayer();
-            }
+//            IjkVideoView currentVideoPlayer = VideoViewManager.instance().getCurrentVideoPlayer();
+//            if (currentVideoPlayer != null) {
+//                currentVideoPlayer.resetPlayer();
+//            }
+            VideoViewManager.instance().releaseVideoPlayer();
             VideoViewManager.instance().setCurrentVideoPlayer(this);
         }
         if (checkNetwork()) return;

@@ -205,6 +205,9 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         return VideoCacheManager.getProxy(getContext().getApplicationContext());
     }
 
+    /**
+     * 开始播放
+     */
     @Override
     public void start() {
         if (mCurrentPlayState == STATE_IDLE) {
@@ -261,15 +264,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         }
     }
 
-    public void resetPlayer() {
-        if (mMediaPlayer != null) {
-            if (mPlayerConfig.savingProgress && isInPlaybackState())
-                ProgressUtil.saveProgress(mCurrentUrl, mCurrentPosition);
-            mMediaPlayer.reset();
-        }
-        setPlayState(STATE_IDLE);
-    }
-
     public void stopPlayback() {
         L.d("stopPlayback");
         if (mPlayerConfig.savingProgress && isInPlaybackState())
@@ -290,6 +284,9 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     }
 
     public void release() {
+        if (mPlayerConfig.savingProgress && isInPlaybackState())
+            ProgressUtil.saveProgress(mCurrentUrl, mCurrentPosition);
+
         if (mMediaPlayer != null) {
             mMediaPlayer.release();
             mMediaPlayer = null;
