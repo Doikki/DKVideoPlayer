@@ -160,6 +160,7 @@ public class FullScreenController extends GestureVideoController implements View
             case IjkVideoView.STATE_PLAYBACK_COMPLETED:
                 L.e("STATE_PLAYBACK_COMPLETED");
                 hide();
+                removeCallbacks(mShowProgress);
                 completeContainer.setVisibility(VISIBLE);
                 bottomProgress.setProgress(0);
                 bottomProgress.setSecondaryProgress(0);

@@ -73,10 +73,11 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
                 ijkVideoView.setVideoController(controller);
                 title = itemView.findViewById(R.id.tv_title);
                 mPlayerConfig = new PlayerConfig.Builder()
-                        .enableCache()
-                        .autoRotate()
+//                        .enableCache()
+//                        .autoRotate()
                         .addToPlayerManager()//required
 //                        .usingAndroidMediaPlayer()
+                        .savingProgress()
                         .build();
             }
         }

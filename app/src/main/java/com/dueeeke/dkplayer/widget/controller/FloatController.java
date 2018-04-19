@@ -107,6 +107,7 @@ public class FloatController extends GestureVideoController implements View.OnCl
                 break;
             case IjkVideoView.STATE_PLAYBACK_COMPLETED:
                 show(0);
+                removeCallbacks(mShowProgress);
                 break;
         }
     }

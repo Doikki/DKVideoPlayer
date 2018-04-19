@@ -199,6 +199,7 @@ public class StandardVideoController extends GestureVideoController implements V
                 L.e("STATE_PLAYING");
                 post(mShowProgress);
                 playButton.setSelected(true);
+                loadingProgress.setVisibility(GONE);
                 completeContainer.setVisibility(GONE);
                 thumb.setVisibility(GONE);
                 startPlayButton.setVisibility(GONE);
@@ -217,7 +218,7 @@ public class StandardVideoController extends GestureVideoController implements V
             case IjkVideoView.STATE_PREPARED:
                 L.e("STATE_PREPARED");
                 if (!isLive) bottomProgress.setVisibility(VISIBLE);
-                loadingProgress.setVisibility(GONE);
+//                loadingProgress.setVisibility(GONE);
                 startPlayButton.setVisibility(GONE);
                 break;
             case IjkVideoView.STATE_ERROR:
@@ -237,6 +238,7 @@ public class StandardVideoController extends GestureVideoController implements V
             case IjkVideoView.STATE_PLAYBACK_COMPLETED:
                 L.e("STATE_PLAYBACK_COMPLETED");
                 hide();
+                removeCallbacks(mShowProgress);
                 startPlayButton.setVisibility(GONE);
                 thumb.setVisibility(VISIBLE);
                 completeContainer.setVisibility(VISIBLE);
