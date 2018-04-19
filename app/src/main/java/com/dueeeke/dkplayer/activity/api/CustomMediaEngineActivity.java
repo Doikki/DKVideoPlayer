@@ -31,7 +31,7 @@ public class CustomMediaEngineActivity extends AppCompatActivity {
         setContentView(R.layout.activity_custom_media_engine);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle("CustomPlayer");
+            actionBar.setTitle("rtsp&concat");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 

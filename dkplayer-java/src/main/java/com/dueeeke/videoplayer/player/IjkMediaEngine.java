@@ -2,6 +2,7 @@ package com.dueeeke.videoplayer.player;
 
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.support.annotation.CallSuper;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
@@ -14,6 +15,7 @@ public class IjkMediaEngine extends BaseMediaEngine {
 
     protected IjkMediaPlayer mMediaPlayer;
     private boolean isLooping;
+    private boolean isEnableMediaCodec;
 
     @Override
     public void start() {
@@ -65,6 +67,7 @@ public class IjkMediaEngine extends BaseMediaEngine {
         mMediaPlayer.setOnVideoSizeChangedListener(onVideoSizeChangedListener);
         mMediaPlayer.setLooping(isLooping);
         setOptions();
+        setEnableMediaCodec(isEnableMediaCodec);
     }
 
     @Override
@@ -74,7 +77,11 @@ public class IjkMediaEngine extends BaseMediaEngine {
 
     @Override
     public void seekTo(long time) {
-        mMediaPlayer.seekTo((int) time);
+        try {
+            mMediaPlayer.seekTo((int) time);
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -116,12 +123,14 @@ public class IjkMediaEngine extends BaseMediaEngine {
 
     @Override
     public void setEnableMediaCodec(boolean isEnable) {
+        isEnableMediaCodec = isEnable;
         int value = isEnable ? 1 : 0;
         mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", value);//开启硬解码
         mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", value);
         mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", value);
     }
 
+    @CallSuper
     @Override
     public void setOptions() {
         //精准seek

@@ -7,7 +7,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -61,9 +60,9 @@ public class AutoPlayRecyclerViewActivity extends AppCompatActivity {
             public void onChildViewDetachedFromWindow(View view) {
                 IjkVideoView ijkVideoView = view.findViewById(R.id.video_player);
                 if (ijkVideoView != null && !ijkVideoView.isFullScreen()) {
-                    Log.d("@@@@@@", "onChildViewDetachedFromWindow: called");
-                    int tag = (int) ijkVideoView.getTag();
-                    Log.d("@@@@@@", "onChildViewDetachedFromWindow: position: " + tag);
+//                    Log.d("@@@@@@", "onChildViewDetachedFromWindow: called");
+//                    int tag = (int) ijkVideoView.getTag();
+//                    Log.d("@@@@@@", "onChildViewDetachedFromWindow: position: " + tag);
                     ijkVideoView.stopPlayback();
                 }
             }
@@ -122,10 +121,7 @@ public class AutoPlayRecyclerViewActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        IjkVideoView currentVideoPlayer = VideoViewManager.instance().getCurrentVideoPlayer();
-        if (currentVideoPlayer != null){
-            currentVideoPlayer.release();
-        }
+        VideoViewManager.instance().releaseVideoPlayer();
     }
 
     @Override

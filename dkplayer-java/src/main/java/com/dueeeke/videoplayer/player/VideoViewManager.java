@@ -1,13 +1,11 @@
 package com.dueeeke.videoplayer.player;
 
-import java.lang.ref.WeakReference;
-
 /**
  * 视频播放器管理器.
  */
 public class VideoViewManager {
 
-    private WeakReference<IjkVideoView> mPlayer; //写成弱引用防止内存泄露
+    private IjkVideoView mPlayer;
 
     private VideoViewManager() {
     }
@@ -26,22 +24,21 @@ public class VideoViewManager {
     }
 
     public void setCurrentVideoPlayer(IjkVideoView player) {
-        mPlayer = new WeakReference<>(player);
+        mPlayer = player;
     }
 
     public IjkVideoView getCurrentVideoPlayer() {
-        if (mPlayer == null) return null;
-        return mPlayer.get();
+        return mPlayer;
     }
 
     public void releaseVideoPlayer() {
-        if (mPlayer != null && mPlayer.get() != null) {
-            mPlayer.get().release();
+        if (mPlayer != null) {
+            mPlayer.release();
             mPlayer = null;
         }
     }
 
     public boolean onBackPressed() {
-        return mPlayer != null && mPlayer.get() != null && mPlayer.get().onBackPressed();
+        return mPlayer != null && mPlayer.onBackPressed();
     }
 }

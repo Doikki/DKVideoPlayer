@@ -23,7 +23,6 @@ import com.dueeeke.videoplayer.util.PlayerConstants;
 import com.dueeeke.videoplayer.util.WindowUtil;
 import com.dueeeke.videoplayer.widget.ResizeSurfaceView;
 import com.dueeeke.videoplayer.widget.ResizeTextureView;
-import com.dueeeke.videoplayer.widget.StatusView;
 
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
@@ -37,7 +36,6 @@ public class IjkVideoView extends BaseIjkVideoView {
     protected ResizeTextureView mTextureView;
     protected SurfaceTexture mSurfaceTexture;
     protected FrameLayout playerContainer;
-    protected StatusView statusView;//显示错误信息的一个view
     protected boolean isFullScreen;//是否处于全屏状态
 
     public static final int SCREEN_SCALE_DEFAULT = 0;
@@ -189,30 +187,22 @@ public class IjkVideoView extends BaseIjkVideoView {
 
     protected boolean checkNetwork() {
         if (NetworkUtil.getNetworkType(getContext()) == NetworkUtil.NETWORK_MOBILE && !PlayerConstants.IS_PLAY_ON_MOBILE_NETWORK) {
-            playerContainer.removeView(statusView);
-            if (statusView == null) {
-                statusView = new StatusView(getContext());
+            if (mVideoController != null) {
+                mVideoController.showStatusView(
+                        getResources().getString(R.string.wifi_tip),
+                        getResources().getString(R.string.continue_play),
+                        new OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                mVideoController.hideStatusView();
+                                PlayerConstants.IS_PLAY_ON_MOBILE_NETWORK = true;
+                                IjkVideoView.super.startPlay();
+                            }
+                        });
             }
-            statusView.setMessage(getResources().getString(R.string.wifi_tip));
-            statusView.setButtonTextAndAction(getResources().getString(R.string.continue_play), new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    PlayerConstants.IS_PLAY_ON_MOBILE_NETWORK = true;
-                    playerContainer.removeView(statusView);
-                    initPlayer();
-                    startPrepare(true);
-                }
-            });
-            playerContainer.addView(statusView);
             return true;
         }
         return false;
-    }
-
-    @Override
-    public void stopPlayback() {
-        super.stopPlayback();
-        playerContainer.removeView(statusView);
     }
 
     @Override
@@ -220,7 +210,6 @@ public class IjkVideoView extends BaseIjkVideoView {
         super.release();
         playerContainer.removeView(mTextureView);
         playerContainer.removeView(mSurfaceView);
-        playerContainer.removeView(statusView);
         if (mSurfaceTexture != null) {
             mSurfaceTexture.release();
             mSurfaceTexture = null;
@@ -280,21 +269,27 @@ public class IjkVideoView extends BaseIjkVideoView {
     @Override
     public void onError() {
         super.onError();
-        playerContainer.removeView(statusView);
-        if (statusView == null) {
-            statusView = new StatusView(getContext());
+        if (mVideoController != null) {
+            mVideoController.showStatusView(
+                    getResources().getString(R.string.error_message),
+                    getResources().getString(R.string.retry),
+                    new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mVideoController.hideStatusView();
+                            retry();
+                        }
+                    });
         }
-        statusView.setMessage(getResources().getString(R.string.error_message));
-        statusView.setButtonTextAndAction(getResources().getString(R.string.retry), new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                playerContainer.removeView(statusView);
-                addDisplay();
-                mMediaPlayer.reset();
-                startPrepare(true);
-            }
-        });
-        playerContainer.addView(statusView);
+    }
+
+    /**
+     * 重试
+     */
+    private void retry() {
+        addDisplay();
+        mMediaPlayer.reset();
+        startPrepare(true);
     }
 
     @Override

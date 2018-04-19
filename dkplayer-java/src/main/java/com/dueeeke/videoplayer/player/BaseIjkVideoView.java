@@ -221,7 +221,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      */
     protected void startPlay() {
         if (mPlayerConfig.savingProgress) {
-            mCurrentPosition = ProgressUtil.getSavedProgress(getContext(), mCurrentUrl);
+            mCurrentPosition = ProgressUtil.getSavedProgress(mCurrentUrl);
         }
         if (mPlayerConfig.mAutoRotate)
             orientationEventListener.enable();
@@ -262,16 +262,18 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     }
 
     public void resetPlayer() {
-        if (mPlayerConfig.savingProgress && isInPlaybackState())
-            ProgressUtil.saveProgress(getContext(), mCurrentUrl, mCurrentPosition);
-        mMediaPlayer.reset();
+        if (mMediaPlayer != null) {
+            if (mPlayerConfig.savingProgress && isInPlaybackState())
+                ProgressUtil.saveProgress(mCurrentUrl, mCurrentPosition);
+            mMediaPlayer.reset();
+        }
         setPlayState(STATE_IDLE);
     }
 
     public void stopPlayback() {
         L.d("stopPlayback");
         if (mPlayerConfig.savingProgress && isInPlaybackState())
-            ProgressUtil.saveProgress(getContext(), mCurrentUrl, mCurrentPosition);
+            ProgressUtil.saveProgress(mCurrentUrl, mCurrentPosition);
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
             setPlayState(STATE_IDLE);
@@ -279,6 +281,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
             setKeepScreenOn(false);
         }
 
+        if (mVideoController != null) mVideoController.hideStatusView();
         orientationEventListener.disable();
         if (mPlayerConfig.isCache) getCacheServer().unregisterCacheListener(cacheListener);
 
@@ -294,6 +297,8 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
             mAudioFocusHelper.abandonFocus();
             setKeepScreenOn(false);
         }
+
+        if (mVideoController != null) mVideoController.hideStatusView();
         orientationEventListener.disable();
         if (mPlayerConfig.isCache) getCacheServer().unregisterCacheListener(cacheListener);
 

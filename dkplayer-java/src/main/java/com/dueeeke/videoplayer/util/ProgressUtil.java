@@ -1,7 +1,8 @@
 package com.dueeeke.videoplayer.util;
 
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.text.TextUtils;
+
+import java.util.LinkedHashMap;
 
 /**
  * Created by xinyu on 2018/4/18.
@@ -9,37 +10,29 @@ import android.content.SharedPreferences;
 
 public class ProgressUtil {
 
+    private static LinkedHashMap<Integer, Long> progressMap = new LinkedHashMap<>();
 
-    public static void saveProgress(Context context, String url, long progress) {
-        L.d("saveProgress:" + url.hashCode() + "/" + progress);
-        SharedPreferences sp = context.getSharedPreferences(PlayerConstants.DK_PROGRESS,
-                Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putLong("dkplayer_" + url.hashCode(), progress).apply();
+    public static void saveProgress(String url, long progress) {
+        if (TextUtils.isEmpty(url)) return;
+        progressMap.put(url.hashCode(), progress);
     }
 
-    public static long getSavedProgress(Context context, String url) {
-        SharedPreferences sp = context.getSharedPreferences(PlayerConstants.DK_PROGRESS,
-                Context.MODE_PRIVATE);
-        return sp.getLong("dkplayer_" + url.hashCode(), 0);
+    public static long getSavedProgress(String url) {
+        return TextUtils.isEmpty(url) ? 0 : progressMap.containsKey(url.hashCode()) ? progressMap.get(url.hashCode()) : 0;
     }
 
     /**
      * clear all progress
      */
-    public static void clearAllSavedProgress(Context context) {
-        SharedPreferences sp = context.getSharedPreferences(PlayerConstants.DK_PROGRESS,
-                Context.MODE_PRIVATE);
-        sp.edit().clear().apply();
+    public static void clearAllSavedProgress() {
+        progressMap.clear();
     }
 
     /**
      * remove progress by url
      */
-    public static void clearSavedProgressByUrl(Context context, String url) {
-        SharedPreferences sp = context.getSharedPreferences(PlayerConstants.DK_PROGRESS,
-                Context.MODE_PRIVATE);
-        sp.edit().remove("dkplayer_" + url.hashCode()).apply();
+    public static void clearSavedProgressByUrl(String url) {
+        progressMap.remove(url.hashCode());
     }
 
 }

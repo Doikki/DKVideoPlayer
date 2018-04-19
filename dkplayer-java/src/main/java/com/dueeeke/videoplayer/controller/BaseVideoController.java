@@ -14,6 +14,7 @@ import com.dueeeke.videoplayer.listener.ControllerListener;
 import com.dueeeke.videoplayer.listener.MediaPlayerControl;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.util.WindowUtil;
+import com.dueeeke.videoplayer.widget.StatusView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -36,6 +37,7 @@ public abstract class BaseVideoController extends FrameLayout {
     private Formatter mFormatter;
     protected ControllerListener listener;
     protected int currentPlayState;
+    protected StatusView mStatusView;
 
 
     public BaseVideoController(@NonNull Context context) {
@@ -56,6 +58,7 @@ public abstract class BaseVideoController extends FrameLayout {
         controllerView = LayoutInflater.from(getContext()).inflate(getLayoutId(), this);
         mFormatBuilder = new StringBuilder();
         mFormatter = new Formatter(mFormatBuilder, Locale.getDefault());
+        mStatusView = new StatusView(getContext());
         setClickable(true);
         setFocusable(true);
     }
@@ -79,6 +82,21 @@ public abstract class BaseVideoController extends FrameLayout {
 
     public void setPlayState(int playState) {
         currentPlayState = playState;
+        switch (playState) {
+            case IjkVideoView.STATE_IDLE:
+                hideStatusView();
+                break;
+        }
+    }
+
+    public void showStatusView(String msg, String btnStr, OnClickListener listener) {
+        mStatusView.setMessage(msg);
+        mStatusView.setButtonTextAndAction(btnStr, listener);
+        this.addView(mStatusView);
+    }
+
+    public void hideStatusView() {
+        this.removeView(mStatusView);
     }
 
     public void setPlayerState(int playerState) {
@@ -162,6 +180,12 @@ public abstract class BaseVideoController extends FrameLayout {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         post(mShowProgress);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        removeCallbacks(mShowProgress);
     }
 
     @Override

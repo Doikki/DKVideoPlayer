@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.widget.controller.StandardVideoController;
@@ -74,11 +75,14 @@ public class VideoListViewAdapter extends BaseAdapter {
 
         ViewHolder(View itemView) {
             this.ijkVideoView = itemView.findViewById(R.id.video_player);
+            int widthPixels = context.getResources().getDisplayMetrics().widthPixels;
+            ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels * 9 / 16 + 1));
             controller = new StandardVideoController(context);
             mPlayerConfig = new PlayerConfig.Builder()
-                    .enableCache()
-                    .autoRotate()
+//                    .enableCache()
+//                    .autoRotate()
                     .addToPlayerManager()
+                    .savingProgress()
                     .build();
         }
     }

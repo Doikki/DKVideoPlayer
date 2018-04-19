@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,9 +48,9 @@ public class RecyclerViewFragment extends Fragment{
             public void onChildViewDetachedFromWindow(View view) {
                 IjkVideoView ijkVideoView = view.findViewById(R.id.video_player);
                 if (ijkVideoView != null && !ijkVideoView.isFullScreen()) {
-                    Log.d("@@@@@@", "onChildViewDetachedFromWindow: called");
-                    int tag = (int) ijkVideoView.getTag();
-                    Log.d("@@@@@@", "onChildViewDetachedFromWindow: position: " + tag);
+//                    Log.d("@@@@@@", "onChildViewDetachedFromWindow: called");
+//                    int tag = (int) ijkVideoView.getTag();
+//                    Log.d("@@@@@@", "onChildViewDetachedFromWindow: position: " + tag);
                     ijkVideoView.stopPlayback();
                 }
             }

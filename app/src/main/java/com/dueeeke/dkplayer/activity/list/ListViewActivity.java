@@ -14,6 +14,7 @@ import com.dueeeke.dkplayer.adapter.VideoListViewAdapter;
 import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.player.VideoViewManager;
+import com.dueeeke.videoplayer.util.ProgressUtil;
 
 /**
  * ListView
@@ -101,6 +102,7 @@ public class ListViewActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         VideoViewManager.instance().releaseVideoPlayer();
+        ProgressUtil.clearAllSavedProgress();
     }
 
     @Override

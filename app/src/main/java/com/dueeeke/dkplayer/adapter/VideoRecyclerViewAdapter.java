@@ -49,7 +49,7 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
             holder.ijkVideoView.setTitle(videoBean.getTitle());
             holder.ijkVideoView.setVideoController(holder.controller);
             holder.title.setText(videoBean.getTitle());
-            holder.ijkVideoView.setTag(position);
+//            holder.ijkVideoView.setTag(position);
         }
 
         @Override
@@ -70,14 +70,13 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
                 int widthPixels = context.getResources().getDisplayMetrics().widthPixels;
                 ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels * 9 / 16 + 1));
                 controller = new StandardVideoController(context);
-                ijkVideoView.setVideoController(controller);
                 title = itemView.findViewById(R.id.tv_title);
                 mPlayerConfig = new PlayerConfig.Builder()
 //                        .enableCache()
-//                        .autoRotate()
+                        .autoRotate()
                         .addToPlayerManager()//required
 //                        .usingAndroidMediaPlayer()
-                        .savingProgress()
+//                        .savingProgress()
                         .build();
             }
         }
