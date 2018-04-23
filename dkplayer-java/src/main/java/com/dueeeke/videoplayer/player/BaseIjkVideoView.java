@@ -277,7 +277,10 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
 
         if (mVideoController != null) mVideoController.hideStatusView();
         orientationEventListener.disable();
-        if (mPlayerConfig.isCache) getCacheServer().unregisterCacheListener(cacheListener);
+        if (mPlayerConfig.isCache && cacheListener != null) {
+            getCacheServer().unregisterCacheListener(cacheListener);
+            cacheListener = null;
+        }
 
         isLockFullScreen = false;
         mCurrentPosition = 0;
@@ -297,7 +300,10 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
 
         if (mVideoController != null) mVideoController.hideStatusView();
         orientationEventListener.disable();
-        if (mPlayerConfig.isCache) getCacheServer().unregisterCacheListener(cacheListener);
+        if (mPlayerConfig.isCache && cacheListener != null) {
+            getCacheServer().unregisterCacheListener(cacheListener);
+            cacheListener = null;
+        }
 
         isLockFullScreen = false;
         mCurrentPosition = 0;
