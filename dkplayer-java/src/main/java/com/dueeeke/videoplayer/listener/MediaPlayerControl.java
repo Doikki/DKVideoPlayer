@@ -30,4 +30,6 @@ public interface MediaPlayerControl {
     void setLock(boolean isLocked);
 
     void setScreenScale(int screenScale);
+
+    void retry();
 }

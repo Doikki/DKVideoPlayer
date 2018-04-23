@@ -10,9 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.dueeeke.videoplayer.R;
 import com.dueeeke.videoplayer.listener.ControllerListener;
 import com.dueeeke.videoplayer.listener.MediaPlayerControl;
 import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.util.PlayerConstants;
 import com.dueeeke.videoplayer.util.WindowUtil;
 import com.dueeeke.videoplayer.widget.StatusView;
 
@@ -82,17 +84,34 @@ public abstract class BaseVideoController extends FrameLayout {
 
     public void setPlayState(int playState) {
         currentPlayState = playState;
+        hideStatusView();
         switch (playState) {
-            case IjkVideoView.STATE_IDLE:
-                hideStatusView();
+            case IjkVideoView.STATE_ERROR:
+                mStatusView.setMessage(getResources().getString(R.string.error_message));
+                mStatusView.setButtonTextAndAction(getResources().getString(R.string.retry), new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        hideStatusView();
+                        mediaPlayer.retry();
+                    }
+                });
+                this.addView(mStatusView, 0);
                 break;
         }
     }
 
-    public void showStatusView(String msg, String btnStr, OnClickListener listener) {
-        mStatusView.setMessage(msg);
-        mStatusView.setButtonTextAndAction(btnStr, listener);
-        this.addView(mStatusView);
+    public void showStatusView() {
+        this.removeView(mStatusView);
+        mStatusView.setMessage(getResources().getString(R.string.wifi_tip));
+        mStatusView.setButtonTextAndAction(getResources().getString(R.string.continue_play), new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideStatusView();
+                PlayerConstants.IS_PLAY_ON_MOBILE_NETWORK = true;
+                mediaPlayer.start();
+            }
+        });
+        this.addView(mStatusView, 0);
     }
 
     public void hideStatusView() {

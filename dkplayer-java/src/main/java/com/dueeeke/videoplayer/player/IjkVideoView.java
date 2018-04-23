@@ -12,11 +12,9 @@ import android.view.Gravity;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.TextureView;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.dueeeke.videoplayer.R;
 import com.dueeeke.videoplayer.controller.BaseVideoController;
 import com.dueeeke.videoplayer.util.NetworkUtil;
 import com.dueeeke.videoplayer.util.PlayerConstants;
@@ -105,10 +103,6 @@ public class IjkVideoView extends BaseIjkVideoView {
     @Override
     protected void startPlay() {
         if (mPlayerConfig.addToPlayerManager) {
-//            IjkVideoView currentVideoPlayer = VideoViewManager.instance().getCurrentVideoPlayer();
-//            if (currentVideoPlayer != null) {
-//                currentVideoPlayer.resetPlayer();
-//            }
             VideoViewManager.instance().releaseVideoPlayer();
             VideoViewManager.instance().setCurrentVideoPlayer(this);
         }
@@ -185,21 +179,10 @@ public class IjkVideoView extends BaseIjkVideoView {
         playerContainer.addView(mTextureView, 0, params);
     }
 
-
     protected boolean checkNetwork() {
         if (NetworkUtil.getNetworkType(getContext()) == NetworkUtil.NETWORK_MOBILE && !PlayerConstants.IS_PLAY_ON_MOBILE_NETWORK) {
             if (mVideoController != null) {
-                mVideoController.showStatusView(
-                        getResources().getString(R.string.wifi_tip),
-                        getResources().getString(R.string.continue_play),
-                        new OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                mVideoController.hideStatusView();
-                                PlayerConstants.IS_PLAY_ON_MOBILE_NETWORK = true;
-                                IjkVideoView.super.startPlay();
-                            }
-                        });
+                mVideoController.showStatusView();
             }
             return true;
         }
@@ -267,27 +250,11 @@ public class IjkVideoView extends BaseIjkVideoView {
         if (mPlayerConfig.usingAndroidMediaPlayer) mMediaPlayer.start();
     }
 
-    @Override
-    public void onError() {
-        super.onError();
-        if (mVideoController != null) {
-            mVideoController.showStatusView(
-                    getResources().getString(R.string.error_message),
-                    getResources().getString(R.string.retry),
-                    new OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            mVideoController.hideStatusView();
-                            retry();
-                        }
-                    });
-        }
-    }
-
     /**
      * 重试
      */
-    private void retry() {
+    @Override
+    public void retry() {
         addDisplay();
         mMediaPlayer.reset();
         startPrepare(true);
@@ -347,8 +314,7 @@ public class IjkVideoView extends BaseIjkVideoView {
     /**
      * 一开始播放就seek到预先设置好的位置
      */
-    public void skipPositionWhenPlay(String url, int position) {
-        this.mCurrentUrl = url;
+    public void skipPositionWhenPlay(int position) {
         this.mCurrentPosition = position;
     }
 

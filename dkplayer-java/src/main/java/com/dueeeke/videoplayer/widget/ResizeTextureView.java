@@ -74,10 +74,12 @@ public class ResizeTextureView extends TextureView {
                 height = heightMeasureSpec;
                 break;
             case IjkVideoView.SCREEN_SCALE_CENTER_CROP:
-                if (mVideoWidth * height > width * mVideoHeight) {
-                    width = height * mVideoWidth / mVideoHeight;
-                } else {
-                    height = width * mVideoHeight / mVideoWidth;
+                if (mVideoWidth > 0 && mVideoHeight > 0) {
+                    if (mVideoWidth * height > width * mVideoHeight) {
+                        width = height * mVideoWidth / mVideoHeight;
+                    } else {
+                        height = width * mVideoHeight / mVideoWidth;
+                    }
                 }
                 break;
             default:

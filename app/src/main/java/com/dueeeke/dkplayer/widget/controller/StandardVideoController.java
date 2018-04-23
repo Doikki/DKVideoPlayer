@@ -224,6 +224,9 @@ public class StandardVideoController extends GestureVideoController implements V
             case IjkVideoView.STATE_ERROR:
                 L.e("STATE_ERROR");
                 startPlayButton.setVisibility(GONE);
+                loadingProgress.setVisibility(GONE);
+                thumb.setVisibility(GONE);
+                bottomProgress.setVisibility(GONE);
                 break;
             case IjkVideoView.STATE_BUFFERING:
                 L.e("STATE_BUFFERING");

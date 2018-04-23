@@ -81,6 +81,7 @@ public class VideoListViewAdapter extends BaseAdapter {
             mPlayerConfig = new PlayerConfig.Builder()
 //                    .enableCache()
 //                    .autoRotate()
+//                    .usingAndroidMediaPlayer()
                     .addToPlayerManager()
                     .savingProgress()
                     .build();
