@@ -38,6 +38,10 @@ public class VideoViewManager {
         }
     }
 
+    public void stopPlayback() {
+        if (mPlayer != null) mPlayer.stopPlayback();
+    }
+
     public boolean onBackPressed() {
         return mPlayer != null && mPlayer.onBackPressed();
     }

@@ -11,7 +11,6 @@ import android.view.MenuItem;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.adapter.MyPagerAdapter;
 import com.dueeeke.dkplayer.fragment.RecyclerViewFragment;
-import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.player.VideoViewManager;
 
 import java.util.ArrayList;
@@ -90,8 +89,7 @@ public class ListFragmentViewPagerActivity extends AppCompatActivity implements 
 
     @Override
     public void onPageSelected(int position) {
-        IjkVideoView currentVideoPlayer = mVideoViewManager.getCurrentVideoPlayer();
-        if (currentVideoPlayer != null) currentVideoPlayer.stopPlayback();
+        mVideoViewManager.stopPlayback();
     }
 
     @Override

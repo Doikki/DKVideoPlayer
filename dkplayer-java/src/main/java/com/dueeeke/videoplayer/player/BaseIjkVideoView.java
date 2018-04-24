@@ -266,29 +266,16 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     }
 
     public void stopPlayback() {
-        L.d("stopPlayback");
-        if (mPlayerConfig.savingProgress && isInPlaybackState())
-            ProgressUtil.saveProgress(mCurrentUrl, mCurrentPosition);
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
             setPlayState(STATE_IDLE);
             mAudioFocusHelper.abandonFocus();
             setKeepScreenOn(false);
         }
-
-        if (mVideoController != null) mVideoController.hideStatusView();
-        orientationEventListener.disable();
-        if (mPlayerConfig.isCache)
-            getCacheServer().unregisterCacheListener(cacheListener);
-
-        isLockFullScreen = false;
-        mCurrentPosition = 0;
+        onPlayStopped();
     }
 
     public void release() {
-        if (mPlayerConfig.savingProgress && isInPlaybackState())
-            ProgressUtil.saveProgress(mCurrentUrl, mCurrentPosition);
-
         if (mMediaPlayer != null) {
             mMediaPlayer.release();
             mMediaPlayer = null;
@@ -296,12 +283,16 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
             mAudioFocusHelper.abandonFocus();
             setKeepScreenOn(false);
         }
+        onPlayStopped();
+    }
 
+    private void onPlayStopped() {
+        if (mPlayerConfig.savingProgress && isInPlaybackState())
+            ProgressUtil.saveProgress(mCurrentUrl, mCurrentPosition);
         if (mVideoController != null) mVideoController.hideStatusView();
         orientationEventListener.disable();
         if (mPlayerConfig.isCache)
             getCacheServer().unregisterCacheListener(cacheListener);
-
         isLockFullScreen = false;
         mCurrentPosition = 0;
     }

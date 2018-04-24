@@ -98,6 +98,7 @@
             android:name=".activity.pip.AndroidOPiPActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:supportsPictureInPicture="true"
+            android:excludeFromRecents="true"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         </activity>
 
