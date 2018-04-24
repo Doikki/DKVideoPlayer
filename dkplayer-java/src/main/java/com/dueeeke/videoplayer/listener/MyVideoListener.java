@@ -7,6 +7,16 @@ package com.dueeeke.videoplayer.listener;
 
 public class MyVideoListener implements VideoListener{
     @Override
+    public void onVideoStarted() {
+
+    }
+
+    @Override
+    public void onVideoPaused() {
+
+    }
+
+    @Override
     public void onComplete() {
 
     }

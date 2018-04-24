@@ -102,6 +102,7 @@ public class ListViewActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         VideoViewManager.instance().releaseVideoPlayer();
+        //清除保存的进度
         ProgressUtil.clearAllSavedProgress();
     }
 

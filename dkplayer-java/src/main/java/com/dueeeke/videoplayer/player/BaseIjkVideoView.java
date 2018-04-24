@@ -35,7 +35,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     protected BaseMediaEngine mMediaPlayer;//播放引擎
     @Nullable
     protected BaseVideoController mVideoController;//控制器
-    protected VideoListener listener;
+    protected VideoListener mVideoListener;
     protected int bufferPercentage;//缓冲百分比
     protected boolean isMute;//是否静音
 
@@ -238,17 +238,17 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     protected void startInPlaybackState() {
         mMediaPlayer.start();
         setPlayState(STATE_PLAYING);
+        if (mVideoListener != null) mVideoListener.onVideoStarted();
     }
 
     @Override
     public void pause() {
-        if (isInPlaybackState()) {
-            if (mMediaPlayer.isPlaying()) {
-                mMediaPlayer.pause();
-                setPlayState(STATE_PAUSED);
-                setKeepScreenOn(false);
-                mAudioFocusHelper.abandonFocus();
-            }
+        if (isInPlaybackState() && mMediaPlayer.isPlaying()) {
+            mMediaPlayer.pause();
+            setPlayState(STATE_PAUSED);
+            setKeepScreenOn(false);
+            mAudioFocusHelper.abandonFocus();
+            if (mVideoListener != null) mVideoListener.onVideoPaused();
         }
     }
 
@@ -261,6 +261,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
             setPlayState(STATE_PLAYING);
             mAudioFocusHelper.requestFocus();
             setKeepScreenOn(true);
+            if (mVideoListener != null) mVideoListener.onVideoStarted();
         }
     }
 
@@ -306,7 +307,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     }
 
     public void setVideoListener(VideoListener listener) {
-        this.listener = listener;
+        this.mVideoListener = listener;
     }
 
     protected boolean isInPlaybackState() {
@@ -392,22 +393,21 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
 
     @Override
     public void onError() {
-        if (listener != null) listener.onError();
         setPlayState(STATE_ERROR);
+        if (mVideoListener != null) mVideoListener.onError();
     }
 
     @Override
     public void onCompletion() {
-        if (listener != null) listener.onComplete();
         setPlayState(STATE_PLAYBACK_COMPLETED);
         setKeepScreenOn(false);
         mCurrentPosition = 0;
+        if (mVideoListener != null) mVideoListener.onComplete();
     }
 
     @Override
     public void onInfo(int what, int extra) {
         L.d("what:" + what);
-        if (listener != null) listener.onInfo(what, extra);
         switch (what) {
             case IMediaPlayer.MEDIA_INFO_BUFFERING_START:
                 setPlayState(STATE_BUFFERING);
@@ -417,9 +417,11 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
                 break;
             case IjkMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START: // 视频开始渲染
                 setPlayState(STATE_PLAYING);
+                if (mVideoListener != null) mVideoListener.onVideoStarted();
                 if (getWindowVisibility() != VISIBLE) pause();
                 break;
         }
+        if (mVideoListener != null) mVideoListener.onInfo(what, extra);
     }
 
     @Override
@@ -429,12 +431,12 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
 
     @Override
     public void onPrepared() {
-        if (listener != null) listener.onPrepared();
         setPlayState(STATE_PREPARED);
         if (mCurrentPosition > 0) {
             L.d("seek to:" + mCurrentPosition);
             seekTo(mCurrentPosition);
         }
+        if (mVideoListener != null) mVideoListener.onPrepared();
     }
 
     public void setPlayerConfig(PlayerConfig config) {

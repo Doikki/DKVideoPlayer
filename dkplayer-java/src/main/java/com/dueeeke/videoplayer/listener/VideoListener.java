@@ -6,6 +6,10 @@ package com.dueeeke.videoplayer.listener;
 
 public interface VideoListener {
 
+    void onVideoStarted();
+
+    void onVideoPaused();
+
     //播放完成
     void onComplete();
 

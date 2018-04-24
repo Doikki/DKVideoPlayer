@@ -12,4 +12,10 @@
         android:layout_height="wrap_content"
         android:onClick="pipInList"
         android:text="PIP IN LIST" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="pipAndroidO"
+        android:text="PIP Android O" />
 </LinearLayout>

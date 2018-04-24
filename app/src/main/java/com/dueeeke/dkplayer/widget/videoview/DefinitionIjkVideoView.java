@@ -16,7 +16,7 @@ import java.util.LinkedHashMap;
  */
 
 public class DefinitionIjkVideoView extends IjkVideoView implements DefinitionMediaPlayerControl {
-    private LinkedHashMap<String, String> mMultiRateVideoModels;
+    private LinkedHashMap<String, String> mDefinitionMap;
     private String mCurrentDefinition;
 
     public DefinitionIjkVideoView(@NonNull Context context) {
@@ -33,12 +33,12 @@ public class DefinitionIjkVideoView extends IjkVideoView implements DefinitionMe
 
     @Override
     public LinkedHashMap<String, String> getDefinitionData() {
-        return mMultiRateVideoModels;
+        return mDefinitionMap;
     }
 
     @Override
     public void switchDefinition(String definition) {
-        String url = mMultiRateVideoModels.get(definition);
+        String url = mDefinitionMap.get(definition);
         if (definition.equals(mCurrentDefinition)) return;
         mCurrentUrl = url;
         addDisplay();
@@ -48,7 +48,7 @@ public class DefinitionIjkVideoView extends IjkVideoView implements DefinitionMe
     }
 
     public void setDefinitionVideos(LinkedHashMap<String, String> videos) {
-        this.mMultiRateVideoModels = videos;
+        this.mDefinitionMap = videos;
         this.mCurrentUrl = getValueFromLinkedMap(videos, 0);
     }
 
