@@ -54,8 +54,8 @@ public class StandardVideoController extends GestureVideoController implements V
     private LinearLayout completeContainer;
     private TextView sysTime;//系统当前时间
     private ImageView batteryLevel;//电量
-    private Animation showAnim = AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_in);
-    private Animation hideAnim = AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_out);
+    private Animation showAnim = AnimationUtils.loadAnimation(getContext(), R.anim.anim_player_alpha_in);
+    private Animation hideAnim = AnimationUtils.loadAnimation(getContext(), R.anim.anim_player_alpha_out);
     private BatteryReceiver mBatteryReceiver;
 
 

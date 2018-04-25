@@ -87,8 +87,8 @@ public abstract class BaseVideoController extends FrameLayout {
         hideStatusView();
         switch (playState) {
             case IjkVideoView.STATE_ERROR:
-                mStatusView.setMessage(getResources().getString(R.string.error_message));
-                mStatusView.setButtonTextAndAction(getResources().getString(R.string.retry), new OnClickListener() {
+                mStatusView.setMessage(getResources().getString(R.string.player_error_message));
+                mStatusView.setButtonTextAndAction(getResources().getString(R.string.player_retry), new OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         hideStatusView();
@@ -102,8 +102,8 @@ public abstract class BaseVideoController extends FrameLayout {
 
     public void showStatusView() {
         this.removeView(mStatusView);
-        mStatusView.setMessage(getResources().getString(R.string.wifi_tip));
-        mStatusView.setButtonTextAndAction(getResources().getString(R.string.continue_play), new OnClickListener() {
+        mStatusView.setMessage(getResources().getString(R.string.player_wifi_tip));
+        mStatusView.setButtonTextAndAction(getResources().getString(R.string.player_continue_play), new OnClickListener() {
             @Override
             public void onClick(View v) {
                 hideStatusView();

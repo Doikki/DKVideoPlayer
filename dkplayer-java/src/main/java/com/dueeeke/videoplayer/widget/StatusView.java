@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -22,7 +21,6 @@ public class StatusView extends LinearLayout {
 
     private TextView tvMessage;
     private TextView btnAction;
-    private ImageView ivClose;
     private float downX;
     private float downY;
 
@@ -36,20 +34,11 @@ public class StatusView extends LinearLayout {
     }
 
     private void init() {
-        View root = LayoutInflater.from(getContext()).inflate(R.layout.layout_status_view, this);
+        View root = LayoutInflater.from(getContext()).inflate(R.layout.layout_player_status_view, this);
         tvMessage = root.findViewById(R.id.message);
         btnAction = root.findViewById(R.id.status_btn);
-        ivClose = root.findViewById(R.id.btn_close);
         this.setBackgroundResource(android.R.color.black);
         setClickable(true);
-//        if (PlayerConstants.IS_START_FLOAT_WINDOW) {
-//            ivClose.setVisibility(VISIBLE);
-//            ivClose.setOnClickListener(v -> {
-//                Intent intent = new Intent(getContext(), BackgroundPlayService.class);
-//                intent.putExtra(KeyUtil.ACTION, PlayerConstants.COMMAND_STOP);
-//                getContext().getApplicationContext().startService(intent);
-//            });
-//        }
     }
 
     public void setMessage(String msg) {

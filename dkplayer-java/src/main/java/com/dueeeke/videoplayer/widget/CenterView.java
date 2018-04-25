@@ -32,7 +32,7 @@ public class CenterView extends LinearLayout {
 
     private void init() {
         setGravity(Gravity.CENTER);
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.layout_center_window, this);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.layout_player_center_window, this);
         ivIcon = view.findViewById(R.id.iv_icon);
         tvPercent = view.findViewById(R.id.tv_percent);
         proPercent = view.findViewById(R.id.pro_percent);
@@ -58,7 +58,7 @@ public class CenterView extends LinearLayout {
     public void setVisibility(int visibility) {
         super.setVisibility(visibility);
         if (visibility != VISIBLE) {
-            Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_out);
+            Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.anim_player_alpha_out);
             this.startAnimation(animation);
         }
     }

@@ -40,8 +40,8 @@ public class FullScreenController extends GestureVideoController implements View
     private ImageView playButton;
     private ProgressBar loadingProgress;
     private LinearLayout completeContainer;
-    private Animation showAnim = AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_in);
-    private Animation hideAnim = AnimationUtils.loadAnimation(getContext(), R.anim.anim_alpha_out);
+    private Animation showAnim = AnimationUtils.loadAnimation(getContext(), R.anim.anim_player_alpha_in);
+    private Animation hideAnim = AnimationUtils.loadAnimation(getContext(), R.anim.anim_player_alpha_out);
 
 
     public FullScreenController(@NonNull Context context) {

@@ -48,7 +48,7 @@ public class PIPActivity extends AppCompatActivity{
             Glide.with(this)
                     .load("http://sh.people.com.cn/NMediaFile/2016/0112/LOCAL201601121344000138197365721.jpg")
                     .asBitmap()
-                    .animate(R.anim.anim_alpha_in)
+                    .animate(R.anim.anim_player_alpha_in)
                     .placeholder(android.R.color.darker_gray)
                     .into(controller.getThumb());
             ijkVideoView.setUrl(URL);

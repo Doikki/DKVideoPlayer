@@ -58,15 +58,15 @@
             android:id="@+id/iv_play"
             android:layout_width="@dimen/controller_height"
             android:layout_height="@dimen/controller_height"
-            android:padding="@dimen/default_spacing"
+            android:padding="@dimen/player_default_spacing"
             android:src="@drawable/selector_play_button" />
 
         <TextView
             android:id="@+id/curr_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/default_spacing"
-            android:layout_marginStart="@dimen/default_spacing"
+            android:layout_marginLeft="@dimen/player_default_spacing"
+            android:layout_marginStart="@dimen/player_default_spacing"
             android:textColor="@android:color/white"
             android:textSize="@dimen/controller_time_text_size"
             tools:text="00:00" />
@@ -80,15 +80,15 @@
             android:background="@null"
             android:max="1000"
             android:maxHeight="2dp"
-            android:progressDrawable="@drawable/layer_progress_bar"
+            android:progressDrawable="@drawable/layer_player_progress_bar"
             android:thumb="@drawable/seekbar_thumb" />
 
         <TextView
             android:id="@+id/total_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/default_spacing"
-            android:layout_marginRight="@dimen/default_spacing"
+            android:layout_marginEnd="@dimen/player_default_spacing"
+            android:layout_marginRight="@dimen/player_default_spacing"
             android:textColor="@android:color/white"
             android:textSize="@dimen/controller_time_text_size"
             tools:text="00:00" />
@@ -101,7 +101,7 @@
         android:layout_gravity="center|start"
         android:layout_margin="24dp"
         android:background="@drawable/shape_back_bg"
-        android:padding="@dimen/default_spacing"
+        android:padding="@dimen/player_default_spacing"
         android:src="@drawable/selector_lock_button"
         android:visibility="gone"
         tools:visibility="visible" />
@@ -113,7 +113,7 @@
         android:layout_height="1dp"
         android:layout_gravity="bottom"
         android:max="1000"
-        android:progressDrawable="@drawable/layer_progress_bar"
+        android:progressDrawable="@drawable/layer_player_progress_bar"
         android:visibility="gone" />
 
     <LinearLayout

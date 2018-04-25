@@ -266,6 +266,8 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     }
 
     public void stopPlayback() {
+        if (mPlayerConfig.savingProgress && isInPlaybackState())
+            ProgressUtil.saveProgress(mCurrentUrl, mCurrentPosition);
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
             setPlayState(STATE_IDLE);
@@ -276,6 +278,8 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     }
 
     public void release() {
+        if (mPlayerConfig.savingProgress && isInPlaybackState())
+            ProgressUtil.saveProgress(mCurrentUrl, mCurrentPosition);
         if (mMediaPlayer != null) {
             mMediaPlayer.release();
             mMediaPlayer = null;
@@ -287,8 +291,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     }
 
     private void onPlayStopped() {
-        if (mPlayerConfig.savingProgress && isInPlaybackState())
-            ProgressUtil.saveProgress(mCurrentUrl, mCurrentPosition);
         if (mVideoController != null) mVideoController.hideStatusView();
         orientationEventListener.disable();
         if (mPlayerConfig.isCache)

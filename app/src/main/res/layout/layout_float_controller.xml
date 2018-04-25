@@ -9,7 +9,7 @@
         android:layout_height="@dimen/player_play_btn_size"
         android:layout_gravity="center"
         android:background="@drawable/shape_play_bg"
-        android:padding="@dimen/default_spacing"
+        android:padding="@dimen/player_default_spacing"
         android:src="@drawable/selector_play_button" />
 
     <ProgressBar

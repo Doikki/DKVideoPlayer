@@ -52,8 +52,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@android:color/white"
-            android:layout_marginRight="@dimen/default_spacing"
-            android:layout_marginEnd="@dimen/default_spacing"
+            android:layout_marginRight="@dimen/player_default_spacing"
+            android:layout_marginEnd="@dimen/player_default_spacing"
             android:visibility="gone"
             tools:text="12:00"
             tools:visibility="visible" />
@@ -102,7 +102,7 @@
             android:background="@null"
             android:max="1000"
             android:maxHeight="2dp"
-            android:progressDrawable="@drawable/layer_progress_bar"
+            android:progressDrawable="@drawable/layer_player_progress_bar"
             android:thumb="@drawable/seekbar_thumb" />
 
         <TextView
@@ -119,8 +119,8 @@
             android:layout_height="wrap_content"
             android:textColor="@android:color/white"
             android:textSize="@dimen/controller_time_text_size"
-            android:layout_marginLeft="@dimen/default_spacing"
-            android:layout_marginStart="@dimen/default_spacing"
+            android:layout_marginLeft="@dimen/player_default_spacing"
+            android:layout_marginStart="@dimen/player_default_spacing"
             android:visibility="gone"
             tools:visibility="visible"
             tools:text="高清" />
@@ -140,7 +140,7 @@
         android:layout_gravity="center|start"
         android:layout_margin="24dp"
         android:background="@drawable/shape_back_bg"
-        android:padding="@dimen/default_spacing"
+        android:padding="@dimen/player_default_spacing"
         android:src="@drawable/selector_lock_button"
         android:visibility="gone"
         tools:visibility="visible" />
@@ -152,7 +152,7 @@
         android:layout_height="1dp"
         android:layout_gravity="bottom"
         android:max="1000"
-        android:progressDrawable="@drawable/layer_progress_bar"
+        android:progressDrawable="@drawable/layer_player_progress_bar"
         android:visibility="gone" />
 
     <ImageView
@@ -193,7 +193,7 @@
         android:layout_height="@dimen/player_play_btn_size"
         android:layout_gravity="center"
         android:background="@drawable/shape_play_bg"
-        android:padding="@dimen/default_spacing"
+        android:padding="@dimen/player_default_spacing"
         android:src="@drawable/selector_play_button" />
 
     <ProgressBar
