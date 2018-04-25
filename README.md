@@ -17,14 +17,14 @@ A video player based on [IjkPlayer](https://github.com/Bilibili/ijkplayer).
 * **支持锁定/解锁全屏。**
 * **支持调整显示比例:默认、原始大小、16:9、4:3、铺满屏幕、居中裁剪。**
 * **支持IJKPlayer和MediaPlayer切换。**
-* **支持Https协议。**
-* **支持rtsp，concat协议。**
+* **支持Https，rtsp，concat协议。**
 * **支持连续播放一个列表的视频。**
 * **支持广告播放。**
 * **支持清晰度切换。**
 * **支持保存播放进度。**
 * **支持弹幕，使用了[DanmakuFlameMaster](https://github.com/Bilibili/DanmakuFlameMaster)。**
 * **抖音demo。**
+* **Android O PiP demo。**
 
 [demo下载](https://fir.im/1r3u)
 ## 使用
@@ -42,14 +42,14 @@ allprojects {
 
 dependencies {
     # required, enough for most devices.
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-java:2.3.3'
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv7a:2.3.3'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-java:2.3.5'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv7a:2.3.5'
 
     # Other ABIs: optional
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv5:2.3.3'
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-arm64:2.3.3'
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86:2.3.3'
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86_64:2.3.3'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv5:2.3.5'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-arm64:2.3.5'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86:2.3.5'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86_64:2.3.5'
 }
 ```
 或者将library下载并导入项目中使用

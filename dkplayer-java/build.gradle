@@ -16,7 +16,5 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
     api "tv.danmaku.ijk.media:ijkplayer-java:$rootProject.ijkPlayerVersion"
-    //    compile "tv.danmaku.ijk.media:ijkplayer-armv7a:$rootProject.ijkPlayerVersion"
     api 'com.danikula:videocache:2.7.0'
-    //    compile 'tv.danmaku.ijk.media:ijkplayer-x86:0.8.4'
 }
