@@ -180,7 +180,8 @@ public class IjkVideoView extends BaseIjkVideoView {
     }
 
     protected boolean checkNetwork() {
-        if (NetworkUtil.getNetworkType(getContext()) == NetworkUtil.NETWORK_MOBILE && !PlayerConstants.IS_PLAY_ON_MOBILE_NETWORK) {
+        if (NetworkUtil.getNetworkType(getContext()) == NetworkUtil.NETWORK_MOBILE
+                && !PlayerConstants.IS_PLAY_ON_MOBILE_NETWORK) {
             if (mVideoController != null) {
                 mVideoController.showStatusView();
             }

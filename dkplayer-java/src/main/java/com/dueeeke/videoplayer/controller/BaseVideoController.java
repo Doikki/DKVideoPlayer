@@ -111,7 +111,7 @@ public abstract class BaseVideoController extends FrameLayout {
                 mediaPlayer.start();
             }
         });
-        this.addView(mStatusView, 0);
+        this.addView(mStatusView);
     }
 
     public void hideStatusView() {
