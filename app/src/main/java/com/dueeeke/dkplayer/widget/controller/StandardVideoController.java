@@ -253,7 +253,7 @@ public class StandardVideoController extends GestureVideoController implements V
         }
     }
 
-    private void doLockUnlock() {
+    protected void doLockUnlock() {
         if (isLocked) {
             isLocked = false;
             mShowing = false;

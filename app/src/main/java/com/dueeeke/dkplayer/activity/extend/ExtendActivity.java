@@ -32,4 +32,8 @@ public class ExtendActivity extends AppCompatActivity{
     public void ad(View view) {
         startActivity(new Intent(this, ADActivity.class));
     }
+
+    public void rotateInFullscreen(View view) {
+        startActivity(new Intent(this, RotateInFullscreenActivity.class));
+    }
 }
