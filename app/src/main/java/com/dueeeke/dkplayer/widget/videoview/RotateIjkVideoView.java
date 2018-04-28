@@ -37,7 +37,6 @@ public class RotateIjkVideoView extends IjkVideoView{
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
         contentView.addView(playerContainer, params);
-        orientationEventListener.enable();
         isFullScreen = true;
         setPlayerState(PLAYER_FULL_SCREEN);
     }
