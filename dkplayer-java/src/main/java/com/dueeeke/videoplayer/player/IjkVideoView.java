@@ -2,6 +2,7 @@ package com.dueeeke.videoplayer.player;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.SurfaceTexture;
@@ -336,5 +337,15 @@ public class IjkVideoView extends BaseIjkVideoView {
         this.mCurrentScreenScale = screenScale;
         if (mSurfaceView != null) mSurfaceView.setScreenScale(screenScale);
         if (mTextureView != null) mTextureView.setScreenScale(screenScale);
+    }
+
+    /**
+     * 截图，暂不支持SurfaceView
+     */
+    public Bitmap doScreenShot() {
+        if (mTextureView != null) {
+            return mTextureView.getBitmap();
+        }
+        return null;
     }
 }

@@ -50,4 +50,8 @@ public class ApiActivity extends AppCompatActivity {
     public void skipToDefinitionPlayer(View view) {
         startActivity(new Intent(this, DefinitionPlayerActivity.class));
     }
+
+    public void skipToScreenShotPlayer(View view) {
+        startActivity(new Intent(this, ScreenShotPlayerActivity.class));
+    }
 }

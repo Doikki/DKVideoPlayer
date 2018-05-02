@@ -137,6 +137,16 @@ public class IjkMediaEngine extends BaseMediaEngine {
         mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "enable-accurate-seek", 1);
     }
 
+    @Override
+    public void setSpeed(float speed) {
+        mMediaPlayer.setSpeed(speed);
+    }
+
+    @Override
+    public long getTcpSpeed() {
+        return mMediaPlayer.getTcpSpeed();
+    }
+
     private IMediaPlayer.OnErrorListener onErrorListener = new IMediaPlayer.OnErrorListener() {
         @Override
         public boolean onError(IMediaPlayer iMediaPlayer, int framework_err, int impl_err) {

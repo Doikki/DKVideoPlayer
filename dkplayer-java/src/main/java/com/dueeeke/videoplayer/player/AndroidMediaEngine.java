@@ -105,12 +105,23 @@ public class AndroidMediaEngine extends BaseMediaEngine {
 
     @Override
     public void setEnableMediaCodec(boolean isEnable) {
-
+        // do not supported
     }
 
     @Override
     public void setOptions() {
+        // do not supported
+    }
 
+    @Override
+    public void setSpeed(float speed) {
+        // do not supported
+    }
+
+    @Override
+    public long getTcpSpeed() {
+        // do not supported
+        return 0;
     }
 
     private MediaPlayer.OnErrorListener onErrorListener = new MediaPlayer.OnErrorListener() {

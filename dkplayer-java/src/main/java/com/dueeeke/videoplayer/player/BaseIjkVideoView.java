@@ -163,7 +163,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
                     mMediaPlayer = new IjkMediaEngine();
                 }
             }
-            mMediaPlayer.setMediaEngineInterface(this);
+            mMediaPlayer.bindVideoView(this);
             mMediaPlayer.initPlayer();
             mMediaPlayer.setEnableMediaCodec(mPlayerConfig.enableMediaCodec);
             mMediaPlayer.setLooping(mPlayerConfig.isLooping);
@@ -448,6 +448,19 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      */
     public int getCurrentPlayState() {
         return mCurrentPlayState;
+    }
+
+
+    @Override
+    public long getTcpSpeed() {
+        return mMediaPlayer.getTcpSpeed();
+    }
+
+    @Override
+    public void setSpeed(float speed) {
+        if (isInPlaybackState()) {
+            mMediaPlayer.setSpeed(speed);
+        }
     }
 
     /**

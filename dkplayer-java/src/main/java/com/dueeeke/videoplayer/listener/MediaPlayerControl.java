@@ -32,4 +32,8 @@ public interface MediaPlayerControl {
     void setScreenScale(int screenScale);
 
     void retry();
+
+    void setSpeed(float speed);
+
+    long getTcpSpeed();
 }
