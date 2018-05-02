@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 
+import com.dueeeke.videoplayer.controller.BaseVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.util.WindowUtil;
 
@@ -26,6 +27,7 @@ public class RotateIjkVideoView extends IjkVideoView{
 
     @Override
     public void startFullScreen() {
+        setVideoController(mVideoController);
         Activity activity = WindowUtil.scanForActivity(getContext());
         if (activity == null) return;
         if (isFullScreen) return;
@@ -57,5 +59,37 @@ public class RotateIjkVideoView extends IjkVideoView{
         this.addView(playerContainer, params);
         isFullScreen = false;
         setPlayerState(PLAYER_NORMAL);
+    }
+
+    @Override
+    public void setVideoController(@Nullable BaseVideoController mediaController) {
+        playerContainer.removeView(mVideoController);
+        if (mediaController != null) {
+            mediaController.setMediaPlayer(this);
+            LayoutParams params = new LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT);
+            playerContainer.addView(mediaController, params);
+            mVideoController = mediaController;
+        }
+    }
+
+    @Override
+    public void onPrepared() {
+        super.onPrepared();
+        //暂时移除Controller
+        setVideoController(null);
+    }
+
+    @Override
+    public void release() {
+        setVideoController(mVideoController);
+        super.release();
+    }
+
+    @Override
+    public void stopPlayback() {
+        setVideoController(mVideoController);
+        super.stopPlayback();
     }
 }

@@ -13,7 +13,7 @@ import android.widget.FrameLayout;
 import com.danikula.videocache.CacheListener;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.dueeeke.videoplayer.controller.BaseVideoController;
-import com.dueeeke.videoplayer.listener.MediaEngineInterface;
+import com.dueeeke.videoplayer.listener.PlayerEventListener;
 import com.dueeeke.videoplayer.listener.MediaPlayerControl;
 import com.dueeeke.videoplayer.listener.VideoListener;
 import com.dueeeke.videoplayer.util.L;
@@ -30,9 +30,9 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
  * Created by Devlin_n on 2017/4/7.
  */
 
-public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlayerControl, MediaEngineInterface {
+public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlayerControl, PlayerEventListener {
 
-    protected BaseMediaEngine mMediaPlayer;//播放引擎
+    protected AbstractPlayer mMediaPlayer;//播放引擎
     @Nullable
     protected BaseVideoController mVideoController;//控制器
     protected VideoListener mVideoListener;
@@ -154,10 +154,10 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
 
     protected void initPlayer() {
         if (mMediaPlayer == null) {
-            if (mPlayerConfig.mBaseMediaEngine != null) {
-                mMediaPlayer = mPlayerConfig.mBaseMediaEngine;
+            if (mPlayerConfig.mAbstractPlayer != null) {
+                mMediaPlayer = mPlayerConfig.mAbstractPlayer;
             } else {
-                mMediaPlayer = new IjkMediaEngine();
+                mMediaPlayer = new IjkPlayer();
             }
             mMediaPlayer.bindVideoView(this);
             mMediaPlayer.initPlayer();

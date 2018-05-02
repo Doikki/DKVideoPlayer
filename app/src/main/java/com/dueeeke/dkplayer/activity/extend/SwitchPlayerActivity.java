@@ -8,10 +8,11 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.dueeeke.dkplayer.R;
-import com.dueeeke.dkplayer.exo.ExoMediaEngine;
+import com.dueeeke.dkplayer.player.AndroidMediaPlayer;
+import com.dueeeke.dkplayer.player.ExoMediaPlayer;
 import com.dueeeke.dkplayer.widget.controller.StandardVideoController;
-import com.dueeeke.videoplayer.player.BaseMediaEngine;
-import com.dueeeke.videoplayer.player.IjkMediaEngine;
+import com.dueeeke.videoplayer.player.AbstractPlayer;
+import com.dueeeke.videoplayer.player.IjkPlayer;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.player.PlayerConfig;
 
@@ -53,16 +54,16 @@ public class SwitchPlayerActivity extends AppCompatActivity implements View.OnCl
     public void onClick(View v) {
 
         int id = v.getId();
-        BaseMediaEngine mediaEngine = null;
+        AbstractPlayer player = null;
         switch (id) {
             case R.id.btn_ijk:
-                mediaEngine = new IjkMediaEngine();
+                player = new IjkPlayer();
                 break;
             case R.id.btn_media:
-                mediaEngine = new AndroidMediaEngine();
+                player = new AndroidMediaPlayer();
                 break;
             case R.id.btn_exo:
-                mediaEngine = new ExoMediaEngine(this);
+                player = new ExoMediaPlayer(this);
                 break;
         }
 
@@ -73,7 +74,7 @@ public class SwitchPlayerActivity extends AppCompatActivity implements View.OnCl
         ijkVideoView.setPlayerConfig(new PlayerConfig.Builder()
                 .autoRotate()//自动旋转屏幕
 //                .usingSurfaceView()//使用SurfaceView
-                .setCustomMediaEngine(mediaEngine)
+                .setCustomMediaPlayer(player)
                 .build());
         ijkVideoView.start();
 

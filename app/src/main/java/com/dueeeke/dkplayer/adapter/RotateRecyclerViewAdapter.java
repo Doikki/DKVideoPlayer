@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.dkplayer.widget.controller.RotateInFullscreenController;
@@ -37,19 +38,19 @@ public class RotateRecyclerViewAdapter extends RecyclerView.Adapter<RotateRecycl
         public void onBindViewHolder(final VideoHolder holder, int position) {
 
             VideoBean videoBean = videos.get(position);
-//            Glide.with(context)
-//                    .load(videoBean.getThumb())
-//                    .crossFade()
-//                    .placeholder(android.R.color.darker_gray)
-//                    .into(holder.controller.getThumb());
+            Glide.with(context)
+                    .load(videoBean.getThumb())
+                    .crossFade()
+                    .placeholder(android.R.color.darker_gray)
+                    .into(holder.controller.getThumb());
             holder.ijkVideoView.setPlayerConfig(holder.mPlayerConfig);
             holder.ijkVideoView.setUrl(videoBean.getUrl());
             holder.ijkVideoView.setTitle(videoBean.getTitle());
+            holder.ijkVideoView.setVideoController(holder.controller);
             holder.title.setText(videoBean.getTitle());
             holder.ijkVideoView.setOnClickListener(v -> {
                 holder.ijkVideoView.startFullScreen();
                 holder.ijkVideoView.start();
-                holder.ijkVideoView.setVideoController(holder.controller);
                 //需在setVideoController之后调用
                 holder.controller.setPlayerState(holder.ijkVideoView.getCurrentPlayerState());
                 holder.controller.setPlayState(holder.ijkVideoView.getCurrentPlayState());

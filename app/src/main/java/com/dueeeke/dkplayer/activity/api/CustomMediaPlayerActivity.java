@@ -10,7 +10,7 @@ import android.widget.RadioGroup;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.widget.controller.StandardVideoController;
-import com.dueeeke.videoplayer.player.IjkMediaEngine;
+import com.dueeeke.videoplayer.player.IjkPlayer;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.player.PlayerConfig;
 
@@ -21,14 +21,14 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
  * Created by Devlin_n on 2017/4/7.
  */
 
-public class CustomMediaEngineActivity extends AppCompatActivity {
+public class CustomMediaPlayerActivity extends AppCompatActivity {
 
     private IjkVideoView ijkVideoView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_custom_media_engine);
+        setContentView(R.layout.activity_custom_media_player);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle("rtsp&concat");
@@ -66,7 +66,7 @@ public class CustomMediaEngineActivity extends AppCompatActivity {
 //                .enableMediaCodec()//启动硬解码
 //                .usingAndroidMediaPlayer()//使用AndroidMediaPlayer
 //                .usingSurfaceView()//使用SurfaceView
-                .setCustomMediaEngine(new IjkMediaEngine() {
+                .setCustomMediaPlayer(new IjkPlayer() {
                     @Override
                     public void setOptions() {
                         super.setOptions();

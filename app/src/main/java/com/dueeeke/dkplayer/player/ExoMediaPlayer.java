@@ -1,4 +1,4 @@
-package com.dueeeke.dkplayer.exo;
+package com.dueeeke.dkplayer.player;
 
 import android.content.Context;
 import android.net.Uri;
@@ -7,7 +7,7 @@ import android.os.Looper;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
-import com.dueeeke.videoplayer.player.BaseMediaEngine;
+import com.dueeeke.videoplayer.player.AbstractPlayer;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -42,10 +42,10 @@ import java.util.Map;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 
-public class ExoMediaEngine extends BaseMediaEngine implements Player.EventListener,
+public class ExoMediaPlayer extends AbstractPlayer implements Player.EventListener,
         VideoRendererEventListener {
 
-    private static final String TAG = "ExoMediaEngine";
+    private static final String TAG = "ExoMediaPlayer";
 
     private Context mAppContext;
     private SimpleExoPlayer2 mInternalPlayer;
@@ -65,7 +65,7 @@ public class ExoMediaEngine extends BaseMediaEngine implements Player.EventListe
 //    private int audioSessionId = C.AUDIO_SESSION_ID_UNSET;
     public static final int TYPE_RTMP = 4;
 
-    public ExoMediaEngine(Context context) {
+    public ExoMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
         Looper eventLooper = Looper.myLooper() != null ? Looper.myLooper() : Looper.getMainLooper();
         mainHandler = new Handler(eventLooper);
@@ -347,8 +347,8 @@ public class ExoMediaEngine extends BaseMediaEngine implements Player.EventListe
                 switch (playbackState) {
                     case Player.STATE_ENDED:
                     case Player.STATE_READY:
-                        if (mMediaEngineInterface != null) {
-                            mMediaEngineInterface.onInfo(IMediaPlayer.MEDIA_INFO_BUFFERING_END, mInternalPlayer.getBufferedPercentage());
+                        if (mPlayerEventListener != null) {
+                            mPlayerEventListener.onInfo(IMediaPlayer.MEDIA_INFO_BUFFERING_END, mInternalPlayer.getBufferedPercentage());
                         }
                         mIsBuffering = false;
                         break;
@@ -358,9 +358,9 @@ public class ExoMediaEngine extends BaseMediaEngine implements Player.EventListe
             if (mIsPrepareing) {
                 switch (playbackState) {
                     case Player.STATE_READY:
-                        if (mMediaEngineInterface != null) {
-                            mMediaEngineInterface.onPrepared();
-                            mMediaEngineInterface.onInfo(IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START, 0);
+                        if (mPlayerEventListener != null) {
+                            mPlayerEventListener.onPrepared();
+                            mPlayerEventListener.onInfo(IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START, 0);
                         }
                         mIsPrepareing = false;
                         break;
@@ -369,16 +369,16 @@ public class ExoMediaEngine extends BaseMediaEngine implements Player.EventListe
 
             switch (playbackState) {
                 case Player.STATE_BUFFERING:
-                    if (mMediaEngineInterface != null) {
-                        mMediaEngineInterface.onInfo(IMediaPlayer.MEDIA_INFO_BUFFERING_START, mInternalPlayer.getBufferedPercentage());
+                    if (mPlayerEventListener != null) {
+                        mPlayerEventListener.onInfo(IMediaPlayer.MEDIA_INFO_BUFFERING_START, mInternalPlayer.getBufferedPercentage());
                     }
                     mIsBuffering = true;
                     break;
                 case Player.STATE_READY:
                     break;
                 case Player.STATE_ENDED:
-                    if (mMediaEngineInterface != null) {
-                        mMediaEngineInterface.onCompletion();
+                    if (mPlayerEventListener != null) {
+                        mPlayerEventListener.onCompletion();
                     }
                     break;
                 default:
@@ -401,8 +401,8 @@ public class ExoMediaEngine extends BaseMediaEngine implements Player.EventListe
 
     @Override
     public void onPlayerError(ExoPlaybackException error) {
-        if (mMediaEngineInterface != null) {
-            mMediaEngineInterface.onError();
+        if (mPlayerEventListener != null) {
+            mPlayerEventListener.onError();
         }
     }
 
@@ -443,10 +443,10 @@ public class ExoMediaEngine extends BaseMediaEngine implements Player.EventListe
 
     @Override
     public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
-        if (mMediaEngineInterface != null) {
-            mMediaEngineInterface.onVideoSizeChanged(width, height);
+        if (mPlayerEventListener != null) {
+            mPlayerEventListener.onVideoSizeChanged(width, height);
             if (unappliedRotationDegrees > 0) {
-                mMediaEngineInterface.onInfo(IMediaPlayer.MEDIA_INFO_VIDEO_ROTATION_CHANGED, unappliedRotationDegrees);
+                mPlayerEventListener.onInfo(IMediaPlayer.MEDIA_INFO_VIDEO_ROTATION_CHANGED, unappliedRotationDegrees);
             }
         }
     }

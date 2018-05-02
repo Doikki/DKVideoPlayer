@@ -4,7 +4,7 @@ package com.dueeeke.videoplayer.listener;
  * Created by xinyu on 2017/12/21.
  */
 
-public interface MediaEngineInterface {
+public interface PlayerEventListener {
 
     void onError();
 

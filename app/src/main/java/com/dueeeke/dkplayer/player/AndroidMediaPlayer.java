@@ -1,13 +1,13 @@
-package com.dueeeke.dkplayer.activity.extend;
+package com.dueeeke.dkplayer.player;
 
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
-import com.dueeeke.videoplayer.player.BaseMediaEngine;
+import com.dueeeke.videoplayer.player.AbstractPlayer;
 
-public class AndroidMediaEngine extends BaseMediaEngine {
+public class AndroidMediaPlayer extends AbstractPlayer {
 
     protected MediaPlayer mMediaPlayer;
     private boolean isLooping;
@@ -34,7 +34,7 @@ public class AndroidMediaEngine extends BaseMediaEngine {
         try {
             mMediaPlayer.setDataSource(path);
         } catch (Exception e) {
-            if (mMediaEngineInterface != null) mMediaEngineInterface.onError();
+            if (mPlayerEventListener != null) mPlayerEventListener.onError();
         }
     }
 
@@ -131,7 +131,7 @@ public class AndroidMediaEngine extends BaseMediaEngine {
     private MediaPlayer.OnErrorListener onErrorListener = new MediaPlayer.OnErrorListener() {
         @Override
         public boolean onError(MediaPlayer mp, int what, int extra) {
-            if (mMediaEngineInterface != null) mMediaEngineInterface.onError();
+            if (mPlayerEventListener != null) mPlayerEventListener.onError();
             return true;
         }
     };
@@ -139,14 +139,14 @@ public class AndroidMediaEngine extends BaseMediaEngine {
     private MediaPlayer.OnCompletionListener onCompletionListener = new MediaPlayer.OnCompletionListener() {
         @Override
         public void onCompletion(MediaPlayer mp) {
-            if (mMediaEngineInterface != null) mMediaEngineInterface.onCompletion();
+            if (mPlayerEventListener != null) mPlayerEventListener.onCompletion();
         }
     };
 
     private MediaPlayer.OnInfoListener onInfoListener = new MediaPlayer.OnInfoListener() {
         @Override
         public boolean onInfo(MediaPlayer mp, int what, int extra) {
-            if (mMediaEngineInterface != null) mMediaEngineInterface.onInfo(what, extra);
+            if (mPlayerEventListener != null) mPlayerEventListener.onInfo(what, extra);
             return true;
         }
     };
@@ -154,7 +154,7 @@ public class AndroidMediaEngine extends BaseMediaEngine {
     private MediaPlayer.OnBufferingUpdateListener onBufferingUpdateListener = new MediaPlayer.OnBufferingUpdateListener() {
         @Override
         public void onBufferingUpdate(MediaPlayer mp, int percent) {
-            if (mMediaEngineInterface != null) mMediaEngineInterface.onBufferingUpdate(percent);
+            if (mPlayerEventListener != null) mPlayerEventListener.onBufferingUpdate(percent);
         }
     };
 
@@ -162,8 +162,8 @@ public class AndroidMediaEngine extends BaseMediaEngine {
     private MediaPlayer.OnPreparedListener onPreparedListener = new MediaPlayer.OnPreparedListener() {
         @Override
         public void onPrepared(MediaPlayer mp) {
-            if (mMediaEngineInterface != null) {
-                mMediaEngineInterface.onPrepared();
+            if (mPlayerEventListener != null) {
+                mPlayerEventListener.onPrepared();
                 mMediaPlayer.start();
             }
         }
@@ -175,8 +175,8 @@ public class AndroidMediaEngine extends BaseMediaEngine {
             int videoWidth = mp.getVideoWidth();
             int videoHeight = mp.getVideoHeight();
             if (videoWidth != 0 && videoHeight != 0) {
-                if (mMediaEngineInterface != null)
-                    mMediaEngineInterface.onVideoSizeChanged(videoWidth, videoHeight);
+                if (mPlayerEventListener != null)
+                    mPlayerEventListener.onVideoSizeChanged(videoWidth, videoHeight);
             }
         }
     };

@@ -3,15 +3,15 @@ package com.dueeeke.videoplayer.player;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
-import com.dueeeke.videoplayer.listener.MediaEngineInterface;
+import com.dueeeke.videoplayer.listener.PlayerEventListener;
 
 /**
  * Created by Devlin_n on 2017/12/21.
  */
 
-public abstract class BaseMediaEngine {
+public abstract class AbstractPlayer {
 
-    protected MediaEngineInterface mMediaEngineInterface;
+    protected PlayerEventListener mPlayerEventListener;
 
     /**
      * 初始化播放器实例
@@ -117,8 +117,8 @@ public abstract class BaseMediaEngine {
     /**
      * 绑定VideoView
      */
-    public void bindVideoView(MediaEngineInterface mediaEngineInterface) {
-        this.mMediaEngineInterface = mediaEngineInterface;
+    public void bindVideoView(PlayerEventListener playerEventListener) {
+        this.mPlayerEventListener = playerEventListener;
     }
 
 }

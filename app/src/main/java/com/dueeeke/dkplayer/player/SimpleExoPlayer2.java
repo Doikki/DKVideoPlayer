@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dueeeke.dkplayer.exo;
+package com.dueeeke.dkplayer.player;
 
 import android.graphics.SurfaceTexture;
 import android.os.Handler;

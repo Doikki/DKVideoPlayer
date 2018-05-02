@@ -44,7 +44,7 @@ public class ApiActivity extends AppCompatActivity {
     }
 
     public void skipToCustomPlayer(View view) {
-        startActivity(new Intent(this, CustomMediaEngineActivity.class));
+        startActivity(new Intent(this, CustomMediaPlayerActivity.class));
     }
 
     public void skipToDefinitionPlayer(View view) {

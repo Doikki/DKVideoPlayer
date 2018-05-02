@@ -9,7 +9,7 @@ import android.view.SurfaceHolder;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
-public class IjkMediaEngine extends BaseMediaEngine {
+public class IjkPlayer extends AbstractPlayer {
 
     protected IjkMediaPlayer mMediaPlayer;
     private boolean isLooping;
@@ -44,7 +44,7 @@ public class IjkMediaEngine extends BaseMediaEngine {
         try {
             mMediaPlayer.setDataSource(path);
         } catch (Exception e) {
-            if (mMediaEngineInterface != null) mMediaEngineInterface.onError();
+            if (mPlayerEventListener != null) mPlayerEventListener.onError();
         }
     }
 
@@ -152,7 +152,7 @@ public class IjkMediaEngine extends BaseMediaEngine {
     private IMediaPlayer.OnErrorListener onErrorListener = new IMediaPlayer.OnErrorListener() {
         @Override
         public boolean onError(IMediaPlayer iMediaPlayer, int framework_err, int impl_err) {
-            if (mMediaEngineInterface != null) mMediaEngineInterface.onError();
+            if (mPlayerEventListener != null) mPlayerEventListener.onError();
             return true;
         }
     };
@@ -160,14 +160,14 @@ public class IjkMediaEngine extends BaseMediaEngine {
     private IMediaPlayer.OnCompletionListener onCompletionListener = new IMediaPlayer.OnCompletionListener() {
         @Override
         public void onCompletion(IMediaPlayer iMediaPlayer) {
-            if (mMediaEngineInterface != null) mMediaEngineInterface.onCompletion();
+            if (mPlayerEventListener != null) mPlayerEventListener.onCompletion();
         }
     };
 
     private IMediaPlayer.OnInfoListener onInfoListener = new IMediaPlayer.OnInfoListener() {
         @Override
         public boolean onInfo(IMediaPlayer iMediaPlayer, int what, int extra) {
-            if (mMediaEngineInterface != null) mMediaEngineInterface.onInfo(what, extra);
+            if (mPlayerEventListener != null) mPlayerEventListener.onInfo(what, extra);
             return true;
         }
     };
@@ -175,7 +175,7 @@ public class IjkMediaEngine extends BaseMediaEngine {
     private IMediaPlayer.OnBufferingUpdateListener onBufferingUpdateListener = new IMediaPlayer.OnBufferingUpdateListener() {
         @Override
         public void onBufferingUpdate(IMediaPlayer iMediaPlayer, int percent) {
-            if (mMediaEngineInterface != null) mMediaEngineInterface.onBufferingUpdate(percent);
+            if (mPlayerEventListener != null) mPlayerEventListener.onBufferingUpdate(percent);
         }
     };
 
@@ -183,7 +183,7 @@ public class IjkMediaEngine extends BaseMediaEngine {
     private IMediaPlayer.OnPreparedListener onPreparedListener = new IMediaPlayer.OnPreparedListener() {
         @Override
         public void onPrepared(IMediaPlayer iMediaPlayer) {
-            if (mMediaEngineInterface != null) mMediaEngineInterface.onPrepared();
+            if (mPlayerEventListener != null) mPlayerEventListener.onPrepared();
         }
     };
 
@@ -193,8 +193,8 @@ public class IjkMediaEngine extends BaseMediaEngine {
             int videoWidth = iMediaPlayer.getVideoWidth();
             int videoHeight = iMediaPlayer.getVideoHeight();
             if (videoWidth != 0 && videoHeight != 0) {
-                if (mMediaEngineInterface != null)
-                    mMediaEngineInterface.onVideoSizeChanged(videoWidth, videoHeight);
+                if (mPlayerEventListener != null)
+                    mPlayerEventListener.onVideoSizeChanged(videoWidth, videoHeight);
             }
         }
     };

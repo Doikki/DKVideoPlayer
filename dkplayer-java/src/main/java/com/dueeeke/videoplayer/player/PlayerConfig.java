@@ -9,15 +9,15 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 public class PlayerConfig {
 
-    boolean usingAndroidMediaPlayer;//是否使用AndroidMediaPlayer
-    boolean isLooping;//是否循环播放
-    boolean mAutoRotate;//是否旋转屏幕
-    boolean isCache;//是否开启缓存
-    boolean addToPlayerManager;//是否添加到播放管理器
-    boolean usingSurfaceView;//是否使用TextureView
-    boolean enableMediaCodec;//是否启用硬解码
-    boolean savingProgress;//是否保存进度
-    BaseMediaEngine mBaseMediaEngine = null;//自定义播放核心
+    public boolean usingAndroidMediaPlayer;//是否使用AndroidMediaPlayer
+    public boolean isLooping;//是否循环播放
+    public boolean mAutoRotate;//是否旋转屏幕
+    public boolean isCache;//是否开启缓存
+    public boolean addToPlayerManager;//是否添加到播放管理器
+    public boolean usingSurfaceView;//是否使用TextureView
+    public boolean enableMediaCodec;//是否启用硬解码
+    public boolean savingProgress;//是否保存进度
+    public AbstractPlayer mAbstractPlayer = null;//自定义播放核心
 
 
     private PlayerConfig(PlayerConfig origin) {
@@ -28,7 +28,7 @@ public class PlayerConfig {
         this.addToPlayerManager = origin.addToPlayerManager;
         this.usingSurfaceView = origin.usingSurfaceView;
         this.enableMediaCodec = origin.enableMediaCodec;
-        this.mBaseMediaEngine = origin.mBaseMediaEngine;
+        this.mAbstractPlayer = origin.mAbstractPlayer;
         this.savingProgress = origin.savingProgress;
     }
 
@@ -103,8 +103,8 @@ public class PlayerConfig {
         /**
          * 设置自定义播放核心
          */
-        public Builder setCustomMediaEngine(BaseMediaEngine baseMediaEngine) {
-            target.mBaseMediaEngine = baseMediaEngine;
+        public Builder setCustomMediaPlayer(AbstractPlayer abstractPlayer) {
+            target.mAbstractPlayer = abstractPlayer;
             return this;
         }
 
