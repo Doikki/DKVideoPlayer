@@ -40,4 +40,8 @@ public class ListActivity extends AppCompatActivity {
     public void douYin(View view) {
         startActivity(new Intent(this, DouYinActivity.class));
     }
+
+    public void rotateInFullscreen(View view) {
+        startActivity(new Intent(this, RotateRecyclerViewActivity.class));
+    }
 }
