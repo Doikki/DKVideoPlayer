@@ -157,11 +157,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
             if (mPlayerConfig.mBaseMediaEngine != null) {
                 mMediaPlayer = mPlayerConfig.mBaseMediaEngine;
             } else {
-                if (mPlayerConfig.usingAndroidMediaPlayer) {
-                    mMediaPlayer = new AndroidMediaEngine();
-                } else {
-                    mMediaPlayer = new IjkMediaEngine();
-                }
+                mMediaPlayer = new IjkMediaEngine();
             }
             mMediaPlayer.bindVideoView(this);
             mMediaPlayer.initPlayer();
@@ -180,25 +176,20 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     protected void startPrepare(boolean needReset) {
         if (mCurrentUrl == null || mCurrentUrl.trim().equals("")) return;
         if (needReset) mMediaPlayer.reset();
-        try {
-            if (mPlayerConfig.isCache) {
-                HttpProxyCacheServer cacheServer = getCacheServer();
-                String proxyPath = cacheServer.getProxyUrl(mCurrentUrl);
-                cacheServer.registerCacheListener(cacheListener, mCurrentUrl);
-                if (cacheServer.isCached(mCurrentUrl)) {
-                    bufferPercentage = 100;
-                }
-                mMediaPlayer.setDataSource(proxyPath);
-            } else {
-                mMediaPlayer.setDataSource(mCurrentUrl);
+        if (mPlayerConfig.isCache) {
+            HttpProxyCacheServer cacheServer = getCacheServer();
+            String proxyPath = cacheServer.getProxyUrl(mCurrentUrl);
+            cacheServer.registerCacheListener(cacheListener, mCurrentUrl);
+            if (cacheServer.isCached(mCurrentUrl)) {
+                bufferPercentage = 100;
             }
-            mMediaPlayer.prepareAsync();
-            setPlayState(STATE_PREPARING);
-            setPlayerState(isFullScreen() ? PLAYER_FULL_SCREEN : PLAYER_NORMAL);
-        } catch (Exception e) {
-            onError();
-            e.printStackTrace();
+            mMediaPlayer.setDataSource(proxyPath);
+        } else {
+            mMediaPlayer.setDataSource(mCurrentUrl);
         }
+        mMediaPlayer.prepareAsync();
+        setPlayState(STATE_PREPARING);
+        setPlayerState(isFullScreen() ? PLAYER_FULL_SCREEN : PLAYER_NORMAL);
     }
 
     private HttpProxyCacheServer getCacheServer() {

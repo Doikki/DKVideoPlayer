@@ -246,12 +246,6 @@ public class IjkVideoView extends BaseIjkVideoView {
         return isFullScreen;
     }
 
-    @Override
-    public void onPrepared() {
-        super.onPrepared();
-        if (mPlayerConfig.usingAndroidMediaPlayer) mMediaPlayer.start();
-    }
-
     /**
      * 重试
      */

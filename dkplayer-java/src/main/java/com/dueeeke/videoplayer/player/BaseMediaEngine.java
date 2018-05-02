@@ -5,8 +5,6 @@ import android.view.SurfaceHolder;
 
 import com.dueeeke.videoplayer.listener.MediaEngineInterface;
 
-import java.io.IOException;
-
 /**
  * Created by Devlin_n on 2017/12/21.
  */
@@ -24,7 +22,7 @@ public abstract class BaseMediaEngine {
      * 设置播放地址
      * @param path 播放地址
      */
-    public abstract void setDataSource(String path) throws IOException, IllegalArgumentException, SecurityException, IllegalStateException;
+    public abstract void setDataSource(String path);
 
     /**
      * 播放

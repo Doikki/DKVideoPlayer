@@ -6,8 +6,6 @@ import android.support.annotation.CallSuper;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
-import java.io.IOException;
-
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
@@ -42,8 +40,12 @@ public class IjkMediaEngine extends BaseMediaEngine {
     }
 
     @Override
-    public void setDataSource(String path) throws IOException, IllegalArgumentException, SecurityException, IllegalStateException {
-        mMediaPlayer.setDataSource(path);
+    public void setDataSource(String path){
+        try {
+            mMediaPlayer.setDataSource(path);
+        } catch (Exception e) {
+            if (mMediaEngineInterface != null) mMediaEngineInterface.onError();
+        }
     }
 
     @Override

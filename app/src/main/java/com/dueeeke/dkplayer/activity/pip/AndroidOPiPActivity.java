@@ -15,8 +15,11 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.util.Rational;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.widget.controller.StandardVideoController;
@@ -59,12 +62,16 @@ public class AndroidOPiPActivity extends AppCompatActivity {
 
     private IjkVideoView mIjkVideoView;
     private StandardVideoController mStandardVideoController;
+    private int mWidthPixels;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pip_android_o);
         mIjkVideoView = findViewById(R.id.player);
+        mWidthPixels = getResources().getDisplayMetrics().widthPixels;
+        mIjkVideoView.setLayoutParams(new LinearLayout.LayoutParams(mWidthPixels, mWidthPixels * 9 / 16 + 1));
+
         mIjkVideoView.setUrl("http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv");
         mStandardVideoController = new StandardVideoController(this);
         mIjkVideoView.setVideoController(mStandardVideoController);
@@ -153,8 +160,12 @@ public class AndroidOPiPActivity extends AppCompatActivity {
     @Override
     public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode, Configuration newConfig) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig);
+        Log.d("pip", "onPictureInPictureModeChanged: " + isInPictureInPictureMode);
         if (isInPictureInPictureMode) {
             mIjkVideoView.setVideoController(null);
+            mIjkVideoView.setLayoutParams(new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT));
             // Starts receiving events from action items in PiP mode.
             mReceiver =
                     new BroadcastReceiver() {
@@ -183,7 +194,12 @@ public class AndroidOPiPActivity extends AppCompatActivity {
             // We are out of PiP mode. We can stop receiving events from it.
             unregisterReceiver(mReceiver);
             mReceiver = null;
+            Log.d("pip", "onPictureInPictureModeChanged: " + mIjkVideoView);
+            mIjkVideoView.setLayoutParams(new LinearLayout.LayoutParams(
+                    mWidthPixels,
+                    mWidthPixels * 9 / 16 + 1));
             mIjkVideoView.setVideoController(mStandardVideoController);
+            mIjkVideoView.requestLayout();
         }
     }
 }

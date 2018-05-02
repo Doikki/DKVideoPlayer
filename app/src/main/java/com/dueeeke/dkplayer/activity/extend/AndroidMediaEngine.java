@@ -1,11 +1,11 @@
-package com.dueeeke.videoplayer.player;
+package com.dueeeke.dkplayer.activity.extend;
 
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
-import java.io.IOException;
+import com.dueeeke.videoplayer.player.BaseMediaEngine;
 
 public class AndroidMediaEngine extends BaseMediaEngine {
 
@@ -30,8 +30,12 @@ public class AndroidMediaEngine extends BaseMediaEngine {
     }
 
     @Override
-    public void setDataSource(String path) throws IOException, IllegalArgumentException, SecurityException, IllegalStateException {
-        mMediaPlayer.setDataSource(path);
+    public void setDataSource(String path) {
+        try {
+            mMediaPlayer.setDataSource(path);
+        } catch (Exception e) {
+            if (mMediaEngineInterface != null) mMediaEngineInterface.onError();
+        }
     }
 
     @Override
@@ -105,22 +109,22 @@ public class AndroidMediaEngine extends BaseMediaEngine {
 
     @Override
     public void setEnableMediaCodec(boolean isEnable) {
-        // do not supported
+        // no support
     }
 
     @Override
     public void setOptions() {
-        // do not supported
+        // no support
     }
 
     @Override
     public void setSpeed(float speed) {
-        // do not supported
+        // no support
     }
 
     @Override
     public long getTcpSpeed() {
-        // do not supported
+        // no support
         return 0;
     }
 
@@ -158,7 +162,10 @@ public class AndroidMediaEngine extends BaseMediaEngine {
     private MediaPlayer.OnPreparedListener onPreparedListener = new MediaPlayer.OnPreparedListener() {
         @Override
         public void onPrepared(MediaPlayer mp) {
-            if (mMediaEngineInterface != null) mMediaEngineInterface.onPrepared();
+            if (mMediaEngineInterface != null) {
+                mMediaEngineInterface.onPrepared();
+                mMediaPlayer.start();
+            }
         }
     };
 

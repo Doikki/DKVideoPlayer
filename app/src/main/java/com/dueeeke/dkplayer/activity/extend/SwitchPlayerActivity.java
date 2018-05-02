@@ -10,6 +10,8 @@ import android.view.View;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.exo.ExoMediaEngine;
 import com.dueeeke.dkplayer.widget.controller.StandardVideoController;
+import com.dueeeke.videoplayer.player.BaseMediaEngine;
+import com.dueeeke.videoplayer.player.IjkMediaEngine;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.player.PlayerConfig;
 
@@ -18,32 +20,63 @@ import com.dueeeke.videoplayer.player.PlayerConfig;
  * Created by Devlin_n on 2017/4/7.
  */
 
-public class ExoPlayerActivity extends AppCompatActivity {
+public class SwitchPlayerActivity extends AppCompatActivity implements View.OnClickListener {
 
     private IjkVideoView ijkVideoView;
+    private StandardVideoController mController;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_exo_player);
+        setContentView(R.layout.activity_switch_player);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle("Screen shot");
+            actionBar.setTitle("多种播放器切换");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         ijkVideoView = findViewById(R.id.player);
-        StandardVideoController controller = new StandardVideoController(this);
+        findViewById(R.id.btn_ijk).setOnClickListener(this);
+        findViewById(R.id.btn_media).setOnClickListener(this);
+        findViewById(R.id.btn_exo).setOnClickListener(this);
+
+        mController = new StandardVideoController(this);
         ijkVideoView.setPlayerConfig(new PlayerConfig.Builder()
                 .autoRotate()//自动旋转屏幕
-//                    .enableCache()//启用边播边存
-//                .enableMediaCodec()//启动硬解码
-//                .usingAndroidMediaPlayer()//使用AndroidMediaPlayer
 //                .usingSurfaceView()//使用SurfaceView
-                .setCustomMediaEngine(new ExoMediaEngine())
                 .build());
-        ijkVideoView.setUrl("http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv");
-        ijkVideoView.setVideoController(controller);
+        ijkVideoView.setUrl("http://flv2.bn.netease.com/videolib3/1611/28/GbgsL3639/HD/movie_index.m3u8");
+        ijkVideoView.setVideoController(mController);
         ijkVideoView.start();
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        int id = v.getId();
+        BaseMediaEngine mediaEngine = null;
+        switch (id) {
+            case R.id.btn_ijk:
+                mediaEngine = new IjkMediaEngine();
+                break;
+            case R.id.btn_media:
+                mediaEngine = new AndroidMediaEngine();
+                break;
+            case R.id.btn_exo:
+                mediaEngine = new ExoMediaEngine(this);
+                break;
+        }
+
+        ijkVideoView.release();
+        ijkVideoView.setUrl("http://flv2.bn.netease.com/videolib3/1611/28/GbgsL3639/HD/movie_index.m3u8");
+        ijkVideoView.setVideoController(mController);
+
+        ijkVideoView.setPlayerConfig(new PlayerConfig.Builder()
+                .autoRotate()//自动旋转屏幕
+//                .usingSurfaceView()//使用SurfaceView
+                .setCustomMediaEngine(mediaEngine)
+                .build());
+        ijkVideoView.start();
+
     }
 
     @Override
@@ -78,29 +111,5 @@ public class ExoPlayerActivity extends AppCompatActivity {
         if (!ijkVideoView.onBackPressed()) {
             super.onBackPressed();
         }
-    }
-
-    public void screenScaleDefault(View view) {
-        ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_DEFAULT);
-    }
-
-    public void screenScale169(View view) {
-        ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_16_9);
-    }
-
-    public void screenScale43(View view) {
-        ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_4_3);
-    }
-
-    public void screenScaleOriginal(View view) {
-        ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_ORIGINAL);
-    }
-
-    public void screenScaleMatch(View view) {
-        ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_MATCH_PARENT);
-    }
-
-    public void screenScaleCenterCrop(View view) {
-        ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_CENTER_CROP);
     }
 }
