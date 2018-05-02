@@ -69,6 +69,9 @@ dependencies {
     implementation "com.android.support:design:$rootProject.supportLibraryVersion"
     implementation 'com.github.rubensousa:gravitysnaphelper:1.5'
     implementation 'com.github.castorflex.verticalviewpager:library:19.0.1'
+    implementation 'com.google.android.exoplayer:exoplayer:2.7.3'
+
+
     implementation project(':dkplayer-java')
     implementation project(':dkplayer-armv7a')
 //    implementation project(':dkplayer-arm64')

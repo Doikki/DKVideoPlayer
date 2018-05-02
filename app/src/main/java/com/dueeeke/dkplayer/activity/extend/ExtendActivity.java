@@ -36,4 +36,8 @@ public class ExtendActivity extends AppCompatActivity{
     public void rotateInFullscreen(View view) {
         startActivity(new Intent(this, RotateInFullscreenActivity.class));
     }
+
+    public void exoPlayer(View view) {
+        startActivity(new Intent(this, ExoPlayerActivity.class));
+    }
 }
