@@ -50,7 +50,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.EventListen
     private static final int BUFFER_REPEAT_DELAY = 1_000;
 
     private Context mAppContext;
-    private SimpleExoPlayer2 mInternalPlayer;
+    private SimpleExoPlayer mInternalPlayer;
     private DefaultRenderersFactory renderersFactory;
     private MediaSource mMediaSource;
     private DefaultTrackSelector mTrackSelector;
@@ -186,7 +186,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.EventListen
 
         renderersFactory = new DefaultRenderersFactory(mAppContext, null, extensionRendererMode);
         DefaultLoadControl loadControl = new DefaultLoadControl();
-        mInternalPlayer = new SimpleExoPlayer2(renderersFactory, mTrackSelector, loadControl);
+        mInternalPlayer = new SimpleExoPlayer(renderersFactory, mTrackSelector, loadControl);
         mInternalPlayer.addListener(this);
         mInternalPlayer.setVideoDebugListener(this);
 //        mInternalPlayer.setAudioDebugListener(this);
