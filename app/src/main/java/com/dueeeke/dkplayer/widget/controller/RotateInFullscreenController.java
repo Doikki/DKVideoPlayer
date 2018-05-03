@@ -47,9 +47,9 @@ public class RotateInFullscreenController extends StandardVideoController {
         switch (playerState) {
             case IjkVideoView.PLAYER_FULL_SCREEN:
                 fullScreenButton.setSelected(false);
+                getThumb().setVisibility(GONE);
                 break;
         }
-
     }
 
     @Override
@@ -67,7 +67,6 @@ public class RotateInFullscreenController extends StandardVideoController {
                 WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             mediaPlayer.stopFullScreen();
         } else if (i == R.id.thumb) {
-            getThumb().setVisibility(GONE);
             mediaPlayer.start();
             mediaPlayer.startFullScreen();
         }
@@ -84,7 +83,6 @@ public class RotateInFullscreenController extends StandardVideoController {
             if (isLandscape)
                 WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             mediaPlayer.stopFullScreen();
-            setPlayerState(IjkVideoView.PLAYER_NORMAL);
             return true;
         }
         return super.onBackPressed();

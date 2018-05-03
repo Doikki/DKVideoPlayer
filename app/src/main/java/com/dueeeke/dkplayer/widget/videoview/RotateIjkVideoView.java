@@ -29,6 +29,7 @@ public class RotateIjkVideoView extends IjkVideoView {
     public void startFullScreen() {
         setOnClickListener(null);
         setVideoController(mVideoController);
+        setPlayState(mCurrentPlayState);
         Activity activity = WindowUtil.scanForActivity(getContext());
         if (activity == null) return;
         if (isFullScreen) return;
@@ -46,8 +47,12 @@ public class RotateIjkVideoView extends IjkVideoView {
 
     @Override
     public void stopFullScreen() {
-        setVideoController(null);
-        setOnClickListener(mOnClickListener);
+        if (mCurrentPlayState != STATE_PREPARING) {
+            setVideoController(null);
+            setOnClickListener(mOnClickListener);
+        } else {
+            setPlayState(mCurrentPlayState);
+        }
         Activity activity = WindowUtil.scanForActivity(getContext());
         if (activity == null) return;
         if (!isFullScreen) return;
@@ -88,7 +93,6 @@ public class RotateIjkVideoView extends IjkVideoView {
     private OnClickListener mOnClickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            start();
             startFullScreen();
         }
     };

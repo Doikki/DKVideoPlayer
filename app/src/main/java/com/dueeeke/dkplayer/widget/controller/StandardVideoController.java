@@ -216,6 +216,7 @@ public class StandardVideoController extends GestureVideoController implements V
                 completeContainer.setVisibility(GONE);
                 startPlayButton.setVisibility(GONE);
                 loadingProgress.setVisibility(VISIBLE);
+                thumb.setVisibility(VISIBLE);
                 break;
             case IjkVideoView.STATE_PREPARED:
                 L.e("STATE_PREPARED");
@@ -438,7 +439,6 @@ public class StandardVideoController extends GestureVideoController implements V
         if (mediaPlayer.isFullScreen()) {
             WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             mediaPlayer.stopFullScreen();
-            setPlayerState(IjkVideoView.PLAYER_NORMAL);
             return true;
         }
         return super.onBackPressed();
