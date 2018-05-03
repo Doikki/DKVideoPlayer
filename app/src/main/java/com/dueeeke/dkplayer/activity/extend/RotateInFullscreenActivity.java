@@ -19,14 +19,8 @@ public class RotateInFullscreenActivity extends AppCompatActivity{
         setContentView(R.layout.activity_rotate_in_fullscreen);
         mIjkVideoView = findViewById(R.id.player);
         mController = new RotateInFullscreenController(this);
+        mIjkVideoView.setVideoController(mController);
         mIjkVideoView.setUrl("http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv");
-        mIjkVideoView.setOnClickListener(v -> {
-            mIjkVideoView.startFullScreen();
-            mIjkVideoView.setVideoController(mController);
-            //需在setVideoController之后调用
-            mController.setPlayerState(mIjkVideoView.getCurrentPlayerState());
-            mController.setPlayState(mIjkVideoView.getCurrentPlayState());
-        });
         mIjkVideoView.start();
     }
 

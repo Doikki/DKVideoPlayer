@@ -60,11 +60,15 @@ public class RotateInFullscreenController extends StandardVideoController {
                 doStartStopFullScreen();
             } else if (i == R.id.lock) {
                 doLockUnlock();
-            } else if (i == R.id.iv_play || i == R.id.thumb || i == R.id.iv_replay) {
+            } else if (i == R.id.iv_play || i == R.id.iv_replay) {
                 doPauseResume();
             } else if (i == R.id.back) {
                 if (isLandscape) WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                 mediaPlayer.stopFullScreen();
+            } else if (i == R.id.thumb) {
+                getThumb().setVisibility(GONE);
+                mediaPlayer.start();
+                mediaPlayer.startFullScreen();
             }
         }
 

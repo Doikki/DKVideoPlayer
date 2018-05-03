@@ -5,13 +5,14 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.dueeeke.videoplayer.controller.BaseVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.util.WindowUtil;
 
-public class RotateIjkVideoView extends IjkVideoView{
+public class RotateIjkVideoView extends IjkVideoView {
     public RotateIjkVideoView(@NonNull Context context) {
         super(context);
     }
@@ -24,9 +25,9 @@ public class RotateIjkVideoView extends IjkVideoView{
         super(context, attrs, defStyleAttr);
     }
 
-
     @Override
     public void startFullScreen() {
+        setOnClickListener(null);
         setVideoController(mVideoController);
         Activity activity = WindowUtil.scanForActivity(getContext());
         if (activity == null) return;
@@ -46,6 +47,7 @@ public class RotateIjkVideoView extends IjkVideoView{
     @Override
     public void stopFullScreen() {
         setVideoController(null);
+        setOnClickListener(mOnClickListener);
         Activity activity = WindowUtil.scanForActivity(getContext());
         if (activity == null) return;
         if (!isFullScreen) return;
@@ -77,9 +79,19 @@ public class RotateIjkVideoView extends IjkVideoView{
     @Override
     public void onPrepared() {
         super.onPrepared();
+        if (isFullScreen) return;
         //暂时移除Controller
         setVideoController(null);
+        setOnClickListener(mOnClickListener);
     }
+
+    private OnClickListener mOnClickListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            start();
+            startFullScreen();
+        }
+    };
 
     @Override
     public void release() {
