@@ -19,7 +19,6 @@ import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.decoder.DecoderCounters;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
@@ -67,7 +66,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.EventListen
     @NonNull
     private Repeater bufferRepeater = new Repeater();
 
-//    private int audioSessionId = C.AUDIO_SESSION_ID_UNSET;
     public static final int TYPE_RTMP = 4;
 
     public ExoMediaPlayer(Context context) {
@@ -91,41 +89,38 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.EventListen
 
     }
 
-    public void setDataSource(Context context, Uri uri) {
-        mDataSource = uri.toString();
-        mMediaSource = getMediaSource(false);
-    }
-
     @Override
     public void setDataSource(String path) {
-        setDataSource(mAppContext, Uri.parse(path));
+        mDataSource = Uri.parse(path).toString();
+        mMediaSource = getMediaSource();
     }
 
-    private MediaSource getMediaSource(boolean preview) {
+    private MediaSource getMediaSource() {
         Uri contentUri = Uri.parse(mDataSource);
         int contentType = inferContentType(mDataSource);
         switch (contentType) {
-            case C.TYPE_SS:
-                return new SsMediaSource(contentUri, new DefaultDataSourceFactory(mAppContext, null,
-                        getHttpDataSourceFactory(preview)),
-                        new DefaultSsChunkSource.Factory(getDataSourceFactory(preview)),
-                        mainHandler, null);
             case C.TYPE_DASH:
-                return new DashMediaSource(contentUri,
-                        new DefaultDataSourceFactory(mAppContext, null,
-                                getHttpDataSourceFactory(preview)),
-                        new DefaultDashChunkSource.Factory(getDataSourceFactory(preview)),
-                        mainHandler, null);
+                return new DashMediaSource.Factory(
+                        new DefaultDashChunkSource.Factory(getDataSourceFactory(false)),
+                        getDataSourceFactory(false))
+                        .createMediaSource(contentUri, mainHandler, null);
+            case C.TYPE_SS:
+                return new SsMediaSource.Factory(
+                        new DefaultSsChunkSource.Factory(getDataSourceFactory(false)),
+                        getDataSourceFactory(false))
+                        .createMediaSource(contentUri, mainHandler, null);
             case C.TYPE_HLS:
-                return new HlsMediaSource(contentUri, getDataSourceFactory(preview), mainHandler, null);
+                return new HlsMediaSource.Factory(getDataSourceFactory(false))
+                        .createMediaSource(contentUri, mainHandler, null);
+            default:
+            case C.TYPE_OTHER:
+                return new ExtractorMediaSource.Factory(getDataSourceFactory(false))
+                        .createMediaSource(contentUri, mainHandler, null);
 //            case TYPE_RTMP:
 //                RtmpDataSourceFactory rtmpDataSourceFactory = new RtmpDataSourceFactory(null);
 //                return new ExtractorMediaSource(contentUri, rtmpDataSourceFactory,
 //                        new DefaultExtractorsFactory(), mainHandler, null);
-            case C.TYPE_OTHER:
-            default:
-                return new ExtractorMediaSource(contentUri, getDataSourceFactory(preview),
-                        new DefaultExtractorsFactory(), mainHandler, null);
+
         }
     }
 
@@ -138,17 +133,10 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.EventListen
     @C.ContentType
     private int inferContentType(String fileName) {
         fileName = Util.toLowerInvariant(fileName);
-        if (fileName.endsWith(".mpd")) {
-            return C.TYPE_DASH;
-        } else if (fileName.endsWith(".m3u8")) {
-            return C.TYPE_HLS;
-        } else if (fileName.endsWith(".ism") || fileName.endsWith(".isml")
-                || fileName.endsWith(".ism/manifest") || fileName.endsWith(".isml/manifest")) {
-            return C.TYPE_SS;
-        } else if (fileName.startsWith("rtmp:")) {
+        if (fileName.startsWith("rtmp:")) {
             return TYPE_RTMP;
         } else {
-            return C.TYPE_OTHER;
+            return Util.inferContentType(fileName);
         }
     }
 
