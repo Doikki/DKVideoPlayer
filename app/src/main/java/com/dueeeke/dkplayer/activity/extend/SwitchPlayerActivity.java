@@ -25,6 +25,7 @@ public class SwitchPlayerActivity extends AppCompatActivity implements View.OnCl
 
     private IjkVideoView ijkVideoView;
     private StandardVideoController mController;
+    public static final String URL = "http://gslb.miaopai.com/stream/FQXM04zrW1dcXGiPdJ6Q3KAq2Fpv4TLV.mp4";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,7 +46,7 @@ public class SwitchPlayerActivity extends AppCompatActivity implements View.OnCl
                 .autoRotate()//自动旋转屏幕
 //                .usingSurfaceView()//使用SurfaceView
                 .build());
-        ijkVideoView.setUrl("http://flv2.bn.netease.com/videolib3/1611/28/GbgsL3639/HD/movie_index.m3u8");
+        ijkVideoView.setUrl(URL);
         ijkVideoView.setVideoController(mController);
         ijkVideoView.start();
     }
@@ -68,7 +69,7 @@ public class SwitchPlayerActivity extends AppCompatActivity implements View.OnCl
         }
 
         ijkVideoView.release();
-        ijkVideoView.setUrl("http://flv2.bn.netease.com/videolib3/1611/28/GbgsL3639/HD/movie_index.m3u8");
+        ijkVideoView.setUrl(URL);
         ijkVideoView.setVideoController(mController);
 
         ijkVideoView.setPlayerConfig(new PlayerConfig.Builder()

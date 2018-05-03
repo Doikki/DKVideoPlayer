@@ -36,7 +36,6 @@ public class DefinitionPlayerActivity extends AppCompatActivity {
         DefinitionController controller = new DefinitionController(this);
         ijkVideoView.setPlayerConfig(new PlayerConfig.Builder()
                 .autoRotate()//自动旋转屏幕
-//                .usingAndroidMediaPlayer()
                 .build());
 
         LinkedHashMap<String, String> videos = new LinkedHashMap<>();

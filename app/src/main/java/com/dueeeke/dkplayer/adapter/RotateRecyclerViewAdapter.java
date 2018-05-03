@@ -73,7 +73,6 @@ public class RotateRecyclerViewAdapter extends RecyclerView.Adapter<RotateRecycl
 //                        .enableCache()
 //                        .autoRotate()//不能开启自动旋转
                     .addToPlayerManager()//required
-//                        .usingAndroidMediaPlayer()
 //                        .savingProgress()
                     .build();
         }

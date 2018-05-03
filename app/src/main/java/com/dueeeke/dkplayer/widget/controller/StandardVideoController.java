@@ -129,8 +129,10 @@ public class StandardVideoController extends GestureVideoController implements V
             doStartStopFullScreen();
         } else if (i == R.id.lock) {
             doLockUnlock();
-        } else if (i == R.id.iv_play || i == R.id.thumb || i == R.id.iv_replay) {
+        } else if (i == R.id.iv_play || i == R.id.thumb) {
             doPauseResume();
+        } else if (i == R.id.iv_replay) {
+            mediaPlayer.retry();
         }
     }
 
@@ -232,10 +234,12 @@ public class StandardVideoController extends GestureVideoController implements V
                 L.e("STATE_BUFFERING");
                 startPlayButton.setVisibility(GONE);
                 loadingProgress.setVisibility(VISIBLE);
+                thumb.setVisibility(GONE);
                 break;
             case IjkVideoView.STATE_BUFFERED:
                 loadingProgress.setVisibility(GONE);
                 startPlayButton.setVisibility(GONE);
+                thumb.setVisibility(GONE);
                 L.e("STATE_BUFFERED");
                 break;
             case IjkVideoView.STATE_PLAYBACK_COMPLETED:

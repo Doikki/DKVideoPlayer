@@ -1,7 +1,5 @@
 package com.dueeeke.videoplayer.player;
 
-import tv.danmaku.ijk.media.player.IjkMediaPlayer;
-
 /**
  * 播放器配置类
  * Created by xinyu on 2018/4/3.
@@ -9,7 +7,6 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 public class PlayerConfig {
 
-    public boolean usingAndroidMediaPlayer;//是否使用AndroidMediaPlayer
     public boolean isLooping;//是否循环播放
     public boolean mAutoRotate;//是否旋转屏幕
     public boolean isCache;//是否开启缓存
@@ -21,7 +18,6 @@ public class PlayerConfig {
 
 
     private PlayerConfig(PlayerConfig origin) {
-        this.usingAndroidMediaPlayer = origin.usingAndroidMediaPlayer;
         this.isLooping = origin.isLooping;
         this.mAutoRotate = origin.mAutoRotate;
         this.isCache = origin.isCache;
@@ -65,14 +61,6 @@ public class PlayerConfig {
          */
         public Builder usingSurfaceView() {
             target.usingSurfaceView = true;
-            return this;
-        }
-
-        /**
-         * 启用{@link android.media.MediaPlayer},如不调用默认使用 {@link IjkMediaPlayer}
-         */
-        public Builder usingAndroidMediaPlayer() {
-            target.usingAndroidMediaPlayer = true;
             return this;
         }
 

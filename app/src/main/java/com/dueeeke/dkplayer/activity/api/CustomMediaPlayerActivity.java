@@ -64,7 +64,6 @@ public class CustomMediaPlayerActivity extends AppCompatActivity {
                 .autoRotate()//自动旋转屏幕
 //                    .enableCache()//启用边播边存
 //                .enableMediaCodec()//启动硬解码
-//                .usingAndroidMediaPlayer()//使用AndroidMediaPlayer
 //                .usingSurfaceView()//使用SurfaceView
                 .setCustomMediaPlayer(new IjkPlayer() {
                     @Override

@@ -442,11 +442,17 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     }
 
 
+    /**
+     * 获取缓冲速度
+     */
     @Override
     public long getTcpSpeed() {
         return mMediaPlayer.getTcpSpeed();
     }
 
+    /**
+     * 设置播放速度
+     */
     @Override
     public void setSpeed(float speed) {
         if (isInPlaybackState()) {

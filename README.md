@@ -16,7 +16,7 @@ A video player based on [IjkPlayer](https://github.com/Bilibili/ijkplayer).
 * **支持封面。**
 * **支持锁定/解锁全屏。**
 * **支持调整显示比例:默认、原始大小、16:9、4:3、铺满屏幕、居中裁剪。**
-* **支持IJKPlayer和MediaPlayer切换。**
+* **支持IjkPlayer、MediaPlayer和ExoPlayer切换。**
 * **支持Https，rtsp，concat协议。**
 * **支持连续播放一个列表的视频。**
 * **支持广告播放。**
@@ -75,7 +75,6 @@ PlayerConfig playerConfig = new PlayerConfig.Builder()
         .enableCache() //启用边播边缓存功能
         .autoRotate() //启用重力感应自动进入/退出全屏功能
         .enableMediaCodec()//启动硬解码，启用后可能导致视频黑屏，音画不同步
-        .usingAndroidMediaPlayer()//启动AndroidMediaPlayer，不调用此方法默认使用IjkPlayer
         .usingSurfaceView() //启用SurfaceView显示视频，不调用默认使用TextureView
         .savingProgress() //保存播放进度
         .build();

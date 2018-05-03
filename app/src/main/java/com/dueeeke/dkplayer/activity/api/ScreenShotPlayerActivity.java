@@ -40,7 +40,6 @@ public class ScreenShotPlayerActivity extends AppCompatActivity {
                 .autoRotate()//自动旋转屏幕
 //                    .enableCache()//启用边播边存
 //                .enableMediaCodec()//启动硬解码
-//                .usingAndroidMediaPlayer()//使用AndroidMediaPlayer
 //                .usingSurfaceView()//使用SurfaceView
                 .build());
         ijkVideoView.setUrl("http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv");

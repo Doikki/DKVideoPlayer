@@ -14,77 +14,79 @@ import com.dueeeke.videoplayer.util.WindowUtil;
 
 public class RotateInFullscreenController extends StandardVideoController {
 
-        private boolean isLandscape;
+    private boolean isLandscape;
 
-        public RotateInFullscreenController(@NonNull Context context) {
-            super(context);
+    public RotateInFullscreenController(@NonNull Context context) {
+        super(context);
+    }
+
+    public RotateInFullscreenController(@NonNull Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public RotateInFullscreenController(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+    }
+
+
+    @Override
+    protected void doStartStopFullScreen() {
+        if (isLandscape) {
+            WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            isLandscape = false;
+        } else {
+            WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            isLandscape = true;
+        }
+        fullScreenButton.setSelected(isLandscape);
+    }
+
+    @Override
+    public void setPlayerState(int playerState) {
+        super.setPlayerState(playerState);
+        switch (playerState) {
+            case IjkVideoView.PLAYER_FULL_SCREEN:
+                fullScreenButton.setSelected(false);
+                break;
         }
 
-        public RotateInFullscreenController(@NonNull Context context, @Nullable AttributeSet attrs) {
-            super(context, attrs);
-        }
+    }
 
-        public RotateInFullscreenController(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-            super(context, attrs, defStyleAttr);
-        }
+    @Override
+    public void onClick(View v) {
 
-
-        @Override
-        protected void doStartStopFullScreen() {
-            if (isLandscape) {
+        int i = v.getId();
+        if (i == R.id.fullscreen) {
+            doStartStopFullScreen();
+        } else if (i == R.id.lock) {
+            doLockUnlock();
+        } else if (i == R.id.iv_play || i == R.id.iv_replay) {
+            doPauseResume();
+        } else if (i == R.id.back) {
+            if (isLandscape)
                 WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                isLandscape = false;
-            } else {
-                WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                isLandscape = true;
-            }
-            fullScreenButton.setSelected(isLandscape);
-        }
-
-        @Override
-        public void setPlayerState(int playerState) {
-            super.setPlayerState(playerState);
-            switch (playerState) {
-                case IjkVideoView.PLAYER_FULL_SCREEN:
-                    fullScreenButton.setSelected(false);
-                    break;
-            }
-
-        }
-
-        @Override
-        public void onClick(View v) {
-
-            int i = v.getId();
-            if (i == R.id.fullscreen) {
-                doStartStopFullScreen();
-            } else if (i == R.id.lock) {
-                doLockUnlock();
-            } else if (i == R.id.iv_play || i == R.id.iv_replay) {
-                doPauseResume();
-            } else if (i == R.id.back) {
-                if (isLandscape) WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                mediaPlayer.stopFullScreen();
-            } else if (i == R.id.thumb) {
-                getThumb().setVisibility(GONE);
-                mediaPlayer.start();
-                mediaPlayer.startFullScreen();
-            }
-        }
-
-        @Override
-        public boolean onBackPressed() {
-            if (isLocked) {
-                show();
-                Toast.makeText(getContext(), R.string.lock_tip, Toast.LENGTH_SHORT).show();
-                return true;
-            }
-            if (mediaPlayer.isFullScreen()) {
-                if (isLandscape) WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                mediaPlayer.stopFullScreen();
-                setPlayerState(IjkVideoView.PLAYER_NORMAL);
-                return true;
-            }
-            return super.onBackPressed();
+            mediaPlayer.stopFullScreen();
+        } else if (i == R.id.thumb) {
+            getThumb().setVisibility(GONE);
+            mediaPlayer.start();
+            mediaPlayer.startFullScreen();
         }
     }
+
+    @Override
+    public boolean onBackPressed() {
+        if (isLocked) {
+            show();
+            Toast.makeText(getContext(), R.string.lock_tip, Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        if (mediaPlayer.isFullScreen()) {
+            if (isLandscape)
+                WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            mediaPlayer.stopFullScreen();
+            setPlayerState(IjkVideoView.PLAYER_NORMAL);
+            return true;
+        }
+        return super.onBackPressed();
+    }
+}

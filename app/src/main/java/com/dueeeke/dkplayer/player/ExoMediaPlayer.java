@@ -4,10 +4,12 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
 import com.dueeeke.videoplayer.player.AbstractPlayer;
+import com.dueeeke.videoplayer.util.L;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -46,6 +48,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.EventListen
         VideoRendererEventListener {
 
     private static final String TAG = "ExoMediaPlayer";
+    private static final int BUFFER_REPEAT_DELAY = 1_000;
 
     private Context mAppContext;
     private SimpleExoPlayer2 mInternalPlayer;
@@ -61,6 +64,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.EventListen
     private boolean lastReportedPlayWhenReady;
     private boolean mIsPrepareing = true;
     private boolean mIsBuffering = false;
+    @NonNull
+    private Repeater bufferRepeater = new Repeater();
 
 //    private int audioSessionId = C.AUDIO_SESSION_ID_UNSET;
     public static final int TYPE_RTMP = 4;
@@ -70,6 +75,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.EventListen
         Looper eventLooper = Looper.myLooper() != null ? Looper.myLooper() : Looper.getMainLooper();
         mainHandler = new Handler(eventLooper);
         lastReportedPlaybackState = Player.STATE_IDLE;
+        bufferRepeater.setRepeaterDelay(BUFFER_REPEAT_DELAY);
+        bufferRepeater.setRepeatListener(new BufferRepeatListener());
     }
 
     @Override
@@ -210,12 +217,15 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.EventListen
     public void reset() {
         if (mInternalPlayer != null) {
             mInternalPlayer.release();
-//            mInternalPlayer.removeListener(this);
+            mInternalPlayer.removeListener(this);
             mInternalPlayer = null;
         }
 
         mSurface = null;
         mDataSource = null;
+        mIsPrepareing = true;
+        mIsBuffering = false;
+        setBufferRepeaterStarted(false);
     }
 
     @Override
@@ -321,6 +331,27 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.EventListen
         return 0;
     }
 
+    private void setBufferRepeaterStarted(boolean start) {
+        if (start && mPlayerEventListener != null) {
+            bufferRepeater.start();
+        } else {
+            bufferRepeater.stop();
+        }
+    }
+
+    private class BufferRepeatListener implements Repeater.RepeatListener {
+        @Override
+        public void onRepeat() {
+            if (mPlayerEventListener != null) {
+                mPlayerEventListener.onBufferingUpdate(getBufferedPercentage());
+            }
+        }
+    }
+
+    private int getBufferedPercentage() {
+        return mInternalPlayer == null ? 0 : mInternalPlayer.getBufferedPercentage();
+    }
+
     @Override
     public void onTimelineChanged(Timeline timeline, Object manifest, int reason) {
 
@@ -341,7 +372,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.EventListen
 
         //重新播放状态顺序为：STATE_IDLE -》STATE_BUFFERING -》STATE_READY
         //缓冲时顺序为：STATE_BUFFERING -》STATE_READY
-        //Log.e(TAG, "onPlayerStateChanged: playWhenReady = " + playWhenReady + ", playbackState = " + playbackState);
+        L.e("onPlayerStateChanged: playWhenReady = " + playWhenReady + ", playbackState = " + playbackState);
         if (lastReportedPlayWhenReady != playWhenReady || lastReportedPlaybackState != playbackState) {
             if (mIsBuffering) {
                 switch (playbackState) {
@@ -362,6 +393,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.EventListen
                             mPlayerEventListener.onPrepared();
                             mPlayerEventListener.onInfo(IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START, 0);
                         }
+                        setBufferRepeaterStarted(true);
                         mIsPrepareing = false;
                         break;
                 }

@@ -89,12 +89,18 @@ public class IjkVideoView extends BaseIjkVideoView {
         }
     }
 
+    /**
+     * 向Controller设置播放状态，用于控制Controller的ui展示
+     */
     @Override
     protected void setPlayState(int playState) {
         mCurrentPlayState = playState;
         if (mVideoController != null) mVideoController.setPlayState(playState);
     }
 
+    /**
+     * 向Controller设置播放器状态，包含全屏状态和非全屏状态
+     */
     @Override
     protected void setPlayerState(int playerState) {
         mCurrentPlayerState = playerState;
@@ -203,6 +209,9 @@ public class IjkVideoView extends BaseIjkVideoView {
         mCurrentScreenScale = SCREEN_SCALE_DEFAULT;
     }
 
+    /**
+     * 进入全屏
+     */
     @Override
     public void startFullScreen() {
         if (mVideoController == null) return;
@@ -222,6 +231,9 @@ public class IjkVideoView extends BaseIjkVideoView {
         setPlayerState(PLAYER_FULL_SCREEN);
     }
 
+    /**
+     * 退出全屏
+     */
     @Override
     public void stopFullScreen() {
         if (mVideoController == null) return;
@@ -241,6 +253,9 @@ public class IjkVideoView extends BaseIjkVideoView {
         setPlayerState(PLAYER_NORMAL);
     }
 
+    /**
+     * 判断是否处于全屏状态
+     */
     @Override
     public boolean isFullScreen() {
         return isFullScreen;
@@ -252,7 +267,6 @@ public class IjkVideoView extends BaseIjkVideoView {
     @Override
     public void retry() {
         addDisplay();
-        mMediaPlayer.reset();
         startPrepare(true);
     }
 
