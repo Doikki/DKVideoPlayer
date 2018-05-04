@@ -1,6 +1,6 @@
 package com.dueeeke.dkplayer.interf;
 
-import com.dueeeke.videoplayer.listener.MediaPlayerControl;
+import com.dueeeke.videoplayer.controller.MediaPlayerControl;
 
 import java.util.LinkedHashMap;
 

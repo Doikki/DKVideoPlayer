@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.dueeeke.videoplayer.R;
-import com.dueeeke.videoplayer.listener.MediaPlayerControl;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.util.PlayerConstants;
 import com.dueeeke.videoplayer.util.WindowUtil;

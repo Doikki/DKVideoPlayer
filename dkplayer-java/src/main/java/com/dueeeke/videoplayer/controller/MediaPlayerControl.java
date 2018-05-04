@@ -1,4 +1,4 @@
-package com.dueeeke.videoplayer.listener;
+package com.dueeeke.videoplayer.controller;
 
 public interface MediaPlayerControl {
 

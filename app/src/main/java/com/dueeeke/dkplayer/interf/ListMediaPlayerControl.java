@@ -1,6 +1,6 @@
 package com.dueeeke.dkplayer.interf;
 
-import com.dueeeke.videoplayer.listener.MediaPlayerControl;
+import com.dueeeke.videoplayer.controller.MediaPlayerControl;
 
 /**
  * Created by xinyu on 2017/12/25.

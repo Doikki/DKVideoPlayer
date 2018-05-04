@@ -14,7 +14,7 @@ import com.danikula.videocache.CacheListener;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.dueeeke.videoplayer.controller.BaseVideoController;
 import com.dueeeke.videoplayer.listener.PlayerEventListener;
-import com.dueeeke.videoplayer.listener.MediaPlayerControl;
+import com.dueeeke.videoplayer.controller.MediaPlayerControl;
 import com.dueeeke.videoplayer.listener.VideoListener;
 import com.dueeeke.videoplayer.util.L;
 import com.dueeeke.videoplayer.util.ProgressUtil;
