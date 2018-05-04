@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.dueeeke.dkplayer.player;
+package com.dueeeke.dkplayer.util;
 
 import android.os.Handler;
 import android.os.HandlerThread;

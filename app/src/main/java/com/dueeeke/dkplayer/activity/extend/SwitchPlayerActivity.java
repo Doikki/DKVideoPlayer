@@ -25,8 +25,8 @@ public class SwitchPlayerActivity extends AppCompatActivity implements View.OnCl
 
     private IjkVideoView ijkVideoView;
     private StandardVideoController mController;
-    private static final String URL = "http://gslb.miaopai.com/stream/FQXM04zrW1dcXGiPdJ6Q3KAq2Fpv4TLV.mp4";
-//    private static final String URL = "http://vfile.hshan.com/2018/1524/9156/4430/152491564430.ssm/152491564430.m3u8";
+//    private static final String URL = "http://gslb.miaopai.com/stream/FQXM04zrW1dcXGiPdJ6Q3KAq2Fpv4TLV.mp4";
+    private static final String URL = "http://vfile.hshan.com/2018/1524/9156/4430/152491564430.ssm/152491564430.m3u8";
 //    private static final String URL = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
 
     @Override
