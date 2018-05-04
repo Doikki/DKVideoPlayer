@@ -1,6 +1,7 @@
 package com.dueeeke.videoplayer.listener;
 
 public interface MediaPlayerControl {
+
     void start();
 
     void pause();
@@ -36,4 +37,6 @@ public interface MediaPlayerControl {
     void setSpeed(float speed);
 
     long getTcpSpeed();
+
+    void refresh();
 }

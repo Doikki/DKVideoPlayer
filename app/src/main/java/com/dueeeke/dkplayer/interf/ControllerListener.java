@@ -1,4 +1,4 @@
-package com.dueeeke.videoplayer.listener;
+package com.dueeeke.dkplayer.interf;
 
 /**
  * Created by Devlin_n on 2017/6/26.

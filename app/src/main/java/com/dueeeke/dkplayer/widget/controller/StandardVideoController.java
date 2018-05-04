@@ -57,6 +57,7 @@ public class StandardVideoController extends GestureVideoController implements V
     private Animation showAnim = AnimationUtils.loadAnimation(getContext(), R.anim.anim_player_alpha_in);
     private Animation hideAnim = AnimationUtils.loadAnimation(getContext(), R.anim.anim_player_alpha_out);
     private BatteryReceiver mBatteryReceiver;
+    protected ImageView refresh;
 
 
     public StandardVideoController(@NonNull Context context) {
@@ -108,6 +109,8 @@ public class StandardVideoController extends GestureVideoController implements V
         sysTime = controllerView.findViewById(R.id.sys_time);
         batteryLevel = controllerView.findViewById(R.id.iv_battery);
         mBatteryReceiver = new BatteryReceiver(batteryLevel);
+        refresh = controllerView.findViewById(R.id.iv_refresh);
+        refresh.setOnClickListener(this);
     }
 
     @Override
@@ -133,6 +136,8 @@ public class StandardVideoController extends GestureVideoController implements V
             doPauseResume();
         } else if (i == R.id.iv_replay) {
             mediaPlayer.retry();
+        } else if (i == R.id.iv_refresh) {
+            mediaPlayer.refresh();
         }
     }
 
@@ -284,6 +289,8 @@ public class StandardVideoController extends GestureVideoController implements V
         bottomProgress.setVisibility(GONE);
         videoProgress.setVisibility(INVISIBLE);
         totalTime.setVisibility(INVISIBLE);
+        currTime.setVisibility(INVISIBLE);
+        refresh.setVisibility(VISIBLE);
     }
 
     @Override
@@ -382,6 +389,15 @@ public class StandardVideoController extends GestureVideoController implements V
         if (mediaPlayer == null || isDragging) {
             return 0;
         }
+
+        if (sysTime != null)
+            sysTime.setText(getCurrentSystemTime());
+        if (title != null && TextUtils.isEmpty(title.getText())) {
+            title.setText(mediaPlayer.getTitle());
+        }
+
+        if (isLive) return 0;
+
         int position = (int) mediaPlayer.getCurrentPosition();
         int duration = (int) mediaPlayer.getDuration();
         if (videoProgress != null) {
@@ -407,11 +423,7 @@ public class StandardVideoController extends GestureVideoController implements V
             totalTime.setText(stringForTime(duration));
         if (currTime != null)
             currTime.setText(stringForTime(position));
-        if (sysTime != null)
-            sysTime.setText(getCurrentSystemTime());
-        if (title != null && TextUtils.isEmpty(title.getText())) {
-            title.setText(mediaPlayer.getTitle());
-        }
+
         return position;
     }
 

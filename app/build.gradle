@@ -70,6 +70,7 @@ dependencies {
     implementation 'com.github.rubensousa:gravitysnaphelper:1.5'
     implementation 'com.github.castorflex.verticalviewpager:library:19.0.1'
     implementation 'com.google.android.exoplayer:exoplayer:2.7.3'
+//    implementation 'com.google.android.exoplayer:extension-rtmp:2.7.3'
 
 
     implementation project(':dkplayer-java')

@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.dueeeke.videoplayer.R;
-import com.dueeeke.videoplayer.listener.ControllerListener;
 import com.dueeeke.videoplayer.listener.MediaPlayerControl;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.util.PlayerConstants;
@@ -37,7 +36,6 @@ public abstract class BaseVideoController extends FrameLayout {
     protected int sDefaultTimeout = 4000;
     private StringBuilder mFormatBuilder;
     private Formatter mFormatter;
-    protected ControllerListener listener;
     protected int currentPlayState;
     protected StatusView mStatusView;
 
@@ -119,10 +117,6 @@ public abstract class BaseVideoController extends FrameLayout {
     }
 
     public void setPlayerState(int playerState) {
-    }
-
-    public void setControllerListener(ControllerListener listener) {
-        this.listener = listener;
     }
 
     protected void doPauseResume() {

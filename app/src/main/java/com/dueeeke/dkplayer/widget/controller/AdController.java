@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dueeeke.dkplayer.R;
+import com.dueeeke.dkplayer.interf.ControllerListener;
 import com.dueeeke.dkplayer.interf.ListMediaPlayerControl;
 import com.dueeeke.videoplayer.controller.GestureVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
@@ -24,6 +25,7 @@ import com.dueeeke.videoplayer.util.WindowUtil;
 public class AdController extends GestureVideoController implements View.OnClickListener {
     protected TextView adTime, adDetail;
     protected ImageView back, volume, fullScreen, playButton;
+    protected ControllerListener listener;
 
     public AdController(@NonNull Context context) {
         super(context);
@@ -142,5 +144,9 @@ public class AdController extends GestureVideoController implements View.OnClick
             return true;
         }
         return super.onBackPressed();
+    }
+
+    public void setControllerListener(ControllerListener listener) {
+        this.listener = listener;
     }
 }

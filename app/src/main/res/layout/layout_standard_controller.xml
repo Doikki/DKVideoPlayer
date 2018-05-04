@@ -85,6 +85,15 @@
             android:padding="@dimen/controller_icon_padding"
             android:src="@drawable/selector_play_button" />
 
+        <ImageView
+            android:id="@+id/iv_refresh"
+            android:layout_width="@dimen/controller_height"
+            android:layout_height="@dimen/controller_height"
+            android:padding="@dimen/controller_icon_padding"
+            android:src="@drawable/ic_action_autorenew"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+
         <TextView
             android:id="@+id/curr_time"
             android:layout_width="wrap_content"

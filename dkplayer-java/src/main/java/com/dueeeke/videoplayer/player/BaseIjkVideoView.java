@@ -152,6 +152,9 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         mPlayerConfig = new PlayerConfig.Builder().build();
     }
 
+    /**
+     * 初始化播放器
+     */
     protected void initPlayer() {
         if (mMediaPlayer == null) {
             if (mPlayerConfig.mAbstractPlayer != null) {
@@ -232,6 +235,9 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         if (mVideoListener != null) mVideoListener.onVideoStarted();
     }
 
+    /**
+     * 暂停播放
+     */
     @Override
     public void pause() {
         if (isInPlaybackState() && mMediaPlayer.isPlaying()) {
@@ -243,7 +249,9 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         }
     }
 
-
+    /**
+     * 继续播放
+     */
     public void resume() {
         if (isInPlaybackState()
                 && !mMediaPlayer.isPlaying()
@@ -256,6 +264,9 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         }
     }
 
+    /**
+     * 停止播放
+     */
     public void stopPlayback() {
         if (mPlayerConfig.savingProgress && isInPlaybackState())
             ProgressUtil.saveProgress(mCurrentUrl, mCurrentPosition);
@@ -268,6 +279,9 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         onPlayStopped();
     }
 
+    /**
+     * 释放播放器
+     */
     public void release() {
         if (mPlayerConfig.savingProgress && isInPlaybackState())
             ProgressUtil.saveProgress(mCurrentUrl, mCurrentPosition);
@@ -290,15 +304,24 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         mCurrentPosition = 0;
     }
 
+    /**
+     * 设置播放器监听，用于外部监听播放器的各种状态
+     */
     public void setVideoListener(VideoListener listener) {
         this.mVideoListener = listener;
     }
 
+    /**
+     * 是否处于播放状态
+     */
     protected boolean isInPlaybackState() {
         return (mMediaPlayer != null && mCurrentPlayState != STATE_ERROR
                 && mCurrentPlayState != STATE_IDLE && mCurrentPlayState != STATE_PREPARING);
     }
 
+    /**
+     * 获取视频总时长
+     */
     @Override
     public long getDuration() {
         if (isInPlaybackState()) {
@@ -307,6 +330,9 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         return 0;
     }
 
+    /**
+     * 获取当前播放的位置
+     */
     @Override
     public long getCurrentPosition() {
         if (isInPlaybackState()) {
@@ -316,6 +342,9 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         return 0;
     }
 
+    /**
+     * 调整播放进度
+     */
     @Override
     public void seekTo(long pos) {
         if (isInPlaybackState()) {
@@ -323,11 +352,17 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         }
     }
 
+    /**
+     * 是否处于播放状态
+     */
     @Override
     public boolean isPlaying() {
         return mMediaPlayer != null && mMediaPlayer.isPlaying();
     }
 
+    /**
+     * 获取当前缓冲百分比
+     */
     @Override
     public int getBufferPercentage() {
         return mMediaPlayer != null ? bufferPercentage : 0;
@@ -347,27 +382,41 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         }
     }
 
+    /**
+     * 是否处于静音状态
+     */
     @Override
     public boolean isMute() {
         return isMute;
     }
 
+    /**
+     * 设置controller是否处于锁定状态
+     */
     @Override
     public void setLock(boolean isLocked) {
         this.isLockFullScreen = isLocked;
     }
 
+    /**
+     * 获取是否处于全屏状态
+     */
     @Override
     public boolean isFullScreen() {
         return false;
     }
 
+    /**
+     * 获取当前播放视频的标题
+     */
     @Override
     public String getTitle() {
         return mCurrentTitle;
     }
 
-
+    /**
+     * 缓存监听
+     */
     private CacheListener cacheListener = new CacheListener() {
         @Override
         public void onCacheAvailable(File cacheFile, String url, int percentsAvailable) {
@@ -375,12 +424,18 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         }
     };
 
+    /**
+     * 视频播放出错回调
+     */
     @Override
     public void onError() {
         setPlayState(STATE_ERROR);
         if (mVideoListener != null) mVideoListener.onError();
     }
 
+    /**
+     * 视频播放完成回调
+     */
     @Override
     public void onCompletion() {
         setPlayState(STATE_PLAYBACK_COMPLETED);
@@ -391,7 +446,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
 
     @Override
     public void onInfo(int what, int extra) {
-        L.d("what:" + what);
         switch (what) {
             case IMediaPlayer.MEDIA_INFO_BUFFERING_START:
                 setPlayState(STATE_BUFFERING);
@@ -408,11 +462,17 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         if (mVideoListener != null) mVideoListener.onInfo(what, extra);
     }
 
+    /**
+     * 缓冲进度回调
+     */
     @Override
     public void onBufferingUpdate(int position) {
         if (!mPlayerConfig.isCache) bufferPercentage = position;
     }
 
+    /**
+     * 视频缓冲完毕，准备开始播放时回调
+     */
     @Override
     public void onPrepared() {
         setPlayState(STATE_PREPARED);
@@ -458,6 +518,15 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         if (isInPlaybackState()) {
             mMediaPlayer.setSpeed(speed);
         }
+    }
+
+    /**
+     * 重新播放
+     */
+    @Override
+    public void refresh() {
+        mCurrentPosition = 0;
+        retry();
     }
 
     /**

@@ -66,7 +66,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.EventListen
     @NonNull
     private Repeater bufferRepeater = new Repeater();
 
-    public static final int TYPE_RTMP = 4;
+    private static final int TYPE_RTMP = 4;
 
     public ExoMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
@@ -112,15 +112,14 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.EventListen
             case C.TYPE_HLS:
                 return new HlsMediaSource.Factory(getDataSourceFactory(false))
                         .createMediaSource(contentUri, mainHandler, null);
+//            case TYPE_RTMP:
+//                RtmpDataSourceFactory rtmpDataSourceFactory = new RtmpDataSourceFactory(null);
+//                return new ExtractorMediaSource.Factory(rtmpDataSourceFactory)
+//                        .createMediaSource(contentUri, mainHandler, null);
             default:
             case C.TYPE_OTHER:
                 return new ExtractorMediaSource.Factory(getDataSourceFactory(false))
                         .createMediaSource(contentUri, mainHandler, null);
-//            case TYPE_RTMP:
-//                RtmpDataSourceFactory rtmpDataSourceFactory = new RtmpDataSourceFactory(null);
-//                return new ExtractorMediaSource(contentUri, rtmpDataSourceFactory,
-//                        new DefaultExtractorsFactory(), mainHandler, null);
-
         }
     }
 
