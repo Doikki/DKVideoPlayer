@@ -43,8 +43,9 @@ public class PlayerActivity extends AppCompatActivity {
             ijkVideoView.setPlayerConfig(new PlayerConfig.Builder()
                     .autoRotate()//自动旋转屏幕
 //                    .enableCache()//启用边播边存
-//                .enableMediaCodec()//启动硬解码
-//                .usingSurfaceView()//使用SurfaceView
+//                    .enableMediaCodec()//启动硬解码
+//                    .usingSurfaceView()//使用SurfaceView
+//                    .setCustomMediaPlayer(new ExoMediaPlayer(this))
                     .build());
             ijkVideoView.setUrl(intent.getStringExtra("url"));
             ijkVideoView.setVideoController(controller);

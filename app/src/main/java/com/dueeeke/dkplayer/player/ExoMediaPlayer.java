@@ -38,26 +38,19 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 
 public class ExoMediaPlayer extends AbstractPlayer implements Player.EventListener,
         VideoRendererEventListener {
 
-    private static final String TAG = "ExoMediaPlayer";
     private static final int BUFFER_REPEAT_DELAY = 1_000;
 
     private Context mAppContext;
     private SimpleExoPlayer mInternalPlayer;
-    private DefaultRenderersFactory renderersFactory;
     private MediaSource mMediaSource;
-    private DefaultTrackSelector mTrackSelector;
     private String mDataSource;
     private Surface mSurface;
     private Handler mainHandler;
-    private Map<String, String> mHeaders = new HashMap<>();
     private PlaybackParameters mSpeedPlaybackParameters;
     private int lastReportedPlaybackState;
     private boolean lastReportedPlayWhenReady;
@@ -86,7 +79,21 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.EventListen
 
     @Override
     public void initPlayer() {
+        TrackSelection.Factory videoTrackSelectionFactory =
+                new AdaptiveTrackSelection.Factory(new DefaultBandwidthMeter());
+        DefaultTrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
 
+//        mEventLogger = new EventLogger(mTrackSelector);
+
+//        boolean preferExtensionDecoders = true;
+//        boolean useExtensionRenderers = true;//是否开启扩展
+        @DefaultRenderersFactory.ExtensionRendererMode int extensionRendererMode = DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER;
+
+        DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(mAppContext, null, extensionRendererMode);
+        DefaultLoadControl loadControl = new DefaultLoadControl();
+        mInternalPlayer = new SimpleExoPlayer(renderersFactory, trackSelector, loadControl);
+        mInternalPlayer.addListener(this);
+        mInternalPlayer.setVideoDebugListener(this);
     }
 
     @Override
@@ -140,14 +147,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.EventListen
     }
 
     private DataSource.Factory getHttpDataSourceFactory(boolean preview) {
-        DefaultHttpDataSourceFactory dataSourceFactory = new DefaultHttpDataSourceFactory(Util.getUserAgent(mAppContext,
-                TAG), preview ? null : new DefaultBandwidthMeter());
-        if (mHeaders != null && mHeaders.size() > 0) {
-            for (Map.Entry<String, String> header : mHeaders.entrySet()) {
-                dataSourceFactory.getDefaultRequestProperties().set(header.getKey(), header.getValue());
-            }
-        }
-        return dataSourceFactory;
+        return new DefaultHttpDataSourceFactory(Util.getUserAgent(mAppContext,
+                mAppContext.getApplicationInfo().name), preview ? null : new DefaultBandwidthMeter());
     }
 
     private DataSource.Factory getDataSourceFactory(boolean preview) {
@@ -166,30 +167,11 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.EventListen
     public void stop() {
         if (mInternalPlayer == null)
             return;
-        mInternalPlayer.release();
+        mInternalPlayer.stop();
     }
 
     @Override
     public void prepareAsync() {
-        if (mInternalPlayer != null)
-            throw new IllegalStateException("can't prepare a prepared player");
-        TrackSelection.Factory videoTrackSelectionFactory =
-                new AdaptiveTrackSelection.Factory(new DefaultBandwidthMeter());
-        mTrackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
-
-//        mEventLogger = new EventLogger(mTrackSelector);
-
-//        boolean preferExtensionDecoders = true;
-//        boolean useExtensionRenderers = true;//是否开启扩展
-        @DefaultRenderersFactory.ExtensionRendererMode int extensionRendererMode = DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER;
-
-        renderersFactory = new DefaultRenderersFactory(mAppContext, null, extensionRendererMode);
-        DefaultLoadControl loadControl = new DefaultLoadControl();
-        mInternalPlayer = new SimpleExoPlayer(renderersFactory, mTrackSelector, loadControl);
-        mInternalPlayer.addListener(this);
-        mInternalPlayer.setVideoDebugListener(this);
-//        mInternalPlayer.setAudioDebugListener(this);
-//        mInternalPlayer.addListener(mEventLogger);
         if (mSpeedPlaybackParameters != null) {
             mInternalPlayer.setPlaybackParameters(mSpeedPlaybackParameters);
         }
@@ -202,17 +184,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.EventListen
 
     @Override
     public void reset() {
-        if (mInternalPlayer != null) {
-            mInternalPlayer.release();
-            mInternalPlayer.removeListener(this);
-            mInternalPlayer = null;
-        }
-
-        mSurface = null;
-        mDataSource = null;
-        mIsPrepareing = true;
-        mIsBuffering = false;
-        setBufferRepeaterStarted(false);
+        release();
+        initPlayer();
     }
 
     @Override
@@ -241,9 +214,16 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.EventListen
     @Override
     public void release() {
         if (mInternalPlayer != null) {
-            reset();
-//            mEventLogger = null;
+            mInternalPlayer.release();
+            mInternalPlayer.removeListener(this);
+            mInternalPlayer = null;
         }
+
+        mSurface = null;
+        mDataSource = null;
+        mIsPrepareing = true;
+        mIsBuffering = false;
+        setBufferRepeaterStarted(false);
     }
 
     @Override
@@ -265,11 +245,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.EventListen
         mSurface = surface;
         if (mInternalPlayer != null) {
             mInternalPlayer.setVideoSurface(surface);
-            /*if (mSurface == null) {
-                mTrackSelector.setRendererDisabled(getVideoRendererIndex(), true);
-            } else {
-                mTrackSelector.setRendererDisabled(getVideoRendererIndex(), false);
-            }*/
         }
     }
 
@@ -289,8 +264,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.EventListen
 
     @Override
     public void setLooping(boolean isLooping) {
-//        this.isLooping = isLooping;
-//        mMediaPlayer.setLooping(isLooping);
+        if (mInternalPlayer != null)
+            mInternalPlayer.setRepeatMode(isLooping ? Player.REPEAT_MODE_ALL : Player.REPEAT_MODE_OFF);
     }
 
     @Override

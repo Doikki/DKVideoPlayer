@@ -78,6 +78,7 @@ public class SwitchPlayerActivity extends AppCompatActivity implements View.OnCl
                 .autoRotate()//自动旋转屏幕
 //                .usingSurfaceView()//使用SurfaceView
                 .setCustomMediaPlayer(player)
+//                .setLooping()
                 .build());
         ijkVideoView.start();
 
