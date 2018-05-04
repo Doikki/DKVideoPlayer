@@ -55,7 +55,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 
-public class SimpleExoPlayer2 implements ExoPlayer {
+public class SimpleExoPlayer implements ExoPlayer {
 
 
     public interface VideoListener {
@@ -101,8 +101,8 @@ public class SimpleExoPlayer2 implements ExoPlayer {
     private AudioAttributes audioAttributes;
     private float audioVolume;
 
-    public SimpleExoPlayer2(RenderersFactory renderersFactory, TrackSelector trackSelector,
-                            LoadControl loadControl) {
+    public SimpleExoPlayer(RenderersFactory renderersFactory, TrackSelector trackSelector,
+                           LoadControl loadControl) {
         componentListener = new ComponentListener();
         videoListeners = new CopyOnWriteArraySet<>();
         textOutputs = new CopyOnWriteArraySet<>();
@@ -791,7 +791,7 @@ public class SimpleExoPlayer2 implements ExoPlayer {
 
         @Override
         public void onRenderedFirstFrame(Surface surface) {
-            if (SimpleExoPlayer2.this.surface == surface) {
+            if (SimpleExoPlayer.this.surface == surface) {
                 for (VideoListener videoListener : videoListeners) {
                     videoListener.onRenderedFirstFrame();
                 }
