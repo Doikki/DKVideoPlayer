@@ -5,6 +5,8 @@ import android.content.pm.ActivityInfo;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
@@ -28,6 +30,26 @@ public class RotateInFullscreenController extends StandardVideoController {
         super(context, attrs, defStyleAttr);
     }
 
+    @Override
+    protected void initView() {
+        super.initView();
+
+        mGestureDetector = new GestureDetector(getContext(), new MyGestureListener() {
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+                if (!mediaPlayer.isFullScreen()) {
+                    mediaPlayer.startFullScreen();
+                    return true;
+                }
+                if (mShowing) {
+                    hide();
+                } else {
+                    show();
+                }
+                return true;
+            }
+        });
+    }
 
     @Override
     protected void doStartStopFullScreen() {

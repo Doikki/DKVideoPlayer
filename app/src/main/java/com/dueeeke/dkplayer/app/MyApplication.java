@@ -2,6 +2,8 @@ package com.dueeeke.dkplayer.app;
 
 import android.app.Application;
 
+import com.dueeeke.dkplayer.BuildConfig;
+import com.dueeeke.videoplayer.util.L;
 import com.squareup.leakcanary.LeakCanary;
 
 /**
@@ -21,6 +23,8 @@ public class MyApplication extends Application{
             return;
         }
         LeakCanary.install(this);
+        //播放器日志
+        L.setDebug(BuildConfig.DEBUG);
     }
 
     public static MyApplication getInstance() {

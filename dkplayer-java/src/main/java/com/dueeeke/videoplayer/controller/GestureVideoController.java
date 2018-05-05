@@ -63,7 +63,7 @@ public abstract class GestureVideoController extends BaseVideoController{
 
     protected boolean mNeedSeek;
 
-    private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
+    protected class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
 
         private boolean firstTouch;
         private boolean mChangePosition;

@@ -79,8 +79,8 @@ dependencies {
 //    implementation project(':dkplayer-armv5')
 //    implementation project(':dkplayer-x86')
 //    implementation project(':dkplayer-x86_64')
-//    implementation 'com.github.dueeeke.dkplayer:dkplayer-java:2.3.3'
-//    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv7a:2.3.3'
+//    implementation 'com.github.dueeeke.dkplayer:dkplayer-java:2.4.0'
+//    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv7a:2.4.0'
 //    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv5:2.3'
 //    implementation 'com.github.dueeeke.dkplayer:dkplayer-arm64:2.3'
 //    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86:2.3'

@@ -5,10 +5,8 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.view.View;
 import android.view.ViewGroup;
 
-import com.dueeeke.videoplayer.controller.BaseVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.util.WindowUtil;
 
@@ -27,9 +25,6 @@ public class RotateIjkVideoView extends IjkVideoView {
 
     @Override
     public void startFullScreen() {
-        setOnClickListener(null);
-        setVideoController(mVideoController);
-        setPlayState(mCurrentPlayState);
         Activity activity = WindowUtil.scanForActivity(getContext());
         if (activity == null) return;
         if (isFullScreen) return;
@@ -47,15 +42,10 @@ public class RotateIjkVideoView extends IjkVideoView {
 
     @Override
     public void stopFullScreen() {
-        if (mCurrentPlayState != STATE_PREPARING) {
-            setVideoController(null);
-            setOnClickListener(mOnClickListener);
-        } else {
-            setPlayState(mCurrentPlayState);
-        }
         Activity activity = WindowUtil.scanForActivity(getContext());
         if (activity == null) return;
         if (!isFullScreen) return;
+        if (mVideoController != null) mVideoController.hide();
         WindowUtil.showSystemBar(getContext());
         ViewGroup contentView = activity
                 .findViewById(android.R.id.content);
@@ -66,46 +56,5 @@ public class RotateIjkVideoView extends IjkVideoView {
         this.addView(playerContainer, params);
         isFullScreen = false;
         setPlayerState(PLAYER_NORMAL);
-    }
-
-    @Override
-    public void setVideoController(@Nullable BaseVideoController mediaController) {
-        playerContainer.removeView(mVideoController);
-        if (mediaController != null) {
-            mediaController.setMediaPlayer(this);
-            LayoutParams params = new LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT);
-            playerContainer.addView(mediaController, params);
-            mVideoController = mediaController;
-        }
-    }
-
-    @Override
-    public void onPrepared() {
-        super.onPrepared();
-        if (isFullScreen) return;
-        //暂时移除Controller
-        setVideoController(null);
-        setOnClickListener(mOnClickListener);
-    }
-
-    private OnClickListener mOnClickListener = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            startFullScreen();
-        }
-    };
-
-    @Override
-    public void release() {
-        setVideoController(mVideoController);
-        super.release();
-    }
-
-    @Override
-    public void stopPlayback() {
-        setVideoController(mVideoController);
-        super.stopPlayback();
     }
 }
