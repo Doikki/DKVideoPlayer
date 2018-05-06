@@ -139,6 +139,29 @@ ijkVideoView.setPlayerConfig(playerConfig);
     -dontwarn tv.danmaku.ijk.**
     -keep class com.dueeeke.videoplayer.** { *; }
     -dontwarn com.dueeeke.videoplayer.**
+    
+## 写在最后
+```
+ 首先我想谈谈我开发这个项目的初衷，我开发这个项目之前看了很多别人写的播放器的源码，很多都存在一个致命的问题，就是 
+ 把播放和控制全写在一起了，这就会导致播放器扩展性极差，增加一个功能要对原有的代码进行破坏性的改造，于是乎我萌生了
+ 一个自己写一个高扩展性的播放器的想法。我从Android系统的VideoView得到启示，把播放和控制分离，控制层以动态的方式
+ 绑定到播放器上,并对播放层，控制层以及播放核心都进行了抽象，大大提高了播放器的扩展性。接下来我要重点说说这个扩展性：
+
+ Demo中提供StandardVideoController供大家参考，如果它不符合你也要求你可以继承它并重写其中的方法来实现你自己的需
+ 求，如果你觉得我这个Controller完全不符合你的要求，你大可以继承BaseVideoController这个类进行完全自定义。
+
+ 如果对IjkVideoView的功能你还需要进一步扩展或者不符合你的需求，你也可以继承它，重写里面的相应方法，实现自己的业务
+ 需求。Demo中的弹幕、广告等功能就是通过这种方法实现的。
+
+ 如果你不想使用IjkPlayer来播放视频，你还可以继承AbstractPlayer这个抽象类来扩展自己的播放器，一行代码切换系统
+ MediaPlayer和ExoPlayer就是这么实现的。
+
+ ps:喜欢的小伙伴可以在右上角star一下，如果大家有什么问题最好到GitHub上提交issue来讨论，当然你也可以发邮件到我的
+    邮箱：xinyunjian1995@gmail.com
+
+ pps:有什么问题最好先看demo中是否有相应的解决方案，因为demo真的非常详细。有时间也可以去研究一下我写的源代码，因为
+     我写的真的很简单。
+```
 ## License
 ```
 Copyright (c) 2017 dueeeke
