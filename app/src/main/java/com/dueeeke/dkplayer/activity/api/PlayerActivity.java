@@ -110,4 +110,30 @@ public class PlayerActivity extends AppCompatActivity {
     public void screenScaleCenterCrop(View view) {
         ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_CENTER_CROP);
     }
+
+    int i = 0;
+    public void setMirrorRotate(View view) {
+        ijkVideoView.setMirrorRotation(i % 2 == 0);
+        i++;
+    }
+
+    public void setSpeed0_25(View view) {
+        ijkVideoView.setSpeed(0.25f);
+    }
+
+    public void setSpeed0_5(View view) {
+        ijkVideoView.setSpeed(0.5f);
+    }
+
+    public void setSpeed1_0(View view) {
+        ijkVideoView.setSpeed(1.0f);
+    }
+
+    public void setSpeed1_5(View view) {
+        ijkVideoView.setSpeed(1.5f);
+    }
+
+    public void setSpeed2_0(View view) {
+        ijkVideoView.setSpeed(2.0f);
+    }
 }

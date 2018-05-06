@@ -1,10 +1,14 @@
 package com.dueeeke.videoplayer.player;
 
+import android.content.Context;
+import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.CallSuper;
 import android.view.Surface;
 import android.view.SurfaceHolder;
+
+import java.util.Map;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
@@ -14,10 +18,10 @@ public class IjkPlayer extends AbstractPlayer {
     protected IjkMediaPlayer mMediaPlayer;
     private boolean isLooping;
     private boolean isEnableMediaCodec;
+    protected Context mAppContext;
 
-    @Override
-    public void start() {
-        mMediaPlayer.start();
+    public IjkPlayer(Context context) {
+        mAppContext = context.getApplicationContext();
     }
 
     @Override
@@ -40,27 +44,58 @@ public class IjkPlayer extends AbstractPlayer {
     }
 
     @Override
-    public void setDataSource(String path){
+    public void setOptions() {
+
+    }
+
+    @Override
+    public void setDataSource(String path, Map<String, String> headers) {
         try {
-            mMediaPlayer.setDataSource(path);
+            mMediaPlayer.setDataSource(mAppContext, Uri.parse(path), headers);
         } catch (Exception e) {
-            if (mPlayerEventListener != null) mPlayerEventListener.onError();
+            mPlayerEventListener.onError();
+        }
+    }
+
+    @Override
+    public void setDataSource(AssetFileDescriptor fd) {
+        try {
+            mMediaPlayer.setDataSource(fd.getFileDescriptor());
+        } catch (Exception e) {
+            mPlayerEventListener.onError();
         }
     }
 
     @Override
     public void pause() {
-        mMediaPlayer.pause();
+        try {
+            mMediaPlayer.pause();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void start() {
+        mMediaPlayer.start();
     }
 
     @Override
     public void stop() {
-        mMediaPlayer.stop();
+        try {
+            mMediaPlayer.stop();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void prepareAsync() {
-        mMediaPlayer.prepareAsync();
+        try {
+            mMediaPlayer.prepareAsync();
+        } catch (Exception e) {
+            mPlayerEventListener.onError();
+        }
     }
 
     @Override
@@ -132,13 +167,6 @@ public class IjkPlayer extends AbstractPlayer {
         mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", value);
     }
 
-    @CallSuper
-    @Override
-    public void setOptions() {
-        //精准seek
-        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "enable-accurate-seek", 1);
-    }
-
     @Override
     public void setSpeed(float speed) {
         mMediaPlayer.setSpeed(speed);
@@ -152,7 +180,7 @@ public class IjkPlayer extends AbstractPlayer {
     private IMediaPlayer.OnErrorListener onErrorListener = new IMediaPlayer.OnErrorListener() {
         @Override
         public boolean onError(IMediaPlayer iMediaPlayer, int framework_err, int impl_err) {
-            if (mPlayerEventListener != null) mPlayerEventListener.onError();
+            mPlayerEventListener.onError();
             return true;
         }
     };
@@ -160,14 +188,14 @@ public class IjkPlayer extends AbstractPlayer {
     private IMediaPlayer.OnCompletionListener onCompletionListener = new IMediaPlayer.OnCompletionListener() {
         @Override
         public void onCompletion(IMediaPlayer iMediaPlayer) {
-            if (mPlayerEventListener != null) mPlayerEventListener.onCompletion();
+            mPlayerEventListener.onCompletion();
         }
     };
 
     private IMediaPlayer.OnInfoListener onInfoListener = new IMediaPlayer.OnInfoListener() {
         @Override
         public boolean onInfo(IMediaPlayer iMediaPlayer, int what, int extra) {
-            if (mPlayerEventListener != null) mPlayerEventListener.onInfo(what, extra);
+            mPlayerEventListener.onInfo(what, extra);
             return true;
         }
     };
@@ -175,7 +203,7 @@ public class IjkPlayer extends AbstractPlayer {
     private IMediaPlayer.OnBufferingUpdateListener onBufferingUpdateListener = new IMediaPlayer.OnBufferingUpdateListener() {
         @Override
         public void onBufferingUpdate(IMediaPlayer iMediaPlayer, int percent) {
-            if (mPlayerEventListener != null) mPlayerEventListener.onBufferingUpdate(percent);
+            mPlayerEventListener.onBufferingUpdate(percent);
         }
     };
 
@@ -183,7 +211,7 @@ public class IjkPlayer extends AbstractPlayer {
     private IMediaPlayer.OnPreparedListener onPreparedListener = new IMediaPlayer.OnPreparedListener() {
         @Override
         public void onPrepared(IMediaPlayer iMediaPlayer) {
-            if (mPlayerEventListener != null) mPlayerEventListener.onPrepared();
+            mPlayerEventListener.onPrepared();
         }
     };
 
@@ -193,8 +221,7 @@ public class IjkPlayer extends AbstractPlayer {
             int videoWidth = iMediaPlayer.getVideoWidth();
             int videoHeight = iMediaPlayer.getVideoHeight();
             if (videoWidth != 0 && videoHeight != 0) {
-                if (mPlayerEventListener != null)
-                    mPlayerEventListener.onVideoSizeChanged(videoWidth, videoHeight);
+                mPlayerEventListener.onVideoSizeChanged(videoWidth, videoHeight);
             }
         }
     };

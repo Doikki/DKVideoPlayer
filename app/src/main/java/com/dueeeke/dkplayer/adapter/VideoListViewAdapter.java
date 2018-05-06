@@ -8,18 +8,20 @@ import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
-import com.dueeeke.dkplayer.widget.controller.StandardVideoController;
-import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.bean.VideoBean;
+import com.dueeeke.dkplayer.widget.controller.StandardVideoController;
+import com.dueeeke.videoplayer.player.IjkPlayer;
+import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.player.PlayerConfig;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 public class VideoListViewAdapter extends BaseAdapter {
 
-    private List<VideoBean> videos = new ArrayList<>();
+    private List<VideoBean> videos;
     private Context context;
 
     public VideoListViewAdapter(List<VideoBean> videos, Context context) {
@@ -81,6 +83,13 @@ public class VideoListViewAdapter extends BaseAdapter {
             mPlayerConfig = new PlayerConfig.Builder()
 //                    .enableCache()
 //                    .autoRotate()
+                    .setCustomMediaPlayer(new IjkPlayer(context){
+                        @Override
+                        public void setOptions() {
+                            //精准seek
+                            mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "enable-accurate-seek", 1);
+                        }
+                    })
                     .addToPlayerManager()
                     .savingProgress()
                     .build();

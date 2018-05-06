@@ -65,7 +65,7 @@ public class CustomMediaPlayerActivity extends AppCompatActivity {
 //                    .enableCache()//启用边播边存
 //                .enableMediaCodec()//启动硬解码
 //                .usingSurfaceView()//使用SurfaceView
-                .setCustomMediaPlayer(new IjkPlayer() {
+                .setCustomMediaPlayer(new IjkPlayer(this) {
                     @Override
                     public void setOptions() {
                         super.setOptions();

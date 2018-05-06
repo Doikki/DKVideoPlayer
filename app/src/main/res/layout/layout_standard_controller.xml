@@ -52,8 +52,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@android:color/white"
-            android:layout_marginRight="@dimen/player_default_spacing"
-            android:layout_marginEnd="@dimen/player_default_spacing"
+            android:layout_marginRight="14dp"
+            android:layout_marginEnd="14dp"
             android:visibility="gone"
             tools:text="12:00"
             tools:visibility="visible" />

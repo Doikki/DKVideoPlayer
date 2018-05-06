@@ -3,9 +3,11 @@ package com.dueeeke.videoplayer.player;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.OrientationEventListener;
 import android.widget.FrameLayout;
@@ -13,14 +15,15 @@ import android.widget.FrameLayout;
 import com.danikula.videocache.CacheListener;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.dueeeke.videoplayer.controller.BaseVideoController;
-import com.dueeeke.videoplayer.listener.PlayerEventListener;
 import com.dueeeke.videoplayer.controller.MediaPlayerControl;
+import com.dueeeke.videoplayer.listener.PlayerEventListener;
 import com.dueeeke.videoplayer.listener.VideoListener;
 import com.dueeeke.videoplayer.util.L;
 import com.dueeeke.videoplayer.util.ProgressUtil;
 import com.dueeeke.videoplayer.util.WindowUtil;
 
 import java.io.File;
+import java.util.Map;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
@@ -32,7 +35,7 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlayerControl, PlayerEventListener {
 
-    protected AbstractPlayer mMediaPlayer;//播放引擎
+    protected AbstractPlayer mMediaPlayer;//播放器
     @Nullable
     protected BaseVideoController mVideoController;//控制器
     protected VideoListener mVideoListener;
@@ -40,6 +43,8 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     protected boolean isMute;//是否静音
 
     protected String mCurrentUrl;//当前播放视频的地址
+    protected Map<String, String> mHeaders;//当前视频地址的请求头
+    protected AssetFileDescriptor mAssetFileDescriptor;//assets文件
     protected long mCurrentPosition;//当前正在播放视频的位置
     protected String mCurrentTitle = "";//当前正在播放视频的标题
 
@@ -160,7 +165,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
             if (mPlayerConfig.mAbstractPlayer != null) {
                 mMediaPlayer = mPlayerConfig.mAbstractPlayer;
             } else {
-                mMediaPlayer = new IjkPlayer();
+                mMediaPlayer = new IjkPlayer(getContext());
             }
             mMediaPlayer.bindVideoView(this);
             mMediaPlayer.initPlayer();
@@ -177,18 +182,20 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      * 开始准备播放（直接播放）
      */
     protected void startPrepare(boolean needReset) {
-        if (mCurrentUrl == null || mCurrentUrl.trim().equals("")) return;
+        if (TextUtils.isEmpty(mCurrentUrl) && mAssetFileDescriptor == null) return;
         if (needReset) mMediaPlayer.reset();
-        if (mPlayerConfig.isCache) {
+        if (mAssetFileDescriptor != null) {
+            mMediaPlayer.setDataSource(mAssetFileDescriptor);
+        } else if (mPlayerConfig.isCache) {
             HttpProxyCacheServer cacheServer = getCacheServer();
             String proxyPath = cacheServer.getProxyUrl(mCurrentUrl);
             cacheServer.registerCacheListener(cacheListener, mCurrentUrl);
             if (cacheServer.isCached(mCurrentUrl)) {
                 bufferPercentage = 100;
             }
-            mMediaPlayer.setDataSource(proxyPath);
+            mMediaPlayer.setDataSource(proxyPath, mHeaders);
         } else {
-            mMediaPlayer.setDataSource(mCurrentUrl);
+            mMediaPlayer.setDataSource(mCurrentUrl, mHeaders);
         }
         mMediaPlayer.prepareAsync();
         setPlayState(STATE_PREPARING);
@@ -527,6 +534,47 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     public void refresh() {
         mCurrentPosition = 0;
         retry();
+    }
+
+    /**
+     * 设置视频地址
+     */
+    public void setUrl(String url) {
+        this.mCurrentUrl = url;
+    }
+
+    /**
+     * 设置包含请求头信息的视频地址
+     *
+     * @param url     视频地址
+     * @param headers 请求头
+     */
+    private void setUrl(String url, Map<String, String> headers) {
+        mCurrentUrl = url;
+        mHeaders = headers;
+    }
+
+    /**
+     * 用于播放assets里面的视频文件
+     */
+    public void setAssetFileDescriptor(AssetFileDescriptor fd) {
+        this.mAssetFileDescriptor = fd;
+    }
+
+    /**
+     * 一开始播放就seek到预先设置好的位置
+     */
+    public void skipPositionWhenPlay(int position) {
+        this.mCurrentPosition = position;
+    }
+
+    /**
+     * 设置标题
+     */
+    public void setTitle(String title) {
+        if (title != null) {
+            this.mCurrentTitle = title;
+        }
     }
 
     /**

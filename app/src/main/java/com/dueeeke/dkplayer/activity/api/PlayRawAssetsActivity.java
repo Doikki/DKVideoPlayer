@@ -7,54 +7,53 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.dueeeke.dkplayer.R;
-import com.dueeeke.dkplayer.widget.controller.DefinitionController;
-import com.dueeeke.dkplayer.widget.videoview.DefinitionIjkVideoView;
-import com.dueeeke.videoplayer.player.IjkPlayer;
+import com.dueeeke.dkplayer.player.AndroidMediaPlayer;
+import com.dueeeke.dkplayer.widget.controller.StandardVideoController;
+import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.player.PlayerConfig;
 
-import java.util.LinkedHashMap;
-
-import tv.danmaku.ijk.media.player.IjkMediaPlayer;
-
 /**
- * 播放器演示
- * Created by Devlin_n on 2017/4/7.
+ * 播放raw/assets视频
  */
 
-public class DefinitionPlayerActivity extends AppCompatActivity {
+public class PlayRawAssetsActivity extends AppCompatActivity {
 
-    private DefinitionIjkVideoView ijkVideoView;
+    private IjkVideoView ijkVideoView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_definition_player);
+        setContentView(R.layout.activity_play_raw_assets);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle("清晰度切换");
+            actionBar.setTitle("raw/assets");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         ijkVideoView = findViewById(R.id.player);
-
-        DefinitionController controller = new DefinitionController(this);
+        StandardVideoController controller = new StandardVideoController(this);
         ijkVideoView.setPlayerConfig(new PlayerConfig.Builder()
-                .setCustomMediaPlayer(new IjkPlayer(this) {
-                    @Override
-                    public void setOptions() {
-                        //精准seek
-                        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "enable-accurate-seek", 1);
-                    }
-                })
                 .autoRotate()//自动旋转屏幕
+//                    .enableCache()//启用边播边存
+//                .enableMediaCodec()//启动硬解码
+//                .usingSurfaceView()//使用SurfaceView
+                //ijkplayer不支持assets和raw播放,需切换成MediaPlayer
+                .setCustomMediaPlayer(new AndroidMediaPlayer(this))
                 .build());
+        //播放assets文件
+//        AssetManager am = getResources().getAssets();
+//        AssetFileDescriptor afd = null;
+//        try {
+//            afd = am.openFd("test.mp4");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        ijkVideoView.setAssetFileDescriptor(afd);
 
-        LinkedHashMap<String, String> videos = new LinkedHashMap<>();
-        videos.put("标清", "http://mov.bn.netease.com/open-movie/nos/flv/2017/07/24/SCP786QON_sd.flv");
-        videos.put("高清", "http://mov.bn.netease.com/open-movie/nos/flv/2017/07/24/SCP786QON_hd.flv");
-        videos.put("超清", "http://mov.bn.netease.com/open-movie/nos/flv/2017/07/24/SCP786QON_shd.flv");
-        ijkVideoView.setDefinitionVideos(videos);
+        //播放raw
+        String url = "android.resource://" + getPackageName() + "/" + R.raw.movie;
+        ijkVideoView.setUrl(url);
+
         ijkVideoView.setVideoController(controller);
-        ijkVideoView.setTitle("韩雪：积极的悲观主义者");
         ijkVideoView.start();
     }
 
@@ -83,7 +82,6 @@ public class DefinitionPlayerActivity extends AppCompatActivity {
         super.onDestroy();
         ijkVideoView.release();
     }
-
 
     @Override
     public void onBackPressed() {

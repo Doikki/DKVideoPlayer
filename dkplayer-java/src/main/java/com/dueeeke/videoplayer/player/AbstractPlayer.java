@@ -1,9 +1,12 @@
 package com.dueeeke.videoplayer.player;
 
+import android.content.res.AssetFileDescriptor;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
 import com.dueeeke.videoplayer.listener.PlayerEventListener;
+
+import java.util.Map;
 
 /**
  * Created by Devlin_n on 2017/12/21.
@@ -21,8 +24,14 @@ public abstract class AbstractPlayer {
     /**
      * 设置播放地址
      * @param path 播放地址
+     * @param headers 播放地址请求头
      */
-    public abstract void setDataSource(String path);
+    public abstract void setDataSource(String path, Map<String, String> headers);
+
+    /**
+     * 用于播放raw和asset里面的视频文件
+     */
+    public abstract void setDataSource(AssetFileDescriptor fd);
 
     /**
      * 播放

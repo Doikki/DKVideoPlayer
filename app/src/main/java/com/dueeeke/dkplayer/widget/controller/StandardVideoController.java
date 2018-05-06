@@ -235,6 +235,7 @@ public class StandardVideoController extends GestureVideoController implements V
                 loadingProgress.setVisibility(GONE);
                 thumb.setVisibility(GONE);
                 bottomProgress.setVisibility(GONE);
+                topContainer.setVisibility(GONE);
                 break;
             case IjkVideoView.STATE_BUFFERING:
                 L.e("STATE_BUFFERING");

@@ -1,6 +1,7 @@
 package com.dueeeke.dkplayer.player;
 
 import android.content.Context;
+import android.content.res.AssetFileDescriptor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.view.Surface;
@@ -32,6 +33,8 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
+
+import java.util.Map;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 
@@ -71,9 +74,14 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoRendererEvent
     }
 
     @Override
-    public void setDataSource(String path) {
+    public void setDataSource(String path, Map<String, String> headers) {
         mDataSource = path;
         mMediaSource = getMediaSource();
+    }
+
+    @Override
+    public void setDataSource(AssetFileDescriptor fd) {
+
     }
 
     private MediaSource getMediaSource() {

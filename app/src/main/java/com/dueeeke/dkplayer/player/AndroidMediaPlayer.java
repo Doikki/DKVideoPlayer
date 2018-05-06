@@ -1,16 +1,26 @@
 package com.dueeeke.dkplayer.player;
 
+import android.content.Context;
+import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
 import com.dueeeke.videoplayer.player.AbstractPlayer;
 
+import java.util.Map;
+
 public class AndroidMediaPlayer extends AbstractPlayer {
 
     protected MediaPlayer mMediaPlayer;
     private boolean isLooping;
+    protected Context mAppContext;
+
+    public AndroidMediaPlayer(Context context) {
+        mAppContext = context.getApplicationContext();
+    }
 
     @Override
     public void start() {
@@ -30,11 +40,20 @@ public class AndroidMediaPlayer extends AbstractPlayer {
     }
 
     @Override
-    public void setDataSource(String path) {
+    public void setDataSource(String path, Map<String, String> headers) {
         try {
-            mMediaPlayer.setDataSource(path);
+            mMediaPlayer.setDataSource(mAppContext, Uri.parse(path), headers);
         } catch (Exception e) {
-            if (mPlayerEventListener != null) mPlayerEventListener.onError();
+            mPlayerEventListener.onError();
+        }
+    }
+
+    @Override
+    public void setDataSource(AssetFileDescriptor fd) {
+        try {
+            mMediaPlayer.setDataSource(fd.getFileDescriptor(), fd.getStartOffset(), fd.getLength());
+        } catch (Exception e) {
+            mPlayerEventListener.onError();
         }
     }
 
@@ -131,7 +150,7 @@ public class AndroidMediaPlayer extends AbstractPlayer {
     private MediaPlayer.OnErrorListener onErrorListener = new MediaPlayer.OnErrorListener() {
         @Override
         public boolean onError(MediaPlayer mp, int what, int extra) {
-            if (mPlayerEventListener != null) mPlayerEventListener.onError();
+            mPlayerEventListener.onError();
             return true;
         }
     };
@@ -139,14 +158,14 @@ public class AndroidMediaPlayer extends AbstractPlayer {
     private MediaPlayer.OnCompletionListener onCompletionListener = new MediaPlayer.OnCompletionListener() {
         @Override
         public void onCompletion(MediaPlayer mp) {
-            if (mPlayerEventListener != null) mPlayerEventListener.onCompletion();
+            mPlayerEventListener.onCompletion();
         }
     };
 
     private MediaPlayer.OnInfoListener onInfoListener = new MediaPlayer.OnInfoListener() {
         @Override
         public boolean onInfo(MediaPlayer mp, int what, int extra) {
-            if (mPlayerEventListener != null) mPlayerEventListener.onInfo(what, extra);
+            mPlayerEventListener.onInfo(what, extra);
             return true;
         }
     };
@@ -154,7 +173,7 @@ public class AndroidMediaPlayer extends AbstractPlayer {
     private MediaPlayer.OnBufferingUpdateListener onBufferingUpdateListener = new MediaPlayer.OnBufferingUpdateListener() {
         @Override
         public void onBufferingUpdate(MediaPlayer mp, int percent) {
-            if (mPlayerEventListener != null) mPlayerEventListener.onBufferingUpdate(percent);
+            mPlayerEventListener.onBufferingUpdate(percent);
         }
     };
 
@@ -162,10 +181,8 @@ public class AndroidMediaPlayer extends AbstractPlayer {
     private MediaPlayer.OnPreparedListener onPreparedListener = new MediaPlayer.OnPreparedListener() {
         @Override
         public void onPrepared(MediaPlayer mp) {
-            if (mPlayerEventListener != null) {
-                mPlayerEventListener.onPrepared();
-                mMediaPlayer.start();
-            }
+            mPlayerEventListener.onPrepared();
+            mMediaPlayer.start();
         }
     };
 
@@ -175,8 +192,7 @@ public class AndroidMediaPlayer extends AbstractPlayer {
             int videoWidth = mp.getVideoWidth();
             int videoHeight = mp.getVideoHeight();
             if (videoWidth != 0 && videoHeight != 0) {
-                if (mPlayerEventListener != null)
-                    mPlayerEventListener.onVideoSizeChanged(videoWidth, videoHeight);
+                mPlayerEventListener.onVideoSizeChanged(videoWidth, videoHeight);
             }
         }
     };

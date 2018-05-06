@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.PixelFormat;
 import android.graphics.SurfaceTexture;
 import android.support.annotation.NonNull;
@@ -315,29 +316,6 @@ public class IjkVideoView extends BaseIjkVideoView {
     }
 
     /**
-     * 设置视频地址
-     */
-    public void setUrl(String url) {
-        this.mCurrentUrl = url;
-    }
-
-    /**
-     * 一开始播放就seek到预先设置好的位置
-     */
-    public void skipPositionWhenPlay(int position) {
-        this.mCurrentPosition = position;
-    }
-
-    /**
-     * 设置标题
-     */
-    public void setTitle(String title) {
-        if (title != null) {
-            this.mCurrentTitle = title;
-        }
-    }
-
-    /**
      * 设置视频比例
      */
     @Override
@@ -345,6 +323,22 @@ public class IjkVideoView extends BaseIjkVideoView {
         this.mCurrentScreenScale = screenScale;
         if (mSurfaceView != null) mSurfaceView.setScreenScale(screenScale);
         if (mTextureView != null) mTextureView.setScreenScale(screenScale);
+    }
+
+    /**
+     * 设置镜像旋转
+     */
+    @Override
+    public void setMirrorRotation(boolean enable) {
+        if (mTextureView == null) return;
+        Matrix transform = new Matrix();
+        if (enable) {
+            transform.setScale(-1, 1, mTextureView.getWidth() / 2, 0);
+        } else {
+            transform.setScale(1, 1, mTextureView.getWidth() / 2, 0);
+        }
+        mTextureView.setTransform(transform);
+        mTextureView.invalidate();
     }
 
     /**

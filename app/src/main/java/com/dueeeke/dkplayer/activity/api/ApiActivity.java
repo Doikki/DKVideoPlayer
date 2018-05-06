@@ -55,4 +55,8 @@ public class ApiActivity extends AppCompatActivity {
     public void skipToScreenShotPlayer(View view) {
         startActivity(new Intent(this, ScreenShotPlayerActivity.class));
     }
+
+    public void skipToRawOrAssets(View view) {
+        startActivity(new Intent(this, PlayRawAssetsActivity.class));
+    }
 }

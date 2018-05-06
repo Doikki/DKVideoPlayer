@@ -118,7 +118,10 @@
             android:name=".activity.extend.SwitchPlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
-
+        <activity
+            android:name=".activity.api.PlayRawAssetsActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

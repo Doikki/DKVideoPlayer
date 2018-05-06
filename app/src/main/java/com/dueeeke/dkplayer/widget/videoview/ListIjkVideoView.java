@@ -36,16 +36,7 @@ public class ListIjkVideoView extends IjkVideoView implements ListMediaPlayerCon
     @Override
     public void onCompletion() {
         super.onCompletion();
-        mCurrentVideoPosition++;
-        if (mVideoModels != null && mVideoModels.size() > 1) {
-            if (mCurrentVideoPosition >= mVideoModels.size()) {
-                return;
-            }
-            playNext();
-            addDisplay();
-            startPrepare(true);
-        }
-
+        skipToNext();
     }
 
     /**

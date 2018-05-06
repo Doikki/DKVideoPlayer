@@ -30,4 +30,10 @@
         android:layout_height="wrap_content"
         android:onClick="skipToScreenShotPlayer"
         android:text="SCREEN SHOT" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="skipToRawOrAssets"
+        android:text="Raw or Assets" />
 </LinearLayout>
