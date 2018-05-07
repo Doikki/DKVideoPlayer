@@ -5,12 +5,14 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.bean.VideoModel;
+import com.dueeeke.dkplayer.interf.ControllerListener;
 import com.dueeeke.dkplayer.widget.controller.AdController;
-import com.dueeeke.dkplayer.widget.videoview.ListIjkVideoView;
 import com.dueeeke.dkplayer.widget.controller.StandardVideoController;
+import com.dueeeke.dkplayer.widget.videoview.ListIjkVideoView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +44,14 @@ public class ADActivity extends AppCompatActivity {
 //        ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 16 * 9));
 
         List<VideoModel> videos = new ArrayList<>();
-        videos.add(new VideoModel(URL_AD, "广告", new AdController(this)));
+        AdController adController = new AdController(this);
+        adController.setControllerListener(new ControllerListener() {
+            @Override
+            public void onAdClick() {
+                Toast.makeText(ADActivity.this, "广告点击跳转", Toast.LENGTH_SHORT).show();
+            }
+        });
+        videos.add(new VideoModel(URL_AD, "广告", adController));
         videos.add(new VideoModel(URL_VOD, "这是一个标题", new StandardVideoController(this)));
 
         ijkVideoView.setVideos(videos);

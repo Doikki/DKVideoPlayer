@@ -5,7 +5,6 @@ import android.content.pm.ActivityInfo;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,7 +12,7 @@ import android.widget.TextView;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.interf.ControllerListener;
 import com.dueeeke.dkplayer.interf.ListMediaPlayerControl;
-import com.dueeeke.videoplayer.controller.GestureVideoController;
+import com.dueeeke.videoplayer.controller.BaseVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.util.WindowUtil;
 
@@ -22,7 +21,7 @@ import com.dueeeke.videoplayer.util.WindowUtil;
  * Created by Devlin_n on 2017/4/12.
  */
 
-public class AdController extends GestureVideoController implements View.OnClickListener {
+public class AdController extends BaseVideoController implements View.OnClickListener {
     protected TextView adTime, adDetail;
     protected ImageView back, volume, fullScreen, playButton;
     protected ControllerListener listener;
@@ -57,7 +56,12 @@ public class AdController extends GestureVideoController implements View.OnClick
         back.setOnClickListener(this);
         volume.setOnClickListener(this);
         fullScreen.setOnClickListener(this);
-        mShowing = true;
+        this.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) listener.onAdClick();
+            }
+        });
     }
 
     @Override
@@ -105,9 +109,11 @@ public class AdController extends GestureVideoController implements View.OnClick
         switch (playerState) {
             case IjkVideoView.PLAYER_NORMAL:
                 back.setVisibility(GONE);
+                fullScreen.setSelected(true);
                 break;
             case IjkVideoView.PLAYER_FULL_SCREEN:
                 back.setVisibility(VISIBLE);
+                fullScreen.setSelected(false);
                 break;
         }
     }
@@ -123,16 +129,6 @@ public class AdController extends GestureVideoController implements View.OnClick
         if (adTime != null)
             adTime.setText(String.format("%s | 跳过", (duration - position) / 1000));
         return position;
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                if (listener != null) listener.onAdClick();
-                break;
-        }
-        return false;
     }
 
     @Override
