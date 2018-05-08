@@ -293,6 +293,15 @@ public class IjkVideoView extends BaseIjkVideoView {
         }
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus && isFullScreen) {
+            WindowUtil.hideSystemBar(getContext());
+        }
+    }
+
+
     /**
      * 设置控制器
      */

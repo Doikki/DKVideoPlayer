@@ -103,7 +103,6 @@ public class WindowUtil {
                 ab.hide();
             }
         }
-        scanForActivity(context).getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         hideNavigationBar(context);
     }
 
@@ -112,7 +111,6 @@ public class WindowUtil {
      */
     @SuppressLint("RestrictedApi")
     public static void showSystemBar(final Context context) {
-        scanForActivity(context).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         showNavigationBar(context);
         AppCompatActivity appCompatActivity = getAppCompActivity(context);
         if (appCompatActivity != null) {
@@ -133,15 +131,22 @@ public class WindowUtil {
 
     private static void hideNavigationBar(Context context) {
         View decorView = scanForActivity(context).getWindow().getDecorView();
-        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN);
+        int flags = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                | View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(flags);
     }
 
     private static void showNavigationBar(Context context) {
         View decorView = scanForActivity(context).getWindow().getDecorView();
         int systemUiVisibility = decorView.getSystemUiVisibility();
-        int flags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
+        int flags = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                | View.SYSTEM_UI_FLAG_FULLSCREEN;
         systemUiVisibility &= ~flags;
         decorView.setSystemUiVisibility(systemUiVisibility);
     }
