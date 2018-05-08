@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.dueeeke.dkplayer.R;
-import com.dueeeke.dkplayer.player.AndroidMediaPlayer;
 import com.dueeeke.dkplayer.widget.controller.StandardVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.player.PlayerConfig;
@@ -36,8 +35,8 @@ public class PlayRawAssetsActivity extends AppCompatActivity {
 //                    .enableCache()//启用边播边存
 //                .enableMediaCodec()//启动硬解码
 //                .usingSurfaceView()//使用SurfaceView
-                //ijkplayer不支持assets和raw播放,需切换成MediaPlayer
-                .setCustomMediaPlayer(new AndroidMediaPlayer(this))
+                //ijkplayer不支持assets播放,需切换成MediaPlayer
+//                .setCustomMediaPlayer(new AndroidMediaPlayer(this))
                 .build());
         //播放assets文件
 //        AssetManager am = getResources().getAssets();

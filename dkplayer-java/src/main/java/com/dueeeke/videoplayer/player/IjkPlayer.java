@@ -1,5 +1,6 @@
 package com.dueeeke.videoplayer.player;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
@@ -51,7 +52,14 @@ public class IjkPlayer extends AbstractPlayer {
     @Override
     public void setDataSource(String path, Map<String, String> headers) {
         try {
-            mMediaPlayer.setDataSource(mAppContext, Uri.parse(path), headers);
+            Uri uri = Uri.parse(path);
+            if(uri.getScheme().equals(ContentResolver.SCHEME_ANDROID_RESOURCE)){
+                RawDataSourceProvider rawDataSourceProvider = RawDataSourceProvider.create(mAppContext, uri);
+                mMediaPlayer.setDataSource(rawDataSourceProvider);
+            } else {
+                mMediaPlayer.setDataSource(mAppContext, uri, headers);
+            }
+
         } catch (Exception e) {
             mPlayerEventListener.onError();
         }
