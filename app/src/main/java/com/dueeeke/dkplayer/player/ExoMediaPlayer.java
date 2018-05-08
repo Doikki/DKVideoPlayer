@@ -52,6 +52,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoRendererEvent
     private boolean mIsPrepareing = true;
     private boolean mIsBuffering = false;
     private DataSource.Factory mediaDataSourceFactory;
+    private Map<String, String> mHeaders;
+    private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
     @NonNull
     private Repeater bufferRepeater = new Repeater();
 
@@ -77,11 +79,12 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoRendererEvent
     public void setDataSource(String path, Map<String, String> headers) {
         mDataSource = path;
         mMediaSource = getMediaSource();
+        mHeaders = headers;
     }
 
     @Override
     public void setDataSource(AssetFileDescriptor fd) {
-
+        //no support
     }
 
     private MediaSource getMediaSource() {
@@ -112,15 +115,34 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoRendererEvent
         }
     }
 
-
-    private DataSource.Factory getHttpDataSourceFactory(boolean useBandwidthMeter) {
-        return new DefaultHttpDataSourceFactory(Util.getUserAgent(mAppContext,
-                mAppContext.getApplicationInfo().name), useBandwidthMeter ? null : new DefaultBandwidthMeter());
+    /**
+     * Returns a new DataSource factory.
+     *
+     * @param useBandwidthMeter Whether to set {@link #BANDWIDTH_METER} as a listener to the new
+     *     DataSource factory.
+     * @return A new DataSource factory.
+     */
+    private DataSource.Factory getDataSourceFactory(boolean useBandwidthMeter) {
+        return new DefaultDataSourceFactory(mAppContext, useBandwidthMeter ? null : BANDWIDTH_METER,
+                getHttpDataSourceFactory(useBandwidthMeter));
     }
 
-    private DataSource.Factory getDataSourceFactory(boolean useBandwidthMeter) {
-        return new DefaultDataSourceFactory(mAppContext, useBandwidthMeter ? null : new DefaultBandwidthMeter(),
-                getHttpDataSourceFactory(useBandwidthMeter));
+    /**
+     * Returns a new HttpDataSource factory.
+     *
+     * @param useBandwidthMeter Whether to set {@link #BANDWIDTH_METER} as a listener to the new
+     *     DataSource factory.
+     * @return A new HttpDataSource factory.
+     */
+    private DataSource.Factory getHttpDataSourceFactory(boolean useBandwidthMeter) {
+        DefaultHttpDataSourceFactory dataSourceFactory = new DefaultHttpDataSourceFactory(Util.getUserAgent(mAppContext,
+                mAppContext.getApplicationInfo().name), useBandwidthMeter ? null : BANDWIDTH_METER);
+        if (mHeaders != null && mHeaders.size() > 0) {
+            for (Map.Entry<String, String> header : mHeaders.entrySet()) {
+                dataSourceFactory.getDefaultRequestProperties().set(header.getKey(), header.getValue());
+            }
+        }
+        return dataSourceFactory;
     }
 
     @Override

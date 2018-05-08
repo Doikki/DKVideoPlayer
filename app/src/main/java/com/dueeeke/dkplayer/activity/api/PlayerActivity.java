@@ -47,7 +47,7 @@ public class PlayerActivity extends AppCompatActivity {
 //                    .usingSurfaceView()//使用SurfaceView
 //                    .setCustomMediaPlayer(new ExoMediaPlayer(this))
                     .build());
-            ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_CENTER_CROP);
+//            ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_CENTER_CROP);
             ijkVideoView.setUrl(intent.getStringExtra("url"));
             ijkVideoView.setVideoController(controller);
             ijkVideoView.start();
