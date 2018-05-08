@@ -17,6 +17,7 @@ import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.decoder.DecoderCounters;
+import com.google.android.exoplayer2.ext.rtmp.RtmpDataSourceFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
@@ -89,6 +90,11 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoRendererEvent
 
     private MediaSource getMediaSource() {
         Uri contentUri = Uri.parse(mDataSource);
+        if (contentUri.getScheme().equals("rtmp")) {
+            RtmpDataSourceFactory rtmpDataSourceFactory = new RtmpDataSourceFactory(null);
+            return new ExtractorMediaSource.Factory(rtmpDataSourceFactory)
+                    .createMediaSource(contentUri);
+        }
         int contentType = Util.inferContentType(mDataSource);
         switch (contentType) {
             case C.TYPE_DASH:
@@ -105,9 +111,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoRendererEvent
                 return new HlsMediaSource.Factory(mediaDataSourceFactory)
                         .createMediaSource(contentUri);
 //            case TYPE_RTMP:
-//                RtmpDataSourceFactory rtmpDataSourceFactory = new RtmpDataSourceFactory(null);
-//                return new ExtractorMediaSource.Factory(rtmpDataSourceFactory)
-//                        .createMediaSource(contentUri, mainHandler, null);
+
             default:
             case C.TYPE_OTHER:
                 return new ExtractorMediaSource.Factory(mediaDataSourceFactory)
@@ -119,7 +123,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoRendererEvent
      * Returns a new DataSource factory.
      *
      * @param useBandwidthMeter Whether to set {@link #BANDWIDTH_METER} as a listener to the new
-     *     DataSource factory.
+     *                          DataSource factory.
      * @return A new DataSource factory.
      */
     private DataSource.Factory getDataSourceFactory(boolean useBandwidthMeter) {
@@ -131,7 +135,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoRendererEvent
      * Returns a new HttpDataSource factory.
      *
      * @param useBandwidthMeter Whether to set {@link #BANDWIDTH_METER} as a listener to the new
-     *     DataSource factory.
+     *                          DataSource factory.
      * @return A new HttpDataSource factory.
      */
     private DataSource.Factory getHttpDataSourceFactory(boolean useBandwidthMeter) {

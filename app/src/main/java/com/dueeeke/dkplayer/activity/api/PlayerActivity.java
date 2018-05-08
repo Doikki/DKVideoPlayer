@@ -46,6 +46,7 @@ public class PlayerActivity extends AppCompatActivity {
 //                    .enableMediaCodec()//启动硬解码
 //                    .usingSurfaceView()//使用SurfaceView
 //                    .setCustomMediaPlayer(new ExoMediaPlayer(this))
+//                    .setCustomMediaPlayer(new AndroidMediaPlayer(this))
                     .build());
 //            ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_CENTER_CROP);
             ijkVideoView.setUrl(intent.getStringExtra("url"));

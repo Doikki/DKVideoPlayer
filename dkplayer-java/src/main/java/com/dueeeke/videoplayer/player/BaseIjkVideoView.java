@@ -75,6 +75,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
 
     protected boolean isLockFullScreen;//是否锁定屏幕
     protected PlayerConfig mPlayerConfig;//播放器配置
+    private HttpProxyCacheServer mCacheServer;
 
     /**
      * 加速度传感器监听
@@ -187,10 +188,10 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         if (mAssetFileDescriptor != null) {
             mMediaPlayer.setDataSource(mAssetFileDescriptor);
         } else if (mPlayerConfig.isCache) {
-            HttpProxyCacheServer cacheServer = getCacheServer();
-            String proxyPath = cacheServer.getProxyUrl(mCurrentUrl);
-            cacheServer.registerCacheListener(cacheListener, mCurrentUrl);
-            if (cacheServer.isCached(mCurrentUrl)) {
+            mCacheServer = getCacheServer();
+            String proxyPath = mCacheServer.getProxyUrl(mCurrentUrl);
+            mCacheServer.registerCacheListener(cacheListener, mCurrentUrl);
+            if (mCacheServer.isCached(mCurrentUrl)) {
                 bufferPercentage = 100;
             }
             mMediaPlayer.setDataSource(proxyPath, mHeaders);
@@ -261,8 +262,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      */
     public void resume() {
         if (isInPlaybackState()
-                && !mMediaPlayer.isPlaying()
-                && mCurrentPlayState != STATE_PLAYBACK_COMPLETED) {
+                && !mMediaPlayer.isPlaying()) {
             mMediaPlayer.start();
             setPlayState(STATE_PLAYING);
             mAudioFocusHelper.requestFocus();
@@ -305,8 +305,8 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     private void onPlayStopped() {
         if (mVideoController != null) mVideoController.hideStatusView();
         orientationEventListener.disable();
-        if (mPlayerConfig.isCache)
-            getCacheServer().unregisterCacheListener(cacheListener);
+        if (mCacheServer != null)
+            mCacheServer.unregisterCacheListener(cacheListener);
         isLockFullScreen = false;
         mCurrentPosition = 0;
     }
@@ -322,8 +322,11 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      * 是否处于播放状态
      */
     protected boolean isInPlaybackState() {
-        return (mMediaPlayer != null && mCurrentPlayState != STATE_ERROR
-                && mCurrentPlayState != STATE_IDLE && mCurrentPlayState != STATE_PREPARING);
+        return (mMediaPlayer != null
+                && mCurrentPlayState != STATE_ERROR
+                && mCurrentPlayState != STATE_PLAYBACK_COMPLETED
+                && mCurrentPlayState != STATE_IDLE
+                && mCurrentPlayState != STATE_PREPARING);
     }
 
     /**
