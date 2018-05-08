@@ -27,7 +27,7 @@ import com.dueeeke.videoplayer.controller.GestureVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.util.L;
 import com.dueeeke.videoplayer.util.WindowUtil;
-import com.dueeeke.videoplayer.widget.MarqueeTextView;
+import com.dueeeke.dkplayer.widget.MarqueeTextView;
 
 /**
  * 直播/点播控制器

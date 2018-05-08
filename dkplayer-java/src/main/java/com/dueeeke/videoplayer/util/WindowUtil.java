@@ -98,7 +98,7 @@ public class WindowUtil {
         AppCompatActivity appCompatActivity = getAppCompActivity(context);
         if (appCompatActivity != null) {
             ActionBar ab = appCompatActivity.getSupportActionBar();
-            if (ab != null) {
+            if (ab != null && ab.isShowing()) {
                 ab.setShowHideAnimationEnabled(false);
                 ab.hide();
             }
@@ -115,7 +115,7 @@ public class WindowUtil {
         AppCompatActivity appCompatActivity = getAppCompActivity(context);
         if (appCompatActivity != null) {
             ActionBar ab = appCompatActivity.getSupportActionBar();
-            if (ab != null) {
+            if (ab != null && !ab.isShowing()) {
                 ab.setShowHideAnimationEnabled(false);
                 ab.show();
             }

@@ -1,4 +1,4 @@
-package com.dueeeke.videoplayer.widget;
+package com.dueeeke.dkplayer.widget;
 
 import android.content.Context;
 import android.support.v7.widget.AppCompatTextView;
