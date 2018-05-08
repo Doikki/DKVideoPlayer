@@ -11,11 +11,13 @@ public class VideoModel {
     public String url;
     public String title;
 
-    public VideoModel(String url, String title, BaseVideoController controller) {
+    public VideoModel(String url, String title, BaseVideoController controller, boolean isCache) {
         this.url = url;
         this.title = title;
         this.controller = controller;
+        this.isCache = isCache;
     }
 
     public BaseVideoController controller;
+    public boolean isCache;
 }

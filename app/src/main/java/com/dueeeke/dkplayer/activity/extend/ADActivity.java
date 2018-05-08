@@ -51,8 +51,8 @@ public class ADActivity extends AppCompatActivity {
                 Toast.makeText(ADActivity.this, "广告点击跳转", Toast.LENGTH_SHORT).show();
             }
         });
-        videos.add(new VideoModel(URL_AD, "广告", adController));
-        videos.add(new VideoModel(URL_VOD, "这是一个标题", new StandardVideoController(this)));
+        videos.add(new VideoModel(URL_AD, "广告", adController, true));
+        videos.add(new VideoModel(URL_VOD, "这是一个标题", new StandardVideoController(this), false));
 
         ijkVideoView.setVideos(videos);
         ijkVideoView.start();

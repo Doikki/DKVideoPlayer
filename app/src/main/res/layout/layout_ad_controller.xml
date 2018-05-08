@@ -51,6 +51,6 @@
         <ImageView
             android:id="@+id/fullscreen"
             style="@style/adIcon"
-            android:src="@drawable/ic_action_fullscreen" />
+            android:src="@drawable/selector_full_screen_button" />
     </LinearLayout>
 </FrameLayout>

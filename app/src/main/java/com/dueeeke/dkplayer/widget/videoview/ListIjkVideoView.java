@@ -47,6 +47,7 @@ public class ListIjkVideoView extends IjkVideoView implements ListMediaPlayerCon
         if (videoModel != null) {
             mCurrentUrl = videoModel.url;
             mCurrentTitle = videoModel.title;
+            mPlayerConfig.isCache = videoModel.isCache;
             mCurrentPosition = 0;
             setVideoController(videoModel.controller);
         }

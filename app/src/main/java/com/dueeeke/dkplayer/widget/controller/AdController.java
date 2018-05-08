@@ -109,11 +109,11 @@ public class AdController extends BaseVideoController implements View.OnClickLis
         switch (playerState) {
             case IjkVideoView.PLAYER_NORMAL:
                 back.setVisibility(GONE);
-                fullScreen.setSelected(true);
+                fullScreen.setSelected(false);
                 break;
             case IjkVideoView.PLAYER_FULL_SCREEN:
                 back.setVisibility(VISIBLE);
-                fullScreen.setSelected(false);
+                fullScreen.setSelected(true);
                 break;
         }
     }
