@@ -20,7 +20,12 @@ public class RotateInFullscreenActivity extends AppCompatActivity{
         mIjkVideoView = findViewById(R.id.player);
         mController = new RotateInFullscreenController(this);
         mIjkVideoView.setVideoController(mController);
-        mIjkVideoView.setUrl("http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv");
+//        mIjkVideoView.setPlayerConfig(new PlayerConfig.Builder().enableMediaCodec().build());
+//        String path = Environment.getExternalStorageDirectory().getAbsolutePath();
+//        String url = "file://"  + path + File.separator + "test.mp4";
+//        String url = "http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv";
+        String url = "https://aweme.snssdk.com/aweme/v1/play/?video_id=374e166692ee4ebfae030ceae117a9d0&line=0&ratio=720p&media_type=4&vr_type=0";
+        mIjkVideoView.setUrl(url);
         mIjkVideoView.start();
     }
 

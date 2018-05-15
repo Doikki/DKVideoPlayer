@@ -88,8 +88,11 @@ public class RotateInFullscreenController extends StandardVideoController {
             if (isLandscape)
                 WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             mediaPlayer.stopFullScreen();
-        } else if (i == R.id.thumb || i == R.id.iv_replay) {
+        } else if (i == R.id.thumb) {
             mediaPlayer.start();
+            mediaPlayer.startFullScreen();
+        } else if (i == R.id.iv_replay) {
+            mediaPlayer.retry();
             mediaPlayer.startFullScreen();
         }
     }

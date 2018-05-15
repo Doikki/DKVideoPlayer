@@ -248,7 +248,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      */
     @Override
     public void pause() {
-        if (isInPlaybackState() && mMediaPlayer.isPlaying()) {
+        if (isPlaying()) {
             mMediaPlayer.pause();
             setPlayState(STATE_PAUSED);
             setKeepScreenOn(false);
@@ -324,9 +324,9 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     protected boolean isInPlaybackState() {
         return (mMediaPlayer != null
                 && mCurrentPlayState != STATE_ERROR
-                && mCurrentPlayState != STATE_PLAYBACK_COMPLETED
                 && mCurrentPlayState != STATE_IDLE
-                && mCurrentPlayState != STATE_PREPARING);
+                && mCurrentPlayState != STATE_PREPARING
+                && mCurrentPlayState != STATE_PLAYBACK_COMPLETED);
     }
 
     /**
@@ -367,7 +367,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      */
     @Override
     public boolean isPlaying() {
-        return mMediaPlayer != null && mMediaPlayer.isPlaying();
+        return isInPlaybackState() && mMediaPlayer.isPlaying();
     }
 
     /**
