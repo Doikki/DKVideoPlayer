@@ -40,6 +40,11 @@ public class ResizeSurfaceView extends SurfaceView {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 //        Log.i("@@@@", "onMeasure(" + MeasureSpec.toString(widthMeasureSpec) + ", "
 //                + MeasureSpec.toString(heightMeasureSpec) + ")");
+        if (getRotation() == 90 || getRotation() == 270) { // 软解码时处理旋转信息，交换宽高
+            widthMeasureSpec = widthMeasureSpec + heightMeasureSpec;
+            heightMeasureSpec = widthMeasureSpec - heightMeasureSpec;
+            widthMeasureSpec = widthMeasureSpec - heightMeasureSpec;
+        }
 
         int width = getDefaultSize(mVideoWidth, widthMeasureSpec);
         int height = getDefaultSize(mVideoHeight, heightMeasureSpec);

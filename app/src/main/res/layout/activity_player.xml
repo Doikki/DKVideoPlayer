@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.dueeeke.dkplayer.widget.videoview.ListIjkVideoView
+    <com.dueeeke.videoplayer.player.IjkVideoView
         android:id="@+id/player"
         android:layout_width="match_parent"
         android:layout_height="250dp" />
@@ -17,83 +17,94 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="screenScaleDefault"
-            android:text="默认"/>
+            android:text="默认" />
+
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="screenScale169"
-            android:text="16:9"/>
+            android:text="16:9" />
+
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="screenScale43"
-            android:text="4:3"/>
+            android:text="4:3" />
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="screenScaleOriginal"
-            android:text="原始大小"/>
+            android:text="原始大小" />
+
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="screenScaleMatch"
-            android:text="填充"/>
+            android:text="填充" />
+
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="screenScaleCenterCrop"
-            android:text="居中裁剪"/>
+            android:text="居中裁剪" />
     </LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="播放速度：（0.25新世界）"/>
+        android:text="播放速度：（0.25新世界）" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <Button
             android:layout_width="60dp"
             android:layout_height="wrap_content"
+            android:onClick="setSpeed0_25"
             android:padding="0dp"
-            android:text="0.25"
-            android:onClick="setSpeed0_25"/>
+            android:text="0.25" />
+
         <Button
             android:layout_width="60dp"
             android:layout_height="wrap_content"
+            android:onClick="setSpeed0_5"
             android:padding="0dp"
-            android:text="0.5"
-            android:onClick="setSpeed0_5"/>
+            android:text="0.5" />
+
         <Button
             android:layout_width="60dp"
             android:layout_height="wrap_content"
+            android:onClick="setSpeed1_0"
             android:padding="0dp"
-            android:text="1.0"
-            android:onClick="setSpeed1_0"/>
+            android:text="1.0" />
+
         <Button
             android:layout_width="60dp"
             android:layout_height="wrap_content"
+            android:onClick="setSpeed1_5"
             android:padding="0dp"
-            android:text="1.5"
-            android:onClick="setSpeed1_5"/>
+            android:text="1.5" />
+
         <Button
             android:layout_width="60dp"
             android:layout_height="wrap_content"
+            android:onClick="setSpeed2_0"
             android:padding="0dp"
-            android:text="2.0"
-            android:onClick="setSpeed2_0"/>
+            android:text="2.0" />
     </LinearLayout>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="setMirrorRotate"
-        android:text="镜像旋转"/>
+        android:text="镜像旋转" />
 
 </LinearLayout>
