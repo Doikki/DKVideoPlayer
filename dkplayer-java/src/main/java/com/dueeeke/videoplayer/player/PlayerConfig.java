@@ -15,6 +15,7 @@ public class PlayerConfig {
     public boolean enableMediaCodec;//是否启用硬解码
     public boolean savingProgress;//是否保存进度
     public AbstractPlayer mAbstractPlayer = null;//自定义播放核心
+    public boolean disableAudioFocus;//关闭AudioFocus监听
 
 
     private PlayerConfig(PlayerConfig origin) {
@@ -26,6 +27,7 @@ public class PlayerConfig {
         this.enableMediaCodec = origin.enableMediaCodec;
         this.mAbstractPlayer = origin.mAbstractPlayer;
         this.savingProgress = origin.savingProgress;
+        this.disableAudioFocus = origin.disableAudioFocus;
     }
 
     private PlayerConfig() {
@@ -101,6 +103,14 @@ public class PlayerConfig {
          */
         public Builder savingProgress() {
             target.savingProgress = true;
+            return this;
+        }
+
+        /**
+         * 关闭AudioFocus监听
+         */
+        public Builder disableAudioFocus() {
+            target.disableAudioFocus = true;
             return this;
         }
 

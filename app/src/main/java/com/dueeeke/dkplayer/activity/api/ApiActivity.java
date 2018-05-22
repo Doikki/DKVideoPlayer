@@ -61,4 +61,8 @@ public class ApiActivity extends AppCompatActivity {
     public void skipToRawOrAssets(View view) {
         startActivity(new Intent(this, PlayRawAssetsActivity.class));
     }
+
+    public void multiPlayer(View view) {
+        startActivity(new Intent(this, MultiPlayerActivity.class));
+    }
 }

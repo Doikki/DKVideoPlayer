@@ -36,4 +36,9 @@
         android:layout_height="wrap_content"
         android:onClick="skipToRawOrAssets"
         android:text="Raw or Assets" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="multiPlayer"
+        android:text="Multi-player" />
 </LinearLayout>

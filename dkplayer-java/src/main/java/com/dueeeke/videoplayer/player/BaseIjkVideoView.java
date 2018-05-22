@@ -65,8 +65,8 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     protected int mCurrentPlayerState = PLAYER_NORMAL;
 
     protected AudioManager mAudioManager;//系统音频管理器
-    @NonNull
-    protected AudioFocusHelper mAudioFocusHelper = new AudioFocusHelper();
+    @Nullable
+    protected AudioFocusHelper mAudioFocusHelper;
 
     protected int currentOrientation = 0;
     protected static final int PORTRAIT = 1;
@@ -154,7 +154,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
 
     public BaseIjkVideoView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mAudioManager = (AudioManager) getContext().getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
         mPlayerConfig = new PlayerConfig.Builder().build();
     }
 
@@ -218,13 +217,18 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
             startInPlaybackState();
         }
         setKeepScreenOn(true);
-        mAudioFocusHelper.requestFocus();
+        if (mAudioFocusHelper != null)
+            mAudioFocusHelper.requestFocus();
     }
 
     /**
      * 第一次播放
      */
     protected void startPlay() {
+        if (!mPlayerConfig.disableAudioFocus) {
+            mAudioManager = (AudioManager) getContext().getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+            mAudioFocusHelper = new AudioFocusHelper();
+        }
         if (mPlayerConfig.savingProgress) {
             mCurrentPosition = ProgressUtil.getSavedProgress(mCurrentUrl);
         }
@@ -252,7 +256,8 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
             mMediaPlayer.pause();
             setPlayState(STATE_PAUSED);
             setKeepScreenOn(false);
-            mAudioFocusHelper.abandonFocus();
+            if (mAudioFocusHelper != null)
+                mAudioFocusHelper.abandonFocus();
             if (mVideoListener != null) mVideoListener.onVideoPaused();
         }
     }
@@ -265,7 +270,8 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
                 && !mMediaPlayer.isPlaying()) {
             mMediaPlayer.start();
             setPlayState(STATE_PLAYING);
-            mAudioFocusHelper.requestFocus();
+            if (mAudioFocusHelper != null)
+                mAudioFocusHelper.requestFocus();
             setKeepScreenOn(true);
             if (mVideoListener != null) mVideoListener.onVideoStarted();
         }
@@ -280,7 +286,8 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
             setPlayState(STATE_IDLE);
-            mAudioFocusHelper.abandonFocus();
+            if (mAudioFocusHelper != null)
+                mAudioFocusHelper.abandonFocus();
             setKeepScreenOn(false);
         }
         onPlayStopped();
@@ -296,7 +303,8 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
             mMediaPlayer.release();
             mMediaPlayer = null;
             setPlayState(STATE_IDLE);
-            mAudioFocusHelper.abandonFocus();
+            if (mAudioFocusHelper != null)
+                mAudioFocusHelper.abandonFocus();
             setKeepScreenOn(false);
         }
         onPlayStopped();
