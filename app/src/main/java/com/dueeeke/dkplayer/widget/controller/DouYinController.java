@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.widget.ImageView;
 
 import com.dueeeke.dkplayer.R;
@@ -39,7 +38,7 @@ public class DouYinController extends BaseVideoController {
 
     @Override
     protected void initView() {
-        controllerView = LayoutInflater.from(getContext()).inflate(getLayoutId(), this);
+        super.initView();
         thumb = controllerView.findViewById(R.id.iv_thumb);
     }
 
