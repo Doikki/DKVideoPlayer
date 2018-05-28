@@ -351,6 +351,8 @@ public class StandardVideoController extends GestureVideoController implements V
     }
 
     private void show(int timeout) {
+        if (sysTime != null)
+            sysTime.setText(getCurrentSystemTime());
         if (!mShowing) {
             if (mediaPlayer.isFullScreen()) {
                 lock.setVisibility(VISIBLE);
@@ -391,8 +393,6 @@ public class StandardVideoController extends GestureVideoController implements V
             return 0;
         }
 
-        if (sysTime != null)
-            sysTime.setText(getCurrentSystemTime());
         if (title != null && TextUtils.isEmpty(title.getText())) {
             title.setText(mediaPlayer.getTitle());
         }
