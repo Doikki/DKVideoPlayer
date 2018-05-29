@@ -61,8 +61,11 @@ public class FloatController extends GestureVideoController implements View.OnCl
         } else if (id == R.id.start_play) {
             doPauseResume();
         } else if (id == R.id.btn_skip) {
-            if (PIPManager.getInstance().getActClass() != null)
-                getContext().startActivity(new Intent(getContext(), PIPManager.getInstance().getActClass()));
+            if (PIPManager.getInstance().getActClass() != null) {
+                Intent intent = new Intent(getContext(), PIPManager.getInstance().getActClass());
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getContext().startActivity(intent);
+            }
         }
     }
 

@@ -42,14 +42,14 @@ allprojects {
 
 dependencies {
     # required, enough for most devices.
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-java:2.4.2'
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv7a:2.4.2'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-java:2.4.3'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv7a:2.4.3'
 
     # Other ABIs: optional
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv5:2.4.2'
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-arm64:2.4.2'
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86:2.4.2'
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86_64:2.4.2'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv5:2.4.3'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-arm64:2.4.3'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86:2.4.3'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86_64:2.4.3'
 }
 ```
 或者将library下载并导入项目中使用
@@ -77,6 +77,7 @@ PlayerConfig playerConfig = new PlayerConfig.Builder()
         .enableMediaCodec()//启动硬解码，启用后可能导致视频黑屏，音画不同步
         .usingSurfaceView() //启用SurfaceView显示视频，不调用默认使用TextureView
         .savingProgress() //保存播放进度
+        .disableAudioFocus() //关闭AudioFocusChange监听
         .build();
 ijkVideoView.setPlayerConfig(playerConfig);
 ```
