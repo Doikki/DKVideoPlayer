@@ -353,6 +353,7 @@ public class IjkVideoView extends BaseIjkVideoView {
     /**
      * 截图，暂不支持SurfaceView
      */
+    @Override
     public Bitmap doScreenShot() {
         if (mTextureView != null) {
             return mTextureView.getBitmap();

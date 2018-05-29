@@ -1,5 +1,7 @@
 package com.dueeeke.videoplayer.controller;
 
+import android.graphics.Bitmap;
+
 public interface MediaPlayerControl {
 
     void start();
@@ -41,4 +43,6 @@ public interface MediaPlayerControl {
     void refresh();
 
     void setMirrorRotation(boolean enable);
+
+    Bitmap doScreenShot();
 }

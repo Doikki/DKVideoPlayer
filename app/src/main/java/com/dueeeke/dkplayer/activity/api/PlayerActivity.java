@@ -119,8 +119,8 @@ public class PlayerActivity extends AppCompatActivity {
         i++;
     }
 
-    public void setSpeed0_25(View view) {
-        ijkVideoView.setSpeed(0.25f);
+    public void setSpeed0_75(View view) {
+        ijkVideoView.setSpeed(0.75f);
     }
 
     public void setSpeed0_5(View view) {
