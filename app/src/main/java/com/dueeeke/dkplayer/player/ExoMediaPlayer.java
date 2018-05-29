@@ -258,7 +258,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoRendererEvent
     }
 
     @Override
-    public void setVolume(int leftVolume, int rightVolume) {
+    public void setVolume(float leftVolume, float rightVolume) {
         if (mInternalPlayer != null)
             mInternalPlayer.setVolume((leftVolume + rightVolume) / 2);
     }

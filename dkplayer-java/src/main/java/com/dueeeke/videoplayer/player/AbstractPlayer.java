@@ -96,7 +96,7 @@ public abstract class AbstractPlayer {
     /**
      * 设置音量
      */
-    public abstract void setVolume(int v1, int v2);
+    public abstract void setVolume(float v1, float v2);
 
     /**
      * 设置是否循环播放

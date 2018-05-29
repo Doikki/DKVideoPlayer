@@ -604,25 +604,26 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
 
             currentFocus = focusChange;
             switch (focusChange) {
-                case AudioManager.AUDIOFOCUS_GAIN:
-                case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT:
+                case AudioManager.AUDIOFOCUS_GAIN://获得焦点
+                case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT://暂时获得焦点
                     if (startRequested || pausedForLoss) {
                         start();
                         startRequested = false;
                         pausedForLoss = false;
                     }
+                    if (mMediaPlayer != null && !isMute)//恢复音量
+                        mMediaPlayer.setVolume(1.0f, 1.0f);
                     break;
-                case AudioManager.AUDIOFOCUS_LOSS:
+                case AudioManager.AUDIOFOCUS_LOSS://焦点丢失
+                case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT://焦点暂时丢失
                     if (isPlaying()) {
                         pausedForLoss = true;
                         pause();
                     }
                     break;
-                case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
-                case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
-                    if (isPlaying()) {
-                        pausedForLoss = true;
-                        pause();
+                case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK://此时需降低音量
+                    if (mMediaPlayer != null && isPlaying() && !isMute) {
+                        mMediaPlayer.setVolume(0.1f, 0.1f);
                     }
                     break;
             }

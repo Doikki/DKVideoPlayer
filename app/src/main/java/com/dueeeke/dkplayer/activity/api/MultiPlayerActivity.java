@@ -29,9 +29,23 @@ public class MultiPlayerActivity extends AppCompatActivity{
 
         mPlayer2 = findViewById(R.id.player_2);
         mPlayer2.setUrl(VOD_URL);
-        mPlayer1.setPlayerConfig(new PlayerConfig.Builder().disableAudioFocus().build());
+        mPlayer2.setPlayerConfig(new PlayerConfig.Builder().disableAudioFocus().build());
         StandardVideoController controller2 = new StandardVideoController(this);
         mPlayer2.setVideoController(controller2);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mPlayer1.pause();
+        mPlayer2.pause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mPlayer1.resume();
+        mPlayer2.resume();
     }
 
     @Override

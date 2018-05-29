@@ -116,7 +116,7 @@ public class AndroidMediaPlayer extends AbstractPlayer {
     }
 
     @Override
-    public void setVolume(int v1, int v2) {
+    public void setVolume(float v1, float v2) {
         mMediaPlayer.setVolume(v1, v2);
     }
 
