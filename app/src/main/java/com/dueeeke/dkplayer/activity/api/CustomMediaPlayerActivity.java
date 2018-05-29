@@ -36,8 +36,8 @@ public class CustomMediaPlayerActivity extends AppCompatActivity {
         }
 
 
-//        String url = "rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov";
-        String rtspUrl = "rtsp://ajj:12345678@218.21.217.122:65523/h264/ch40/sub/av_stream";
+        String rtspUrl = "rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov";
+//        String rtspUrl = "rtsp://ajj:12345678@218.21.217.122:65523/h264/ch40/sub/av_stream";
 //        String rtspUrl = "rtsp://live.3gv.ifeng.com/live/71";
 //        String url = "http://storage.gzstv.net/uploads/media/huangmeiyan/jr05-09.mp4";
         //测试concat,将项目根目录的other文件夹中的test.ffconcat文件复制到sd卡根目录测试
@@ -73,7 +73,7 @@ public class CustomMediaPlayerActivity extends AppCompatActivity {
                         mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "safe", 0);
                         mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "protocol_whitelist",
                                 "rtmp,concat,ffconcat,file,subfile,http,https,tls,rtp,tcp,udp,crypto,rtsp");
-                        //支持rtsp
+                        //使用tcp方式拉取rtsp流，默认是通过udp方式
                         mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "rtsp_transport", "tcp");
                     }
                 })
