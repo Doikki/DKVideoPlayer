@@ -20,6 +20,7 @@ public class IjkPlayer extends AbstractPlayer {
     private boolean isLooping;
     private boolean isEnableMediaCodec;
     protected Context mAppContext;
+    private int mBufferedPercent;
 
     public IjkPlayer(Context context) {
         mAppContext = context.getApplicationContext();
@@ -146,6 +147,11 @@ public class IjkPlayer extends AbstractPlayer {
     }
 
     @Override
+    public int getBufferedPercentage() {
+        return mBufferedPercent;
+    }
+
+    @Override
     public void setSurface(Surface surface) {
         mMediaPlayer.setSurface(surface);
     }
@@ -211,7 +217,7 @@ public class IjkPlayer extends AbstractPlayer {
     private IMediaPlayer.OnBufferingUpdateListener onBufferingUpdateListener = new IMediaPlayer.OnBufferingUpdateListener() {
         @Override
         public void onBufferingUpdate(IMediaPlayer iMediaPlayer, int percent) {
-            mPlayerEventListener.onBufferingUpdate(percent);
+            mBufferedPercent = percent;
         }
     };
 

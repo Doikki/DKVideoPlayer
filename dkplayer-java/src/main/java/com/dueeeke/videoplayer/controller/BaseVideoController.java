@@ -166,7 +166,7 @@ public abstract class BaseVideoController extends FrameLayout {
      * 获取当前系统时间
      */
     protected String getCurrentSystemTime() {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.CHINA);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
         Date date = new Date();
         return simpleDateFormat.format(date);
     }

@@ -383,21 +383,17 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      */
     @Override
     public int getBufferPercentage() {
-        return mMediaPlayer != null ? bufferPercentage : 0;
+        return mMediaPlayer != null ? mMediaPlayer.getBufferedPercentage() : 0;
     }
 
     /**
      * 设置静音
      */
     @Override
-    public void setMute() {
-        if (isMute) {
-            mMediaPlayer.setVolume(1, 1);
-            isMute = false;
-        } else {
-            mMediaPlayer.setVolume(0, 0);
-            isMute = true;
-        }
+    public void setMute(boolean isMute) {
+        this.isMute = isMute;
+        float volume = isMute ? 1.0f : 0.0f;
+        mMediaPlayer.setVolume(volume, volume);
     }
 
     /**
@@ -478,14 +474,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
                 break;
         }
         if (mVideoListener != null) mVideoListener.onInfo(what, extra);
-    }
-
-    /**
-     * 缓冲进度回调
-     */
-    @Override
-    public void onBufferingUpdate(int position) {
-        if (!mPlayerConfig.isCache) bufferPercentage = position;
     }
 
     /**
@@ -585,6 +573,18 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     public void setTitle(String title) {
         if (title != null) {
             this.mCurrentTitle = title;
+        }
+    }
+
+    /**
+     * 设置音量 0.0f-1.0f 之间
+     *
+     * @param v1 左声道音量
+     * @param v2 右声道音量
+     */
+    public void setVolume(float v1, float v2) {
+        if (isInPlaybackState()) {
+            mMediaPlayer.setVolume(v1, v2);
         }
     }
 

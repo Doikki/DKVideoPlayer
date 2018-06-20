@@ -17,6 +17,7 @@ public class AndroidMediaPlayer extends AbstractPlayer {
     protected MediaPlayer mMediaPlayer;
     private boolean isLooping;
     protected Context mAppContext;
+    private int mBufferedPercent;
 
     public AndroidMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
@@ -106,6 +107,11 @@ public class AndroidMediaPlayer extends AbstractPlayer {
     }
 
     @Override
+    public int getBufferedPercentage() {
+        return mBufferedPercent;
+    }
+
+    @Override
     public void setSurface(Surface surface) {
         mMediaPlayer.setSurface(surface);
     }
@@ -173,7 +179,7 @@ public class AndroidMediaPlayer extends AbstractPlayer {
     private MediaPlayer.OnBufferingUpdateListener onBufferingUpdateListener = new MediaPlayer.OnBufferingUpdateListener() {
         @Override
         public void onBufferingUpdate(MediaPlayer mp, int percent) {
-            mPlayerEventListener.onBufferingUpdate(percent);
+            mBufferedPercent = percent;
         }
     };
 

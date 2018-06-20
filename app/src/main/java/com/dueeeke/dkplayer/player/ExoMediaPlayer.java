@@ -3,11 +3,9 @@ package com.dueeeke.dkplayer.player;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.net.Uri;
-import android.support.annotation.NonNull;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
-import com.dueeeke.dkplayer.util.Repeater;
 import com.dueeeke.videoplayer.player.AbstractPlayer;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -41,7 +39,6 @@ import tv.danmaku.ijk.media.player.IMediaPlayer;
 
 public class ExoMediaPlayer extends AbstractPlayer implements VideoRendererEventListener {
 
-    private static final int BUFFER_REPEAT_DELAY = 1_000;
     private Context mAppContext;
     private SimpleExoPlayer mInternalPlayer;
     private MediaSource mMediaSource;
@@ -55,14 +52,10 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoRendererEvent
     private DataSource.Factory mediaDataSourceFactory;
     private Map<String, String> mHeaders;
     private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
-    @NonNull
-    private Repeater bufferRepeater = new Repeater();
 
     public ExoMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
         lastReportedPlaybackState = Player.STATE_IDLE;
-        bufferRepeater.setRepeaterDelay(BUFFER_REPEAT_DELAY);
-        bufferRepeater.setRepeatListener(new BufferRepeatListener());
         mediaDataSourceFactory = getDataSourceFactory(true);
     }
 
@@ -110,8 +103,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoRendererEvent
             case C.TYPE_HLS:
                 return new HlsMediaSource.Factory(mediaDataSourceFactory)
                         .createMediaSource(contentUri);
-//            case TYPE_RTMP:
-
             default:
             case C.TYPE_OTHER:
                 return new ExtractorMediaSource.Factory(mediaDataSourceFactory)
@@ -224,7 +215,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoRendererEvent
         mDataSource = null;
         mIsPrepareing = true;
         mIsBuffering = false;
-        setBufferRepeaterStarted(false);
     }
 
     @Override
@@ -239,6 +229,11 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoRendererEvent
         if (mInternalPlayer == null)
             return 0;
         return mInternalPlayer.getDuration();
+    }
+
+    @Override
+    public int getBufferedPercentage() {
+        return mInternalPlayer == null ? 0 : mInternalPlayer.getBufferedPercentage();
     }
 
     @Override
@@ -294,34 +289,12 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoRendererEvent
         return 0;
     }
 
-    private void setBufferRepeaterStarted(boolean start) {
-        if (start && mPlayerEventListener != null) {
-            bufferRepeater.start();
-        } else {
-            bufferRepeater.stop();
-        }
-    }
-
-    private class BufferRepeatListener implements Repeater.RepeatListener {
-        @Override
-        public void onRepeat() {
-            if (mPlayerEventListener != null) {
-                mPlayerEventListener.onBufferingUpdate(getBufferedPercentage());
-            }
-        }
-    }
-
-    private int getBufferedPercentage() {
-        return mInternalPlayer == null ? 0 : mInternalPlayer.getBufferedPercentage();
-    }
-
     private Player.DefaultEventListener mDefaultEventListener = new Player.DefaultEventListener() {
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
             super.onPlayerStateChanged(playWhenReady, playbackState);
             //重新播放状态顺序为：STATE_IDLE -》STATE_BUFFERING -》STATE_READY
             //缓冲时顺序为：STATE_BUFFERING -》STATE_READY
-//        L.e("onPlayerStateChanged: playWhenReady = " + playWhenReady + ", playbackState = " + playbackState);
             if (lastReportedPlayWhenReady != playWhenReady || lastReportedPlaybackState != playbackState) {
                 if (mIsBuffering) {
                     switch (playbackState) {
@@ -340,7 +313,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoRendererEvent
                         case Player.STATE_READY:
                             if (mPlayerEventListener != null) {
                                 mPlayerEventListener.onPrepared();
-                                setBufferRepeaterStarted(true);
                             }
                             mIsPrepareing = false;
                             break;

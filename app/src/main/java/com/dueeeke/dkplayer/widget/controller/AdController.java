@@ -81,12 +81,8 @@ public class AdController extends BaseVideoController implements View.OnClickLis
     }
 
     private void doMute() {
-        mediaPlayer.setMute();
-        if (mediaPlayer.isMute()) {
-            volume.setImageResource(R.drawable.ic_action_volume_up);
-        } else {
-            volume.setImageResource(R.drawable.ic_action_volume_off);
-        }
+        mediaPlayer.setMute(!mediaPlayer.isMute());
+        volume.setImageResource(mediaPlayer.isMute() ? R.drawable.ic_action_volume_up : R.drawable.ic_action_volume_off);
     }
 
     @Override

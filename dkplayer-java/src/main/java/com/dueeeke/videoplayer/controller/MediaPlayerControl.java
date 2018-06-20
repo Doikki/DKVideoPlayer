@@ -26,7 +26,7 @@ public interface MediaPlayerControl {
 
     String getTitle();
 
-    void setMute();
+    void setMute(boolean isMute);
 
     boolean isMute();
 

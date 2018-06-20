@@ -84,6 +84,11 @@ public abstract class AbstractPlayer {
     public abstract long getDuration();
 
     /**
+     * 获取缓冲百分比
+     */
+    public abstract int getBufferedPercentage();
+
+    /**
      * 设置渲染视频的View,主要用于TextureView
      */
     public abstract void setSurface(Surface surface);
