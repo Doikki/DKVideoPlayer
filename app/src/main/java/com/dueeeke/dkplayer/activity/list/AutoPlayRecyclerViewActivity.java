@@ -31,7 +31,7 @@ public class AutoPlayRecyclerViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_recycler_view);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle("AUTO PLAY RECYCLER VIEW");
+            actionBar.setTitle(R.string.str_auto_play_recycler_view);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         initView();

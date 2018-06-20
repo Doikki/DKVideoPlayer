@@ -36,7 +36,7 @@ public class ADActivity extends AppCompatActivity {
         setContentView(R.layout.activity_ad);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle("AD");
+            actionBar.setTitle(R.string.str_ad);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         ijkVideoView = findViewById(R.id.player);

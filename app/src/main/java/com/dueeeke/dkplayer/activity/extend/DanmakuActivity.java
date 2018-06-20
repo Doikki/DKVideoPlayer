@@ -57,7 +57,7 @@ public class DanmakuActivity extends AppCompatActivity {
         setContentView(R.layout.activity_danmaku_player);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle("弹幕");
+            actionBar.setTitle(R.string.str_danmu);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         danmukuVideoView = findViewById(R.id.player);

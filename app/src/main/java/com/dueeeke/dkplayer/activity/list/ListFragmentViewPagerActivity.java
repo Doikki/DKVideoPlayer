@@ -36,7 +36,7 @@ public class ListFragmentViewPagerActivity extends AppCompatActivity implements 
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle("LIST FRAGMENT VIEWPAGER");
+            actionBar.setTitle(R.string.str_list_fragment_viewpager);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 

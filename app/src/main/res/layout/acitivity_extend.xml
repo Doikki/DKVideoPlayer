@@ -7,26 +7,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="startFullScreen"
-        android:text="FULLSCREEN DIRECTLY" />
+        android:text="@string/str_fullscreen_directly" />
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="danmaku"
-        android:text="DANMU" />
+        android:text="@string/str_danmu" />
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="ad"
-        android:text="AD" />
+        android:text="@string/str_ad" />
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="rotateInFullscreen"
-        android:text="ROTATE IN FULLSCREEN" />
+        android:text="@string/str_extend_rotate_in_fullscreen" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="switchPlayer"
-        android:text="SWITCH PLAYER" />
+        android:text="@string/str_switch_player" />
 </LinearLayout>

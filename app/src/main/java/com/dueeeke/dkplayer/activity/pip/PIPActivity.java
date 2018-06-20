@@ -28,7 +28,7 @@ public class PIPActivity extends AppCompatActivity{
         setContentView(R.layout.activity_pip);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle("PIP");
+            actionBar.setTitle(R.string.str_pip_demo);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         FrameLayout playerContainer = findViewById(R.id.player_container);

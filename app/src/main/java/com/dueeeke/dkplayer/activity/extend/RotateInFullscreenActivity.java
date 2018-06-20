@@ -2,6 +2,7 @@ package com.dueeeke.dkplayer.activity.extend;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 
 import com.dueeeke.dkplayer.R;
@@ -16,6 +17,12 @@ public class RotateInFullscreenActivity extends AppCompatActivity{
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(R.string.str_extend_rotate_in_fullscreen);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
         setContentView(R.layout.activity_rotate_in_fullscreen);
         mIjkVideoView = findViewById(R.id.player);
         mController = new RotateInFullscreenController(this);

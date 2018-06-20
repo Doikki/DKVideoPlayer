@@ -13,6 +13,6 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="悬浮窗"
+        android:text="@string/str_start_pip"
         android:onClick="startFloatWindow"/>
 </LinearLayout>

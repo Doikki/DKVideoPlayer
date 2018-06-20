@@ -8,37 +8,37 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="skipToVodPlayer"
-        android:text="VOD" />
+        android:text="@string/str_api_vod" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="skipToLivePlayer"
-        android:text="LIVE" />
+        android:text="@string/str_api_live" />
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="skipToCustomPlayer"
-        android:text="CUSTOM" />
+        android:text="@string/str_rtsp_concat" />
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="skipToDefinitionPlayer"
-        android:text="DEFINITION" />
+        android:text="@string/str_definition" />
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="skipToScreenShotPlayer"
-        android:text="SCREEN SHOT" />
+        android:text="@string/str_screen_shot" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="skipToRawOrAssets"
-        android:text="Raw or Assets" />
+        android:text="@string/str_raw_or_assets" />
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="multiPlayer"
-        android:text="Multi-player" />
+        android:text="@string/str_multi_player" />
 </LinearLayout>

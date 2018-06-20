@@ -31,7 +31,7 @@ public class CustomMediaPlayerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_custom_media_player);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle("rtsp&concat");
+            actionBar.setTitle(R.string.str_rtsp_concat);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 

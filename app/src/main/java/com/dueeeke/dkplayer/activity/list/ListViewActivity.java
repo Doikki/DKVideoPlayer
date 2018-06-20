@@ -29,7 +29,7 @@ public class ListViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list_view);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle("LIST");
+            actionBar.setTitle(R.string.str_list_view);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         ListView listView = findViewById(R.id.lv);

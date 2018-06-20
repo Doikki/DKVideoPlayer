@@ -35,7 +35,7 @@ public class SwitchPlayerActivity extends AppCompatActivity implements View.OnCl
         setContentView(R.layout.activity_switch_player);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle("多种播放器切换");
+            actionBar.setTitle(R.string.str_switch_player);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         ijkVideoView = findViewById(R.id.player);

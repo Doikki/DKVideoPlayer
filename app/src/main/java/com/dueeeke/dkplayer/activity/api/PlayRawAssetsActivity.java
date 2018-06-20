@@ -25,7 +25,7 @@ public class PlayRawAssetsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_play_raw_assets);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle("raw/assets");
+            actionBar.setTitle(R.string.str_raw_or_assets);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         ijkVideoView = findViewById(R.id.player);

@@ -17,22 +17,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:onClick="api"
-                android:text="API" />
+                android:text="@string/str_api" />
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:onClick="list"
-                android:text="LIST" />
+                android:text="@string/str_list" />
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:onClick="extend"
-                android:text="EXTEND" />
+                android:text="@string/str_extend" />
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:onClick="pip"
-                android:text="PIP" />
+                android:text="@string/str_pip" />
         </LinearLayout>
 
     </ScrollView>
@@ -52,7 +52,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="clearUrl"
-            android:text="other:" />
+            android:text="@string/str_other" />
 
         <EditText
             android:id="@+id/et"
@@ -65,7 +65,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="playOther"
-            android:text="play" />
+            android:text="@string/str_play" />
     </LinearLayout>
 
     <RadioGroup
@@ -77,20 +77,20 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="视频类型：" />
+            android:text="@string/str_video_type" />
 
         <RadioButton
             android:id="@+id/vod"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="点播" />
+            android:text="@string/str_vod" />
 
         <RadioButton
             android:id="@+id/live"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="直播" />
+            android:text="@string/str_live" />
 
     </RadioGroup>
 

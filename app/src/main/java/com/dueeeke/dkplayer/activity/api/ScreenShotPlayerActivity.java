@@ -30,7 +30,7 @@ public class ScreenShotPlayerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_screen_shot_player);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle("Screen shot");
+            actionBar.setTitle(R.string.str_screen_shot);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         ijkVideoView = findViewById(R.id.player);

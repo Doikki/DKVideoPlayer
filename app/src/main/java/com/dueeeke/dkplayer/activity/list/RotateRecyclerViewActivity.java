@@ -30,7 +30,7 @@ public class RotateRecyclerViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_recycler_view);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle("Rotate in fullscreen");
+            actionBar.setTitle(R.string.str_rotate_in_fullscreen);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         initView();

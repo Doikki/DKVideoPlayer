@@ -41,7 +41,7 @@ public class PIPListActivity extends AppCompatActivity implements FloatRecyclerV
         setContentView(R.layout.activity_recycler_view);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle("PIP");
+            actionBar.setTitle(R.string.str_pip_in_list);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         mPIPManager = PIPManager.getInstance();

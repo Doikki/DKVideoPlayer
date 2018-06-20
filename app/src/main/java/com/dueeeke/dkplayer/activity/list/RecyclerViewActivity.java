@@ -27,7 +27,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_recycler_view);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle("RECYCLER");
+            actionBar.setTitle(R.string.str_recycler_view);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         initView();

@@ -31,9 +31,10 @@ public class DefinitionPlayerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_definition_player);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle("清晰度切换");
+            actionBar.setTitle(R.string.str_definition);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+
         ijkVideoView = findViewById(R.id.player);
 
         DefinitionController controller = new DefinitionController(this);
