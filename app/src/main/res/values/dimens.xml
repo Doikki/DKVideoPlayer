@@ -9,4 +9,5 @@
     <dimen name="controller_seekbar_max_size">1dp</dimen>
     <dimen name="player_play_btn_size">50dp</dimen>
     <dimen name="controller_time_text_size">14sp</dimen>
+    <dimen name="player_default_spacing">10dp</dimen>
 </resources>

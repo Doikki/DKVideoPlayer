@@ -2,5 +2,4 @@
 <resources>
     <color name="player_theme_color">#39C5BB</color>
     <color name="player_theme_color_translucent">#9939C5BB</color>
-    <color name="player_background_color">#96000000</color>
 </resources>

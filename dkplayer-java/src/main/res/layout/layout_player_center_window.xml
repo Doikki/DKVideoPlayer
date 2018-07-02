@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="160dp"
     android:layout_height="120dp"
-    android:background="@color/player_background_color"
+    android:background="#96000000"
     android:gravity="center">
 
     <ImageView
@@ -16,7 +16,7 @@
         android:id="@+id/tv_percent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/player_default_spacing"
+        android:layout_margin="10dp"
         android:textColor="@android:color/white"
         android:textSize="14sp"
         tools:text="100"/>
