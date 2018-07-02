@@ -12,8 +12,8 @@ android {
         applicationId "com.dueeeke.dkplayer"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 23
-        versionName "2.4.3"
+        versionCode 24
+        versionName "2.5.0"
 
         ndk {
             //打包时只保留armeabi-v7a so
@@ -29,6 +29,13 @@ android {
             keyAlias KEY_ALIAS
             keyPassword KEY_PWD
         }
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
     }
 
 

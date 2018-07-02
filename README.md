@@ -41,15 +41,18 @@ allprojects {
 }
 
 dependencies {
-    # required, enough for most devices.
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-java:2.4.3'
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv7a:2.4.3'
+    # 必选，可兼容市面上绝大部分设备
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-java:2.5.0'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv7a:2.5.0'
 
-    # Other ABIs: optional
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv5:2.4.3'
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-arm64:2.4.3'
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86:2.4.3'
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86_64:2.4.3'
+    # 可选，用于兼容一些其他的CPU架构
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv5:2.5.0'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-arm64:2.5.0'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86:2.5.0'
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86_64:2.5.0'
+
+    # 可选，里面包含StandardVideoController的实现
+    implementation 'com.github.dueeeke.dkplayer:dkplayer-ui:2.5.0'
 }
 ```
 或者将library下载并导入项目中使用
