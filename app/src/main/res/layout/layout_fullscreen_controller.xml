@@ -34,13 +34,6 @@
             android:textSize="@dimen/controller_text_size"
             tools:text="这是一个标题" />
 
-        <ImageView
-            android:id="@+id/more_menu"
-            android:layout_width="@dimen/controller_height"
-            android:layout_height="@dimen/controller_height"
-            android:padding="@dimen/controller_icon_padding"
-            android:src="@drawable/ic_action_more_vert"
-            android:visibility="gone" />
     </LinearLayout>
 
     <LinearLayout
@@ -80,7 +73,7 @@
             android:background="@null"
             android:max="1000"
             android:maxHeight="2dp"
-            android:progressDrawable="@drawable/layer_player_progress_bar"
+            android:progressDrawable="@drawable/layer_dkplayer_progress_bar"
             android:thumb="@drawable/seekbar_thumb" />
 
         <TextView
@@ -113,7 +106,7 @@
         android:layout_height="1dp"
         android:layout_gravity="bottom"
         android:max="1000"
-        android:progressDrawable="@drawable/layer_player_progress_bar"
+        android:progressDrawable="@drawable/layer_dkplayer_progress_bar"
         android:visibility="gone" />
 
     <LinearLayout

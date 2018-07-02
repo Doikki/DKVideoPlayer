@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.dueeeke.dkplayer.R;
+import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.util.WindowUtil;
 

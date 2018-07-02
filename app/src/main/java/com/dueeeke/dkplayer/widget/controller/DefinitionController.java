@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.interf.DefinitionMediaPlayerControl;
+import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.util.L;
 import com.dueeeke.videoplayer.util.WindowUtil;

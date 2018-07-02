@@ -17,7 +17,7 @@ android {
 
         ndk {
             //打包时只保留armeabi-v7a so
-            abiFilters "armeabi-v7a"
+            abiFilters "armeabi-v7a", "x86"
         }
     }
 
@@ -74,15 +74,16 @@ dependencies {
     implementation "com.android.support:design:$rootProject.supportLibraryVersion"
     implementation 'com.github.rubensousa:gravitysnaphelper:1.5'
     implementation 'com.github.castorflex.verticalviewpager:library:19.0.1'
-    implementation 'com.google.android.exoplayer:exoplayer:2.7.3'
-    implementation 'com.google.android.exoplayer:extension-rtmp:2.7.3'
+    implementation 'com.google.android.exoplayer:exoplayer:2.8.2'
+    implementation 'com.google.android.exoplayer:extension-rtmp:2.8.2'
 
 
     implementation project(':dkplayer-java')
+    implementation project(':dkplayer-ui')
     implementation project(':dkplayer-armv7a')
 //    implementation project(':dkplayer-arm64')
 //    implementation project(':dkplayer-armv5')
-//    implementation project(':dkplayer-x86')
+    implementation project(':dkplayer-x86')
 //    implementation project(':dkplayer-x86_64')
 //    implementation 'com.github.dueeeke.dkplayer:dkplayer-java:2.4.0'
 //    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv7a:2.4.0'

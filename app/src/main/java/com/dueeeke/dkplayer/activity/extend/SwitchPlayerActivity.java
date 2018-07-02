@@ -10,7 +10,7 @@ import android.view.View;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.player.AndroidMediaPlayer;
 import com.dueeeke.dkplayer.player.ExoMediaPlayer;
-import com.dueeeke.dkplayer.widget.controller.StandardVideoController;
+import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.player.AbstractPlayer;
 import com.dueeeke.videoplayer.player.IjkPlayer;
 import com.dueeeke.videoplayer.player.IjkVideoView;

@@ -22,7 +22,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.dueeeke.dkplayer.R;
-import com.dueeeke.dkplayer.widget.controller.StandardVideoController;
+import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.listener.MyVideoListener;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 

@@ -10,11 +10,9 @@ import com.dueeeke.videoplayer.player.AbstractPlayer;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.decoder.DecoderCounters;
 import com.google.android.exoplayer2.ext.rtmp.RtmpDataSourceFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -31,13 +29,13 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-import com.google.android.exoplayer2.video.VideoRendererEventListener;
+import com.google.android.exoplayer2.video.VideoListener;
 
 import java.util.Map;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 
-public class ExoMediaPlayer extends AbstractPlayer implements VideoRendererEventListener {
+public class ExoMediaPlayer extends AbstractPlayer implements VideoListener {
 
     private Context mAppContext;
     private SimpleExoPlayer mInternalPlayer;
@@ -47,7 +45,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoRendererEvent
     private PlaybackParameters mSpeedPlaybackParameters;
     private int lastReportedPlaybackState;
     private boolean lastReportedPlayWhenReady;
-    private boolean mIsPrepareing = true;
+    private boolean mIsPreparing = true;
     private boolean mIsBuffering = false;
     private DataSource.Factory mediaDataSourceFactory;
     private Map<String, String> mHeaders;
@@ -66,7 +64,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoRendererEvent
         DefaultTrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
         mInternalPlayer = ExoPlayerFactory.newSimpleInstance(mAppContext, trackSelector);
         mInternalPlayer.addListener(mDefaultEventListener);
-        mInternalPlayer.addVideoDebugListener(this);
+        mInternalPlayer.addVideoListener(this);
     }
 
     @Override
@@ -207,13 +205,13 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoRendererEvent
         if (mInternalPlayer != null) {
             mInternalPlayer.release();
             mInternalPlayer.removeListener(mDefaultEventListener);
-            mInternalPlayer.removeVideoDebugListener(this);
+            mInternalPlayer.removeVideoListener(this);
             mInternalPlayer = null;
         }
 
         mSurface = null;
         mDataSource = null;
-        mIsPrepareing = true;
+        mIsPreparing = true;
         mIsBuffering = false;
     }
 
@@ -308,13 +306,13 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoRendererEvent
                     }
                 }
 
-                if (mIsPrepareing) {
+                if (mIsPreparing) {
                     switch (playbackState) {
                         case Player.STATE_READY:
                             if (mPlayerEventListener != null) {
                                 mPlayerEventListener.onPrepared();
                             }
-                            mIsPrepareing = false;
+                            mIsPreparing = false;
                             break;
                     }
                 }
@@ -350,23 +348,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoRendererEvent
         }
     };
 
-    //------------------ Start VideoRendererEventListener ---------------------//
-    @Override
-    public void onVideoEnabled(DecoderCounters counters) {
-    }
-
-    @Override
-    public void onVideoDecoderInitialized(String decoderName, long initializedTimestampMs, long initializationDurationMs) {
-    }
-
-    @Override
-    public void onVideoInputFormatChanged(Format format) {
-    }
-
-    @Override
-    public void onDroppedFrames(int count, long elapsedMs) {
-    }
-
     @Override
     public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
         if (mPlayerEventListener != null) {
@@ -378,13 +359,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoRendererEvent
     }
 
     @Override
-    public void onRenderedFirstFrame(Surface surface) {
-        if (mPlayerEventListener != null && mIsPrepareing)
+    public void onRenderedFirstFrame() {
+        if (mPlayerEventListener != null && mIsPreparing)
             mPlayerEventListener.onInfo(IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START, 0);
     }
-
-    @Override
-    public void onVideoDisabled(DecoderCounters counters) {
-    }
-    //------------------ End VideoRendererEventListener ---------------------//
 }

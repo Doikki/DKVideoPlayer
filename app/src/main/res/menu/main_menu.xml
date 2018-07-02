@@ -2,8 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:id="@+id/close_float_window"
-        android:title="关闭悬浮窗"
-        android:icon="@drawable/ic_action_picture_in_picture"/>
+        android:title="关闭悬浮窗"/>
     <item android:id="@+id/clear_cache"
         android:title="清除缓存">
 

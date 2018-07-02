@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="player_theme_color">#39C5BB</color>
-    <color name="player_theme_color_translucent">#9939C5BB</color>
+    <color name="dkplayer_theme_color">#39C5BB</color>
 </resources>

@@ -46,7 +46,7 @@
         <ImageView
             android:id="@+id/iv_volume"
             style="@style/adIcon"
-            android:src="@drawable/ic_action_volume_off" />
+            android:src="@drawable/dkplayer_ic_action_volume_off" />
 
         <ImageView
             android:id="@+id/fullscreen"

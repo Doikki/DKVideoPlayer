@@ -20,7 +20,7 @@ import android.view.View;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.widget.CenteredImageSpan;
 import com.dueeeke.dkplayer.widget.videoview.DanmukuVideoView;
-import com.dueeeke.dkplayer.widget.controller.StandardVideoController;
+import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.player.PlayerConfig;
 import com.dueeeke.videoplayer.util.WindowUtil;
 

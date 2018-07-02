@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.PixelFormat;
 import android.graphics.SurfaceTexture;
 import android.support.annotation.NonNull;
@@ -331,24 +330,21 @@ public class IjkVideoView extends BaseIjkVideoView {
     @Override
     public void setScreenScale(int screenScale) {
         this.mCurrentScreenScale = screenScale;
-        if (mSurfaceView != null) mSurfaceView.setScreenScale(screenScale);
-        if (mTextureView != null) mTextureView.setScreenScale(screenScale);
+        if (mSurfaceView != null) {
+            mSurfaceView.setScreenScale(screenScale);
+        } else if (mTextureView != null) {
+            mTextureView.setScreenScale(screenScale);
+        }
     }
 
     /**
-     * 设置镜像旋转
+     * 设置镜像旋转，暂不支持SurfaceView
      */
     @Override
     public void setMirrorRotation(boolean enable) {
-        if (mTextureView == null) return;
-        Matrix transform = new Matrix();
-        if (enable) {
-            transform.setScale(-1, 1, mTextureView.getWidth() / 2, 0);
-        } else {
-            transform.setScale(1, 1, mTextureView.getWidth() / 2, 0);
+        if (mTextureView != null) {
+            mTextureView.setScaleX(enable ? -1 : 1);
         }
-        mTextureView.setTransform(transform);
-        mTextureView.invalidate();
     }
 
     /**
