@@ -4,6 +4,7 @@ A video player based on [IjkPlayer](https://github.com/Bilibili/ijkplayer).
 [![](https://www.jitpack.io/v/dueeeke/dkplayer.svg)](https://www.jitpack.io/#dueeeke/dkplayer)
 [![API](https://img.shields.io/badge/API-16%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=16)
 
+#### [------ demo下载 ------](https://fir.im/1r3u)
 
 ## 特性
 * **支持滑动调节进度，声音、亮度。**
@@ -26,7 +27,6 @@ A video player based on [IjkPlayer](https://github.com/Bilibili/ijkplayer).
 * **抖音demo。**
 * **Android O PiP demo。**
 
-[demo下载](https://fir.im/1r3u)
 ## 使用
 
 1.添加类库
