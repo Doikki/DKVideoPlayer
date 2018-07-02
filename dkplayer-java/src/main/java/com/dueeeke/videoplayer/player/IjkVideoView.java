@@ -250,6 +250,7 @@ public class IjkVideoView extends BaseIjkVideoView {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
         this.addView(playerContainer, params);
+        this.requestFocus();
         isFullScreen = false;
         setPlayerState(PLAYER_NORMAL);
     }
