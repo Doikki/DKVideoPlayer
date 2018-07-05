@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <solid android:color="@color/player_background_color" />
+    <solid android:color="@color/dkplayer_background_color" />
     <size
         android:width="80dp"
         android:height="40dp" />

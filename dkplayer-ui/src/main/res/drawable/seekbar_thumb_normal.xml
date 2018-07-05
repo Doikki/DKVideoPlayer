@@ -3,6 +3,6 @@
        xmlns:android="http://schemas.android.com/apk/res/android">
     <solid android:color="@color/dkplayer_theme_color"/>
     <size
-        android:height="@dimen/controller_seekbar_size_n"
-        android:width="@dimen/controller_seekbar_size_n"/>
+        android:height="@dimen/dkplayer_controller_seekbar_size_n"
+        android:width="@dimen/dkplayer_controller_seekbar_size_n"/>
 </shape>
