@@ -42,7 +42,12 @@ public class FloatView extends FrameLayout{
     private void initWindow() {
         mWindowManager = WindowUtil.getWindowManager(getContext().getApplicationContext());
         mParams = new WindowManager.LayoutParams();
-        mParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT; // 设置window type
+//        mParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT; // 设置window type
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            mParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+        }else {
+            mParams.type =  WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
+        }
         // 设置图片格式，效果为背景透明
         mParams.format = PixelFormat.TRANSLUCENT;
         mParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
