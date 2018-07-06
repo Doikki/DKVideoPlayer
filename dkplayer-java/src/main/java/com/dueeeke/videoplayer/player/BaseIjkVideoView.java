@@ -548,7 +548,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      * @param url     视频地址
      * @param headers 请求头
      */
-    private void setUrl(String url, Map<String, String> headers) {
+    public void setUrl(String url, Map<String, String> headers) {
         mCurrentUrl = url;
         mHeaders = headers;
     }
