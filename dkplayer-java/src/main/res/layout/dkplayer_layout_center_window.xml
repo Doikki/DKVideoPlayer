@@ -26,6 +26,6 @@
         android:layout_width="100dp"
         android:layout_height="3dp"
         android:max="100"
-        android:progressDrawable="@drawable/layer_dkplayer_progress_bar" />
+        android:progressDrawable="@drawable/dkplayer_layer_progress_bar" />
 
 </LinearLayout>

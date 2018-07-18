@@ -23,25 +23,25 @@ public class BatteryReceiver extends BroadcastReceiver {
         int total = extras.getInt("scale");// 获得总电量
         int percent = current * 100 / total;
         if (percent < 15) {
-            pow.setImageResource(R.drawable.ic_action_battery_10);
+            pow.setImageResource(R.drawable.dkplayer_ic_action_battery_10);
         } else if (percent < 25) {
-            pow.setImageResource(R.drawable.ic_action_battery_20);
+            pow.setImageResource(R.drawable.dkplayer_ic_action_battery_20);
         } else if (percent < 35) {
-            pow.setImageResource(R.drawable.ic_action_battery_30);
+            pow.setImageResource(R.drawable.dkplayer_ic_action_battery_30);
         } else if (percent < 45) {
-            pow.setImageResource(R.drawable.ic_action_battery_40);
+            pow.setImageResource(R.drawable.dkplayer_ic_action_battery_40);
         } else if (percent < 55) {
-            pow.setImageResource(R.drawable.ic_action_battery_50);
+            pow.setImageResource(R.drawable.dkplayer_ic_action_battery_50);
         } else if (percent < 65) {
-            pow.setImageResource(R.drawable.ic_action_battery_60);
+            pow.setImageResource(R.drawable.dkplayer_ic_action_battery_60);
         } else if (percent < 75) {
-            pow.setImageResource(R.drawable.ic_action_battery_70);
+            pow.setImageResource(R.drawable.dkplayer_ic_action_battery_70);
         } else if (percent < 85) {
-            pow.setImageResource(R.drawable.ic_action_battery_80);
+            pow.setImageResource(R.drawable.dkplayer_ic_action_battery_80);
         } else if (percent < 95) {
-            pow.setImageResource(R.drawable.ic_action_battery_90);
+            pow.setImageResource(R.drawable.dkplayer_ic_action_battery_90);
         } else {
-            pow.setImageResource(R.drawable.ic_action_battery);
+            pow.setImageResource(R.drawable.dkplayer_ic_action_battery);
         }
 
     }

@@ -34,7 +34,7 @@ public class StatusView extends LinearLayout {
     }
 
     private void init() {
-        View root = LayoutInflater.from(getContext()).inflate(R.layout.layout_dkplayer_status_view, this);
+        View root = LayoutInflater.from(getContext()).inflate(R.layout.dkplayer_layout_status_view, this);
         tvMessage = root.findViewById(R.id.message);
         btnAction = root.findViewById(R.id.status_btn);
         this.setBackgroundResource(android.R.color.black);

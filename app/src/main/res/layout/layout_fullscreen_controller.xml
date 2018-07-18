@@ -9,7 +9,7 @@
         android:id="@+id/top_container"
         android:layout_width="match_parent"
         android:layout_height="@dimen/controller_height"
-        android:background="@drawable/shape_standard_controller_top_bg"
+        android:background="@drawable/dkplayer_shape_standard_controller_top_bg"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:visibility="gone"
@@ -21,7 +21,7 @@
             android:layout_height="@dimen/controller_height"
             android:layout_gravity="center"
             android:padding="@dimen/controller_icon_padding"
-            android:src="@drawable/ic_action_arrow_back" />
+            android:src="@drawable/dkplayer_ic_action_arrow_back" />
 
         <TextView
             android:id="@+id/title"
@@ -41,7 +41,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/controller_height"
         android:layout_gravity="bottom"
-        android:background="@drawable/shape_stardard_controller_bottom_bg"
+        android:background="@drawable/dkplayer_shape_stardard_controller_bottom_bg"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:visibility="gone"
@@ -52,7 +52,7 @@
             android:layout_width="@dimen/controller_height"
             android:layout_height="@dimen/controller_height"
             android:padding="@dimen/player_default_spacing"
-            android:src="@drawable/selector_play_button" />
+            android:src="@drawable/dkplayer_selector_play_button" />
 
         <TextView
             android:id="@+id/curr_time"
@@ -73,8 +73,8 @@
             android:background="@null"
             android:max="1000"
             android:maxHeight="2dp"
-            android:progressDrawable="@drawable/layer_dkplayer_progress_bar"
-            android:thumb="@drawable/seekbar_thumb" />
+            android:progressDrawable="@drawable/dkplayer_layer_progress_bar"
+            android:thumb="@drawable/dkplayer_seekbar_thumb" />
 
         <TextView
             android:id="@+id/total_time"
@@ -93,9 +93,9 @@
         android:layout_height="40dp"
         android:layout_gravity="center|start"
         android:layout_margin="24dp"
-        android:background="@drawable/shape_back_bg"
+        android:background="@drawable/dkplayer_shape_back_bg"
         android:padding="@dimen/player_default_spacing"
-        android:src="@drawable/selector_lock_button"
+        android:src="@drawable/dkplayer_selector_lock_button"
         android:visibility="gone"
         tools:visibility="visible" />
 
@@ -106,7 +106,7 @@
         android:layout_height="1dp"
         android:layout_gravity="bottom"
         android:max="1000"
-        android:progressDrawable="@drawable/layer_dkplayer_progress_bar"
+        android:progressDrawable="@drawable/dkplayer_layer_progress_bar"
         android:visibility="gone" />
 
     <LinearLayout
@@ -122,9 +122,9 @@
             android:layout_width="@dimen/player_play_btn_size"
             android:layout_height="@dimen/player_play_btn_size"
             android:layout_gravity="center"
-            android:background="@drawable/shape_play_bg"
+            android:background="@drawable/dkplayer_shape_play_bg"
             android:padding="@dimen/controller_icon_padding"
-            android:src="@drawable/ic_action_replay" />
+            android:src="@drawable/dkplayer_ic_action_replay" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -140,7 +140,7 @@
         android:layout_width="@dimen/player_play_btn_size"
         android:layout_height="@dimen/player_play_btn_size"
         android:layout_gravity="center"
-        android:indeterminateDrawable="@drawable/progress_loading"
+        android:indeterminateDrawable="@drawable/dkplayer_progress_loading"
         android:visibility="gone"
         tools:visibility="visible" />
 

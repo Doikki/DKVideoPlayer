@@ -13,17 +13,18 @@
 
         <TextView
             android:id="@+id/message"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:padding="10dp"
             android:textColor="@android:color/white"
-            tools:text="继续使用将消耗流量" />
+            tools:text="You are currently using the mobile network, and continuing to play will consume traffic" />
 
         <TextView
             android:id="@+id/status_btn"
             android:layout_width="wrap_content"
             android:layout_height="26dp"
-            android:background="@drawable/shape_dkplayer_status_view_btn"
+            android:background="@drawable/dkplayer_shape_status_view_btn"
             android:gravity="center"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"

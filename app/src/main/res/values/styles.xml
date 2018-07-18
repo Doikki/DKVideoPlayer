@@ -16,7 +16,7 @@
         <item name="android:padding">6dp</item>
         <item name="android:layout_width">30dp</item>
         <item name="android:layout_height">30dp</item>
-        <item name="android:background">@drawable/shape_back_bg</item>
+        <item name="android:background">@drawable/dkplayer_shape_back_bg</item>
         <item name="android:layout_margin">5dp</item>
     </style>
     <style name="adText">
