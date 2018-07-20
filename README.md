@@ -7,26 +7,23 @@ A video player based on [IjkPlayer](https://github.com/Bilibili/ijkplayer).
 #### [------ demo下载 ------](https://fir.im/1r3u)
 
 ## 特性
-* **支持滑动调节进度，声音、亮度。**
-* **支持双击播放、暂停。**
-* **支持重力感应自动进入/退出全屏。**
-* **支持边播边缓存，使用了[AndroidVideoCache](https://github.com/danikula/AndroidVideoCache)。**
-* **完美实现列表播放（RecyclerView和ListView）。**
-* **支持列表自动播放。**
-* **支持列表小窗悬浮播放。**
-* **支持封面。**
-* **支持锁定/解锁全屏。**
+* **支持直播和点播。**
 * **支持调整显示比例:默认、原始大小、16:9、4:3、铺满屏幕、居中裁剪。**
-* **支持IjkPlayer、MediaPlayer和ExoPlayer切换。**
+* **支持滑动调节播放进度、声音、亮度；双击播放、暂停；保存播放进度。**
+* **支持边播边缓存，使用了[AndroidVideoCache](https://github.com/danikula/AndroidVideoCache)。**
+* **支持弹幕，使用了[DanmakuFlameMaster](https://github.com/Bilibili/DanmakuFlameMaster)。**
 * **支持Https，rtsp，concat协议。**
+* **支持播放本地视频以及raw和assets视频。**
+* **支持重力感应自动进入/退出全屏以及手动进入/退出全屏，全屏状态下可锁定。**
+* **完美实现列表播放（RecyclerView和ListView），列表自动播放。**
+* **支持列表小窗全局悬浮播放，Android 8.0画中画功能。**
 * **支持连续播放一个列表的视频。**
 * **支持广告播放。**
 * **支持清晰度切换。**
-* **支持保存播放进度。**
-* **支持弹幕，使用了[DanmakuFlameMaster](https://github.com/Bilibili/DanmakuFlameMaster)。**
+* **支持扩展自定义播放内核，MediaPlayer、ExoPlayer、vitamio等。**
+* **支持完全自定义控制层。**
+* **支持多路播放器同时播放，没有任何控制UI的纯播放**
 * **抖音demo。**
-* **Android O PiP demo。**
-
 ## 使用
 
 1.添加类库
@@ -81,6 +78,7 @@ PlayerConfig playerConfig = new PlayerConfig.Builder()
         .usingSurfaceView() //启用SurfaceView显示视频，不调用默认使用TextureView
         .savingProgress() //保存播放进度
         .disableAudioFocus() //关闭AudioFocusChange监听
+        .setLooping() //循环播放当前正在播放的视频
         .build();
 ijkVideoView.setPlayerConfig(playerConfig);
 ```
@@ -125,18 +123,9 @@ ijkVideoView.setPlayerConfig(playerConfig);
 其他API的用法参照demo
 
 ## 截图
-<div>
-<img src="https://github.com/dueeeke/dkplayer/blob/master/art/1.png" width="240px" height="426px"/>
-<img src="https://github.com/dueeeke/dkplayer/blob/master/art/2.png" width="240px" height="426px"/>
-<img src="https://github.com/dueeeke/dkplayer/blob/master/art/3.png" width="240px" height="426px"/>
-<img src="https://github.com/dueeeke/dkplayer/blob/master/art/4.png" width="240px" height="426px"/>
-<img src="https://github.com/dueeeke/dkplayer/blob/master/art/5.png" width="240px" height="426px"/>
-<img src="https://github.com/dueeeke/dkplayer/blob/master/art/6.png" width="240px" height="426px"/>
-<img src="https://github.com/dueeeke/dkplayer/blob/master/art/7.png" width="240px" height="426px"/>
-<img src="https://github.com/dueeeke/dkplayer/blob/master/art/8.png" width="240px" height="426px"/>
-<img src="https://github.com/dueeeke/dkplayer/blob/master/art/9.png" width="240px" height="426px"/>
-<img src="https://github.com/dueeeke/dkplayer/blob/master/art/10.png" width="426px" height="240px"/>
-</div>
+|API演示|列表播放|扩展功能|画中画
+|:---:|:---:|:---:|:---:|
+![](https://github.com/dueeeke/dkplayer/blob/master/art/1.jpg)|![](https://github.com/dueeeke/dkplayer/blob/master/art/2.jpg)|![](https://github.com/dueeeke/dkplayer/blob/master/art/3.jpg)|![](https://github.com/dueeeke/dkplayer/blob/master/art/4.jpg)
 
 ## 混淆
 	-keep class tv.danmaku.ijk.** { *; }
