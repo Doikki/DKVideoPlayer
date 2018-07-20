@@ -42,7 +42,7 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
             Glide.with(context)
                     .load(videoBean.getThumb())
                     .crossFade()
-                    .placeholder(android.R.color.darker_gray)
+                    .placeholder(android.R.color.white)
                     .into(holder.controller.getThumb());
             holder.ijkVideoView.setPlayerConfig(holder.mPlayerConfig);
             holder.ijkVideoView.setUrl(videoBean.getUrl());

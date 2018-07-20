@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">dk_player</string>
+    <string name="dkplayer_error_message">Something went wrong, please try again later</string>
+    <string name="dkplayer_retry">  Retry  </string>
+    <string name="dkplayer_continue_play">Continue playing</string>
+    <string name="dkplayer_wifi_tip">You are currently using the mobile network, and continuing to play will consume traffic</string>
+</resources>

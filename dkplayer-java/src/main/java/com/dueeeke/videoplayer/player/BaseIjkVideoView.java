@@ -18,7 +18,6 @@ import com.dueeeke.videoplayer.controller.BaseVideoController;
 import com.dueeeke.videoplayer.controller.MediaPlayerControl;
 import com.dueeeke.videoplayer.listener.PlayerEventListener;
 import com.dueeeke.videoplayer.listener.VideoListener;
-import com.dueeeke.videoplayer.util.L;
 import com.dueeeke.videoplayer.util.ProgressUtil;
 import com.dueeeke.videoplayer.util.WindowUtil;
 
@@ -391,9 +390,11 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      */
     @Override
     public void setMute(boolean isMute) {
-        this.isMute = isMute;
-        float volume = isMute ? 1.0f : 0.0f;
-        mMediaPlayer.setVolume(volume, volume);
+        if (isInPlaybackState()) {
+            this.isMute = isMute;
+            float volume = isMute ? 0.0f : 1.0f;
+            mMediaPlayer.setVolume(volume, volume);
+        }
     }
 
     /**
@@ -483,7 +484,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     public void onPrepared() {
         setPlayState(STATE_PREPARED);
         if (mCurrentPosition > 0) {
-            L.d("seek to:" + mCurrentPosition);
             seekTo(mCurrentPosition);
         }
         if (mVideoListener != null) mVideoListener.onPrepared();

@@ -8,16 +8,16 @@
         android:layout_width="@dimen/player_play_btn_size"
         android:layout_height="@dimen/player_play_btn_size"
         android:layout_gravity="center"
-        android:background="@drawable/shape_play_bg"
+        android:background="@drawable/dkplayer_shape_play_bg"
         android:padding="@dimen/player_default_spacing"
-        android:src="@drawable/selector_play_button" />
+        android:src="@drawable/dkplayer_selector_play_button" />
 
     <ProgressBar
         android:id="@+id/loading"
         android:layout_width="@dimen/player_play_btn_size"
         android:layout_height="@dimen/player_play_btn_size"
         android:layout_gravity="center"
-        android:indeterminateDrawable="@drawable/progress_loading"
+        android:indeterminateDrawable="@drawable/dkplayer_progress_loading"
         android:visibility="gone"
         tools:visibility="visible" />
     <ImageView
@@ -26,12 +26,12 @@
         android:layout_height="20dp"
         android:layout_gravity="end"
         android:layout_margin="4dp"
-        android:src="@drawable/ic_action_close" />
+        android:src="@drawable/dkplayer_ic_action_close" />
     <ImageView
         android:id="@+id/btn_skip"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_margin="4dp"
-        android:src="@drawable/ic_action_fullscreen" />
+        android:src="@drawable/dkplayer_ic_action_fullscreen" />
 
 </FrameLayout>

@@ -81,21 +81,21 @@ public class AndroidOPiPActivity extends AppCompatActivity {
             public void onVideoPaused() {
                 super.onVideoPaused();
                 updatePictureInPictureActions(
-                        R.drawable.ic_action_play_arrow, "播放", CONTROL_TYPE_PLAY, REQUEST_PLAY);
+                        R.drawable.dkplayer_ic_action_play_arrow, "播放", CONTROL_TYPE_PLAY, REQUEST_PLAY);
             }
 
             @Override
             public void onVideoStarted() {
                 super.onVideoStarted();
                 updatePictureInPictureActions(
-                        R.drawable.ic_action_pause, "暂停", CONTROL_TYPE_PAUSE, REQUEST_PAUSE);
+                        R.drawable.dkplayer_ic_action_pause, "暂停", CONTROL_TYPE_PAUSE, REQUEST_PAUSE);
             }
 
             @Override
             public void onComplete() {
                 super.onComplete();
                 updatePictureInPictureActions(
-                        R.drawable.ic_action_replay, "重新播放", CONTROL_TYPE_PLAY, REQUEST_PLAY);
+                        R.drawable.dkplayer_ic_action_replay, "重新播放", CONTROL_TYPE_PLAY, REQUEST_PLAY);
             }
         });
     }

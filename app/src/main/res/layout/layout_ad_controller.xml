@@ -11,7 +11,7 @@
         <ImageView
             android:id="@+id/back"
             style="@style/adIcon"
-            android:src="@drawable/ic_action_arrow_back" />
+            android:src="@drawable/dkplayer_ic_action_arrow_back" />
 
         <TextView
             android:id="@+id/ad_time"
@@ -31,7 +31,7 @@
         <ImageView
             android:id="@+id/iv_play"
             style="@style/adIcon"
-            android:src="@drawable/selector_play_button" />
+            android:src="@drawable/dkplayer_selector_play_button" />
 
         <View
             android:layout_width="0dp"
@@ -51,6 +51,6 @@
         <ImageView
             android:id="@+id/fullscreen"
             style="@style/adIcon"
-            android:src="@drawable/selector_full_screen_button" />
+            android:src="@drawable/dkplayer_selector_full_screen_button" />
     </LinearLayout>
 </FrameLayout>

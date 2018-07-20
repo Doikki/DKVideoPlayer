@@ -9,7 +9,7 @@
         android:id="@+id/top_container"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dkplayer_controller_height"
-        android:background="@drawable/shape_standard_controller_top_bg"
+        android:background="@drawable/dkplayer_shape_standard_controller_top_bg"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:visibility="gone"
@@ -21,7 +21,7 @@
             android:layout_height="@dimen/dkplayer_controller_height"
             android:layout_gravity="center"
             android:padding="@dimen/dkplayer_controller_icon_padding"
-            android:src="@drawable/ic_action_arrow_back"
+            android:src="@drawable/dkplayer_ic_action_arrow_back"
             android:visibility="gone"
             tools:visibility="visible" />
 
@@ -30,13 +30,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:marqueeRepeatLimit="marquee_forever"
             android:paddingLeft="6dp"
             android:paddingRight="6dp"
             android:singleLine="true"
-            android:ellipsize="marquee"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
             android:textColor="@android:color/white"
             android:textSize="@dimen/dkplayer_controller_text_size"
             tools:text="这是一个标题" />
@@ -45,15 +45,15 @@
             android:id="@+id/iv_battery"
             android:layout_width="26dp"
             android:layout_height="20dp"
-            tools:src="@drawable/ic_action_battery"/>
+            tools:src="@drawable/dkplayer_ic_action_battery" />
 
         <TextView
             android:id="@+id/sys_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
-            android:layout_marginRight="14dp"
             android:layout_marginEnd="14dp"
+            android:layout_marginRight="14dp"
+            android:textColor="@android:color/white"
             android:visibility="gone"
             tools:text="12:00"
             tools:visibility="visible" />
@@ -65,7 +65,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/dkplayer_controller_height"
         android:layout_gravity="bottom"
-        android:background="@drawable/shape_stardard_controller_bottom_bg"
+        android:background="@drawable/dkplayer_shape_stardard_controller_bottom_bg"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:visibility="gone"
@@ -76,16 +76,16 @@
             android:layout_width="@dimen/dkplayer_controller_height"
             android:layout_height="@dimen/dkplayer_controller_height"
             android:padding="@dimen/dkplayer_controller_icon_padding"
-            android:src="@drawable/selector_play_button" />
+            android:src="@drawable/dkplayer_selector_play_button" />
 
         <ImageView
             android:id="@+id/iv_refresh"
             android:layout_width="@dimen/dkplayer_controller_height"
             android:layout_height="@dimen/dkplayer_controller_height"
             android:padding="@dimen/dkplayer_controller_icon_padding"
-            android:src="@drawable/ic_action_autorenew"
+            android:src="@drawable/dkplayer_ic_action_autorenew"
             android:visibility="gone"
-            tools:visibility="visible"/>
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/curr_time"
@@ -100,12 +100,17 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
             android:layout_weight="1"
             android:background="@null"
             android:max="1000"
             android:maxHeight="2dp"
-            android:progressDrawable="@drawable/layer_dkplayer_progress_bar"
-            android:thumb="@drawable/seekbar_thumb" />
+            android:paddingEnd="0dp"
+            android:paddingStart="0dp"
+            android:progressDrawable="@drawable/dkplayer_layer_progress_bar"
+            android:thumb="@drawable/dkplayer_seekbar_thumb"
+            android:thumbOffset="0dp" />
 
         <TextView
             android:id="@+id/total_time"
@@ -119,20 +124,20 @@
             android:id="@+id/tv_multi_rate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/dkplayer_controller_time_text_size"
             android:layout_marginLeft="@dimen/dkplayer_default_spacing"
             android:layout_marginStart="@dimen/dkplayer_default_spacing"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/dkplayer_controller_time_text_size"
             android:visibility="gone"
-            tools:visibility="visible"
-            tools:text="高清" />
+            tools:text="高清"
+            tools:visibility="visible" />
 
         <ImageView
             android:id="@+id/fullscreen"
             android:layout_width="@dimen/dkplayer_controller_height"
             android:layout_height="@dimen/dkplayer_controller_height"
             android:padding="@dimen/dkplayer_controller_icon_padding"
-            android:src="@drawable/selector_full_screen_button" />
+            android:src="@drawable/dkplayer_selector_full_screen_button" />
     </LinearLayout>
 
     <ImageView
@@ -141,9 +146,9 @@
         android:layout_height="40dp"
         android:layout_gravity="center|start"
         android:layout_margin="24dp"
-        android:background="@drawable/shape_back_bg"
+        android:background="@drawable/dkplayer_shape_back_bg"
         android:padding="@dimen/dkplayer_default_spacing"
-        android:src="@drawable/selector_lock_button"
+        android:src="@drawable/dkplayer_selector_lock_button"
         android:visibility="gone"
         tools:visibility="visible" />
 
@@ -154,7 +159,7 @@
         android:layout_height="1dp"
         android:layout_gravity="bottom"
         android:max="1000"
-        android:progressDrawable="@drawable/layer_dkplayer_progress_bar"
+        android:progressDrawable="@drawable/dkplayer_layer_progress_bar"
         android:visibility="gone" />
 
     <ImageView
@@ -176,9 +181,9 @@
             android:layout_width="@dimen/dkplayer_play_btn_size"
             android:layout_height="@dimen/dkplayer_play_btn_size"
             android:layout_gravity="center"
-            android:background="@drawable/shape_play_bg"
+            android:background="@drawable/dkplayer_shape_play_bg"
             android:padding="@dimen/dkplayer_controller_icon_padding"
-            android:src="@drawable/ic_action_replay" />
+            android:src="@drawable/dkplayer_ic_action_replay" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -194,16 +199,16 @@
         android:layout_width="@dimen/dkplayer_play_btn_size"
         android:layout_height="@dimen/dkplayer_play_btn_size"
         android:layout_gravity="center"
-        android:background="@drawable/shape_play_bg"
+        android:background="@drawable/dkplayer_shape_play_bg"
         android:padding="@dimen/dkplayer_default_spacing"
-        android:src="@drawable/selector_play_button" />
+        android:src="@drawable/dkplayer_selector_play_button" />
 
     <ProgressBar
         android:id="@+id/loading"
         android:layout_width="@dimen/dkplayer_play_btn_size"
         android:layout_height="@dimen/dkplayer_play_btn_size"
         android:layout_gravity="center"
-        android:indeterminateDrawable="@drawable/progress_loading"
+        android:indeterminateDrawable="@drawable/dkplayer_progress_loading"
         android:visibility="gone"
         tools:visibility="visible" />
 

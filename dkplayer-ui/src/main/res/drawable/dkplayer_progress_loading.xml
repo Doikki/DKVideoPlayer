@@ -6,9 +6,9 @@
     android:toDegrees="360">
 
     <shape
-        android:innerRadiusRatio="3"
+        android:innerRadiusRatio="2.8"
         android:shape="ring"
-        android:thicknessRatio="8"
+        android:thicknessRatio="15"
         android:useLevel="false">
         <gradient
             android:endColor="@android:color/white"
