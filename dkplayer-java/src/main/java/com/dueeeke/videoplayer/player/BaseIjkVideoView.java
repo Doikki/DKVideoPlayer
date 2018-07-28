@@ -390,7 +390,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      */
     @Override
     public void setMute(boolean isMute) {
-        if (isInPlaybackState()) {
+        if (mMediaPlayer != null) {
             this.isMute = isMute;
             float volume = isMute ? 0.0f : 1.0f;
             mMediaPlayer.setVolume(volume, volume);
@@ -411,14 +411,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     @Override
     public void setLock(boolean isLocked) {
         this.isLockFullScreen = isLocked;
-    }
-
-    /**
-     * 获取是否处于全屏状态
-     */
-    @Override
-    public boolean isFullScreen() {
-        return false;
     }
 
     /**
@@ -583,7 +575,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      * @param v2 右声道音量
      */
     public void setVolume(float v1, float v2) {
-        if (isInPlaybackState()) {
+        if (mMediaPlayer != null) {
             mMediaPlayer.setVolume(v1, v2);
         }
     }
