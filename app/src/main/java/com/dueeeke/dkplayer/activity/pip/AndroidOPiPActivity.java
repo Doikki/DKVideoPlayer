@@ -23,7 +23,7 @@ import android.widget.LinearLayout;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videocontroller.StandardVideoController;
-import com.dueeeke.videoplayer.listener.MyVideoListener;
+import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 
 import java.util.ArrayList;
@@ -35,29 +35,55 @@ import java.util.ArrayList;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class AndroidOPiPActivity extends AppCompatActivity {
-    /** The arguments to be used for Picture-in-Picture mode. */
+    /**
+     * The arguments to be used for Picture-in-Picture mode.
+     */
     private final PictureInPictureParams.Builder mPictureInPictureParamsBuilder =
             new PictureInPictureParams.Builder();
 
-    /** Intent action for media controls from Picture-in-Picture mode. */
+    /**
+     * Intent action for media controls from Picture-in-Picture mode.
+     */
     private static final String ACTION_MEDIA_CONTROL = "media_control";
 
-    /** Intent extra for media controls from Picture-in-Picture mode. */
+    /**
+     * Intent extra for media controls from Picture-in-Picture mode.
+     */
     private static final String EXTRA_CONTROL_TYPE = "control_type";
 
-    /** The request code for play action PendingIntent. */
+    /**
+     * The request code for play action PendingIntent.
+     */
     private static final int REQUEST_PLAY = 1;
 
-    /** The request code for pause action PendingIntent. */
+    /**
+     * The request code for pause action PendingIntent.
+     */
     private static final int REQUEST_PAUSE = 2;
 
-    /** The intent extra value for play action. */
+    /**
+     * The request code for replay action PendingIntent.
+     */
+    private static final int REQUEST_REPLAY = 3;
+
+    /**
+     * The intent extra value for play action.
+     */
     private static final int CONTROL_TYPE_PLAY = 1;
 
-    /** The intent extra value for pause action. */
+    /**
+     * The intent extra value for pause action.
+     */
     private static final int CONTROL_TYPE_PAUSE = 2;
 
-    /** A {@link BroadcastReceiver} to receive action item events from Picture-in-Picture mode. */
+    /**
+     * The intent extra value for replay action.
+     */
+    private static final int CONTROL_TYPE_REPLAY = 3;
+
+    /**
+     * A {@link BroadcastReceiver} to receive action item events from Picture-in-Picture mode.
+     */
     private BroadcastReceiver mReceiver;
 
     private IjkVideoView mIjkVideoView;
@@ -76,26 +102,28 @@ public class AndroidOPiPActivity extends AppCompatActivity {
         mStandardVideoController = new StandardVideoController(this);
         mIjkVideoView.setVideoController(mStandardVideoController);
         mIjkVideoView.start();
-        mIjkVideoView.setVideoListener(new MyVideoListener() {
+        mIjkVideoView.setOnVideoViewStateChangeListener(new OnVideoViewStateChangeListener() {
             @Override
-            public void onVideoPaused() {
-                super.onVideoPaused();
-                updatePictureInPictureActions(
-                        R.drawable.dkplayer_ic_action_play_arrow, "播放", CONTROL_TYPE_PLAY, REQUEST_PLAY);
+            public void onPlayerStateChanged(int playerState) {
+
             }
 
             @Override
-            public void onVideoStarted() {
-                super.onVideoStarted();
-                updatePictureInPictureActions(
-                        R.drawable.dkplayer_ic_action_pause, "暂停", CONTROL_TYPE_PAUSE, REQUEST_PAUSE);
-            }
-
-            @Override
-            public void onComplete() {
-                super.onComplete();
-                updatePictureInPictureActions(
-                        R.drawable.dkplayer_ic_action_replay, "重新播放", CONTROL_TYPE_PLAY, REQUEST_PLAY);
+            public void onPlayStateChanged(int playState) {
+                switch (playState) {
+                    case IjkVideoView.STATE_PAUSED:
+                        updatePictureInPictureActions(
+                                R.drawable.dkplayer_ic_action_play_arrow, "播放", CONTROL_TYPE_PLAY, REQUEST_PLAY);
+                        break;
+                    case IjkVideoView.STATE_PLAYING:
+                        updatePictureInPictureActions(
+                                R.drawable.dkplayer_ic_action_pause, "暂停", CONTROL_TYPE_PAUSE, REQUEST_PAUSE);
+                        break;
+                    case IjkVideoView.STATE_PLAYBACK_COMPLETED:
+                        updatePictureInPictureActions(
+                                R.drawable.dkplayer_ic_action_replay, "重新播放", CONTROL_TYPE_REPLAY, REQUEST_REPLAY);
+                        break;
+                }
             }
         });
     }
@@ -103,10 +131,10 @@ public class AndroidOPiPActivity extends AppCompatActivity {
     /**
      * Update the state of pause/resume action item in Picture-in-Picture mode.
      *
-     * @param iconId The icon to be used.
-     * @param title The title text.
+     * @param iconId      The icon to be used.
+     * @param title       The title text.
      * @param controlType The type of the action. either {@link #CONTROL_TYPE_PLAY} or {@link
-     *     #CONTROL_TYPE_PAUSE}.
+     *                    #CONTROL_TYPE_PAUSE}.
      * @param requestCode The request code for the {@link PendingIntent}.
      */
     void updatePictureInPictureActions(
@@ -185,6 +213,9 @@ public class AndroidOPiPActivity extends AppCompatActivity {
                                     break;
                                 case CONTROL_TYPE_PAUSE:
                                     mIjkVideoView.pause();
+                                    break;
+                                case CONTROL_TYPE_REPLAY:
+                                    mIjkVideoView.retry();
                                     break;
                             }
                         }

@@ -95,7 +95,10 @@ public class IjkVideoView extends BaseIjkVideoView {
     @Override
     protected void setPlayState(int playState) {
         mCurrentPlayState = playState;
-        if (mVideoController != null) mVideoController.setPlayState(playState);
+        if (mVideoController != null)
+            mVideoController.setPlayState(playState);
+        if (mOnVideoViewStateChangeListener != null)
+            mOnVideoViewStateChangeListener.onPlayStateChanged(playState);
     }
 
     /**
@@ -104,7 +107,10 @@ public class IjkVideoView extends BaseIjkVideoView {
     @Override
     protected void setPlayerState(int playerState) {
         mCurrentPlayerState = playerState;
-        if (mVideoController != null) mVideoController.setPlayerState(playerState);
+        if (mVideoController != null)
+            mVideoController.setPlayerState(playerState);
+        if (mOnVideoViewStateChangeListener != null)
+            mOnVideoViewStateChangeListener.onPlayerStateChanged(playerState);
     }
 
     @Override

@@ -16,8 +16,8 @@ import com.danikula.videocache.CacheListener;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.dueeeke.videoplayer.controller.BaseVideoController;
 import com.dueeeke.videoplayer.controller.MediaPlayerControl;
+import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.listener.PlayerEventListener;
-import com.dueeeke.videoplayer.listener.VideoListener;
 import com.dueeeke.videoplayer.util.ProgressUtil;
 import com.dueeeke.videoplayer.util.WindowUtil;
 
@@ -37,7 +37,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     protected AbstractPlayer mMediaPlayer;//播放器
     @Nullable
     protected BaseVideoController mVideoController;//控制器
-    protected VideoListener mVideoListener;
     protected int bufferPercentage;//缓冲百分比
     protected boolean isMute;//是否静音
 
@@ -75,6 +74,9 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     protected boolean isLockFullScreen;//是否锁定屏幕
     protected PlayerConfig mPlayerConfig;//播放器配置
     private HttpProxyCacheServer mCacheServer;
+
+    @Nullable
+    protected OnVideoViewStateChangeListener mOnVideoViewStateChangeListener;
 
     /**
      * 加速度传感器监听
@@ -243,7 +245,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     protected void startInPlaybackState() {
         mMediaPlayer.start();
         setPlayState(STATE_PLAYING);
-        if (mVideoListener != null) mVideoListener.onVideoStarted();
     }
 
     /**
@@ -257,7 +258,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
             setKeepScreenOn(false);
             if (mAudioFocusHelper != null)
                 mAudioFocusHelper.abandonFocus();
-            if (mVideoListener != null) mVideoListener.onVideoPaused();
         }
     }
 
@@ -272,7 +272,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
             if (mAudioFocusHelper != null)
                 mAudioFocusHelper.requestFocus();
             setKeepScreenOn(true);
-            if (mVideoListener != null) mVideoListener.onVideoStarted();
         }
     }
 
@@ -319,10 +318,10 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     }
 
     /**
-     * 设置播放器监听，用于外部监听播放器的各种状态
+     * 监听播放器状态变化以及播放状态变化
      */
-    public void setVideoListener(VideoListener listener) {
-        this.mVideoListener = listener;
+    public void setOnVideoViewStateChangeListener(OnVideoViewStateChangeListener listener) {
+        this.mOnVideoViewStateChangeListener = listener;
     }
 
     /**
@@ -437,7 +436,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     @Override
     public void onError() {
         setPlayState(STATE_ERROR);
-        if (mVideoListener != null) mVideoListener.onError();
     }
 
     /**
@@ -448,7 +446,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         setPlayState(STATE_PLAYBACK_COMPLETED);
         setKeepScreenOn(false);
         mCurrentPosition = 0;
-        if (mVideoListener != null) mVideoListener.onComplete();
     }
 
     @Override
@@ -462,11 +459,9 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
                 break;
             case IjkMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START: // 视频开始渲染
                 setPlayState(STATE_PLAYING);
-                if (mVideoListener != null) mVideoListener.onVideoStarted();
                 if (getWindowVisibility() != VISIBLE) pause();
                 break;
         }
-        if (mVideoListener != null) mVideoListener.onInfo(what, extra);
     }
 
     /**
@@ -478,7 +473,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         if (mCurrentPosition > 0) {
             seekTo(mCurrentPosition);
         }
-        if (mVideoListener != null) mVideoListener.onPrepared();
     }
 
     public void setPlayerConfig(PlayerConfig config) {

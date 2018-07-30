@@ -12,7 +12,6 @@ import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.videocontroller.StandardVideoController;
-import com.dueeeke.videoplayer.listener.MyVideoListener;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.player.PlayerConfig;
 
@@ -49,14 +48,6 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
         holder.ijkVideoView.setTitle(videoBean.getTitle());
         holder.ijkVideoView.setVideoController(holder.controller);
         holder.title.setText(videoBean.getTitle());
-//        holder.ijkVideoView.setVideoListener(new MyVideoListener() {
-//            @Override
-//            public void onPrepared() {
-//                super.onPrepared();
-//                holder.ijkVideoView.setMute(true);
-//            }
-//        });
-//            holder.ijkVideoView.setTag(position);
     }
 
     @Override
