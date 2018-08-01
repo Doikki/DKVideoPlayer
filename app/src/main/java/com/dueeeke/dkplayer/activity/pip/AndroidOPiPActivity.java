@@ -102,7 +102,7 @@ public class AndroidOPiPActivity extends AppCompatActivity {
         mStandardVideoController = new StandardVideoController(this);
         mIjkVideoView.setVideoController(mStandardVideoController);
         mIjkVideoView.start();
-        mIjkVideoView.setOnVideoViewStateChangeListener(new OnVideoViewStateChangeListener() {
+        mIjkVideoView.addOnVideoViewStateChangeListener(new OnVideoViewStateChangeListener() {
             @Override
             public void onPlayerStateChanged(int playerState) {
 

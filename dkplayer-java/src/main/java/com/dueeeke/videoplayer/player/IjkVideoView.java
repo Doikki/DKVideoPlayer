@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.dueeeke.videoplayer.controller.BaseVideoController;
+import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.util.NetworkUtil;
 import com.dueeeke.videoplayer.util.PlayerConstants;
 import com.dueeeke.videoplayer.util.WindowUtil;
@@ -97,8 +98,11 @@ public class IjkVideoView extends BaseIjkVideoView {
         mCurrentPlayState = playState;
         if (mVideoController != null)
             mVideoController.setPlayState(playState);
-        if (mOnVideoViewStateChangeListener != null)
-            mOnVideoViewStateChangeListener.onPlayStateChanged(playState);
+        if (mOnVideoViewStateChangeListeners != null) {
+            for (OnVideoViewStateChangeListener listener : mOnVideoViewStateChangeListeners) {
+                listener.onPlayStateChanged(playState);
+            }
+        }
     }
 
     /**
@@ -109,8 +113,11 @@ public class IjkVideoView extends BaseIjkVideoView {
         mCurrentPlayerState = playerState;
         if (mVideoController != null)
             mVideoController.setPlayerState(playerState);
-        if (mOnVideoViewStateChangeListener != null)
-            mOnVideoViewStateChangeListener.onPlayerStateChanged(playerState);
+        if (mOnVideoViewStateChangeListeners != null) {
+            for (OnVideoViewStateChangeListener listener : mOnVideoViewStateChangeListeners) {
+                listener.onPlayerStateChanged(playerState);
+            }
+        }
     }
 
     @Override

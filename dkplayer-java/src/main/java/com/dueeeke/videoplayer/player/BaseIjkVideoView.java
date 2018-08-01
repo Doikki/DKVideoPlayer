@@ -22,6 +22,8 @@ import com.dueeeke.videoplayer.util.ProgressUtil;
 import com.dueeeke.videoplayer.util.WindowUtil;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
@@ -75,8 +77,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     protected PlayerConfig mPlayerConfig;//播放器配置
     private HttpProxyCacheServer mCacheServer;
 
-    @Nullable
-    protected OnVideoViewStateChangeListener mOnVideoViewStateChangeListener;
+    protected List<OnVideoViewStateChangeListener> mOnVideoViewStateChangeListeners;
 
     /**
      * 加速度传感器监听
@@ -318,10 +319,31 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     }
 
     /**
-     * 监听播放器状态变化以及播放状态变化
+     * 监听播放状态变化
      */
-    public void setOnVideoViewStateChangeListener(OnVideoViewStateChangeListener listener) {
-        this.mOnVideoViewStateChangeListener = listener;
+    public void addOnVideoViewStateChangeListener(@NonNull OnVideoViewStateChangeListener listener) {
+        if (mOnVideoViewStateChangeListeners == null) {
+            mOnVideoViewStateChangeListeners = new ArrayList<>();
+        }
+        mOnVideoViewStateChangeListeners.add(listener);
+    }
+
+    /**
+     * 移除播放状态监听
+     */
+    public void removeOnVideoViewStateChangeListener(@NonNull OnVideoViewStateChangeListener listener) {
+        if (mOnVideoViewStateChangeListeners != null) {
+            mOnVideoViewStateChangeListeners.remove(listener);
+        }
+    }
+
+    /**
+     * 移除所有播放状态监听
+     */
+    public void clearOnVideoViewStateChangeListeners() {
+        if (mOnVideoViewStateChangeListeners != null) {
+            mOnVideoViewStateChangeListeners.clear();
+        }
     }
 
     /**
