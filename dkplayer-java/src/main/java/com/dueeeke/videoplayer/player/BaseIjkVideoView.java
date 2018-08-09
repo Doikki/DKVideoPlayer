@@ -188,7 +188,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         if (needReset) mMediaPlayer.reset();
         if (mAssetFileDescriptor != null) {
             mMediaPlayer.setDataSource(mAssetFileDescriptor);
-        } else if (mPlayerConfig.isCache) {
+        } else if (mPlayerConfig.isCache && !mCurrentUrl.startsWith("file://")) {
             mCacheServer = getCacheServer();
             String proxyPath = mCacheServer.getProxyUrl(mCurrentUrl);
             mCacheServer.registerCacheListener(cacheListener, mCurrentUrl);

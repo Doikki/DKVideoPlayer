@@ -47,6 +47,7 @@ public class SwitchPlayerActivity extends AppCompatActivity implements View.OnCl
         ijkVideoView.setPlayerConfig(new PlayerConfig.Builder()
                 .autoRotate()//自动旋转屏幕
 //                .usingSurfaceView()//使用SurfaceView
+                .enableCache()
                 .build());
         ijkVideoView.setUrl(URL);
         ijkVideoView.setVideoController(mController);

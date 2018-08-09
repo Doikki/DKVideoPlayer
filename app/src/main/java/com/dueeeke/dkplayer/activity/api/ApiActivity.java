@@ -48,6 +48,7 @@ public class ApiActivity extends AppCompatActivity {
     public void skipToVodPlayer(View view) {
 //        String path = Environment.getExternalStorageDirectory().getAbsolutePath();
 //        String url = "file://" + path + File.separator + "test.mp4";
+//        String url = "file:///storage/emulated/0/Android/data/com.dueeeke.dkplayer/cache/video-cache/56b84ac750c6959155b6b6e4d9f01b98.mp4";
         Intent intent = new Intent(this, PlayerActivity.class);
         intent.putExtra("url", VOD_URL);
         intent.putExtra("isLive", false);
