@@ -213,6 +213,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener {
         mDataSource = null;
         mIsPreparing = true;
         mIsBuffering = false;
+        lastReportedPlaybackState = Player.STATE_IDLE;
+        lastReportedPlayWhenReady = false;
     }
 
     @Override
@@ -319,10 +321,12 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener {
 
                 switch (playbackState) {
                     case Player.STATE_BUFFERING:
-                        if (mPlayerEventListener != null) {
-                            mPlayerEventListener.onInfo(IMediaPlayer.MEDIA_INFO_BUFFERING_START, mInternalPlayer.getBufferedPercentage());
+                        if (!mIsPreparing) {
+                            if (mPlayerEventListener != null) {
+                                mPlayerEventListener.onInfo(IMediaPlayer.MEDIA_INFO_BUFFERING_START, mInternalPlayer.getBufferedPercentage());
+                            }
+                            mIsBuffering = true;
                         }
-                        mIsBuffering = true;
                         break;
                     case Player.STATE_READY:
                         break;
