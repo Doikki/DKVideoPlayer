@@ -215,7 +215,7 @@ public class StandardVideoController extends GestureVideoController implements V
                 completeContainer.setVisibility(View.GONE);
                 startPlayButton.setVisibility(View.GONE);
                 loadingProgress.setVisibility(View.VISIBLE);
-                thumb.setVisibility(View.VISIBLE);
+//                thumb.setVisibility(View.VISIBLE);
                 break;
             case IjkVideoView.STATE_PREPARED:
                 L.e("STATE_PREPARED");

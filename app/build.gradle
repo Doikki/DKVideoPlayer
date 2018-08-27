@@ -12,11 +12,11 @@ android {
         applicationId "com.dueeeke.dkplayer"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 26
-        versionName "2.5.2"
+        versionCode 27
+        versionName "2.5.3"
 
         ndk {
-            //打包时只保留armeabi-v7a so
+            //打包时保留armeabi-v7a x86 so
             abiFilters "armeabi-v7a", "x86"
         }
     }
@@ -92,11 +92,11 @@ dependencies {
     implementation project(':dkplayer-armv5')
     implementation project(':dkplayer-x86')
     implementation project(':dkplayer-x86_64')
-//    implementation 'com.github.dueeeke.dkplayer:dkplayer-java:2.5.1'
-//    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv7a:2.5.1'
-//    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv5:2.5.1'
-//    implementation 'com.github.dueeeke.dkplayer:dkplayer-arm64:2.5.1'
-//    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86:2.5.1'
-//    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86_64:2.5.1'
-//    implementation 'com.github.dueeeke.dkplayer:dkplayer-ui:2.5.1'
+//    implementation 'com.github.dueeeke.dkplayer:dkplayer-java:2.5.2'
+//    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv7a:2.5.2'
+//    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv5:2.5.2'
+//    implementation 'com.github.dueeeke.dkplayer:dkplayer-arm64:2.5.2'
+//    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86:2.5.2'
+//    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86_64:2.5.2'
+//    implementation 'com.github.dueeeke.dkplayer:dkplayer-ui:2.5.2'
 }
