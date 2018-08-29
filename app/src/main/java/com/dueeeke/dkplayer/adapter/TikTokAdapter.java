@@ -36,6 +36,7 @@ public class TikTokAdapter extends RecyclerView.Adapter<TikTokAdapter.VideoHolde
         VideoBean videoBean = videos.get(position);
         Glide.with(context)
                 .load(videoBean.getThumb())
+                .placeholder(android.R.color.white)
                 .into(holder.thumb);
     }
 

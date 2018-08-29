@@ -13,8 +13,8 @@ import android.view.View;
 import android.view.ViewParent;
 import android.view.WindowInsets;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.adapter.TikTokAdapter;
 import com.dueeeke.dkplayer.bean.VideoBean;
@@ -74,7 +74,9 @@ public class TikTokActivity extends AppCompatActivity {
 
             @Override
             public void onPageRelease(boolean isNext, int position) {
-                mIjkVideoView.release();
+                if (mCurrentPosition == position) {
+                    mIjkVideoView.release();
+                }
             }
 
             @Override
@@ -93,8 +95,10 @@ public class TikTokActivity extends AppCompatActivity {
     private void startPlay(int position) {
         View itemView = mRecyclerView.getChildAt(0);
         FrameLayout frameLayout = itemView.findViewById(R.id.container);
-        ImageView imageView = itemView.findViewById(R.id.thumb);
-        mTikTokController.getThumb().setImageDrawable(imageView.getDrawable());
+        Glide.with(this)
+                .load(mVideoList.get(position).getThumb())
+                .placeholder(android.R.color.white)
+                .into(mTikTokController.getThumb());
         frameLayout.addView(mIjkVideoView);
         mIjkVideoView.setUrl(mVideoList.get(position).getUrl());
         mIjkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_CENTER_CROP);
