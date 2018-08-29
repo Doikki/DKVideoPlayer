@@ -80,7 +80,6 @@ dependencies {
     implementation 'com.github.ctiao:ndkbitmap-armv7a:0.8.3'
     implementation "com.android.support:design:$rootProject.supportLibraryVersion"
     implementation 'com.github.rubensousa:gravitysnaphelper:1.5'
-    implementation 'com.github.castorflex.verticalviewpager:library:19.0.1'
     implementation 'com.google.android.exoplayer:exoplayer:2.8.2'
     implementation 'com.google.android.exoplayer:extension-rtmp:2.8.2'
 

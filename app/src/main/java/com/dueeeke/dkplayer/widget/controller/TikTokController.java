@@ -16,24 +16,24 @@ import com.dueeeke.videoplayer.util.L;
  * Created by xinyu on 2018/1/6.
  */
 
-public class DouYinController extends BaseVideoController {
+public class TikTokController extends BaseVideoController {
 
     private ImageView thumb;
-    public DouYinController(@NonNull Context context) {
+    public TikTokController(@NonNull Context context) {
         super(context);
     }
 
-    public DouYinController(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public TikTokController(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public DouYinController(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public TikTokController(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
     @Override
     protected int getLayoutId() {
-        return R.layout.layout_douyin_controller;
+        return R.layout.layout_tiktok_controller;
     }
 
     @Override

@@ -76,7 +76,7 @@ public class DataUtil {
     /**
      * 抖音演示数据
      */
-    public static List<VideoBean> getDouYinVideoList() {
+    public static List<VideoBean> getTikTokVideoList() {
         List<VideoBean> videoList = new ArrayList<>();
         videoList.add(new VideoBean("",
                 "http://p9.pstatp.com/large/4c87000639ab0f21c285.jpeg",

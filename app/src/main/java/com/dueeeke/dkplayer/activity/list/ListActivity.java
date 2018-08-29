@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.dueeeke.dkplayer.R;
+import com.dueeeke.dkplayer.activity.list.tiktok.TikTokActivity;
 
 /**
  * List相关Demo
@@ -52,8 +53,8 @@ public class ListActivity extends AppCompatActivity {
         startActivity(new Intent(this, RecyclerViewActivity.class));
     }
 
-    public void douYin(View view) {
-        startActivity(new Intent(this, DouYinActivity.class));
+    public void tikTok(View view) {
+        startActivity(new Intent(this, TikTokActivity.class));
     }
 
     public void rotateInFullscreen(View view) {

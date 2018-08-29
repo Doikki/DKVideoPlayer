@@ -36,7 +36,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="douYin"
-        android:text="@string/str_douyin" />
+        android:onClick="tikTok"
+        android:text="@string/str_tiktok" />
 
 </LinearLayout>

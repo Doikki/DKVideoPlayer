@@ -22,7 +22,7 @@
     <string name="str_auto_play_recycler_view">AUTO PLAY RECYCLER VIEW</string>
     <string name="str_list_fragment_viewpager">LIST FRAGMENT VIEWPAGER</string>
     <string name="str_rotate_in_fullscreen">rotate in fullscreen</string>
-    <string name="str_douyin">Tik Tok</string>
+    <string name="str_tiktok">Tik Tok</string>
     <string name="str_fullscreen_directly">FULLSCREEN DIRECTLY</string>
     <string name="str_danmu">barrage</string>
     <string name="str_ad">AD</string>
