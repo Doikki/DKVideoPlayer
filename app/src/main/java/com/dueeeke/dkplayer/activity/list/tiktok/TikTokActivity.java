@@ -82,10 +82,6 @@ public class TikTokActivity extends AppCompatActivity {
             @Override
             public void onPageSelected(int position, boolean isBottom) {
                 if (mCurrentPosition == position) return;
-                ViewParent parent = mIjkVideoView.getParent();
-                if (parent != null && parent instanceof FrameLayout) {
-                    ((FrameLayout) parent).removeView(mIjkVideoView);
-                }
                 startPlay(position);
                 mCurrentPosition = position;
             }
@@ -99,6 +95,10 @@ public class TikTokActivity extends AppCompatActivity {
                 .load(mVideoList.get(position).getThumb())
                 .placeholder(android.R.color.white)
                 .into(mTikTokController.getThumb());
+        ViewParent parent = mIjkVideoView.getParent();
+        if (parent != null && parent instanceof FrameLayout) {
+            ((FrameLayout) parent).removeView(mIjkVideoView);
+        }
         frameLayout.addView(mIjkVideoView);
         mIjkVideoView.setUrl(mVideoList.get(position).getUrl());
         mIjkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_CENTER_CROP);
