@@ -143,8 +143,7 @@ public class WindowUtil {
 
     private static void showNavigationBar(Context context) {
         View decorView = scanForActivity(context).getWindow().getDecorView();
-        int systemUiVisibility = decorView.getSystemUiVisibility();
-        systemUiVisibility &= ~FLAGS;
+        int  systemUiVisibility =View.SYSTEM_UI_FLAG_VISIBLE|View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
         decorView.setSystemUiVisibility(systemUiVisibility);
     }
 
