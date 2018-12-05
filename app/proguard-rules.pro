@@ -26,5 +26,12 @@
 
 -keep class tv.danmaku.ijk.** { *; }
 -dontwarn tv.danmaku.ijk.**
--keep class com.devlin_n.magic_player.** { *; }
--dontwarn com.devlin_n.magic_player.**
+-keep class com.dueeeke.videoplayer.** { *; }
+-dontwarn com.dueeeke.videoplayer.**
+
+
+-dontwarn com.yanzhenjie.permission.**
+
+-keep class android.support.** { *; }
+
+-keep class com.bumptech.glide.** { *; }

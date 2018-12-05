@@ -12,8 +12,8 @@ android {
         applicationId "com.dueeeke.dkplayer"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 27
-        versionName "2.5.3"
+        versionCode 28
+        versionName "2.5.4"
 
         ndk {
             //打包时保留armeabi-v7a x86 so
@@ -72,7 +72,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.2'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.2'
-    testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.2'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.2'
     implementation "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion"
     implementation 'com.github.bumptech.glide:glide:3.7.0'
     implementation 'com.yanzhenjie:permission:2.0.0-rc12'
