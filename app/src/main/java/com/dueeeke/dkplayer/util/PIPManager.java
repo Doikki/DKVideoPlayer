@@ -78,7 +78,7 @@ public class PIPManager {
 
     private void removePlayerFormParent() {
         ViewParent parent = ijkVideoView.getParent();
-        if (parent != null && parent instanceof ViewGroup) {
+        if (parent instanceof ViewGroup) {
             ((ViewGroup) parent).removeView(ijkVideoView);
         }
     }

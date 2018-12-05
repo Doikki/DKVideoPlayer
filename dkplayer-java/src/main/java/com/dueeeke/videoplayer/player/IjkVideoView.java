@@ -37,7 +37,7 @@ public class IjkVideoView extends BaseIjkVideoView {
     protected FrameLayout mPlayerContainer;
     protected boolean mIsFullScreen;//是否处于全屏状态
     //通过添加和移除这个view来实现隐藏和显示系统navigation bar和status bar，可以避免出现一些奇奇怪怪的问题
-    private View mHideSysBarView;
+    protected View mHideSysBarView;
 
     public static final int SCREEN_SCALE_DEFAULT = 0;
     public static final int SCREEN_SCALE_16_9 = 1;
@@ -47,6 +47,13 @@ public class IjkVideoView extends BaseIjkVideoView {
     public static final int SCREEN_SCALE_CENTER_CROP = 5;
 
     protected int mCurrentScreenScale = SCREEN_SCALE_DEFAULT;
+
+    protected int[] mVideoSize = {0, 0};
+
+    private static final int FULLSCREEN_FLAGS = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+            | View.SYSTEM_UI_FLAG_FULLSCREEN;
 
     public IjkVideoView(@NonNull Context context) {
         this(context, null);
@@ -73,8 +80,7 @@ public class IjkVideoView extends BaseIjkVideoView {
         this.addView(mPlayerContainer, params);
 
         mHideSysBarView = new View(getContext());
-        mHideSysBarView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN);
+        mHideSysBarView.setSystemUiVisibility(FULLSCREEN_FLAGS);
     }
 
     /**
@@ -303,6 +309,8 @@ public class IjkVideoView extends BaseIjkVideoView {
 
     @Override
     public void onVideoSizeChanged(int videoWidth, int videoHeight) {
+        mVideoSize[0] = videoWidth;
+        mVideoSize[1] = videoHeight;
         if (mPlayerConfig.usingSurfaceView) {
             mSurfaceView.setScreenScale(mCurrentScreenScale);
             mSurfaceView.setVideoSize(videoWidth, videoHeight);
@@ -317,11 +325,7 @@ public class IjkVideoView extends BaseIjkVideoView {
         super.onWindowFocusChanged(hasFocus);
         //重新获得焦点时保持全屏状态
         if (hasFocus && mIsFullScreen) {
-            PlayerUtils.hideActionBar(getContext());
-            removeView(mHideSysBarView);
-            mHideSysBarView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN);
-            addView(mHideSysBarView);
+            mHideSysBarView.setSystemUiVisibility(FULLSCREEN_FLAGS);
         }
     }
 
@@ -380,5 +384,12 @@ public class IjkVideoView extends BaseIjkVideoView {
             return mTextureView.getBitmap();
         }
         return null;
+    }
+
+    /**
+     * 获取视频宽高,其中width: mVideoSize[0], height: mVideoSize[1]
+     */
+    public int[] getVideoSize() {
+        return mVideoSize;
     }
 }

@@ -54,7 +54,7 @@ public class IjkPlayer extends AbstractPlayer {
     public void setDataSource(String path, Map<String, String> headers) {
         try {
             Uri uri = Uri.parse(path);
-            if(uri.getScheme().equals(ContentResolver.SCHEME_ANDROID_RESOURCE)){
+            if (ContentResolver.SCHEME_ANDROID_RESOURCE.equals(uri.getScheme())) {
                 RawDataSourceProvider rawDataSourceProvider = RawDataSourceProvider.create(mAppContext, uri);
                 mMediaPlayer.setDataSource(rawDataSourceProvider);
             } else {

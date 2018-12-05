@@ -104,7 +104,6 @@ public class PIPListActivity extends AppCompatActivity implements FloatRecyclerV
                 .overlay()
                 .onGranted(data -> {
                     mPIPManager.startFloatWindow();
-                    finish();
                 })
                 .onDenied(data -> {
 

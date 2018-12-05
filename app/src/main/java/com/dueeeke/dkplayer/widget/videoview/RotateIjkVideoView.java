@@ -30,6 +30,7 @@ public class RotateIjkVideoView extends IjkVideoView {
         if (mIsFullScreen) return;
         PlayerUtils.hideActionBar(getContext());
         this.removeView(mPlayerContainer);
+        this.addView(mHideSysBarView);
         ViewGroup contentView = activity
                 .findViewById(android.R.id.content);
         LayoutParams params = new LayoutParams(
@@ -50,6 +51,7 @@ public class RotateIjkVideoView extends IjkVideoView {
         ViewGroup contentView = activity
                 .findViewById(android.R.id.content);
         contentView.removeView(mPlayerContainer);
+        this.removeView(mHideSysBarView);
         LayoutParams params = new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);

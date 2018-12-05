@@ -19,7 +19,7 @@ import com.yanzhenjie.permission.AndPermission;
 public class PIPActivity extends AppCompatActivity{
     private PIPManager mPIPManager;
 //    private static final String URL = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
-    private static final String URL = "http://ivi.bupt.edu.cn/hls/sztv.m3u8";
+    private static final String URL = "http://220.161.87.62:8800/hls/0/index.m3u8";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
