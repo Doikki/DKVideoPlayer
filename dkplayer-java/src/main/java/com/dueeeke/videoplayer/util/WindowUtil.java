@@ -111,7 +111,6 @@ public class WindowUtil {
      */
     @SuppressLint("RestrictedApi")
     public static void showSystemBar(final Context context) {
-        showNavigationBar(context);
         AppCompatActivity appCompatActivity = getAppCompatActivity(context);
         if (appCompatActivity != null) {
             ActionBar ab = appCompatActivity.getSupportActionBar();
@@ -120,6 +119,7 @@ public class WindowUtil {
                 ab.show();
             }
         }
+        showNavigationBar(context);
     }
 
     /**
@@ -134,6 +134,7 @@ public class WindowUtil {
                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     | View.SYSTEM_UI_FLAG_FULLSCREEN;
 
     private static void hideNavigationBar(Context context) {
@@ -148,6 +149,7 @@ public class WindowUtil {
         if (activity == null) return;
         View decorView = activity.getWindow().getDecorView();
         int systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
         decorView.setSystemUiVisibility(systemUiVisibility);
     }
