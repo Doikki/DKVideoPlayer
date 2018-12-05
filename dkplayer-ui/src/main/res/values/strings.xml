@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">dkplayer-ui</string>
     <string name="dkplayer_replay">重新播放</string>
     <string name="dkplayer_lock_tip">请先解锁屏幕！</string>
     <string name="dkplayer_unlocked">已解锁</string>

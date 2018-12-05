@@ -45,7 +45,7 @@
             android:id="@+id/iv_battery"
             android:layout_width="26dp"
             android:layout_height="20dp"
-            tools:src="@drawable/dkplayer_ic_action_battery" />
+            android:src="@drawable/dkplayer_battery_level" />
 
         <TextView
             android:id="@+id/sys_time"

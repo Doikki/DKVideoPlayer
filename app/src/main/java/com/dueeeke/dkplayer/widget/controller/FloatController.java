@@ -45,10 +45,10 @@ public class FloatController extends GestureVideoController implements View.OnCl
     protected void initView() {
         super.initView();
         this.setOnClickListener(this);
-        controllerView.findViewById(R.id.btn_close).setOnClickListener(this);
-        controllerView.findViewById(R.id.btn_skip).setOnClickListener(this);
-        proLoading = controllerView.findViewById(R.id.loading);
-        playButton = controllerView.findViewById(R.id.start_play);
+        mControllerView.findViewById(R.id.btn_close).setOnClickListener(this);
+        mControllerView.findViewById(R.id.btn_skip).setOnClickListener(this);
+        proLoading = mControllerView.findViewById(R.id.loading);
+        playButton = mControllerView.findViewById(R.id.start_play);
         playButton.setOnClickListener(this);
     }
 
@@ -120,11 +120,11 @@ public class FloatController extends GestureVideoController implements View.OnCl
 
     @Override
     public void show() {
-        show(sDefaultTimeout);
+        show(mDefaultTimeout);
     }
 
     private void show(int timeout) {
-        if (currentPlayState == IjkVideoView.STATE_BUFFERING) return;
+        if (mCurrentPlayState == IjkVideoView.STATE_BUFFERING) return;
         if (!mShowing) {
             playButton.setVisibility(VISIBLE);
         }
@@ -139,7 +139,7 @@ public class FloatController extends GestureVideoController implements View.OnCl
 
     @Override
     public void hide() {
-        if (currentPlayState == IjkVideoView.STATE_BUFFERING) return;
+        if (mCurrentPlayState == IjkVideoView.STATE_BUFFERING) return;
         if (mShowing) {
             playButton.setVisibility(GONE);
             mShowing = false;

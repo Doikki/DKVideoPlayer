@@ -1,5 +1,6 @@
 package com.dueeeke.videoplayer.controller;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.support.annotation.AttrRes;
@@ -28,14 +29,14 @@ import java.util.Locale;
 
 public abstract class BaseVideoController extends FrameLayout {
 
-    protected View controllerView;//控制器视图
-    protected MediaPlayerControl mediaPlayer;//播放器
+    protected View mControllerView;//控制器视图
+    protected MediaPlayerControl mMediaPlayer;//播放器
     protected boolean mShowing;//控制器是否处于显示状态
-    protected boolean isLocked;
-    protected int sDefaultTimeout = 4000;
+    protected boolean mIsLocked;
+    protected int mDefaultTimeout = 4000;
     private StringBuilder mFormatBuilder;
     private Formatter mFormatter;
-    protected int currentPlayState;
+    protected int mCurrentPlayState;
     protected StatusView mStatusView;
 
 
@@ -54,7 +55,7 @@ public abstract class BaseVideoController extends FrameLayout {
     }
 
     protected void initView() {
-        controllerView = LayoutInflater.from(getContext()).inflate(getLayoutId(), this);
+        mControllerView = LayoutInflater.from(getContext()).inflate(getLayoutId(), this);
         mFormatBuilder = new StringBuilder();
         mFormatter = new Formatter(mFormatBuilder, Locale.getDefault());
         mStatusView = new StatusView(getContext());
@@ -80,7 +81,7 @@ public abstract class BaseVideoController extends FrameLayout {
     }
 
     public void setPlayState(int playState) {
-        currentPlayState = playState;
+        mCurrentPlayState = playState;
         hideStatusView();
         switch (playState) {
             case IjkVideoView.STATE_ERROR:
@@ -89,7 +90,7 @@ public abstract class BaseVideoController extends FrameLayout {
                     @Override
                     public void onClick(View v) {
                         hideStatusView();
-                        mediaPlayer.retry();
+                        mMediaPlayer.retry();
                     }
                 });
                 this.addView(mStatusView, 0);
@@ -105,7 +106,7 @@ public abstract class BaseVideoController extends FrameLayout {
             public void onClick(View v) {
                 hideStatusView();
                 PlayerConstants.IS_PLAY_ON_MOBILE_NETWORK = true;
-                mediaPlayer.start();
+                mMediaPlayer.start();
             }
         });
         this.addView(mStatusView);
@@ -119,11 +120,11 @@ public abstract class BaseVideoController extends FrameLayout {
     }
 
     protected void doPauseResume() {
-        if (currentPlayState == IjkVideoView.STATE_BUFFERING) return;
-        if (mediaPlayer.isPlaying()) {
-            mediaPlayer.pause();
+        if (mCurrentPlayState == IjkVideoView.STATE_BUFFERING) return;
+        if (mMediaPlayer.isPlaying()) {
+            mMediaPlayer.pause();
         } else {
-            mediaPlayer.start();
+            mMediaPlayer.start();
         }
     }
 
@@ -131,12 +132,14 @@ public abstract class BaseVideoController extends FrameLayout {
      * 横竖屏切换
      */
     protected void doStartStopFullScreen() {
-        if (mediaPlayer.isFullScreen()) {
-            WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            mediaPlayer.stopFullScreen();
+        Activity activity = WindowUtil.scanForActivity(getContext());
+        if (activity == null) return;
+        if (mMediaPlayer.isFullScreen()) {
+            mMediaPlayer.stopFullScreen();
+            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         } else {
-            WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            mediaPlayer.startFullScreen();
+            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            mMediaPlayer.startFullScreen();
         }
     }
 
@@ -145,7 +148,7 @@ public abstract class BaseVideoController extends FrameLayout {
         @Override
         public void run() {
             int pos = setProgress();
-            if (mediaPlayer.isPlaying()) {
+            if (mMediaPlayer.isPlaying()) {
                 postDelayed(mShowProgress, 1000 - (pos % 1000));
             }
         }
@@ -216,6 +219,6 @@ public abstract class BaseVideoController extends FrameLayout {
     }
 
     public void setMediaPlayer(MediaPlayerControl mediaPlayer) {
-        this.mediaPlayer = mediaPlayer;
+        this.mMediaPlayer = mediaPlayer;
     }
 }

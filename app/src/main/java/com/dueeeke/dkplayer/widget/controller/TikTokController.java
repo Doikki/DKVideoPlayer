@@ -39,7 +39,7 @@ public class TikTokController extends BaseVideoController {
     @Override
     protected void initView() {
         super.initView();
-        thumb = controllerView.findViewById(R.id.iv_thumb);
+        thumb = mControllerView.findViewById(R.id.iv_thumb);
     }
 
     @Override

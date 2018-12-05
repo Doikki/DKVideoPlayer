@@ -35,8 +35,8 @@ public class IjkVideoView extends BaseIjkVideoView {
     protected ResizeSurfaceView mSurfaceView;
     protected ResizeTextureView mTextureView;
     protected SurfaceTexture mSurfaceTexture;
-    protected FrameLayout playerContainer;
-    protected boolean isFullScreen;//是否处于全屏状态
+    protected FrameLayout mPlayerContainer;
+    protected boolean mIsFullScreen;//是否处于全屏状态
 
     public static final int SCREEN_SCALE_DEFAULT = 0;
     public static final int SCREEN_SCALE_16_9 = 1;
@@ -65,12 +65,12 @@ public class IjkVideoView extends BaseIjkVideoView {
      * 初始化播放器视图
      */
     protected void initView() {
-        playerContainer = new FrameLayout(getContext());
-        playerContainer.setBackgroundColor(Color.BLACK);
+        mPlayerContainer = new FrameLayout(getContext());
+        mPlayerContainer.setBackgroundColor(Color.BLACK);
         LayoutParams params = new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
-        this.addView(playerContainer, params);
+        this.addView(mPlayerContainer, params);
     }
 
     /**
@@ -134,7 +134,7 @@ public class IjkVideoView extends BaseIjkVideoView {
      * 添加SurfaceView
      */
     private void addSurfaceView() {
-        playerContainer.removeView(mSurfaceView);
+        mPlayerContainer.removeView(mSurfaceView);
         mSurfaceView = new ResizeSurfaceView(getContext());
         SurfaceHolder surfaceHolder = mSurfaceView.getHolder();
         surfaceHolder.addCallback(new SurfaceHolder.Callback() {
@@ -158,14 +158,14 @@ public class IjkVideoView extends BaseIjkVideoView {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 Gravity.CENTER);
-        playerContainer.addView(mSurfaceView, 0, params);
+        mPlayerContainer.addView(mSurfaceView, 0, params);
     }
 
     /**
      * 添加TextureView
      */
     private void addTextureView() {
-        playerContainer.removeView(mTextureView);
+        mPlayerContainer.removeView(mTextureView);
         mSurfaceTexture = null;
         mTextureView = new ResizeTextureView(getContext());
         mTextureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
@@ -196,7 +196,7 @@ public class IjkVideoView extends BaseIjkVideoView {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 Gravity.CENTER);
-        playerContainer.addView(mTextureView, 0, params);
+        mPlayerContainer.addView(mTextureView, 0, params);
     }
 
     protected boolean checkNetwork() {
@@ -213,8 +213,8 @@ public class IjkVideoView extends BaseIjkVideoView {
     @Override
     public void release() {
         super.release();
-        playerContainer.removeView(mTextureView);
-        playerContainer.removeView(mSurfaceView);
+        mPlayerContainer.removeView(mTextureView);
+        mPlayerContainer.removeView(mSurfaceView);
         if (mSurfaceTexture != null) {
             mSurfaceTexture.release();
             mSurfaceTexture = null;
@@ -230,17 +230,17 @@ public class IjkVideoView extends BaseIjkVideoView {
         if (mVideoController == null) return;
         Activity activity = WindowUtil.scanForActivity(mVideoController.getContext());
         if (activity == null) return;
-        if (isFullScreen) return;
+        if (mIsFullScreen) return;
         WindowUtil.hideSystemBar(mVideoController.getContext());
-        this.removeView(playerContainer);
+        this.removeView(mPlayerContainer);
         ViewGroup contentView = activity
                 .findViewById(android.R.id.content);
         LayoutParams params = new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
-        contentView.addView(playerContainer, params);
-        orientationEventListener.enable();
-        isFullScreen = true;
+        contentView.addView(mPlayerContainer, params);
+        mOrientationEventListener.enable();
+        mIsFullScreen = true;
         setPlayerState(PLAYER_FULL_SCREEN);
     }
 
@@ -252,18 +252,18 @@ public class IjkVideoView extends BaseIjkVideoView {
         if (mVideoController == null) return;
         Activity activity = WindowUtil.scanForActivity(mVideoController.getContext());
         if (activity == null) return;
-        if (!isFullScreen) return;
-        if (!mPlayerConfig.mAutoRotate) orientationEventListener.disable();
+        if (!mIsFullScreen) return;
+        if (!mPlayerConfig.mAutoRotate) mOrientationEventListener.disable();
         WindowUtil.showSystemBar(mVideoController.getContext());
         ViewGroup contentView = activity
                 .findViewById(android.R.id.content);
-        contentView.removeView(playerContainer);
+        contentView.removeView(mPlayerContainer);
         LayoutParams params = new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
-        this.addView(playerContainer, params);
+        this.addView(mPlayerContainer, params);
         this.requestFocus();
-        isFullScreen = false;
+        mIsFullScreen = false;
         setPlayerState(PLAYER_NORMAL);
     }
 
@@ -272,7 +272,7 @@ public class IjkVideoView extends BaseIjkVideoView {
      */
     @Override
     public boolean isFullScreen() {
-        return isFullScreen;
+        return mIsFullScreen;
     }
 
     /**
@@ -309,7 +309,7 @@ public class IjkVideoView extends BaseIjkVideoView {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (hasFocus && isFullScreen) {
+        if (hasFocus && mIsFullScreen) {
             WindowUtil.hideSystemBar(getContext());
         }
     }
@@ -319,14 +319,14 @@ public class IjkVideoView extends BaseIjkVideoView {
      * 设置控制器
      */
     public void setVideoController(@Nullable BaseVideoController mediaController) {
-        playerContainer.removeView(mVideoController);
+        mPlayerContainer.removeView(mVideoController);
         mVideoController = mediaController;
         if (mediaController != null) {
             mediaController.setMediaPlayer(this);
             LayoutParams params = new LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT);
-            playerContainer.addView(mVideoController, params);
+            mPlayerContainer.addView(mVideoController, params);
         }
     }
 

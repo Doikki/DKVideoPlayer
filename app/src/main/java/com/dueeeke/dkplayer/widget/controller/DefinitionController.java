@@ -58,7 +58,7 @@ public class DefinitionController extends StandardVideoController {
     @Override
     protected void initView() {
         super.initView();
-        multiRate = controllerView.findViewById(R.id.tv_multi_rate);
+        multiRate = mControllerView.findViewById(R.id.tv_multi_rate);
         multiRate.setOnClickListener(this);
         mPopupWindow = new PopupWindow(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         mPopLayout = (LinearLayout) LayoutInflater.from(getContext()).inflate(R.layout.layout_rate_pop, this, false);
@@ -110,7 +110,7 @@ public class DefinitionController extends StandardVideoController {
     protected int setProgress() {
         if (multiRate != null && TextUtils.isEmpty(multiRate.getText())) {
             L.d("multiRate");
-            LinkedHashMap<String, String> multiRateData = ((DefinitionMediaPlayerControl) mediaPlayer).getDefinitionData();
+            LinkedHashMap<String, String> multiRateData = ((DefinitionMediaPlayerControl) mMediaPlayer).getDefinitionData();
             if (multiRateData == null) return super.setProgress();
             mRateStr = new ArrayList<>();
             mRateItems = new ArrayList<>();
@@ -143,7 +143,7 @@ public class DefinitionController extends StandardVideoController {
             mRateItems.get(currentIndex).setTextColor(Color.BLACK);
             mRateItems.get(index).setTextColor(ContextCompat.getColor(getContext(), R.color.theme_color));
             multiRate.setText(mRateStr.get(index));
-            ((DefinitionMediaPlayerControl) mediaPlayer).switchDefinition(mRateStr.get(index));
+            ((DefinitionMediaPlayerControl) mMediaPlayer).switchDefinition(mRateStr.get(index));
             mPopupWindow.dismiss();
             hide();
             currentIndex = index;

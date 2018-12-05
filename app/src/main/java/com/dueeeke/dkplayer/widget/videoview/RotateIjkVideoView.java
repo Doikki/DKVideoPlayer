@@ -27,16 +27,16 @@ public class RotateIjkVideoView extends IjkVideoView {
     public void startFullScreen() {
         Activity activity = WindowUtil.scanForActivity(getContext());
         if (activity == null) return;
-        if (isFullScreen) return;
+        if (mIsFullScreen) return;
         WindowUtil.hideSystemBar(getContext());
-        this.removeView(playerContainer);
+        this.removeView(mPlayerContainer);
         ViewGroup contentView = activity
                 .findViewById(android.R.id.content);
         LayoutParams params = new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
-        contentView.addView(playerContainer, params);
-        isFullScreen = true;
+        contentView.addView(mPlayerContainer, params);
+        mIsFullScreen = true;
         setPlayerState(PLAYER_FULL_SCREEN);
     }
 
@@ -44,17 +44,17 @@ public class RotateIjkVideoView extends IjkVideoView {
     public void stopFullScreen() {
         Activity activity = WindowUtil.scanForActivity(getContext());
         if (activity == null) return;
-        if (!isFullScreen) return;
+        if (!mIsFullScreen) return;
         if (mVideoController != null) mVideoController.hide();
         WindowUtil.showSystemBar(getContext());
         ViewGroup contentView = activity
                 .findViewById(android.R.id.content);
-        contentView.removeView(playerContainer);
+        contentView.removeView(mPlayerContainer);
         LayoutParams params = new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
-        this.addView(playerContainer, params);
-        isFullScreen = false;
+        this.addView(mPlayerContainer, params);
+        mIsFullScreen = false;
         setPlayerState(PLAYER_NORMAL);
     }
 }

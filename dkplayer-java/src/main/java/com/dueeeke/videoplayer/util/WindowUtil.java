@@ -95,7 +95,7 @@ public class WindowUtil {
      */
     @SuppressLint("RestrictedApi")
     public static void hideSystemBar(Context context) {
-        AppCompatActivity appCompatActivity = getAppCompActivity(context);
+        AppCompatActivity appCompatActivity = getAppCompatActivity(context);
         if (appCompatActivity != null) {
             ActionBar ab = appCompatActivity.getSupportActionBar();
             if (ab != null && ab.isShowing()) {
@@ -112,7 +112,7 @@ public class WindowUtil {
     @SuppressLint("RestrictedApi")
     public static void showSystemBar(final Context context) {
         showNavigationBar(context);
-        AppCompatActivity appCompatActivity = getAppCompActivity(context);
+        AppCompatActivity appCompatActivity = getAppCompatActivity(context);
         if (appCompatActivity != null) {
             ActionBar ab = appCompatActivity.getSupportActionBar();
             if (ab != null && !ab.isShowing()) {
@@ -137,14 +137,18 @@ public class WindowUtil {
                     | View.SYSTEM_UI_FLAG_FULLSCREEN;
 
     private static void hideNavigationBar(Context context) {
-        View decorView = scanForActivity(context).getWindow().getDecorView();
+        Activity activity = scanForActivity(context);
+        if (activity == null) return;
+        View decorView = activity.getWindow().getDecorView();
         decorView.setSystemUiVisibility(FLAGS);
     }
 
     private static void showNavigationBar(Context context) {
-        View decorView = scanForActivity(context).getWindow().getDecorView();
-        int systemUiVisibility = decorView.getSystemUiVisibility();
-        systemUiVisibility &= ~FLAGS;
+        Activity activity = scanForActivity(context);
+        if (activity == null) return;
+        View decorView = activity.getWindow().getDecorView();
+        int systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
         decorView.setSystemUiVisibility(systemUiVisibility);
     }
 
@@ -152,12 +156,12 @@ public class WindowUtil {
     /**
      * Get AppCompatActivity from context
      */
-    public static AppCompatActivity getAppCompActivity(Context context) {
+    public static AppCompatActivity getAppCompatActivity(Context context) {
         if (context == null) return null;
         if (context instanceof AppCompatActivity) {
             return (AppCompatActivity) context;
         } else if (context instanceof ContextThemeWrapper) {
-            return getAppCompActivity(((ContextThemeWrapper) context).getBaseContext());
+            return getAppCompatActivity(((ContextThemeWrapper) context).getBaseContext());
         }
         return null;
     }

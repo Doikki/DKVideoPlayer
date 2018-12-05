@@ -23,7 +23,7 @@ import com.dueeeke.videoplayer.widget.CenterView;
 public abstract class GestureVideoController extends BaseVideoController{
 
     protected GestureDetector mGestureDetector;
-    protected boolean gestureEnabled;
+    protected boolean mIsGestureEnabled;
     protected CenterView mCenterView;
     protected AudioManager mAudioManager;
 
@@ -72,7 +72,7 @@ public abstract class GestureVideoController extends BaseVideoController{
 
         @Override
         public boolean onDown(MotionEvent e) {
-            if (!gestureEnabled || WindowUtil.isEdge(getContext(), e)) return super.onDown(e);
+            if (!mIsGestureEnabled || WindowUtil.isEdge(getContext(), e)) return super.onDown(e);
             streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
             mBrightness = WindowUtil.scanForActivity(getContext()).getWindow().getAttributes().screenBrightness;
             firstTouch = true;
@@ -94,7 +94,7 @@ public abstract class GestureVideoController extends BaseVideoController{
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            if (!gestureEnabled || WindowUtil.isEdge(getContext(), e1)) return super.onScroll(e1, e2, distanceX, distanceY);
+            if (!mIsGestureEnabled || WindowUtil.isEdge(getContext(), e1)) return super.onScroll(e1, e2, distanceX, distanceY);
             float deltaX = e1.getX() - e2.getX();
             float deltaY = e1.getY() - e2.getY();
             if (firstTouch) {
@@ -120,7 +120,7 @@ public abstract class GestureVideoController extends BaseVideoController{
 
         @Override
         public boolean onDoubleTap(MotionEvent e) {
-            if (!isLocked) doPauseResume();
+            if (!mIsLocked) doPauseResume();
             return true;
         }
     }
@@ -133,7 +133,7 @@ public abstract class GestureVideoController extends BaseVideoController{
                 mCenterView.setVisibility(GONE);
             }
             if (mNeedSeek) {
-                mediaPlayer.seekTo(mPosition);
+                mMediaPlayer.seekTo(mPosition);
                 mNeedSeek = false;
             }
         }
@@ -146,9 +146,9 @@ public abstract class GestureVideoController extends BaseVideoController{
         mCenterView.setProVisibility(View.GONE);
         deltaX = -deltaX;
         int width = getMeasuredWidth();
-        int duration = (int) mediaPlayer.getDuration();
-        int currentPosition = (int) mediaPlayer.getCurrentPosition();
-        int position = (int) (deltaX / width * duration + currentPosition);
+        int duration = (int) mMediaPlayer.getDuration();
+        int currentPosition = (int) mMediaPlayer.getCurrentPosition();
+        int position = (int) (deltaX / width * 120000 + currentPosition);
         if (position > currentPosition) {
             mCenterView.setIcon(R.drawable.dkplayer_ic_action_fast_forward);
         } else {

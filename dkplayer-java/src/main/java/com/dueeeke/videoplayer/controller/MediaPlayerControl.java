@@ -16,7 +16,7 @@ public interface MediaPlayerControl {
 
     boolean isPlaying();
 
-    int getBufferPercentage();
+    int getBufferedPercentage();
 
     void startFullScreen();
 

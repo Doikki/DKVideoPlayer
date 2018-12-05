@@ -64,25 +64,25 @@ public class FullScreenController extends GestureVideoController implements View
     @Override
     protected void initView() {
         super.initView();
-        bottomContainer = controllerView.findViewById(R.id.bottom_container);
-        topContainer = controllerView.findViewById(R.id.top_container);
-        videoProgress = controllerView.findViewById(R.id.seekBar);
+        bottomContainer = mControllerView.findViewById(R.id.bottom_container);
+        topContainer = mControllerView.findViewById(R.id.top_container);
+        videoProgress = mControllerView.findViewById(R.id.seekBar);
         videoProgress.setOnSeekBarChangeListener(this);
-        totalTime = controllerView.findViewById(R.id.total_time);
-        currTime = controllerView.findViewById(R.id.curr_time);
-        backButton = controllerView.findViewById(R.id.back);
+        totalTime = mControllerView.findViewById(R.id.total_time);
+        currTime = mControllerView.findViewById(R.id.curr_time);
+        backButton = mControllerView.findViewById(R.id.back);
         backButton.setOnClickListener(this);
-        lock = controllerView.findViewById(R.id.lock);
+        lock = mControllerView.findViewById(R.id.lock);
         lock.setOnClickListener(this);
-        playButton = controllerView.findViewById(R.id.iv_play);
+        playButton = mControllerView.findViewById(R.id.iv_play);
         playButton.setOnClickListener(this);
-        loadingProgress = controllerView.findViewById(R.id.loading);
-        bottomProgress = controllerView.findViewById(R.id.bottom_progress);
-        ImageView rePlayButton = controllerView.findViewById(R.id.iv_replay);
+        loadingProgress = mControllerView.findViewById(R.id.loading);
+        bottomProgress = mControllerView.findViewById(R.id.bottom_progress);
+        ImageView rePlayButton = mControllerView.findViewById(R.id.iv_replay);
         rePlayButton.setOnClickListener(this);
-        completeContainer = controllerView.findViewById(R.id.complete_container);
+        completeContainer = mControllerView.findViewById(R.id.complete_container);
         completeContainer.setOnClickListener(this);
-        title = controllerView.findViewById(R.id.title);
+        title = mControllerView.findViewById(R.id.title);
     }
 
     @Override
@@ -107,7 +107,7 @@ public class FullScreenController extends GestureVideoController implements View
         super.setPlayerState(playerState);
         switch (playerState) {
             case IjkVideoView.PLAYER_FULL_SCREEN:
-                gestureEnabled = true;
+                mIsGestureEnabled = true;
                 break;
         }
     }
@@ -119,9 +119,9 @@ public class FullScreenController extends GestureVideoController implements View
             case IjkVideoView.STATE_IDLE:
                 L.e("STATE_IDLE");
                 hide();
-                isLocked = false;
+                mIsLocked = false;
                 lock.setSelected(false);
-                mediaPlayer.setLock(false);
+                mMediaPlayer.setLock(false);
                 completeContainer.setVisibility(GONE);
                 bottomProgress.setVisibility(GONE);
                 loadingProgress.setVisibility(GONE);
@@ -164,28 +164,28 @@ public class FullScreenController extends GestureVideoController implements View
                 completeContainer.setVisibility(VISIBLE);
                 bottomProgress.setProgress(0);
                 bottomProgress.setSecondaryProgress(0);
-                isLocked = false;
-                mediaPlayer.setLock(false);
+                mIsLocked = false;
+                mMediaPlayer.setLock(false);
                 break;
         }
     }
 
     private void doLockUnlock() {
-        if (isLocked) {
-            isLocked = false;
+        if (mIsLocked) {
+            mIsLocked = false;
             mShowing = false;
-            gestureEnabled = true;
+            mIsGestureEnabled = true;
             show();
             lock.setSelected(false);
             Toast.makeText(getContext(), R.string.unlocked, Toast.LENGTH_SHORT).show();
         } else {
             hide();
-            isLocked = true;
-            gestureEnabled = false;
+            mIsLocked = true;
+            mIsGestureEnabled = false;
             lock.setSelected(true);
             Toast.makeText(getContext(), R.string.locked, Toast.LENGTH_SHORT).show();
         }
-        mediaPlayer.setLock(isLocked);
+        mMediaPlayer.setLock(mIsLocked);
     }
 
     /**
@@ -207,9 +207,9 @@ public class FullScreenController extends GestureVideoController implements View
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        long duration = mediaPlayer.getDuration();
+        long duration = mMediaPlayer.getDuration();
         long newPosition = (duration * seekBar.getProgress()) / videoProgress.getMax();
-        mediaPlayer.seekTo((int) newPosition);
+        mMediaPlayer.seekTo((int) newPosition);
         isDragging = false;
         post(mShowProgress);
         show();
@@ -221,7 +221,7 @@ public class FullScreenController extends GestureVideoController implements View
             return;
         }
 
-        long duration = mediaPlayer.getDuration();
+        long duration = mMediaPlayer.getDuration();
         long newPosition = (duration * progress) / videoProgress.getMax();
         if (currTime != null)
             currTime.setText(stringForTime((int) newPosition));
@@ -230,15 +230,15 @@ public class FullScreenController extends GestureVideoController implements View
     @Override
     public void hide() {
         if (mShowing) {
-            if (mediaPlayer.isFullScreen()) {
+            if (mMediaPlayer.isFullScreen()) {
                 lock.setVisibility(GONE);
-                if (!isLocked) {
+                if (!mIsLocked) {
                     hideAllViews();
                 }
             } else {
                 hideAllViews();
             }
-            if (!isLive && !isLocked) {
+            if (!isLive && !mIsLocked) {
                 bottomProgress.setVisibility(VISIBLE);
                 bottomProgress.startAnimation(showAnim);
             }
@@ -255,15 +255,15 @@ public class FullScreenController extends GestureVideoController implements View
 
     private void show(int timeout) {
         if (!mShowing) {
-            if (mediaPlayer.isFullScreen()) {
+            if (mMediaPlayer.isFullScreen()) {
                 lock.setVisibility(VISIBLE);
-                if (!isLocked) {
+                if (!mIsLocked) {
                     showAllViews();
                 }
             } else {
                 showAllViews();
             }
-            if (!isLocked && !isLive) {
+            if (!mIsLocked && !isLive) {
                 bottomProgress.setVisibility(GONE);
                 bottomProgress.startAnimation(hideAnim);
             }
@@ -284,16 +284,16 @@ public class FullScreenController extends GestureVideoController implements View
 
     @Override
     public void show() {
-        show(sDefaultTimeout);
+        show(mDefaultTimeout);
     }
 
     @Override
     protected int setProgress() {
-        if (mediaPlayer == null || isDragging) {
+        if (mMediaPlayer == null || isDragging) {
             return 0;
         }
-        int position = (int) mediaPlayer.getCurrentPosition();
-        int duration = (int) mediaPlayer.getDuration();
+        int position = (int) mMediaPlayer.getCurrentPosition();
+        int duration = (int) mMediaPlayer.getDuration();
         if (videoProgress != null) {
             if (duration > 0) {
                 videoProgress.setEnabled(true);
@@ -303,7 +303,7 @@ public class FullScreenController extends GestureVideoController implements View
             } else {
                 videoProgress.setEnabled(false);
             }
-            int percent = mediaPlayer.getBufferPercentage();
+            int percent = mMediaPlayer.getBufferedPercentage();
             if (percent >= 95) { //修复第二进度不能100%问题
                 videoProgress.setSecondaryProgress(videoProgress.getMax());
                 bottomProgress.setSecondaryProgress(bottomProgress.getMax());
@@ -318,7 +318,7 @@ public class FullScreenController extends GestureVideoController implements View
         if (currTime != null)
             currTime.setText(stringForTime(position));
         if (title != null)
-            title.setText(mediaPlayer.getTitle());
+            title.setText(mMediaPlayer.getTitle());
         return position;
     }
 
@@ -334,7 +334,7 @@ public class FullScreenController extends GestureVideoController implements View
 
     @Override
     public boolean onBackPressed() {
-        if (isLocked) {
+        if (mIsLocked) {
             show();
             Toast.makeText(getContext(), R.string.lock_tip, Toast.LENGTH_SHORT).show();
             return true;

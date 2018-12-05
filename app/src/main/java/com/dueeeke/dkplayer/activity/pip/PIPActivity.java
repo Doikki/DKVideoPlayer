@@ -20,7 +20,8 @@ import com.dueeeke.videoplayer.player.PlayerConfig;
 
 public class PIPActivity extends AppCompatActivity{
     private PIPManager mPIPManager;
-    private static final String URL = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
+//    private static final String URL = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
+    private static final String URL = "http://ivi.bupt.edu.cn/hls/sztv.m3u8";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

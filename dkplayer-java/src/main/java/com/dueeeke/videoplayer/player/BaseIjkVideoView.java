@@ -39,8 +39,8 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     protected AbstractPlayer mMediaPlayer;//播放器
     @Nullable
     protected BaseVideoController mVideoController;//控制器
-    protected int bufferPercentage;//缓冲百分比
-    protected boolean isMute;//是否静音
+    protected int mBufferedPercentage;//缓冲百分比
+    protected boolean mIsMute;//是否静音
 
     protected String mCurrentUrl;//当前播放视频的地址
     protected Map<String, String> mHeaders;//当前视频地址的请求头
@@ -68,12 +68,12 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     @Nullable
     protected AudioFocusHelper mAudioFocusHelper;
 
-    protected int currentOrientation = 0;
+    protected int mCurrentOrientation = 0;
     protected static final int PORTRAIT = 1;
     protected static final int LANDSCAPE = 2;
     protected static final int REVERSE_LANDSCAPE = 3;
 
-    protected boolean isLockFullScreen;//是否锁定屏幕
+    protected boolean mIsLockFullScreen;//是否锁定屏幕
     protected PlayerConfig mPlayerConfig;//播放器配置
     private HttpProxyCacheServer mCacheServer;
 
@@ -82,7 +82,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     /**
      * 加速度传感器监听
      */
-    protected OrientationEventListener orientationEventListener = new OrientationEventListener(getContext()) { // 加速度传感器监听，用于自动旋转屏幕
+    protected OrientationEventListener mOrientationEventListener = new OrientationEventListener(getContext()) { // 加速度传感器监听，用于自动旋转屏幕
         @Override
         public void onOrientationChanged(int orientation) {
             if (mVideoController == null) return;
@@ -102,13 +102,13 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      * 竖屏
      */
     protected void onOrientationPortrait(Activity activity) {
-        if (isLockFullScreen || !mPlayerConfig.mAutoRotate || currentOrientation == PORTRAIT)
+        if (mIsLockFullScreen || !mPlayerConfig.mAutoRotate || mCurrentOrientation == PORTRAIT)
             return;
-        if ((currentOrientation == LANDSCAPE || currentOrientation == REVERSE_LANDSCAPE) && !isFullScreen()) {
-            currentOrientation = PORTRAIT;
+        if ((mCurrentOrientation == LANDSCAPE || mCurrentOrientation == REVERSE_LANDSCAPE) && !isFullScreen()) {
+            mCurrentOrientation = PORTRAIT;
             return;
         }
-        currentOrientation = PORTRAIT;
+        mCurrentOrientation = PORTRAIT;
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         stopFullScreen();
     }
@@ -117,12 +117,12 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      * 横屏
      */
     protected void onOrientationLandscape(Activity activity) {
-        if (currentOrientation == LANDSCAPE) return;
-        if (currentOrientation == PORTRAIT && isFullScreen()) {
-            currentOrientation = LANDSCAPE;
+        if (mCurrentOrientation == LANDSCAPE) return;
+        if (mCurrentOrientation == PORTRAIT && isFullScreen()) {
+            mCurrentOrientation = LANDSCAPE;
             return;
         }
-        currentOrientation = LANDSCAPE;
+        mCurrentOrientation = LANDSCAPE;
         if (!isFullScreen()) {
             startFullScreen();
         }
@@ -133,12 +133,12 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      * 反向横屏
      */
     protected void onOrientationReverseLandscape(Activity activity) {
-        if (currentOrientation == REVERSE_LANDSCAPE) return;
-        if (currentOrientation == PORTRAIT && isFullScreen()) {
-            currentOrientation = REVERSE_LANDSCAPE;
+        if (mCurrentOrientation == REVERSE_LANDSCAPE) return;
+        if (mCurrentOrientation == PORTRAIT && isFullScreen()) {
+            mCurrentOrientation = REVERSE_LANDSCAPE;
             return;
         }
-        currentOrientation = REVERSE_LANDSCAPE;
+        mCurrentOrientation = REVERSE_LANDSCAPE;
         if (!isFullScreen()) {
             startFullScreen();
         }
@@ -193,7 +193,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
             String proxyPath = mCacheServer.getProxyUrl(mCurrentUrl);
             mCacheServer.registerCacheListener(cacheListener, mCurrentUrl);
             if (mCacheServer.isCached(mCurrentUrl)) {
-                bufferPercentage = 100;
+                mBufferedPercentage = 100;
             }
             mMediaPlayer.setDataSource(proxyPath, mHeaders);
         } else {
@@ -235,7 +235,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
             mCurrentPosition = ProgressUtil.getSavedProgress(mCurrentUrl);
         }
         if (mPlayerConfig.mAutoRotate)
-            orientationEventListener.enable();
+            mOrientationEventListener.enable();
         initPlayer();
         startPrepare(false);
     }
@@ -311,10 +311,10 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
 
     private void onPlayStopped() {
         if (mVideoController != null) mVideoController.hideStatusView();
-        orientationEventListener.disable();
+        mOrientationEventListener.disable();
         if (mCacheServer != null)
             mCacheServer.unregisterCacheListener(cacheListener);
-        isLockFullScreen = false;
+        mIsLockFullScreen = false;
         mCurrentPosition = 0;
     }
 
@@ -402,7 +402,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      * 获取当前缓冲百分比
      */
     @Override
-    public int getBufferPercentage() {
+    public int getBufferedPercentage() {
         return mMediaPlayer != null ? mMediaPlayer.getBufferedPercentage() : 0;
     }
 
@@ -412,7 +412,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     @Override
     public void setMute(boolean isMute) {
         if (mMediaPlayer != null) {
-            this.isMute = isMute;
+            this.mIsMute = isMute;
             float volume = isMute ? 0.0f : 1.0f;
             mMediaPlayer.setVolume(volume, volume);
         }
@@ -423,7 +423,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      */
     @Override
     public boolean isMute() {
-        return isMute;
+        return mIsMute;
     }
 
     /**
@@ -431,7 +431,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      */
     @Override
     public void setLock(boolean isLocked) {
-        this.isLockFullScreen = isLocked;
+        this.mIsLockFullScreen = isLocked;
     }
 
     /**
@@ -448,7 +448,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     private CacheListener cacheListener = new CacheListener() {
         @Override
         public void onCacheAvailable(File cacheFile, String url, int percentsAvailable) {
-            bufferPercentage = percentsAvailable;
+            mBufferedPercentage = percentsAvailable;
         }
     };
 
@@ -600,9 +600,9 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      * 音频焦点改变监听
      */
     private class AudioFocusHelper implements AudioManager.OnAudioFocusChangeListener {
-        boolean startRequested = false;
-        boolean pausedForLoss = false;
-        int currentFocus = 0;
+        private boolean startRequested = false;
+        private boolean pausedForLoss = false;
+        private int currentFocus = 0;
 
         @Override
         public void onAudioFocusChange(int focusChange) {
@@ -619,7 +619,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
                         startRequested = false;
                         pausedForLoss = false;
                     }
-                    if (mMediaPlayer != null && !isMute)//恢复音量
+                    if (mMediaPlayer != null && !mIsMute)//恢复音量
                         mMediaPlayer.setVolume(1.0f, 1.0f);
                     break;
                 case AudioManager.AUDIOFOCUS_LOSS://焦点丢失
@@ -630,7 +630,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
                     }
                     break;
                 case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK://此时需降低音量
-                    if (mMediaPlayer != null && isPlaying() && !isMute) {
+                    if (mMediaPlayer != null && isPlaying() && !mIsMute) {
                         mMediaPlayer.setVolume(0.1f, 0.1f);
                     }
                     break;

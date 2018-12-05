@@ -42,14 +42,14 @@ public class AdController extends BaseVideoController implements View.OnClickLis
     @Override
     protected void initView() {
         super.initView();
-        adTime = controllerView.findViewById(R.id.ad_time);
-        adDetail = controllerView.findViewById(R.id.ad_detail);
+        adTime = mControllerView.findViewById(R.id.ad_time);
+        adDetail = mControllerView.findViewById(R.id.ad_detail);
         adDetail.setText("了解详情>");
-        back = controllerView.findViewById(R.id.back);
+        back = mControllerView.findViewById(R.id.back);
         back.setVisibility(GONE);
-        volume = controllerView.findViewById(R.id.iv_volume);
-        fullScreen = controllerView.findViewById(R.id.fullscreen);
-        playButton = controllerView.findViewById(R.id.iv_play);
+        volume = mControllerView.findViewById(R.id.iv_volume);
+        fullScreen = mControllerView.findViewById(R.id.fullscreen);
+        playButton = mControllerView.findViewById(R.id.iv_play);
         playButton.setOnClickListener(this);
         adTime.setOnClickListener(this);
         adDetail.setOnClickListener(this);
@@ -74,15 +74,15 @@ public class AdController extends BaseVideoController implements View.OnClickLis
         } else if (id == R.id.ad_detail) {
             if (listener != null) listener.onAdClick();
         } else if (id == R.id.ad_time) {
-            ((ListMediaPlayerControl) mediaPlayer).skipToNext();
+            ((ListMediaPlayerControl) mMediaPlayer).skipToNext();
         } else if (id == R.id.iv_play) {
             doPauseResume();
         }
     }
 
     private void doMute() {
-        mediaPlayer.setMute(!mediaPlayer.isMute());
-        volume.setImageResource(mediaPlayer.isMute() ? R.drawable.dkplayer_ic_action_volume_up : R.drawable.dkplayer_ic_action_volume_off);
+        mMediaPlayer.setMute(!mMediaPlayer.isMute());
+        volume.setImageResource(mMediaPlayer.isMute() ? R.drawable.dkplayer_ic_action_volume_up : R.drawable.dkplayer_ic_action_volume_off);
     }
 
     @Override
@@ -116,11 +116,11 @@ public class AdController extends BaseVideoController implements View.OnClickLis
 
     @Override
     protected int setProgress() {
-        if (mediaPlayer == null) {
+        if (mMediaPlayer == null) {
             return 0;
         }
-        int position = (int) mediaPlayer.getCurrentPosition();
-        int duration = (int) mediaPlayer.getDuration();
+        int position = (int) mMediaPlayer.getCurrentPosition();
+        int duration = (int) mMediaPlayer.getDuration();
 
         if (adTime != null)
             adTime.setText(String.format("%s | 跳过", (duration - position) / 1000));
@@ -129,9 +129,9 @@ public class AdController extends BaseVideoController implements View.OnClickLis
 
     @Override
     public boolean onBackPressed() {
-        if (mediaPlayer.isFullScreen()) {
+        if (mMediaPlayer.isFullScreen()) {
             WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            mediaPlayer.stopFullScreen();
+            mMediaPlayer.stopFullScreen();
             setPlayerState(IjkVideoView.PLAYER_NORMAL);
             return true;
         }

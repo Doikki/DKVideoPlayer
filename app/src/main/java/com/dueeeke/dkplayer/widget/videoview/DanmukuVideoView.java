@@ -38,8 +38,8 @@ public class DanmukuVideoView extends IjkVideoView {
     protected void initPlayer() {
         super.initPlayer();
         if (mDanmakuView != null) {
-            playerContainer.removeView(mDanmakuView);
-            playerContainer.addView(mDanmakuView, 1);
+            mPlayerContainer.removeView(mDanmakuView);
+            mPlayerContainer.addView(mDanmakuView, 1);
         }
     }
 

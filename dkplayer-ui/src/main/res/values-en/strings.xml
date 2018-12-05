@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">dkplayer-ui</string>
     <string name="dkplayer_replay">Replay</string>
     <string name="dkplayer_lock_tip">Please unlock the screen first!</string>
     <string name="dkplayer_unlocked">Unlocked</string>

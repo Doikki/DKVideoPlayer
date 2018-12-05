@@ -1,5 +1,6 @@
 package com.dueeeke.videocontroller;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -32,28 +33,28 @@ import com.dueeeke.videoplayer.util.WindowUtil;
  */
 
 public class StandardVideoController extends GestureVideoController implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
-    protected TextView totalTime, currTime;
-    protected ImageView fullScreenButton;
-    protected LinearLayout bottomContainer, topContainer;
-    protected SeekBar videoProgress;
-    protected ImageView backButton;
-    protected ImageView lock;
-    protected MarqueeTextView title;
-    private boolean isLive;
-    private boolean isDragging;
+    protected TextView mTotalTime, mCurrTime;
+    protected ImageView mFullScreenButton;
+    protected LinearLayout mBottomContainer, mTopContainer;
+    protected SeekBar mVideoProgress;
+    protected ImageView mBackButton;
+    protected ImageView mLockButton;
+    protected MarqueeTextView mTitle;
+    private boolean mIsLive;
+    private boolean mIsDragging;
 
-    private ProgressBar bottomProgress;
-    private ImageView playButton;
-    private ImageView startPlayButton;
-    private ProgressBar loadingProgress;
-    private ImageView thumb;
-    private LinearLayout completeContainer;
-    private TextView sysTime;//系统当前时间
-    private ImageView batteryLevel;//电量
-    private Animation showAnim = AnimationUtils.loadAnimation(getContext(), R.anim.dkplayer_anim_alpha_in);
-    private Animation hideAnim = AnimationUtils.loadAnimation(getContext(), R.anim.dkplayer_anim_alpha_out);
+    private ProgressBar mBottomProgress;
+    private ImageView mPlayButton;
+    private ImageView mStartPlayButton;
+    private ProgressBar mLoadingProgress;
+    private ImageView mThumb;
+    private LinearLayout mCompleteContainer;
+    private TextView mSysTime;//系统当前时间
+    private ImageView mBatteryLevel;//电量
+    private Animation mShowAnim = AnimationUtils.loadAnimation(getContext(), R.anim.dkplayer_anim_alpha_in);
+    private Animation mHideAnim = AnimationUtils.loadAnimation(getContext(), R.anim.dkplayer_anim_alpha_out);
     private BatteryReceiver mBatteryReceiver;
-    protected ImageView refresh;
+    protected ImageView mRefreshButton;
 
 
     public StandardVideoController(@NonNull Context context) {
@@ -76,35 +77,35 @@ public class StandardVideoController extends GestureVideoController implements V
     @Override
     protected void initView() {
         super.initView();
-        fullScreenButton = controllerView.findViewById(R.id.fullscreen);
-        fullScreenButton.setOnClickListener(this);
-        bottomContainer = controllerView.findViewById(R.id.bottom_container);
-        topContainer = controllerView.findViewById(R.id.top_container);
-        videoProgress = controllerView.findViewById(R.id.seekBar);
-        videoProgress.setOnSeekBarChangeListener(this);
-        totalTime = controllerView.findViewById(R.id.total_time);
-        currTime = controllerView.findViewById(R.id.curr_time);
-        backButton = controllerView.findViewById(R.id.back);
-        backButton.setOnClickListener(this);
-        lock = controllerView.findViewById(R.id.lock);
-        lock.setOnClickListener(this);
-        thumb = controllerView.findViewById(R.id.thumb);
-        thumb.setOnClickListener(this);
-        playButton = controllerView.findViewById(R.id.iv_play);
-        playButton.setOnClickListener(this);
-        startPlayButton = controllerView.findViewById(R.id.start_play);
-        loadingProgress = controllerView.findViewById(R.id.loading);
-        bottomProgress = controllerView.findViewById(R.id.bottom_progress);
-        ImageView rePlayButton = controllerView.findViewById(R.id.iv_replay);
+        mFullScreenButton = mControllerView.findViewById(R.id.fullscreen);
+        mFullScreenButton.setOnClickListener(this);
+        mBottomContainer = mControllerView.findViewById(R.id.bottom_container);
+        mTopContainer = mControllerView.findViewById(R.id.top_container);
+        mVideoProgress = mControllerView.findViewById(R.id.seekBar);
+        mVideoProgress.setOnSeekBarChangeListener(this);
+        mTotalTime = mControllerView.findViewById(R.id.total_time);
+        mCurrTime = mControllerView.findViewById(R.id.curr_time);
+        mBackButton = mControllerView.findViewById(R.id.back);
+        mBackButton.setOnClickListener(this);
+        mLockButton = mControllerView.findViewById(R.id.lock);
+        mLockButton.setOnClickListener(this);
+        mThumb = mControllerView.findViewById(R.id.thumb);
+        mThumb.setOnClickListener(this);
+        mPlayButton = mControllerView.findViewById(R.id.iv_play);
+        mPlayButton.setOnClickListener(this);
+        mStartPlayButton = mControllerView.findViewById(R.id.start_play);
+        mLoadingProgress = mControllerView.findViewById(R.id.loading);
+        mBottomProgress = mControllerView.findViewById(R.id.bottom_progress);
+        ImageView rePlayButton = mControllerView.findViewById(R.id.iv_replay);
         rePlayButton.setOnClickListener(this);
-        completeContainer = controllerView.findViewById(R.id.complete_container);
-        completeContainer.setOnClickListener(this);
-        title = controllerView.findViewById(R.id.title);
-        sysTime = controllerView.findViewById(R.id.sys_time);
-        batteryLevel = controllerView.findViewById(R.id.iv_battery);
-        mBatteryReceiver = new BatteryReceiver(batteryLevel);
-        refresh = controllerView.findViewById(R.id.iv_refresh);
-        refresh.setOnClickListener(this);
+        mCompleteContainer = mControllerView.findViewById(R.id.complete_container);
+        mCompleteContainer.setOnClickListener(this);
+        mTitle = mControllerView.findViewById(R.id.title);
+        mSysTime = mControllerView.findViewById(R.id.sys_time);
+        mBatteryLevel = mControllerView.findViewById(R.id.iv_battery);
+        mBatteryReceiver = new BatteryReceiver(mBatteryLevel);
+        mRefreshButton = mControllerView.findViewById(R.id.iv_refresh);
+        mRefreshButton.setOnClickListener(this);
     }
 
     @Override
@@ -129,14 +130,14 @@ public class StandardVideoController extends GestureVideoController implements V
         } else if (i == R.id.iv_play || i == R.id.thumb) {
             doPauseResume();
         } else if (i == R.id.iv_replay) {
-            mediaPlayer.retry();
+            mMediaPlayer.retry();
         } else if (i == R.id.iv_refresh) {
-            mediaPlayer.refresh();
+            mMediaPlayer.refresh();
         }
     }
 
     public void showTitle() {
-        title.setVisibility(View.VISIBLE);
+        mTitle.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -144,33 +145,33 @@ public class StandardVideoController extends GestureVideoController implements V
         switch (playerState) {
             case IjkVideoView.PLAYER_NORMAL:
                 L.e("PLAYER_NORMAL");
-                if (isLocked) return;
+                if (mIsLocked) return;
                 setLayoutParams(new FrameLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT));
-                gestureEnabled = false;
-                fullScreenButton.setSelected(false);
-                backButton.setVisibility(View.GONE);
-                lock.setVisibility(View.GONE);
-                title.setVisibility(View.INVISIBLE);
-                sysTime.setVisibility(View.GONE);
-                batteryLevel.setVisibility(View.GONE);
-                topContainer.setVisibility(View.GONE);
+                mIsGestureEnabled = false;
+                mFullScreenButton.setSelected(false);
+                mBackButton.setVisibility(View.GONE);
+                mLockButton.setVisibility(View.GONE);
+                mTitle.setVisibility(View.INVISIBLE);
+                mSysTime.setVisibility(View.GONE);
+                mBatteryLevel.setVisibility(View.GONE);
+                mTopContainer.setVisibility(View.GONE);
                 break;
             case IjkVideoView.PLAYER_FULL_SCREEN:
                 L.e("PLAYER_FULL_SCREEN");
-                if (isLocked) return;
-                gestureEnabled = true;
-                fullScreenButton.setSelected(true);
-                backButton.setVisibility(View.VISIBLE);
-                title.setVisibility(View.VISIBLE);
-                sysTime.setVisibility(View.VISIBLE);
-                batteryLevel.setVisibility(View.VISIBLE);
+                if (mIsLocked) return;
+                mIsGestureEnabled = true;
+                mFullScreenButton.setSelected(true);
+                mBackButton.setVisibility(View.VISIBLE);
+                mTitle.setVisibility(View.VISIBLE);
+                mSysTime.setVisibility(View.VISIBLE);
+                mBatteryLevel.setVisibility(View.VISIBLE);
                 if (mShowing) {
-                    lock.setVisibility(View.VISIBLE);
-                    topContainer.setVisibility(View.VISIBLE);
+                    mLockButton.setVisibility(View.VISIBLE);
+                    mTopContainer.setVisibility(View.VISIBLE);
                 } else {
-                    lock.setVisibility(View.GONE);
+                    mLockButton.setVisibility(View.GONE);
                 }
                 break;
         }
@@ -183,124 +184,124 @@ public class StandardVideoController extends GestureVideoController implements V
             case IjkVideoView.STATE_IDLE:
                 L.e("STATE_IDLE");
                 hide();
-                isLocked = false;
-                lock.setSelected(false);
-                mediaPlayer.setLock(false);
-                bottomProgress.setProgress(0);
-                bottomProgress.setSecondaryProgress(0);
-                videoProgress.setProgress(0);
-                videoProgress.setSecondaryProgress(0);
-                completeContainer.setVisibility(View.GONE);
-                bottomProgress.setVisibility(View.GONE);
-                loadingProgress.setVisibility(View.GONE);
-                startPlayButton.setVisibility(View.VISIBLE);
-                thumb.setVisibility(View.VISIBLE);
+                mIsLocked = false;
+                mLockButton.setSelected(false);
+                mMediaPlayer.setLock(false);
+                mBottomProgress.setProgress(0);
+                mBottomProgress.setSecondaryProgress(0);
+                mVideoProgress.setProgress(0);
+                mVideoProgress.setSecondaryProgress(0);
+                mCompleteContainer.setVisibility(View.GONE);
+                mBottomProgress.setVisibility(View.GONE);
+                mLoadingProgress.setVisibility(View.GONE);
+                mStartPlayButton.setVisibility(View.VISIBLE);
+                mThumb.setVisibility(View.VISIBLE);
                 break;
             case IjkVideoView.STATE_PLAYING:
                 L.e("STATE_PLAYING");
                 post(mShowProgress);
-                playButton.setSelected(true);
-                loadingProgress.setVisibility(View.GONE);
-                completeContainer.setVisibility(View.GONE);
-                thumb.setVisibility(View.GONE);
-                startPlayButton.setVisibility(View.GONE);
+                mPlayButton.setSelected(true);
+                mLoadingProgress.setVisibility(View.GONE);
+                mCompleteContainer.setVisibility(View.GONE);
+                mThumb.setVisibility(View.GONE);
+                mStartPlayButton.setVisibility(View.GONE);
                 break;
             case IjkVideoView.STATE_PAUSED:
                 L.e("STATE_PAUSED");
-                playButton.setSelected(false);
-                startPlayButton.setVisibility(View.GONE);
+                mPlayButton.setSelected(false);
+                mStartPlayButton.setVisibility(View.GONE);
                 break;
             case IjkVideoView.STATE_PREPARING:
                 L.e("STATE_PREPARING");
-                completeContainer.setVisibility(View.GONE);
-                startPlayButton.setVisibility(View.GONE);
-                loadingProgress.setVisibility(View.VISIBLE);
-//                thumb.setVisibility(View.VISIBLE);
+                mCompleteContainer.setVisibility(View.GONE);
+                mStartPlayButton.setVisibility(View.GONE);
+                mLoadingProgress.setVisibility(View.VISIBLE);
+//                mThumb.setVisibility(View.VISIBLE);
                 break;
             case IjkVideoView.STATE_PREPARED:
                 L.e("STATE_PREPARED");
-                if (!isLive) bottomProgress.setVisibility(View.VISIBLE);
-//                loadingProgress.setVisibility(GONE);
-                startPlayButton.setVisibility(View.GONE);
+                if (!mIsLive) mBottomProgress.setVisibility(View.VISIBLE);
+//                mLoadingProgress.setVisibility(GONE);
+                mStartPlayButton.setVisibility(View.GONE);
                 break;
             case IjkVideoView.STATE_ERROR:
                 L.e("STATE_ERROR");
-                startPlayButton.setVisibility(View.GONE);
-                loadingProgress.setVisibility(View.GONE);
-                thumb.setVisibility(View.GONE);
-                bottomProgress.setVisibility(View.GONE);
-                topContainer.setVisibility(View.GONE);
+                mStartPlayButton.setVisibility(View.GONE);
+                mLoadingProgress.setVisibility(View.GONE);
+                mThumb.setVisibility(View.GONE);
+                mBottomProgress.setVisibility(View.GONE);
+                mTopContainer.setVisibility(View.GONE);
                 break;
             case IjkVideoView.STATE_BUFFERING:
                 L.e("STATE_BUFFERING");
-                startPlayButton.setVisibility(View.GONE);
-                loadingProgress.setVisibility(View.VISIBLE);
-                thumb.setVisibility(View.GONE);
+                mStartPlayButton.setVisibility(View.GONE);
+                mLoadingProgress.setVisibility(View.VISIBLE);
+                mThumb.setVisibility(View.GONE);
                 break;
             case IjkVideoView.STATE_BUFFERED:
-                loadingProgress.setVisibility(View.GONE);
-                startPlayButton.setVisibility(View.GONE);
-                thumb.setVisibility(View.GONE);
+                mLoadingProgress.setVisibility(View.GONE);
+                mStartPlayButton.setVisibility(View.GONE);
+                mThumb.setVisibility(View.GONE);
                 L.e("STATE_BUFFERED");
                 break;
             case IjkVideoView.STATE_PLAYBACK_COMPLETED:
                 L.e("STATE_PLAYBACK_COMPLETED");
                 hide();
                 removeCallbacks(mShowProgress);
-                startPlayButton.setVisibility(View.GONE);
-                thumb.setVisibility(View.VISIBLE);
-                completeContainer.setVisibility(View.VISIBLE);
-                bottomProgress.setProgress(0);
-                bottomProgress.setSecondaryProgress(0);
-                isLocked = false;
-                mediaPlayer.setLock(false);
+                mStartPlayButton.setVisibility(View.GONE);
+                mThumb.setVisibility(View.VISIBLE);
+                mCompleteContainer.setVisibility(View.VISIBLE);
+                mBottomProgress.setProgress(0);
+                mBottomProgress.setSecondaryProgress(0);
+                mIsLocked = false;
+                mMediaPlayer.setLock(false);
                 break;
         }
     }
 
     protected void doLockUnlock() {
-        if (isLocked) {
-            isLocked = false;
+        if (mIsLocked) {
+            mIsLocked = false;
             mShowing = false;
-            gestureEnabled = true;
+            mIsGestureEnabled = true;
             show();
-            lock.setSelected(false);
+            mLockButton.setSelected(false);
             Toast.makeText(getContext(), R.string.dkplayer_unlocked, Toast.LENGTH_SHORT).show();
         } else {
             hide();
-            isLocked = true;
-            gestureEnabled = false;
-            lock.setSelected(true);
+            mIsLocked = true;
+            mIsGestureEnabled = false;
+            mLockButton.setSelected(true);
             Toast.makeText(getContext(), R.string.dkplayer_locked, Toast.LENGTH_SHORT).show();
         }
-        mediaPlayer.setLock(isLocked);
+        mMediaPlayer.setLock(mIsLocked);
     }
 
     /**
      * 设置是否为直播视频
      */
     public void setLive() {
-        isLive = true;
-        bottomProgress.setVisibility(View.GONE);
-        videoProgress.setVisibility(View.INVISIBLE);
-        totalTime.setVisibility(View.INVISIBLE);
-        currTime.setVisibility(View.INVISIBLE);
-        refresh.setVisibility(View.VISIBLE);
+        mIsLive = true;
+        mBottomProgress.setVisibility(View.GONE);
+        mVideoProgress.setVisibility(View.INVISIBLE);
+        mTotalTime.setVisibility(View.INVISIBLE);
+        mCurrTime.setVisibility(View.INVISIBLE);
+        mRefreshButton.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-        isDragging = true;
+        mIsDragging = true;
         removeCallbacks(mShowProgress);
         removeCallbacks(mFadeOut);
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        long duration = mediaPlayer.getDuration();
-        long newPosition = (duration * seekBar.getProgress()) / videoProgress.getMax();
-        mediaPlayer.seekTo((int) newPosition);
-        isDragging = false;
+        long duration = mMediaPlayer.getDuration();
+        long newPosition = (duration * seekBar.getProgress()) / mVideoProgress.getMax();
+        mMediaPlayer.seekTo((int) newPosition);
+        mIsDragging = false;
         post(mShowProgress);
         show();
     }
@@ -311,55 +312,55 @@ public class StandardVideoController extends GestureVideoController implements V
             return;
         }
 
-        long duration = mediaPlayer.getDuration();
-        long newPosition = (duration * progress) / videoProgress.getMax();
-        if (currTime != null)
-            currTime.setText(stringForTime((int) newPosition));
+        long duration = mMediaPlayer.getDuration();
+        long newPosition = (duration * progress) / mVideoProgress.getMax();
+        if (mCurrTime != null)
+            mCurrTime.setText(stringForTime((int) newPosition));
     }
 
     @Override
     public void hide() {
         if (mShowing) {
-            if (mediaPlayer.isFullScreen()) {
-                lock.setVisibility(View.GONE);
-                if (!isLocked) {
+            if (mMediaPlayer.isFullScreen()) {
+                mLockButton.setVisibility(View.GONE);
+                if (!mIsLocked) {
                     hideAllViews();
                 }
             } else {
-                bottomContainer.setVisibility(View.GONE);
-                bottomContainer.startAnimation(hideAnim);
+                mBottomContainer.setVisibility(View.GONE);
+                mBottomContainer.startAnimation(mHideAnim);
             }
-            if (!isLive && !isLocked) {
-                bottomProgress.setVisibility(View.VISIBLE);
-                bottomProgress.startAnimation(showAnim);
+            if (!mIsLive && !mIsLocked) {
+                mBottomProgress.setVisibility(View.VISIBLE);
+                mBottomProgress.startAnimation(mShowAnim);
             }
             mShowing = false;
         }
     }
 
     private void hideAllViews() {
-        topContainer.setVisibility(View.GONE);
-        topContainer.startAnimation(hideAnim);
-        bottomContainer.setVisibility(View.GONE);
-        bottomContainer.startAnimation(hideAnim);
+        mTopContainer.setVisibility(View.GONE);
+        mTopContainer.startAnimation(mHideAnim);
+        mBottomContainer.setVisibility(View.GONE);
+        mBottomContainer.startAnimation(mHideAnim);
     }
 
     private void show(int timeout) {
-        if (sysTime != null)
-            sysTime.setText(getCurrentSystemTime());
+        if (mSysTime != null)
+            mSysTime.setText(getCurrentSystemTime());
         if (!mShowing) {
-            if (mediaPlayer.isFullScreen()) {
-                lock.setVisibility(View.VISIBLE);
-                if (!isLocked) {
+            if (mMediaPlayer.isFullScreen()) {
+                mLockButton.setVisibility(View.VISIBLE);
+                if (!mIsLocked) {
                     showAllViews();
                 }
             } else {
-                bottomContainer.setVisibility(View.VISIBLE);
-                bottomContainer.startAnimation(showAnim);
+                mBottomContainer.setVisibility(View.VISIBLE);
+                mBottomContainer.startAnimation(mShowAnim);
             }
-            if (!isLocked && !isLive) {
-                bottomProgress.setVisibility(View.GONE);
-                bottomProgress.startAnimation(hideAnim);
+            if (!mIsLocked && !mIsLive) {
+                mBottomProgress.setVisibility(View.GONE);
+                mBottomProgress.startAnimation(mHideAnim);
             }
             mShowing = true;
         }
@@ -370,54 +371,54 @@ public class StandardVideoController extends GestureVideoController implements V
     }
 
     private void showAllViews() {
-        bottomContainer.setVisibility(View.VISIBLE);
-        bottomContainer.startAnimation(showAnim);
-        topContainer.setVisibility(View.VISIBLE);
-        topContainer.startAnimation(showAnim);
+        mBottomContainer.setVisibility(View.VISIBLE);
+        mBottomContainer.startAnimation(mShowAnim);
+        mTopContainer.setVisibility(View.VISIBLE);
+        mTopContainer.startAnimation(mShowAnim);
     }
 
     @Override
     public void show() {
-        show(sDefaultTimeout);
+        show(mDefaultTimeout);
     }
 
     @Override
     protected int setProgress() {
-        if (mediaPlayer == null || isDragging) {
+        if (mMediaPlayer == null || mIsDragging) {
             return 0;
         }
 
-        if (title != null && TextUtils.isEmpty(title.getText())) {
-            title.setText(mediaPlayer.getTitle());
+        if (mTitle != null && TextUtils.isEmpty(mTitle.getText())) {
+            mTitle.setText(mMediaPlayer.getTitle());
         }
 
-        if (isLive) return 0;
+        if (mIsLive) return 0;
 
-        int position = (int) mediaPlayer.getCurrentPosition();
-        int duration = (int) mediaPlayer.getDuration();
-        if (videoProgress != null) {
+        int position = (int) mMediaPlayer.getCurrentPosition();
+        int duration = (int) mMediaPlayer.getDuration();
+        if (mVideoProgress != null) {
             if (duration > 0) {
-                videoProgress.setEnabled(true);
-                int pos = (int) (position * 1.0 / duration * videoProgress.getMax());
-                videoProgress.setProgress(pos);
-                bottomProgress.setProgress(pos);
+                mVideoProgress.setEnabled(true);
+                int pos = (int) (position * 1.0 / duration * mVideoProgress.getMax());
+                mVideoProgress.setProgress(pos);
+                mBottomProgress.setProgress(pos);
             } else {
-                videoProgress.setEnabled(false);
+                mVideoProgress.setEnabled(false);
             }
-            int percent = mediaPlayer.getBufferPercentage();
+            int percent = mMediaPlayer.getBufferedPercentage();
             if (percent >= 95) { //解决缓冲进度不能100%问题
-                videoProgress.setSecondaryProgress(videoProgress.getMax());
-                bottomProgress.setSecondaryProgress(bottomProgress.getMax());
+                mVideoProgress.setSecondaryProgress(mVideoProgress.getMax());
+                mBottomProgress.setSecondaryProgress(mBottomProgress.getMax());
             } else {
-                videoProgress.setSecondaryProgress(percent * 10);
-                bottomProgress.setSecondaryProgress(percent * 10);
+                mVideoProgress.setSecondaryProgress(percent * 10);
+                mBottomProgress.setSecondaryProgress(percent * 10);
             }
         }
 
-        if (totalTime != null)
-            totalTime.setText(stringForTime(duration));
-        if (currTime != null)
-            currTime.setText(stringForTime(position));
+        if (mTotalTime != null)
+            mTotalTime.setText(stringForTime(duration));
+        if (mCurrTime != null)
+            mCurrTime.setText(stringForTime(position));
 
         return position;
     }
@@ -425,7 +426,7 @@ public class StandardVideoController extends GestureVideoController implements V
 
     @Override
     protected void slideToChangePosition(float deltaX) {
-        if (isLive) {
+        if (mIsLive) {
             mNeedSeek = false;
         } else {
             super.slideToChangePosition(deltaX);
@@ -433,19 +434,23 @@ public class StandardVideoController extends GestureVideoController implements V
     }
 
     public ImageView getThumb() {
-        return thumb;
+        return mThumb;
     }
 
     @Override
     public boolean onBackPressed() {
-        if (isLocked) {
+        if (mIsLocked) {
             show();
             Toast.makeText(getContext(), R.string.dkplayer_lock_tip, Toast.LENGTH_SHORT).show();
             return true;
         }
-        if (mediaPlayer.isFullScreen()) {
-            WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            mediaPlayer.stopFullScreen();
+
+        Activity activity = WindowUtil.scanForActivity(getContext());
+        if (activity == null) return super.onBackPressed();
+
+        if (mMediaPlayer.isFullScreen()) {
+            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            mMediaPlayer.stopFullScreen();
             return true;
         }
         return super.onBackPressed();

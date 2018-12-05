@@ -38,8 +38,8 @@ public class RotateInFullscreenController extends StandardVideoController {
         mGestureDetector = new GestureDetector(getContext(), new MyGestureListener() {
             @Override
             public boolean onSingleTapConfirmed(MotionEvent e) {
-                if (!mediaPlayer.isFullScreen()) {
-                    mediaPlayer.startFullScreen();
+                if (!mMediaPlayer.isFullScreen()) {
+                    mMediaPlayer.startFullScreen();
                     return true;
                 }
                 if (mShowing) {
@@ -61,7 +61,7 @@ public class RotateInFullscreenController extends StandardVideoController {
             WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             isLandscape = true;
         }
-        fullScreenButton.setSelected(isLandscape);
+        mFullScreenButton.setSelected(isLandscape);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class RotateInFullscreenController extends StandardVideoController {
         super.setPlayerState(playerState);
         switch (playerState) {
             case IjkVideoView.PLAYER_FULL_SCREEN:
-                fullScreenButton.setSelected(false);
+                mFullScreenButton.setSelected(false);
                 getThumb().setVisibility(GONE);
                 break;
         }
@@ -88,27 +88,27 @@ public class RotateInFullscreenController extends StandardVideoController {
         } else if (i == R.id.back) {
             if (isLandscape)
                 WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            mediaPlayer.stopFullScreen();
+            mMediaPlayer.stopFullScreen();
         } else if (i == R.id.thumb) {
-            mediaPlayer.start();
-            mediaPlayer.startFullScreen();
+            mMediaPlayer.start();
+            mMediaPlayer.startFullScreen();
         } else if (i == R.id.iv_replay) {
-            mediaPlayer.retry();
-            mediaPlayer.startFullScreen();
+            mMediaPlayer.retry();
+            mMediaPlayer.startFullScreen();
         }
     }
 
     @Override
     public boolean onBackPressed() {
-        if (isLocked) {
+        if (mIsLocked) {
             show();
             Toast.makeText(getContext(), R.string.lock_tip, Toast.LENGTH_SHORT).show();
             return true;
         }
-        if (mediaPlayer.isFullScreen()) {
+        if (mMediaPlayer.isFullScreen()) {
             if (isLandscape)
                 WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            mediaPlayer.stopFullScreen();
+            mMediaPlayer.stopFullScreen();
             return true;
         }
         return super.onBackPressed();

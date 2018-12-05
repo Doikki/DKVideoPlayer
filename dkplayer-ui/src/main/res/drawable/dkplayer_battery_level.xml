@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<level-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:drawable="@drawable/dkplayer_ic_action_battery"
+        android:maxLevel="100"
+        android:minLevel="90" />
+    <item
+        android:drawable="@drawable/dkplayer_ic_action_battery_10"
+        android:maxLevel="10"
+        android:minLevel="0" />
+    <item
+        android:drawable="@drawable/dkplayer_ic_action_battery_20"
+        android:maxLevel="20"
+        android:minLevel="10" />
+    <item
+        android:drawable="@drawable/dkplayer_ic_action_battery_30"
+        android:maxLevel="30"
+        android:minLevel="20" />
+    <item
+        android:drawable="@drawable/dkplayer_ic_action_battery_40"
+        android:maxLevel="40"
+        android:minLevel="30" />
+    <item
+        android:drawable="@drawable/dkplayer_ic_action_battery_50"
+        android:maxLevel="50"
+        android:minLevel="40" />
+    <item
+        android:drawable="@drawable/dkplayer_ic_action_battery_60"
+        android:maxLevel="60"
+        android:minLevel="50" />
+    <item
+        android:drawable="@drawable/dkplayer_ic_action_battery_70"
+        android:maxLevel="70"
+        android:minLevel="60" />
+    <item
+        android:drawable="@drawable/dkplayer_ic_action_battery_80"
+        android:maxLevel="80"
+        android:minLevel="70" />
+    <item
+        android:drawable="@drawable/dkplayer_ic_action_battery_90"
+        android:maxLevel="90"
+        android:minLevel="80" />
+</level-list>
