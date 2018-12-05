@@ -6,25 +6,27 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.res.Resources;
 import android.graphics.Point;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ContextThemeWrapper;
+import android.telephony.TelephonyManager;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.WindowManager;
 
 /**
- * Window工具类
+ * 播放器相关工具类
  * Created by Devlin_n on 2017/4/10.
  */
 
-public class WindowUtil {
+public class PlayerUtils {
 
     /**
      * 获取状态栏高度
@@ -91,10 +93,10 @@ public class WindowUtil {
     }
 
     /**
-     * 隐藏ActionBar，StatusBar，NavigationBar
+     * 隐藏ActionBar
      */
     @SuppressLint("RestrictedApi")
-    public static void hideSystemBar(Context context) {
+    public static void hideActionBar(Context context) {
         AppCompatActivity appCompatActivity = getAppCompatActivity(context);
         if (appCompatActivity != null) {
             ActionBar ab = appCompatActivity.getSupportActionBar();
@@ -103,14 +105,13 @@ public class WindowUtil {
                 ab.hide();
             }
         }
-        hideNavigationBar(context);
     }
 
     /**
-     * 显示ActionBar，StatusBar，NavigationBar
+     * 显示ActionBar
      */
     @SuppressLint("RestrictedApi")
-    public static void showSystemBar(final Context context) {
+    public static void showActionBar(final Context context) {
         AppCompatActivity appCompatActivity = getAppCompatActivity(context);
         if (appCompatActivity != null) {
             ActionBar ab = appCompatActivity.getSupportActionBar();
@@ -119,7 +120,6 @@ public class WindowUtil {
                 ab.show();
             }
         }
-        showNavigationBar(context);
     }
 
     /**
@@ -128,32 +128,6 @@ public class WindowUtil {
     public static Activity scanForActivity(Context context) {
         return context == null ? null : (context instanceof Activity ? (Activity) context : (context instanceof ContextWrapper ? scanForActivity(((ContextWrapper) context).getBaseContext()) : null));
     }
-
-    private static final int FLAGS =
-            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN;
-
-    private static void hideNavigationBar(Context context) {
-        Activity activity = scanForActivity(context);
-        if (activity == null) return;
-        View decorView = activity.getWindow().getDecorView();
-        decorView.setSystemUiVisibility(FLAGS);
-    }
-
-    private static void showNavigationBar(Context context) {
-        Activity activity = scanForActivity(context);
-        if (activity == null) return;
-        View decorView = activity.getWindow().getDecorView();
-        int systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-        decorView.setSystemUiVisibility(systemUiVisibility);
-    }
-
 
     /**
      * Get AppCompatActivity from context
@@ -198,5 +172,68 @@ public class WindowUtil {
                 || e.getRawX() > getScreenWidth(context) - edgeSize
                 || e.getRawY() < edgeSize
                 || e.getRawY() > getScreenHeight(context, true) - edgeSize;
+    }
+
+
+    public static final int NO_NETWORK = 0;
+    public static final int NETWORK_CLOSED = 1;
+    public static final int NETWORK_ETHERNET = 2;
+    public static final int NETWORK_WIFI = 3;
+    public static final int NETWORK_MOBILE = 4;
+    public static final int NETWORK_UNKNOWN = -1;
+
+    /**
+     * 判断当前网络类型-1为未知网络0为没有网络连接1网络断开或关闭2为以太网3为WiFi4为2G5为3G6为4G
+     */
+    public static int getNetworkType(Context context) {
+        //改为context.getApplicationContext()，防止在Android 6.0上发生内存泄漏
+        ConnectivityManager connectMgr = (ConnectivityManager) context.getApplicationContext()
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        if (connectMgr == null) {
+            return NO_NETWORK;
+        }
+
+        NetworkInfo networkInfo = connectMgr.getActiveNetworkInfo();
+        if (networkInfo == null) {
+            // 没有任何网络
+            return NO_NETWORK;
+        }
+        if (!networkInfo.isConnected()) {
+            // 网络断开或关闭
+            return NETWORK_CLOSED;
+        }
+        if (networkInfo.getType() == ConnectivityManager.TYPE_ETHERNET) {
+            // 以太网网络
+            return NETWORK_ETHERNET;
+        } else if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+            // wifi网络，当激活时，默认情况下，所有的数据流量将使用此连接
+            return NETWORK_WIFI;
+        } else if (networkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
+            // 移动数据连接,不能与连接共存,如果wifi打开，则自动关闭
+            switch (networkInfo.getSubtype()) {
+                case TelephonyManager.NETWORK_TYPE_GPRS:
+                case TelephonyManager.NETWORK_TYPE_EDGE:
+                case TelephonyManager.NETWORK_TYPE_CDMA:
+                case TelephonyManager.NETWORK_TYPE_1xRTT:
+                case TelephonyManager.NETWORK_TYPE_IDEN:
+                    // 2G网络
+                case TelephonyManager.NETWORK_TYPE_UMTS:
+                case TelephonyManager.NETWORK_TYPE_EVDO_0:
+                case TelephonyManager.NETWORK_TYPE_EVDO_A:
+                case TelephonyManager.NETWORK_TYPE_HSDPA:
+                case TelephonyManager.NETWORK_TYPE_HSUPA:
+                case TelephonyManager.NETWORK_TYPE_HSPA:
+                case TelephonyManager.NETWORK_TYPE_EVDO_B:
+                case TelephonyManager.NETWORK_TYPE_EHRPD:
+                case TelephonyManager.NETWORK_TYPE_HSPAP:
+                    // 3G网络
+                case TelephonyManager.NETWORK_TYPE_LTE:
+                    // 4G网络
+                    return NETWORK_MOBILE;
+            }
+        }
+        // 未知网络
+        return NETWORK_UNKNOWN;
     }
 }

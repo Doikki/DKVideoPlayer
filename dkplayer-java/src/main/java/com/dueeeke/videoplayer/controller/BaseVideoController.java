@@ -12,9 +12,9 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.dueeeke.videoplayer.R;
+import com.dueeeke.videoplayer.player.BaseIjkVideoView;
 import com.dueeeke.videoplayer.player.IjkVideoView;
-import com.dueeeke.videoplayer.util.PlayerConstants;
-import com.dueeeke.videoplayer.util.WindowUtil;
+import com.dueeeke.videoplayer.util.PlayerUtils;
 import com.dueeeke.videoplayer.widget.StatusView;
 
 import java.text.SimpleDateFormat;
@@ -105,7 +105,7 @@ public abstract class BaseVideoController extends FrameLayout {
             @Override
             public void onClick(View v) {
                 hideStatusView();
-                PlayerConstants.IS_PLAY_ON_MOBILE_NETWORK = true;
+                BaseIjkVideoView.IS_PLAY_ON_MOBILE_NETWORK = true;
                 mMediaPlayer.start();
             }
         });
@@ -132,7 +132,7 @@ public abstract class BaseVideoController extends FrameLayout {
      * 横竖屏切换
      */
     protected void doStartStopFullScreen() {
-        Activity activity = WindowUtil.scanForActivity(getContext());
+        Activity activity = PlayerUtils.scanForActivity(getContext());
         if (activity == null) return;
         if (mMediaPlayer.isFullScreen()) {
             mMediaPlayer.stopFullScreen();

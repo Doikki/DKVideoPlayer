@@ -13,7 +13,7 @@ import android.widget.Toast;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
-import com.dueeeke.videoplayer.util.WindowUtil;
+import com.dueeeke.videoplayer.util.PlayerUtils;
 
 public class RotateInFullscreenController extends StandardVideoController {
 
@@ -55,10 +55,10 @@ public class RotateInFullscreenController extends StandardVideoController {
     @Override
     protected void doStartStopFullScreen() {
         if (isLandscape) {
-            WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            PlayerUtils.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             isLandscape = false;
         } else {
-            WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            PlayerUtils.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             isLandscape = true;
         }
         mFullScreenButton.setSelected(isLandscape);
@@ -87,7 +87,7 @@ public class RotateInFullscreenController extends StandardVideoController {
             doPauseResume();
         } else if (i == R.id.back) {
             if (isLandscape)
-                WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                PlayerUtils.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             mMediaPlayer.stopFullScreen();
         } else if (i == R.id.thumb) {
             mMediaPlayer.start();
@@ -107,7 +107,7 @@ public class RotateInFullscreenController extends StandardVideoController {
         }
         if (mMediaPlayer.isFullScreen()) {
             if (isLandscape)
-                WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                PlayerUtils.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             mMediaPlayer.stopFullScreen();
             return true;
         }

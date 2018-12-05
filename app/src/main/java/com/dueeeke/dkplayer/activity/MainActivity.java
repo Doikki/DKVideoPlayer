@@ -2,10 +2,7 @@ package com.dueeeke.dkplayer.activity;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -15,14 +12,15 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.dueeeke.dkplayer.util.PIPManager;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.activity.api.ApiActivity;
+import com.dueeeke.dkplayer.activity.api.PlayerActivity;
 import com.dueeeke.dkplayer.activity.extend.ExtendActivity;
 import com.dueeeke.dkplayer.activity.list.ListActivity;
-import com.dueeeke.dkplayer.activity.api.PlayerActivity;
 import com.dueeeke.dkplayer.activity.pip.PIPDemoActivity;
+import com.dueeeke.dkplayer.util.PIPManager;
 import com.dueeeke.videoplayer.player.VideoCacheManager;
+import com.yanzhenjie.permission.AndPermission;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,10 +44,17 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
         });
-        //用于将视频缓存到SDCard，如不授权将缓存到/data/data目录
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1001);
-        }
+        AndPermission
+                .with(this)
+                .runtime()
+                .permission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .onDenied(data -> {
+
+                })
+                .onGranted(data -> {
+
+                })
+                .start();
     }
 
     @Override

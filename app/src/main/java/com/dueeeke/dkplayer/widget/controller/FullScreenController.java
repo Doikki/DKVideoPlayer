@@ -19,7 +19,7 @@ import com.dueeeke.dkplayer.R;
 import com.dueeeke.videoplayer.controller.GestureVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.util.L;
-import com.dueeeke.videoplayer.util.WindowUtil;
+import com.dueeeke.videoplayer.util.PlayerUtils;
 
 /**
  * 全屏控制器
@@ -93,7 +93,7 @@ public class FullScreenController extends GestureVideoController implements View
         } else if (i == R.id.iv_play || i == R.id.iv_replay) {
             doPauseResume();
         } else if (i == R.id.back) {
-            WindowUtil.scanForActivity(getContext()).finish();
+            PlayerUtils.scanForActivity(getContext()).finish();
         }
     }
 

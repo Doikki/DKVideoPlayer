@@ -17,8 +17,8 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 public class IjkPlayer extends AbstractPlayer {
 
     protected IjkMediaPlayer mMediaPlayer;
-    private boolean isLooping;
-    private boolean isEnableMediaCodec;
+    private boolean mIsLooping;
+    private boolean mIsEnableMediaCodec;
     protected Context mAppContext;
     private int mBufferedPercent;
 
@@ -111,9 +111,9 @@ public class IjkPlayer extends AbstractPlayer {
     public void reset() {
         mMediaPlayer.reset();
         mMediaPlayer.setOnVideoSizeChangedListener(onVideoSizeChangedListener);
-        mMediaPlayer.setLooping(isLooping);
+        mMediaPlayer.setLooping(mIsLooping);
         setOptions();
-        setEnableMediaCodec(isEnableMediaCodec);
+        setEnableMediaCodec(mIsEnableMediaCodec);
     }
 
     @Override
@@ -168,13 +168,13 @@ public class IjkPlayer extends AbstractPlayer {
 
     @Override
     public void setLooping(boolean isLooping) {
-        this.isLooping = isLooping;
+        this.mIsLooping = isLooping;
         mMediaPlayer.setLooping(isLooping);
     }
 
     @Override
     public void setEnableMediaCodec(boolean isEnable) {
-        isEnableMediaCodec = isEnable;
+        mIsEnableMediaCodec = isEnable;
         int value = isEnable ? 1 : 0;
         mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", value);//开启硬解码
         mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", value);

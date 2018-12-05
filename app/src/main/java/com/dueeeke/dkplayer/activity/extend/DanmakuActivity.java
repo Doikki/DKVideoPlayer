@@ -22,7 +22,7 @@ import com.dueeeke.dkplayer.widget.CenteredImageSpan;
 import com.dueeeke.dkplayer.widget.videoview.DanmukuVideoView;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.player.PlayerConfig;
-import com.dueeeke.videoplayer.util.WindowUtil;
+import com.dueeeke.videoplayer.util.PlayerUtils;
 
 import java.util.HashMap;
 
@@ -193,7 +193,7 @@ public class DanmakuActivity extends AppCompatActivity {
         // for(int i=0;i<100;i++){
         // }
         Drawable drawable = ContextCompat.getDrawable(this, R.mipmap.ic_launcher_round);
-        int size = WindowUtil.dp2px(this, 20);
+        int size = PlayerUtils.dp2px(this, 20);
         drawable.setBounds(0, 0, size, size);
 
 //        danmaku.text = "这是一条弹幕";
@@ -202,7 +202,7 @@ public class DanmakuActivity extends AppCompatActivity {
         danmaku.priority = 0;  // 可能会被各种过滤器过滤并隐藏显示
         danmaku.isLive = false;
         danmaku.setTime(mDanmakuView.getCurrentTime() + 1200);
-        danmaku.textSize = WindowUtil.sp2px(this, 12);
+        danmaku.textSize = PlayerUtils.sp2px(this, 12);
         danmaku.textColor = Color.RED;
         danmaku.textShadowColor = Color.WHITE;
         // danmaku.underlineColor = Color.GREEN;
@@ -221,7 +221,7 @@ public class DanmakuActivity extends AppCompatActivity {
         danmaku.priority = 0;  // 可能会被各种过滤器过滤并隐藏显示
         danmaku.isLive = false;
         danmaku.setTime(mDanmakuView.getCurrentTime() + 1200);
-        danmaku.textSize = WindowUtil.sp2px(this, 12);
+        danmaku.textSize = PlayerUtils.sp2px(this, 12);
         danmaku.textColor = Color.WHITE;
         danmaku.textShadowColor = Color.RED;
         // danmaku.underlineColor = Color.GREEN;
@@ -258,7 +258,7 @@ public class DanmakuActivity extends AppCompatActivity {
         public void drawBackground(BaseDanmaku danmaku, Canvas canvas, float left, float top) {
             paint.setAntiAlias(true);
             paint.setColor(Color.parseColor("#65777777"));//黑色 普通
-            int radius = WindowUtil.dp2px(DanmakuActivity.this, 10);
+            int radius = PlayerUtils.dp2px(DanmakuActivity.this, 10);
             canvas.drawRoundRect(new RectF(left, top, left + danmaku.paintWidth, top + danmaku.paintHeight), radius, radius, paint);
         }
 

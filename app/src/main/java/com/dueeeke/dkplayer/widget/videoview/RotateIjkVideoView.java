@@ -8,7 +8,7 @@ import android.util.AttributeSet;
 import android.view.ViewGroup;
 
 import com.dueeeke.videoplayer.player.IjkVideoView;
-import com.dueeeke.videoplayer.util.WindowUtil;
+import com.dueeeke.videoplayer.util.PlayerUtils;
 
 public class RotateIjkVideoView extends IjkVideoView {
     public RotateIjkVideoView(@NonNull Context context) {
@@ -25,10 +25,10 @@ public class RotateIjkVideoView extends IjkVideoView {
 
     @Override
     public void startFullScreen() {
-        Activity activity = WindowUtil.scanForActivity(getContext());
+        Activity activity = PlayerUtils.scanForActivity(getContext());
         if (activity == null) return;
         if (mIsFullScreen) return;
-        WindowUtil.hideSystemBar(getContext());
+        PlayerUtils.hideActionBar(getContext());
         this.removeView(mPlayerContainer);
         ViewGroup contentView = activity
                 .findViewById(android.R.id.content);
@@ -42,11 +42,11 @@ public class RotateIjkVideoView extends IjkVideoView {
 
     @Override
     public void stopFullScreen() {
-        Activity activity = WindowUtil.scanForActivity(getContext());
+        Activity activity = PlayerUtils.scanForActivity(getContext());
         if (activity == null) return;
         if (!mIsFullScreen) return;
         if (mVideoController != null) mVideoController.hide();
-        WindowUtil.showSystemBar(getContext());
+        PlayerUtils.showActionBar(getContext());
         ViewGroup contentView = activity
                 .findViewById(android.R.id.content);
         contentView.removeView(mPlayerContainer);

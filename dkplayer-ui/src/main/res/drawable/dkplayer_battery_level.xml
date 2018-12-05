@@ -4,41 +4,41 @@
     <item
         android:drawable="@drawable/dkplayer_ic_action_battery"
         android:maxLevel="100"
-        android:minLevel="90" />
+        android:minLevel="95" />
     <item
         android:drawable="@drawable/dkplayer_ic_action_battery_10"
-        android:maxLevel="10"
+        android:maxLevel="15"
         android:minLevel="0" />
     <item
         android:drawable="@drawable/dkplayer_ic_action_battery_20"
-        android:maxLevel="20"
-        android:minLevel="10" />
+        android:maxLevel="25"
+        android:minLevel="15" />
     <item
         android:drawable="@drawable/dkplayer_ic_action_battery_30"
-        android:maxLevel="30"
-        android:minLevel="20" />
+        android:maxLevel="35"
+        android:minLevel="25" />
     <item
         android:drawable="@drawable/dkplayer_ic_action_battery_40"
-        android:maxLevel="40"
-        android:minLevel="30" />
+        android:maxLevel="45"
+        android:minLevel="35" />
     <item
         android:drawable="@drawable/dkplayer_ic_action_battery_50"
-        android:maxLevel="50"
-        android:minLevel="40" />
+        android:maxLevel="55"
+        android:minLevel="45" />
     <item
         android:drawable="@drawable/dkplayer_ic_action_battery_60"
-        android:maxLevel="60"
-        android:minLevel="50" />
+        android:maxLevel="65"
+        android:minLevel="55" />
     <item
         android:drawable="@drawable/dkplayer_ic_action_battery_70"
-        android:maxLevel="70"
-        android:minLevel="60" />
+        android:maxLevel="75"
+        android:minLevel="65" />
     <item
         android:drawable="@drawable/dkplayer_ic_action_battery_80"
-        android:maxLevel="80"
-        android:minLevel="70" />
+        android:maxLevel="85"
+        android:minLevel="75" />
     <item
         android:drawable="@drawable/dkplayer_ic_action_battery_90"
-        android:maxLevel="90"
-        android:minLevel="80" />
+        android:maxLevel="95"
+        android:minLevel="85" />
 </level-list>

@@ -8,7 +8,7 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 
 import com.dueeeke.videoplayer.player.IjkVideoView;
-import com.dueeeke.videoplayer.util.WindowUtil;
+import com.dueeeke.videoplayer.util.PlayerUtils;
 
 /**
  * 锁定全屏播放器
@@ -33,7 +33,7 @@ public class FullScreenIjkVideoView extends IjkVideoView {
      * 直接开始全屏播放
      */
     public void startFullScreenDirectly() {
-        Activity activity = WindowUtil.scanForActivity(getContext());
+        Activity activity = PlayerUtils.scanForActivity(getContext());
         if (activity == null) return;
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         startFullScreen();

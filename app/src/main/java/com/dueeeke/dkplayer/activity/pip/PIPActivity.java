@@ -1,6 +1,5 @@
 package com.dueeeke.dkplayer.activity.pip;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
@@ -8,15 +7,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.devlin_n.floatWindowPermission.FloatWindowManager;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.util.PIPManager;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.player.PlayerConfig;
+import com.yanzhenjie.permission.AndPermission;
 
 public class PIPActivity extends AppCompatActivity{
     private PIPManager mPIPManager;
@@ -95,24 +93,18 @@ public class PIPActivity extends AppCompatActivity{
         super.onBackPressed();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == FloatWindowManager.PERMISSION_REQUEST_CODE) {
-            if (FloatWindowManager.getInstance().checkPermission(this)) {
-                mPIPManager.startFloatWindow();
-                finish();
-            } else {
-                Toast.makeText(PIPActivity.this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
     public void startFloatWindow(View view) {
-        if (FloatWindowManager.getInstance().checkPermission(this)) {
-            mPIPManager.startFloatWindow();
-            finish();
-        } else {
-            FloatWindowManager.getInstance().applyPermission(this);
-        }
+
+        AndPermission
+                .with(this)
+                .overlay()
+                .onGranted(data -> {
+                    mPIPManager.startFloatWindow();
+                    finish();
+                })
+                .onDenied(data -> {
+
+                })
+                .start();
     }
 }

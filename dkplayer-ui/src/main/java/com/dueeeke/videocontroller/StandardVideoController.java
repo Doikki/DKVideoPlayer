@@ -25,7 +25,7 @@ import android.widget.Toast;
 import com.dueeeke.videoplayer.controller.GestureVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.util.L;
-import com.dueeeke.videoplayer.util.WindowUtil;
+import com.dueeeke.videoplayer.util.PlayerUtils;
 
 /**
  * 直播/点播控制器
@@ -445,7 +445,7 @@ public class StandardVideoController extends GestureVideoController implements V
             return true;
         }
 
-        Activity activity = WindowUtil.scanForActivity(getContext());
+        Activity activity = PlayerUtils.scanForActivity(getContext());
         if (activity == null) return super.onBackPressed();
 
         if (mMediaPlayer.isFullScreen()) {

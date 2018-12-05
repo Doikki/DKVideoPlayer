@@ -19,7 +19,7 @@ import com.dueeeke.videoplayer.controller.MediaPlayerControl;
 import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.listener.PlayerEventListener;
 import com.dueeeke.videoplayer.util.ProgressUtil;
-import com.dueeeke.videoplayer.util.WindowUtil;
+import com.dueeeke.videoplayer.util.PlayerUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -77,6 +77,8 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     protected PlayerConfig mPlayerConfig;//播放器配置
     private HttpProxyCacheServer mCacheServer;
 
+    public static boolean IS_PLAY_ON_MOBILE_NETWORK = false;//记录是否在移动网络下播放视频
+
     protected List<OnVideoViewStateChangeListener> mOnVideoViewStateChangeListeners;
 
     /**
@@ -86,7 +88,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         @Override
         public void onOrientationChanged(int orientation) {
             if (mVideoController == null) return;
-            Activity activity = WindowUtil.scanForActivity(mVideoController.getContext());
+            Activity activity = PlayerUtils.scanForActivity(mVideoController.getContext());
             if (activity == null) return;
             if (orientation >= 340) { //屏幕顶部朝上
                 onOrientationPortrait(activity);

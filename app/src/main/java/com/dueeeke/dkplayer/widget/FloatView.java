@@ -11,7 +11,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.dueeeke.dkplayer.R;
-import com.dueeeke.videoplayer.util.WindowUtil;
+import com.dueeeke.videoplayer.util.PlayerUtils;
 
 /**
  * 悬浮窗控件（解决滑动冲突）
@@ -34,13 +34,13 @@ public class FloatView extends FrameLayout{
 
     private void init() {
         setBackgroundResource(R.drawable.shape_float_window_background);
-        int padding = WindowUtil.dp2px(getContext(), 1);
+        int padding = PlayerUtils.dp2px(getContext(), 1);
         setPadding(padding, padding, padding, padding);
         initWindow();
     }
 
     private void initWindow() {
-        mWindowManager = WindowUtil.getWindowManager(getContext().getApplicationContext());
+        mWindowManager = PlayerUtils.getWindowManager(getContext().getApplicationContext());
         mParams = new WindowManager.LayoutParams();
 //        mParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT; // 设置window type
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
@@ -54,7 +54,7 @@ public class FloatView extends FrameLayout{
         mParams.windowAnimations = R.style.FloatWindowAnimation;
         mParams.gravity = Gravity.START | Gravity.TOP; // 调整悬浮窗口至右下角
         // 设置悬浮窗口长宽数据
-        int width = WindowUtil.dp2px(getContext(), 250);
+        int width = PlayerUtils.dp2px(getContext(), 250);
         mParams.width = width;
         mParams.height = width * 9 / 16;
         mParams.x = floatX;
@@ -136,7 +136,7 @@ public class FloatView extends FrameLayout{
             case MotionEvent.ACTION_MOVE:
                 if (firstTouch) {
                     floatX = (int) event.getX();
-                    floatY = (int) (event.getY() + WindowUtil.getStatusBarHeight(getContext()));
+                    floatY = (int) (event.getY() + PlayerUtils.getStatusBarHeight(getContext()));
                     firstTouch = false;
                 }
                 mParams.x = X - floatX;

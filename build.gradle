@@ -34,6 +34,6 @@ ext {
     buildToolsVersion = '27.0.3'
 
     // App dependencies
-    supportLibraryVersion = '27.0.2'
+    supportLibraryVersion = '27.1.1'
     ijkPlayerVersion = '0.8.8'
 }

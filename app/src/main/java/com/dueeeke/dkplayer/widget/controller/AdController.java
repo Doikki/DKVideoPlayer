@@ -14,7 +14,7 @@ import com.dueeeke.dkplayer.interf.ControllerListener;
 import com.dueeeke.dkplayer.interf.ListMediaPlayerControl;
 import com.dueeeke.videoplayer.controller.BaseVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
-import com.dueeeke.videoplayer.util.WindowUtil;
+import com.dueeeke.videoplayer.util.PlayerUtils;
 
 /**
  * 广告控制器
@@ -130,7 +130,7 @@ public class AdController extends BaseVideoController implements View.OnClickLis
     @Override
     public boolean onBackPressed() {
         if (mMediaPlayer.isFullScreen()) {
-            WindowUtil.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            PlayerUtils.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             mMediaPlayer.stopFullScreen();
             setPlayerState(IjkVideoView.PLAYER_NORMAL);
             return true;

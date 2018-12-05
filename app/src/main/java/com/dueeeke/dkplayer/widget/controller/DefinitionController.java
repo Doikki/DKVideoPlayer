@@ -21,7 +21,7 @@ import com.dueeeke.dkplayer.interf.DefinitionMediaPlayerControl;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.util.L;
-import com.dueeeke.videoplayer.util.WindowUtil;
+import com.dueeeke.videoplayer.util.PlayerUtils;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -101,7 +101,7 @@ public class DefinitionController extends StandardVideoController {
     private void showRateMenu() {
         mPopLayout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         mPopupWindow.showAsDropDown(multiRate, -((mPopLayout.getMeasuredWidth() - multiRate.getMeasuredWidth()) / 2),
-                -(mPopLayout.getMeasuredHeight() + multiRate.getMeasuredHeight() + WindowUtil.dp2px(getContext(), 10)));
+                -(mPopLayout.getMeasuredHeight() + multiRate.getMeasuredHeight() + PlayerUtils.dp2px(getContext(), 10)));
     }
 
     private int currentIndex;

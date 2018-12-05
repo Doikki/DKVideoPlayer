@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.bumptech.glide.Glide;
-import com.devlin_n.floatWindowPermission.FloatWindowManager;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.adapter.FloatRecyclerViewAdapter;
 import com.dueeeke.dkplayer.bean.VideoBean;
@@ -19,6 +18,7 @@ import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.dkplayer.util.PIPManager;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.yanzhenjie.permission.AndPermission;
 
 import java.util.List;
 
@@ -98,25 +98,18 @@ public class PIPListActivity extends AppCompatActivity implements FloatRecyclerV
         });
     }
 
-
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (requestCode == FloatWindowManager.PERMISSION_REQUEST_CODE) {
-//            if (FloatWindowManager.getInstance().checkPermission(this)) {
-//                mPIPManager.startFloatWindow();
-//            } else {
-//                Toast.makeText(PIPListActivity.this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
-//            }
-//        }
-//    }
-
     private void startFloatWindow() {
-        if (FloatWindowManager.getInstance().checkPermission(this)) {
-            mPIPManager.startFloatWindow();
-        } else {
-            mPIPManager.reset();
-            FloatWindowManager.getInstance().applyPermission(this);
-        }
+        AndPermission
+                .with(this)
+                .overlay()
+                .onGranted(data -> {
+                    mPIPManager.startFloatWindow();
+                    finish();
+                })
+                .onDenied(data -> {
+
+                })
+                .start();
     }
 
     @Override

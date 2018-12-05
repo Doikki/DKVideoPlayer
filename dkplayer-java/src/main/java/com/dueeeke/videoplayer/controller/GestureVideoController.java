@@ -12,7 +12,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.dueeeke.videoplayer.R;
-import com.dueeeke.videoplayer.util.WindowUtil;
+import com.dueeeke.videoplayer.util.PlayerUtils;
 import com.dueeeke.videoplayer.widget.CenterView;
 
 /**
@@ -55,7 +55,7 @@ public abstract class GestureVideoController extends BaseVideoController{
         });
     }
 
-    protected int streamVolume;
+    protected int mStreamVolume;
 
     protected float mBrightness;
 
@@ -65,17 +65,17 @@ public abstract class GestureVideoController extends BaseVideoController{
 
     protected class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
 
-        private boolean firstTouch;
+        private boolean mFirstTouch;
         private boolean mChangePosition;
         private boolean mChangeBrightness;
         private boolean mChangeVolume;
 
         @Override
         public boolean onDown(MotionEvent e) {
-            if (!mIsGestureEnabled || WindowUtil.isEdge(getContext(), e)) return super.onDown(e);
-            streamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-            mBrightness = WindowUtil.scanForActivity(getContext()).getWindow().getAttributes().screenBrightness;
-            firstTouch = true;
+            if (!mIsGestureEnabled || PlayerUtils.isEdge(getContext(), e)) return super.onDown(e);
+            mStreamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+            mBrightness = PlayerUtils.scanForActivity(getContext()).getWindow().getAttributes().screenBrightness;
+            mFirstTouch = true;
             mChangePosition = false;
             mChangeBrightness = false;
             mChangeVolume = false;
@@ -94,19 +94,19 @@ public abstract class GestureVideoController extends BaseVideoController{
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            if (!mIsGestureEnabled || WindowUtil.isEdge(getContext(), e1)) return super.onScroll(e1, e2, distanceX, distanceY);
+            if (!mIsGestureEnabled || PlayerUtils.isEdge(getContext(), e1)) return super.onScroll(e1, e2, distanceX, distanceY);
             float deltaX = e1.getX() - e2.getX();
             float deltaY = e1.getY() - e2.getY();
-            if (firstTouch) {
+            if (mFirstTouch) {
                 mChangePosition = Math.abs(distanceX) >= Math.abs(distanceY);
                 if (!mChangePosition) {
-                    if (e2.getX() > WindowUtil.getScreenHeight(getContext(), false) / 2) {
+                    if (e2.getX() > PlayerUtils.getScreenHeight(getContext(), false) / 2) {
                         mChangeBrightness = true;
                     } else {
                         mChangeVolume = true;
                     }
                 }
-                firstTouch = false;
+                mFirstTouch = false;
             }
             if (mChangePosition) {
                 slideToChangePosition(deltaX);
@@ -165,7 +165,7 @@ public abstract class GestureVideoController extends BaseVideoController{
         mCenterView.setVisibility(VISIBLE);
         hide();
         mCenterView.setProVisibility(View.VISIBLE);
-        Window window = WindowUtil.scanForActivity(getContext()).getWindow();
+        Window window = PlayerUtils.scanForActivity(getContext()).getWindow();
         WindowManager.LayoutParams attributes = window.getAttributes();
         mCenterView.setIcon(R.drawable.dkplayer_ic_action_brightness);
         int height = getMeasuredHeight();
@@ -189,7 +189,7 @@ public abstract class GestureVideoController extends BaseVideoController{
         int streamMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         int height = getMeasuredHeight();
         float deltaV = deltaY * 2 / height * streamMaxVolume;
-        float index = streamVolume + deltaV;
+        float index = mStreamVolume + deltaV;
         if (index > streamMaxVolume) index = streamMaxVolume;
         if (index < 0) {
             mCenterView.setIcon(R.drawable.dkplayer_ic_action_volume_off);

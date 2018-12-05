@@ -13,14 +13,13 @@ import android.view.Gravity;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.TextureView;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.dueeeke.videoplayer.controller.BaseVideoController;
 import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
-import com.dueeeke.videoplayer.util.NetworkUtil;
-import com.dueeeke.videoplayer.util.PlayerConstants;
-import com.dueeeke.videoplayer.util.WindowUtil;
+import com.dueeeke.videoplayer.util.PlayerUtils;
 import com.dueeeke.videoplayer.widget.ResizeSurfaceView;
 import com.dueeeke.videoplayer.widget.ResizeTextureView;
 
@@ -37,6 +36,8 @@ public class IjkVideoView extends BaseIjkVideoView {
     protected SurfaceTexture mSurfaceTexture;
     protected FrameLayout mPlayerContainer;
     protected boolean mIsFullScreen;//是否处于全屏状态
+    //通过添加和移除这个view来实现隐藏和显示系统navigation bar和status bar，可以避免出现一些奇奇怪怪的问题
+    private View mHideSysBarView;
 
     public static final int SCREEN_SCALE_DEFAULT = 0;
     public static final int SCREEN_SCALE_16_9 = 1;
@@ -60,7 +61,6 @@ public class IjkVideoView extends BaseIjkVideoView {
         initView();
     }
 
-
     /**
      * 初始化播放器视图
      */
@@ -71,6 +71,10 @@ public class IjkVideoView extends BaseIjkVideoView {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
         this.addView(mPlayerContainer, params);
+
+        mHideSysBarView = new View(getContext());
+        mHideSysBarView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN);
     }
 
     /**
@@ -200,8 +204,8 @@ public class IjkVideoView extends BaseIjkVideoView {
     }
 
     protected boolean checkNetwork() {
-        if (NetworkUtil.getNetworkType(getContext()) == NetworkUtil.NETWORK_MOBILE
-                && !PlayerConstants.IS_PLAY_ON_MOBILE_NETWORK) {
+        if (PlayerUtils.getNetworkType(getContext()) == PlayerUtils.NETWORK_MOBILE
+                && !IS_PLAY_ON_MOBILE_NETWORK) {
             if (mVideoController != null) {
                 mVideoController.showStatusView();
             }
@@ -228,10 +232,11 @@ public class IjkVideoView extends BaseIjkVideoView {
     @Override
     public void startFullScreen() {
         if (mVideoController == null) return;
-        Activity activity = WindowUtil.scanForActivity(mVideoController.getContext());
+        Activity activity = PlayerUtils.scanForActivity(mVideoController.getContext());
         if (activity == null) return;
         if (mIsFullScreen) return;
-        WindowUtil.hideSystemBar(mVideoController.getContext());
+        PlayerUtils.hideActionBar(mVideoController.getContext());
+        this.addView(mHideSysBarView);
         this.removeView(mPlayerContainer);
         ViewGroup contentView = activity
                 .findViewById(android.R.id.content);
@@ -250,11 +255,12 @@ public class IjkVideoView extends BaseIjkVideoView {
     @Override
     public void stopFullScreen() {
         if (mVideoController == null) return;
-        Activity activity = WindowUtil.scanForActivity(mVideoController.getContext());
+        Activity activity = PlayerUtils.scanForActivity(mVideoController.getContext());
         if (activity == null) return;
         if (!mIsFullScreen) return;
         if (!mPlayerConfig.mAutoRotate) mOrientationEventListener.disable();
-        WindowUtil.showSystemBar(mVideoController.getContext());
+        PlayerUtils.showActionBar(mVideoController.getContext());
+        this.removeView(mHideSysBarView);
         ViewGroup contentView = activity
                 .findViewById(android.R.id.content);
         contentView.removeView(mPlayerContainer);
@@ -309,8 +315,13 @@ public class IjkVideoView extends BaseIjkVideoView {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
+        //重新获得焦点时保持全屏状态
         if (hasFocus && mIsFullScreen) {
-            WindowUtil.hideSystemBar(getContext());
+            PlayerUtils.hideActionBar(getContext());
+            removeView(mHideSysBarView);
+            mHideSysBarView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN);
+            addView(mHideSysBarView);
         }
     }
 
