@@ -15,6 +15,7 @@ import android.view.SurfaceHolder;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.dueeeke.videoplayer.controller.BaseVideoController;
@@ -36,8 +37,8 @@ public class IjkVideoView extends BaseIjkVideoView {
     protected SurfaceTexture mSurfaceTexture;
     protected FrameLayout mPlayerContainer;
     protected boolean mIsFullScreen;//是否处于全屏状态
-    //通过添加和移除这个view来实现隐藏和显示系统navigation bar和status bar，可以避免出现一些奇奇怪怪的问题
-    protected View mHideSysBarView;
+    //通过添加和移除这个view来实现隐藏和显示系统navigation bar，可以避免出现一些奇奇怪怪的问题
+    protected View mHideNavBarView;
 
     public static final int SCREEN_SCALE_DEFAULT = 0;
     public static final int SCREEN_SCALE_16_9 = 1;
@@ -51,9 +52,7 @@ public class IjkVideoView extends BaseIjkVideoView {
     protected int[] mVideoSize = {0, 0};
 
     private static final int FULLSCREEN_FLAGS = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-            | View.SYSTEM_UI_FLAG_FULLSCREEN;
+            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
 
     public IjkVideoView(@NonNull Context context) {
         this(context, null);
@@ -79,8 +78,8 @@ public class IjkVideoView extends BaseIjkVideoView {
                 ViewGroup.LayoutParams.MATCH_PARENT);
         this.addView(mPlayerContainer, params);
 
-        mHideSysBarView = new View(getContext());
-        mHideSysBarView.setSystemUiVisibility(FULLSCREEN_FLAGS);
+        mHideNavBarView = new View(getContext());
+        mHideNavBarView.setSystemUiVisibility(FULLSCREEN_FLAGS);
     }
 
     /**
@@ -242,7 +241,9 @@ public class IjkVideoView extends BaseIjkVideoView {
         if (activity == null) return;
         if (mIsFullScreen) return;
         PlayerUtils.hideActionBar(mVideoController.getContext());
-        this.addView(mHideSysBarView);
+        this.addView(mHideNavBarView);
+        activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         this.removeView(mPlayerContainer);
         ViewGroup contentView = activity
                 .findViewById(android.R.id.content);
@@ -266,7 +267,8 @@ public class IjkVideoView extends BaseIjkVideoView {
         if (!mIsFullScreen) return;
         if (!mPlayerConfig.mAutoRotate) mOrientationEventListener.disable();
         PlayerUtils.showActionBar(mVideoController.getContext());
-        this.removeView(mHideSysBarView);
+        this.removeView(mHideNavBarView);
+        activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         ViewGroup contentView = activity
                 .findViewById(android.R.id.content);
         contentView.removeView(mPlayerContainer);
@@ -325,7 +327,7 @@ public class IjkVideoView extends BaseIjkVideoView {
         super.onWindowFocusChanged(hasFocus);
         //重新获得焦点时保持全屏状态
         if (hasFocus && mIsFullScreen) {
-            mHideSysBarView.setSystemUiVisibility(FULLSCREEN_FLAGS);
+            mHideNavBarView.setSystemUiVisibility(FULLSCREEN_FLAGS);
         }
     }
 

@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.util.PlayerUtils;
@@ -30,7 +31,9 @@ public class RotateIjkVideoView extends IjkVideoView {
         if (mIsFullScreen) return;
         PlayerUtils.hideActionBar(getContext());
         this.removeView(mPlayerContainer);
-        this.addView(mHideSysBarView);
+        this.addView(mHideNavBarView);
+        activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         ViewGroup contentView = activity
                 .findViewById(android.R.id.content);
         LayoutParams params = new LayoutParams(
@@ -51,7 +54,8 @@ public class RotateIjkVideoView extends IjkVideoView {
         ViewGroup contentView = activity
                 .findViewById(android.R.id.content);
         contentView.removeView(mPlayerContainer);
-        this.removeView(mHideSysBarView);
+        this.removeView(mHideNavBarView);
+        activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         LayoutParams params = new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
