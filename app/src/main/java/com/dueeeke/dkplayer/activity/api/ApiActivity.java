@@ -24,7 +24,8 @@ public class ApiActivity extends AppCompatActivity {
 //    private static final String VOD_URL = "ijkhttphook:http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv";
 //    private static final String LIVE_URL = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
 //    private static final String LIVE_URL = "http://ivi.bupt.edu.cn/hls/sztv.m3u8";
-    private static final String LIVE_URL = "http://220.161.87.62:8800/hls/0/index.m3u8";
+//    private static final String LIVE_URL = "http://220.161.87.62:8800/hls/0/index.m3u8";
+    private static final String LIVE_URL = "http://ivi.bupt.edu.cn/hls/cctv6.m3u8";
     //断线自动重连,需加上ijklivehook:
 //    private static final String LIVE_URL = "ijklivehook:rtmp://live.hkstv.hk.lxdns.com/live/hks";
 

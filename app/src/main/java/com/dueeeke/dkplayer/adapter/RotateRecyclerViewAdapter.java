@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.dkplayer.widget.controller.RotateInFullscreenController;
+import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.player.PlayerConfig;
 
@@ -31,7 +32,6 @@ public class RotateRecyclerViewAdapter extends RecyclerView.Adapter<RotateRecycl
     public VideoHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(context).inflate(R.layout.item_video_rotate, parent, false);
         return new VideoHolder(itemView);
-
     }
 
     @Override
@@ -67,6 +67,25 @@ public class RotateRecyclerViewAdapter extends RecyclerView.Adapter<RotateRecycl
             ijkVideoView = itemView.findViewById(R.id.video_player);
             int widthPixels = context.getResources().getDisplayMetrics().widthPixels;
             ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels * 9 / 16 + 1));
+            //这段代码用于实现小屏时静音，全屏时有声音
+            ijkVideoView.addOnVideoViewStateChangeListener(new OnVideoViewStateChangeListener() {
+                @Override
+                public void onPlayerStateChanged(int playerState) {
+                    if (playerState == IjkVideoView.PLAYER_FULL_SCREEN) {
+                        ijkVideoView.setMute(false);
+                    } else if (playerState == IjkVideoView.PLAYER_NORMAL) {
+                        ijkVideoView.setMute(true);
+                    }
+                }
+
+                @Override
+                public void onPlayStateChanged(int playState) {
+                    //小屏状态下播放出来之后，把声音关闭
+                    if (playState == IjkVideoView.STATE_PREPARED && !ijkVideoView.isFullScreen()) {
+                        ijkVideoView.setMute(true);
+                    }
+                }
+            });
             controller = new RotateInFullscreenController(context);
             title = itemView.findViewById(R.id.tv_title);
             mPlayerConfig = new PlayerConfig.Builder()

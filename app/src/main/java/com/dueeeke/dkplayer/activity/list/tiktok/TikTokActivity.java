@@ -96,7 +96,7 @@ public class TikTokActivity extends AppCompatActivity {
                 .placeholder(android.R.color.white)
                 .into(mTikTokController.getThumb());
         ViewParent parent = mIjkVideoView.getParent();
-        if (parent != null && parent instanceof FrameLayout) {
+        if (parent instanceof FrameLayout) {
             ((FrameLayout) parent).removeView(mIjkVideoView);
         }
         frameLayout.addView(mIjkVideoView);
