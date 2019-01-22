@@ -19,7 +19,7 @@ import com.yanzhenjie.permission.AndPermission;
 public class PIPActivity extends AppCompatActivity{
     private PIPManager mPIPManager;
 //    private static final String URL = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
-    private static final String URL = "http://220.161.87.62:8800/hls/0/index.m3u8";
+    private static final String URL = "http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,7 +34,6 @@ public class PIPActivity extends AppCompatActivity{
         mPIPManager = PIPManager.getInstance();
         IjkVideoView ijkVideoView = mPIPManager.getIjkVideoView();
         StandardVideoController controller = new StandardVideoController(this);
-        controller.setLive();
         ijkVideoView.setVideoController(controller);
         if (mPIPManager.isStartFloatWindow()) {
             mPIPManager.stopFloatWindow();

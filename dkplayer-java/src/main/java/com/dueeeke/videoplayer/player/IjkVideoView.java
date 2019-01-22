@@ -328,10 +328,9 @@ public class IjkVideoView extends BaseIjkVideoView {
         if (hasFocus) {
             //重新获得焦点时保持全屏状态
             mHideNavBarView.setSystemUiVisibility(FULLSCREEN_FLAGS);
-
         }
 
-        if (mPlayerConfig.mAutoRotate || mIsFullScreen) {
+        if (isInPlaybackState() && (mPlayerConfig.mAutoRotate || mIsFullScreen)) {
             if (hasFocus) {
                 postDelayed(new Runnable() {
                     @Override

@@ -80,8 +80,11 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      * 加速度传感器监听
      */
     protected OrientationEventListener mOrientationEventListener = new OrientationEventListener(getContext()) { // 加速度传感器监听，用于自动旋转屏幕
+        private long mLastTime;
         @Override
         public void onOrientationChanged(int orientation) {
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - mLastTime < 300) return;//300毫秒检测一次
             if (mVideoController == null) return;
             Activity activity = PlayerUtils.scanForActivity(mVideoController.getContext());
             if (activity == null) return;
@@ -92,6 +95,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
             } else if (orientation >= 70 && orientation <= 90) { //屏幕右边朝上
                 onOrientationReverseLandscape(activity);
             }
+            mLastTime = currentTime;
         }
     };
 
@@ -115,7 +119,9 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      */
     protected void onOrientationLandscape(Activity activity) {
         if (mCurrentOrientation == LANDSCAPE) return;
-        if (mCurrentOrientation == PORTRAIT && isFullScreen()) {
+        if (mCurrentOrientation == PORTRAIT
+                && activity.getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
+                && isFullScreen()) {
             mCurrentOrientation = LANDSCAPE;
             return;
         }
