@@ -1,4 +1,4 @@
-package com.dueeeke.videoplayer.util;
+package com.dueeeke.dkplayer.util;
 
 import android.content.Context;
 import android.os.Environment;

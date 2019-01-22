@@ -55,4 +55,8 @@ public class ExtendActivity extends AppCompatActivity{
     public void switchPlayer(View view) {
         startActivity(new Intent(this, SwitchPlayerActivity.class));
     }
+
+    public void cache(View view) {
+        startActivity(new Intent(this, CacheActivity.class));
+    }
 }

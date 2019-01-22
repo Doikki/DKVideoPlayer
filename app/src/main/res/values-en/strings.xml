@@ -32,4 +32,5 @@
     <string name="str_pip_in_list">PIP IN LIST</string>
     <string name="str_pip_android_o">PIP Android O</string>
     <string name="str_start_pip">PiP</string>
+    <string name="str_cache">CACHE</string>
 </resources>

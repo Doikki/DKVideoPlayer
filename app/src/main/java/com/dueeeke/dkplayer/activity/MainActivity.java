@@ -19,7 +19,7 @@ import com.dueeeke.dkplayer.activity.extend.ExtendActivity;
 import com.dueeeke.dkplayer.activity.list.ListActivity;
 import com.dueeeke.dkplayer.activity.pip.PIPDemoActivity;
 import com.dueeeke.dkplayer.util.PIPManager;
-import com.dueeeke.videoplayer.player.VideoCacheManager;
+import com.dueeeke.dkplayer.util.VideoCacheManager;
 import com.yanzhenjie.permission.AndPermission;
 
 public class MainActivity extends AppCompatActivity {

@@ -1,10 +1,9 @@
-package com.dueeeke.videoplayer.player;
+package com.dueeeke.dkplayer.util;
 
 import android.content.Context;
 
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.danikula.videocache.file.Md5FileNameGenerator;
-import com.dueeeke.videoplayer.util.StorageUtil;
 
 import java.io.File;
 
@@ -22,6 +21,8 @@ public class VideoCacheManager {
     private static HttpProxyCacheServer newProxy(Context context) {
         return new HttpProxyCacheServer.Builder(context)
                 .maxCacheSize(1024 * 1024 * 1024)       // 1 Gb for cache
+                //缓存路径，不设置默认在sd_card/Android/data/[app_package_name]/cache中
+//                .cacheDirectory()
                 .build();
     }
 

@@ -83,6 +83,8 @@ dependencies {
     implementation 'com.google.android.exoplayer:exoplayer:2.8.2'
     implementation 'com.google.android.exoplayer:extension-rtmp:2.8.2'
 
+    implementation 'com.danikula:videocache:2.7.1'
+
 
     implementation project(':dkplayer-java')
     implementation project(':dkplayer-ui')

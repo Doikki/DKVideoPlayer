@@ -45,4 +45,8 @@ public interface MediaPlayerControl {
     void setMirrorRotation(boolean enable);
 
     Bitmap doScreenShot();
+
+    int[] getVideoSize();
+
+    void setRotation(float rotation);
 }

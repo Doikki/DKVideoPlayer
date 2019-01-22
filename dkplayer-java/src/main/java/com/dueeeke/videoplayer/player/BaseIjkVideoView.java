@@ -12,16 +12,13 @@ import android.util.AttributeSet;
 import android.view.OrientationEventListener;
 import android.widget.FrameLayout;
 
-import com.danikula.videocache.CacheListener;
-import com.danikula.videocache.HttpProxyCacheServer;
 import com.dueeeke.videoplayer.controller.BaseVideoController;
 import com.dueeeke.videoplayer.controller.MediaPlayerControl;
 import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.listener.PlayerEventListener;
-import com.dueeeke.videoplayer.util.ProgressUtil;
 import com.dueeeke.videoplayer.util.PlayerUtils;
+import com.dueeeke.videoplayer.util.ProgressUtil;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +36,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     protected AbstractPlayer mMediaPlayer;//播放器
     @Nullable
     protected BaseVideoController mVideoController;//控制器
-    protected int mBufferedPercentage;//缓冲百分比
     protected boolean mIsMute;//是否静音
 
     protected String mCurrentUrl;//当前播放视频的地址
@@ -75,7 +71,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
 
     protected boolean mIsLockFullScreen;//是否锁定屏幕
     protected PlayerConfig mPlayerConfig;//播放器配置
-    private HttpProxyCacheServer mCacheServer;
 
     public static boolean IS_PLAY_ON_MOBILE_NETWORK = false;//记录是否在移动网络下播放视频
 
@@ -190,24 +185,12 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         if (needReset) mMediaPlayer.reset();
         if (mAssetFileDescriptor != null) {
             mMediaPlayer.setDataSource(mAssetFileDescriptor);
-        } else if (mPlayerConfig.isCache && !mCurrentUrl.startsWith("file://")) {
-            mCacheServer = getCacheServer();
-            String proxyPath = mCacheServer.getProxyUrl(mCurrentUrl);
-            mCacheServer.registerCacheListener(cacheListener, mCurrentUrl);
-            if (mCacheServer.isCached(mCurrentUrl)) {
-                mBufferedPercentage = 100;
-            }
-            mMediaPlayer.setDataSource(proxyPath, mHeaders);
         } else {
             mMediaPlayer.setDataSource(mCurrentUrl, mHeaders);
         }
         mMediaPlayer.prepareAsync();
         setPlayState(STATE_PREPARING);
         setPlayerState(isFullScreen() ? PLAYER_FULL_SCREEN : PLAYER_NORMAL);
-    }
-
-    private HttpProxyCacheServer getCacheServer() {
-        return VideoCacheManager.getProxy(getContext().getApplicationContext());
     }
 
     /**
@@ -314,8 +297,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     private void onPlayStopped() {
         if (mVideoController != null) mVideoController.hideStatusView();
         mOrientationEventListener.disable();
-        if (mCacheServer != null)
-            mCacheServer.unregisterCacheListener(cacheListener);
         mIsLockFullScreen = false;
         mCurrentPosition = 0;
     }
@@ -443,16 +424,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     public String getTitle() {
         return mCurrentTitle;
     }
-
-    /**
-     * 缓存监听
-     */
-    private CacheListener cacheListener = new CacheListener() {
-        @Override
-        public void onCacheAvailable(File cacheFile, String url, int percentsAvailable) {
-            mBufferedPercentage = percentsAvailable;
-        }
-    };
 
     /**
      * 视频播放出错回调

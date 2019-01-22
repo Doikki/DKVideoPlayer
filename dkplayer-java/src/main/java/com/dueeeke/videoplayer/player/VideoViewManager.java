@@ -1,7 +1,7 @@
 package com.dueeeke.videoplayer.player;
 
 /**
- * 视频播放器管理器.
+ * 视频播放器管理器，需要配合addToPlayerManager()使用
  */
 public class VideoViewManager {
 

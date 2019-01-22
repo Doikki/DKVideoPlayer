@@ -39,7 +39,6 @@ public class DefinitionController extends StandardVideoController {
     //    private PopupMenu mPopupMenu;
     private PopupWindow mPopupWindow;
     private List<String> mRateStr;
-    private List<TextView> mRateItems;
     private LinearLayout mPopLayout;
 
 
@@ -113,7 +112,6 @@ public class DefinitionController extends StandardVideoController {
             LinkedHashMap<String, String> multiRateData = ((DefinitionMediaPlayerControl) mMediaPlayer).getDefinitionData();
             if (multiRateData == null) return super.setProgress();
             mRateStr = new ArrayList<>();
-            mRateItems = new ArrayList<>();
             int index = 0;
             ListIterator<Map.Entry<String, String>> iterator = new ArrayList<>(multiRateData.entrySet()).listIterator(multiRateData.size());
             while (iterator.hasPrevious()) {//反向遍历
@@ -124,10 +122,9 @@ public class DefinitionController extends StandardVideoController {
                 rateItem.setTag(index);
                 rateItem.setOnClickListener(rateOnClickListener);
                 mPopLayout.addView(rateItem);
-                mRateItems.add(rateItem);
                 index++;
             }
-            mRateItems.get(index - 1).setTextColor(ContextCompat.getColor(getContext(), R.color.theme_color));
+            ((TextView) mPopLayout.getChildAt(index - 1)).setTextColor(ContextCompat.getColor(getContext(), R.color.theme_color));
             multiRate.setText(mRateStr.get(index - 1));
             currentIndex = index - 1;
         }
@@ -140,8 +137,8 @@ public class DefinitionController extends StandardVideoController {
         public void onClick(View v) {
             int index = (int) v.getTag();
             if (currentIndex == index) return;
-            mRateItems.get(currentIndex).setTextColor(Color.BLACK);
-            mRateItems.get(index).setTextColor(ContextCompat.getColor(getContext(), R.color.theme_color));
+            ((TextView) mPopLayout.getChildAt(currentIndex)).setTextColor(Color.BLACK);
+            ((TextView) mPopLayout.getChildAt(index)).setTextColor(ContextCompat.getColor(getContext(), R.color.theme_color));
             multiRate.setText(mRateStr.get(index));
             ((DefinitionMediaPlayerControl) mMediaPlayer).switchDefinition(mRateStr.get(index));
             mPopupWindow.dismiss();

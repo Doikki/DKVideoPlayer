@@ -40,4 +40,5 @@
     <string name="str_pip_android_o">Android 8.0 画中画demo</string>
     <string name="str_switch_player">多播放器切换</string>
     <string name="str_start_pip">悬浮窗</string>
+    <string name="str_cache">缓存</string>
 </resources>

@@ -99,11 +99,9 @@
         <activity
             android:name=".activity.pip.AndroidOPiPActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
-            android:supportsPictureInPicture="true"
             android:excludeFromRecents="true"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        </activity>
-
+            android:supportsPictureInPicture="true"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity
             android:name=".activity.extend.RotateInFullscreenActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -126,6 +124,10 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.api.MultiPlayerActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.extend.CacheActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
     </application>

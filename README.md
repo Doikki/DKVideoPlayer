@@ -72,7 +72,6 @@ ijkVideoView.start(); //开始播放，不调用则不自动播放
 
 //高级设置（可选，须在start()之前调用方可生效）
 PlayerConfig playerConfig = new PlayerConfig.Builder()
-        .enableCache() //启用边播边缓存功能
         .autoRotate() //启用重力感应自动进入/退出全屏功能
         .enableMediaCodec()//启动硬解码，启用后可能导致视频黑屏，音画不同步
         .usingSurfaceView() //启用SurfaceView显示视频，不调用默认使用TextureView

@@ -5,9 +5,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 
-import com.dueeeke.dkplayer.interf.ListMediaPlayerControl;
-import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.dkplayer.bean.VideoModel;
+import com.dueeeke.dkplayer.interf.ListMediaPlayerControl;
 
 import java.util.List;
 
@@ -16,7 +15,7 @@ import java.util.List;
  * Created by xinyu on 2017/12/25.
  */
 
-public class ListIjkVideoView extends IjkVideoView implements ListMediaPlayerControl{
+public class ListIjkVideoView extends CacheIjkVideoView implements ListMediaPlayerControl{
 
     protected List<VideoModel> mVideoModels;//列表播放数据
     protected int mCurrentVideoPosition = 0;//列表播放时当前播放视频的在List中的位置
@@ -47,7 +46,7 @@ public class ListIjkVideoView extends IjkVideoView implements ListMediaPlayerCon
         if (videoModel != null) {
             mCurrentUrl = videoModel.url;
             mCurrentTitle = videoModel.title;
-            mPlayerConfig.isCache = videoModel.isCache;
+            setCacheEnabled(videoModel.isCache);
             mCurrentPosition = 0;
             setVideoController(videoModel.controller);
         }

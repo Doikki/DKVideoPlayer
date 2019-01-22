@@ -29,4 +29,9 @@
         android:layout_height="wrap_content"
         android:onClick="switchPlayer"
         android:text="@string/str_switch_player" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="cache"
+        android:text="@string/str_cache"/>
 </LinearLayout>

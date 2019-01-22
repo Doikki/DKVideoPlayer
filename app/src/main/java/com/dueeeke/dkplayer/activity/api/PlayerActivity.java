@@ -10,8 +10,10 @@ import android.view.View;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videocontroller.StandardVideoController;
+import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.player.PlayerConfig;
+import com.dueeeke.videoplayer.util.L;
 
 /**
  * 播放器演示
@@ -52,8 +54,52 @@ public class PlayerActivity extends AppCompatActivity {
             ijkVideoView.setUrl(intent.getStringExtra("url"));
             ijkVideoView.setVideoController(controller);
             ijkVideoView.start();
+
+            //播放状态监听
+            ijkVideoView.addOnVideoViewStateChangeListener(mOnVideoViewStateChangeListener);
+
         }
     }
+
+    private OnVideoViewStateChangeListener mOnVideoViewStateChangeListener = new OnVideoViewStateChangeListener() {
+        @Override
+        public void onPlayerStateChanged(int playerState) {
+            switch (playerState) {
+                case IjkVideoView.PLAYER_NORMAL://小屏
+                    break;
+                case IjkVideoView.PLAYER_FULL_SCREEN://全屏
+                    break;
+            }
+        }
+
+        @Override
+        public void onPlayStateChanged(int playState) {
+            switch (playState) {
+                case IjkVideoView.STATE_IDLE:
+                    break;
+                case IjkVideoView.STATE_PREPARING:
+                    break;
+                case IjkVideoView.STATE_PREPARED:
+                    //需在此时获取视频宽高
+                    int[] videoSize = ijkVideoView.getVideoSize();
+                    L.d("视频宽：" + videoSize[0]);
+                    L.d("视频高：" + videoSize[1]);
+                    break;
+                case IjkVideoView.STATE_PLAYING:
+                    break;
+                case IjkVideoView.STATE_PAUSED:
+                    break;
+                case IjkVideoView.STATE_BUFFERING:
+                    break;
+                case IjkVideoView.STATE_BUFFERED:
+                    break;
+                case IjkVideoView.STATE_PLAYBACK_COMPLETED:
+                    break;
+                case IjkVideoView.STATE_ERROR:
+                    break;
+            }
+        }
+    };
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

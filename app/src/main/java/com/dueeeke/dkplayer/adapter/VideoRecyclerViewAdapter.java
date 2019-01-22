@@ -70,7 +70,6 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
             controller = new StandardVideoController(context);
             title = itemView.findViewById(R.id.tv_title);
             mPlayerConfig = new PlayerConfig.Builder()
-                    .enableCache()
                     .autoRotate()
                     .addToPlayerManager()//required
 //                        .savingProgress()
