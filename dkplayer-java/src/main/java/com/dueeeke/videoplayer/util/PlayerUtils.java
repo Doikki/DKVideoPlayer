@@ -77,8 +77,12 @@ public class PlayerUtils {
     /**
      * 获取屏幕宽度
      */
-    public static int getScreenWidth(Context context) {
-        return context.getResources().getDisplayMetrics().widthPixels;
+    public static int getScreenWidth(Context context, boolean isIncludeNav) {
+        if (isIncludeNav) {
+            return context.getResources().getDisplayMetrics().widthPixels + getNavigationBarHeight(context);
+        } else {
+            return context.getResources().getDisplayMetrics().widthPixels;
+        }
     }
 
     /**
@@ -167,9 +171,9 @@ public class PlayerUtils {
      * 边缘检测
      */
     public static boolean isEdge(Context context, MotionEvent e) {
-        int edgeSize = dp2px(context, 50);
+        int edgeSize = dp2px(context, 40);
         return e.getRawX() < edgeSize
-                || e.getRawX() > getScreenWidth(context) - edgeSize
+                || e.getRawX() > getScreenWidth(context, true) - edgeSize
                 || e.getRawY() < edgeSize
                 || e.getRawY() > getScreenHeight(context, true) - edgeSize;
     }
