@@ -325,11 +325,20 @@ public class IjkVideoView extends BaseIjkVideoView {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (mPlayerConfig.mAutoRotate || isFullScreen()) {
+        if (hasFocus) {
+            //重新获得焦点时保持全屏状态
+            mHideNavBarView.setSystemUiVisibility(FULLSCREEN_FLAGS);
+
+        }
+
+        if (mPlayerConfig.mAutoRotate || mIsFullScreen) {
             if (hasFocus) {
-                //重新获得焦点时保持全屏状态
-                mHideNavBarView.setSystemUiVisibility(FULLSCREEN_FLAGS);
-                mOrientationEventListener.enable();
+                postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mOrientationEventListener.enable();
+                    }
+                }, 800);
             } else {
                 mOrientationEventListener.disable();
             }
@@ -403,6 +412,7 @@ public class IjkVideoView extends BaseIjkVideoView {
 
     /**
      * 旋转视频画面
+     *
      * @param rotation 角度
      */
     @Override

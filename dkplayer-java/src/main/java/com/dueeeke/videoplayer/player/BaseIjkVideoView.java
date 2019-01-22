@@ -131,7 +131,9 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      */
     protected void onOrientationReverseLandscape(Activity activity) {
         if (mCurrentOrientation == REVERSE_LANDSCAPE) return;
-        if (mCurrentOrientation == PORTRAIT && isFullScreen()) {
+        if (mCurrentOrientation == PORTRAIT
+                && activity.getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                && isFullScreen()) {
             mCurrentOrientation = REVERSE_LANDSCAPE;
             return;
         }
@@ -139,6 +141,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         if (!isFullScreen()) {
             startFullScreen();
         }
+
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
     }
 

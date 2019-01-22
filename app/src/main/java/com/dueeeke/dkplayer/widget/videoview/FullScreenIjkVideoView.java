@@ -49,4 +49,9 @@ public class FullScreenIjkVideoView extends IjkVideoView {
     protected void onOrientationPortrait(Activity activity) {
 
     }
+
+    @Override
+    public boolean onBackPressed() {
+        return false;
+    }
 }
