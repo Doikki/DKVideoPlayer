@@ -6,6 +6,6 @@
     <com.dueeeke.dkplayer.widget.videoview.CacheIjkVideoView
         android:id="@+id/player"
         android:layout_width="match_parent"
-        android:layout_height="200dp"/>
+        android:layout_height="250dp"/>
 
 </LinearLayout>

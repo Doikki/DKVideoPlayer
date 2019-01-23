@@ -12,8 +12,8 @@ android {
         applicationId "com.dueeeke.dkplayer"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 28
-        versionName "2.5.4"
+        versionCode 29
+        versionName "2.5.5"
 
         ndk {
             //打包时保留armeabi-v7a x86 so
@@ -79,10 +79,9 @@ dependencies {
     implementation 'com.github.ctiao:DanmakuFlameMaster:0.8.3'
     implementation 'com.github.ctiao:ndkbitmap-armv7a:0.8.3'
     implementation "com.android.support:design:$rootProject.supportLibraryVersion"
-    implementation 'com.github.rubensousa:gravitysnaphelper:1.5'
     implementation 'com.google.android.exoplayer:exoplayer:2.8.2'
     implementation 'com.google.android.exoplayer:extension-rtmp:2.8.2'
-
+    //缓存
     implementation 'com.danikula:videocache:2.7.1'
 
 

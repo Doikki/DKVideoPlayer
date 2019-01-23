@@ -67,11 +67,11 @@ public class CacheIjkVideoView extends IjkVideoView {
     }
 
     /**
-     * 返回是缓存的进度
+     * 开启缓存后，返回是缓存的进度
      */
     @Override
     public int getBufferedPercentage() {
-        return mBufferedPercentage;
+        return mIsCacheEnabled ? mBufferedPercentage : super.getBufferedPercentage();
     }
 
     @Override
