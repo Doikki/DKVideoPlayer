@@ -39,4 +39,10 @@
         android:onClick="tikTok"
         android:text="@string/str_tiktok" />
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="seamlessPlay"
+        android:text="无缝衔接" />
+
 </LinearLayout>

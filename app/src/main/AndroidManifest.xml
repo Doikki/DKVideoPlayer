@@ -130,6 +130,14 @@
             android:name=".activity.extend.CacheActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.list.DetailActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.list.SeamlessPlayActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

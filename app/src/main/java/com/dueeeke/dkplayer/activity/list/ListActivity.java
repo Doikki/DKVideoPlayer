@@ -60,4 +60,8 @@ public class ListActivity extends AppCompatActivity {
     public void rotateInFullscreen(View view) {
         startActivity(new Intent(this, RotateRecyclerViewActivity.class));
     }
+
+    public void seamlessPlay(View view) {
+        startActivity(new Intent(this, SeamlessPlayActivity.class));
+    }
 }

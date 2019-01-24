@@ -136,40 +136,4 @@ public class PIPManager {
         return mActClass;
     }
 
-//    private class KeyReceiver extends BroadcastReceiver {
-//
-//        private final String SYSTEM_DIALOG_REASON_KEY = "reason";
-//        private final String SYSTEM_DIALOG_REASON_HOME_KEY = "homekey";
-//        private final String SYSTEM_DIALOG_REASON_RECENT_APPS = "recentapps";
-//
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            String action = intent.getAction();
-//            if (action == null) return;
-//            if (action.equals(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)) {
-//                String reason = intent.getStringExtra(SYSTEM_DIALOG_REASON_KEY);
-//
-//                if (reason == null)
-//                    return;
-//
-//                // Home键
-//                if (reason.equals(SYSTEM_DIALOG_REASON_HOME_KEY)) {
-//                    if (isShowing) {
-//                        ijkVideoView.pause();
-//                        floatView.setVisibility(View.GONE);
-//                    }
-//                }
-//
-//                // 最近任务列表键
-//                if (reason.equals(SYSTEM_DIALOG_REASON_RECENT_APPS)) {
-//                    if (isShowing) {
-//                        ijkVideoView.pause();
-//                        floatView.setVisibility(View.GONE);
-//                    }
-//                }
-//            }
-//        }
-//    }
-
-
 }
