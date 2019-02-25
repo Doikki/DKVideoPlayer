@@ -20,7 +20,7 @@ public class SeamlessPlayHelper {
 
     public static SeamlessPlayHelper getInstance() {
         if (instance == null) {
-            synchronized (PIPManager.class) {
+            synchronized (SeamlessPlayHelper.class) {
                 if (instance == null) {
                     instance = new SeamlessPlayHelper();
                 }
