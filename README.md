@@ -20,10 +20,12 @@ A video player based on [IjkPlayer](https://github.com/Bilibili/ijkplayer).
 * **支持连续播放一个列表的视频。**
 * **支持广告播放。**
 * **支持清晰度切换。**
-* **支持扩展自定义播放内核，MediaPlayer、ExoPlayer、vitamio等。**
+* **支持扩展自定义播放内核，MediaPlayer、ExoPlayer等。**
 * **支持完全自定义控制层。**
 * **支持多路播放器同时播放，没有任何控制UI的纯播放**
+* **无缝衔接播放demo。**
 * **抖音demo。**
+
 ## 使用
 
 1.添加类库
