@@ -8,7 +8,6 @@ import android.content.pm.ActivityInfo;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -136,8 +135,11 @@ public class StandardVideoController extends GestureVideoController implements V
         }
     }
 
-    public void showTitle() {
-        mTitle.setVisibility(View.VISIBLE);
+    /**
+     * 设置标题
+     */
+    public void setTitle(String title) {
+        mTitle.setText(title);
     }
 
     @Override
@@ -237,12 +239,14 @@ public class StandardVideoController extends GestureVideoController implements V
                 mStartPlayButton.setVisibility(View.GONE);
                 mLoadingProgress.setVisibility(View.VISIBLE);
                 mThumb.setVisibility(View.GONE);
+                mPlayButton.setSelected(mMediaPlayer.isPlaying());
                 break;
             case IjkVideoView.STATE_BUFFERED:
+                L.e("STATE_BUFFERED");
                 mLoadingProgress.setVisibility(View.GONE);
                 mStartPlayButton.setVisibility(View.GONE);
                 mThumb.setVisibility(View.GONE);
-                L.e("STATE_BUFFERED");
+                mPlayButton.setSelected(mMediaPlayer.isPlaying());
                 break;
             case IjkVideoView.STATE_PLAYBACK_COMPLETED:
                 L.e("STATE_PLAYBACK_COMPLETED");
@@ -386,10 +390,6 @@ public class StandardVideoController extends GestureVideoController implements V
     protected int setProgress() {
         if (mMediaPlayer == null || mIsDragging) {
             return 0;
-        }
-
-        if (mTitle != null && TextUtils.isEmpty(mTitle.getText())) {
-            mTitle.setText(mMediaPlayer.getTitle());
         }
 
         if (mIsLive) return 0;

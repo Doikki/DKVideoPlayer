@@ -58,7 +58,7 @@ public class DataUtil {
                 "https://cms-bucket.nosdn.127.net/e2af1d563faa46d0aa19da87f83159fd20180418131040.jpeg",
                 "http://mov.bn.netease.com/open-movie/nos/flv/2014/01/03/S9GO68OJG_sd.flv"));
 
-        videoList.add(new VideoBean("为什么健康的生活方式几乎把我害死",
+        videoList.add(new VideoBean("为什么健康的生活方式几乎把我害死 为什么健康的生活方式几乎把我害死",
                 "https://cms-bucket.nosdn.127.net/f90b03a4bac34419b4bc0b22f4d989b420180411100506.jpeg",
                 "http://mov.bn.netease.com/open-movie/nos/flv/2013/08/05/S94IVFMKI_hd.flv"));
 

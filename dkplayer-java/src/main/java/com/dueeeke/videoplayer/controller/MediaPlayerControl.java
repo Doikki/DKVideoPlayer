@@ -24,8 +24,6 @@ public interface MediaPlayerControl {
 
     boolean isFullScreen();
 
-    String getTitle();
-
     void setMute(boolean isMute);
 
     boolean isMute();

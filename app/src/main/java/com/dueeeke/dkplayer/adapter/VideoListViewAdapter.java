@@ -58,8 +58,8 @@ public class VideoListViewAdapter extends BaseAdapter {
 
         viewHolder.ijkVideoView.setPlayerConfig(viewHolder.mPlayerConfig);
         viewHolder.ijkVideoView.setUrl(videoBean.getUrl());
-        viewHolder.ijkVideoView.setTitle(videoBean.getTitle());
         viewHolder.ijkVideoView.setVideoController(viewHolder.controller);
+        viewHolder.controller.setTitle(videoBean.getTitle());
         Glide.with(context)
                 .load(videoBean.getThumb())
                 .crossFade()

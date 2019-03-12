@@ -161,7 +161,6 @@ public class SeamlessPlayActivity extends AppCompatActivity {
                         mIjkVideoView.release();
                         VideoBean videoBean = mVideoList.get(position);
                         mIjkVideoView.setUrl(videoBean.getUrl());
-                        mIjkVideoView.setTitle(videoBean.getTitle());
                         mSeamlessController.resetController();
                         mIjkVideoView.setVideoController(mSeamlessController);
                         mIjkVideoView.start();
@@ -177,7 +176,6 @@ public class SeamlessPlayActivity extends AppCompatActivity {
             //自动播放第一个
             VideoBean videoBean = mVideoList.get(0);
             mIjkVideoView.setUrl(videoBean.getUrl());
-            mIjkVideoView.setTitle(videoBean.getTitle());
             mIjkVideoView.start();
             mCurrentPlayPosition = 0;
 

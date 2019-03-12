@@ -59,4 +59,8 @@ public class ExtendActivity extends AppCompatActivity{
     public void cache(View view) {
         startActivity(new Intent(this, CacheActivity.class));
     }
+
+    public void playList(View view) {
+        startActivity(new Intent(this, PlayListActivity.class));
+    }
 }

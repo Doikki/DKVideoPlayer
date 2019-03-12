@@ -42,7 +42,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     protected Map<String, String> mHeaders;//当前视频地址的请求头
     protected AssetFileDescriptor mAssetFileDescriptor;//assets文件
     protected long mCurrentPosition;//当前正在播放视频的位置
-    protected String mCurrentTitle = "";//当前正在播放视频的标题
 
     //播放器的各种状态
     public static final int STATE_ERROR = -1;
@@ -427,14 +426,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     }
 
     /**
-     * 获取当前播放视频的标题
-     */
-    @Override
-    public String getTitle() {
-        return mCurrentTitle;
-    }
-
-    /**
      * 视频播放出错回调
      */
     @Override
@@ -555,15 +546,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      */
     public void skipPositionWhenPlay(int position) {
         this.mCurrentPosition = position;
-    }
-
-    /**
-     * 设置标题
-     */
-    public void setTitle(String title) {
-        if (title != null) {
-            this.mCurrentTitle = title;
-        }
     }
 
     /**

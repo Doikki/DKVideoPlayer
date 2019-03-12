@@ -7,4 +7,6 @@ package com.dueeeke.dkplayer.interf;
 public interface ControllerListener {
 
     void onAdClick();
+
+    void onSkipAd();
 }

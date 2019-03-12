@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.dueeeke.dkplayer.R;
+import com.dueeeke.dkplayer.util.IntentKeys;
 
 /**
  * 基础API相关Demo
@@ -17,7 +18,9 @@ import com.dueeeke.dkplayer.R;
 
 public class ApiActivity extends AppCompatActivity {
 
-    private static final String VOD_URL = "http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv";
+//    private static final String VOD_URL = "http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv";
+    private static final String VOD_URL = "http://youku163.zuida-bofang.com/20190113/24356_0cbc9d8f/index.m3u8";
+//    private static final String VOD_URL = "http://sohu.zuida-163sina.com/20190303/ZRkvZAiK/index.m3u8";
 //    private static final String VOD_URL = "http://vfile.hshan.com/2018/1524/9156/4430/152491564430.ssm/152491564430.m3u8";
 //    private static final String VOD_URL = "https://aweme.snssdk.com/aweme/v1/play/?video_id=3fdb4876a7f34bad8fa957db4b5ed159&line=0&ratio=720p&media_type=4&vr_type=0";
     //断线自动重连,需加上ijkhttphook:
@@ -53,15 +56,17 @@ public class ApiActivity extends AppCompatActivity {
 //        String url = "file://" + path + File.separator + "test.mp4";
 //        String url = "file:///storage/emulated/0/Android/data/com.dueeeke.dkplayer/cache/video-cache/56b84ac750c6959155b6b6e4d9f01b98.mp4";
         Intent intent = new Intent(this, PlayerActivity.class);
-        intent.putExtra("url", VOD_URL);
-        intent.putExtra("isLive", false);
+        intent.putExtra(IntentKeys.URL, VOD_URL);
+        intent.putExtra(IntentKeys.IS_LIVE, false);
+        intent.putExtra(IntentKeys.TITLE, "点播");
         startActivity(intent);
     }
 
     public void skipToLivePlayer(View view) {
         Intent intent = new Intent(this, PlayerActivity.class);
-        intent.putExtra("url", LIVE_URL);
-        intent.putExtra("isLive", true);
+        intent.putExtra(IntentKeys.URL, LIVE_URL);
+        intent.putExtra(IntentKeys.IS_LIVE, true);
+        intent.putExtra(IntentKeys.TITLE, "直播");
         startActivity(intent);
     }
 

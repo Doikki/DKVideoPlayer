@@ -79,7 +79,7 @@ public class CacheIjkVideoView extends IjkVideoView {
         super.release();
         if (mCacheServer != null) {
             mCacheServer.unregisterCacheListener(cacheListener);
-            cacheListener = null;
+            mCacheServer = null;
         }
     }
 

@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.interf.ControllerListener;
-import com.dueeeke.dkplayer.interf.ListMediaPlayerControl;
 import com.dueeeke.videoplayer.controller.BaseVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
 import com.dueeeke.videoplayer.util.PlayerUtils;
@@ -74,7 +73,7 @@ public class AdController extends BaseVideoController implements View.OnClickLis
         } else if (id == R.id.ad_detail) {
             if (listener != null) listener.onAdClick();
         } else if (id == R.id.ad_time) {
-            ((ListMediaPlayerControl) mMediaPlayer).skipToNext();
+            if (listener != null) listener.onSkipAd();
         } else if (id == R.id.iv_play) {
             doPauseResume();
         }

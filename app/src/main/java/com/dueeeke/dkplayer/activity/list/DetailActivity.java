@@ -46,7 +46,7 @@ public class DetailActivity extends AppCompatActivity {
         } else {
             //不是无缝播放的情况
             String title = intent.getStringExtra(IntentKeys.TITLE);
-            mIjkVideoView.setTitle(title);
+            standardVideoController.setTitle(title);
             String url = intent.getStringExtra(IntentKeys.URL);
             mIjkVideoView.setUrl(url);
             mIjkVideoView.start();

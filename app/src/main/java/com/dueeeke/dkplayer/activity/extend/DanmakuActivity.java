@@ -66,9 +66,10 @@ public class DanmakuActivity extends AppCompatActivity {
         danmukuVideoView.addDanmukuView(mDanmakuView, mContext, mParser);
         PlayerConfig config = new PlayerConfig.Builder().setLooping().build();
         danmukuVideoView.setPlayerConfig(config);
-        danmukuVideoView.setVideoController(new StandardVideoController(this));
+        StandardVideoController standardVideoController = new StandardVideoController(this);
+        standardVideoController.setTitle("网易公开课-如何掌控你的自由时间");
+        danmukuVideoView.setVideoController(standardVideoController);
         danmukuVideoView.setUrl(URL_VOD);
-        danmukuVideoView.setTitle("网易公开课-如何掌控你的自由时间");
         danmukuVideoView.start();
     }
 

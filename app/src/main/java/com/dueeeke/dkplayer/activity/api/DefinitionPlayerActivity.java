@@ -38,6 +38,7 @@ public class DefinitionPlayerActivity extends AppCompatActivity {
         ijkVideoView = findViewById(R.id.player);
 
         DefinitionController controller = new DefinitionController(this);
+        controller.setTitle("韩雪：积极的悲观主义者");
         ijkVideoView.setPlayerConfig(new PlayerConfig.Builder()
                 .setCustomMediaPlayer(new IjkPlayer(this) {
                     @Override
@@ -55,7 +56,6 @@ public class DefinitionPlayerActivity extends AppCompatActivity {
         videos.put("超清", "http://mov.bn.netease.com/open-movie/nos/flv/2017/07/24/SCP786QON_shd.flv");
         ijkVideoView.setDefinitionVideos(videos);
         ijkVideoView.setVideoController(controller);
-        ijkVideoView.setTitle("韩雪：积极的悲观主义者");
         ijkVideoView.start();
     }
 

@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.dueeeke.dkplayer.R;
+import com.dueeeke.dkplayer.util.IntentKeys;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.IjkVideoView;
@@ -42,9 +43,10 @@ public class PlayerActivity extends AppCompatActivity {
             if (isLive) {
                 controller.setLive();
             }
+            String title = intent.getStringExtra(IntentKeys.TITLE);
+            controller.setTitle(title);
             ijkVideoView.setPlayerConfig(new PlayerConfig.Builder()
                     .autoRotate()//自动旋转屏幕
-//                    .enableCache()//启用边播边存
 //                    .enableMediaCodec()//启动硬解码
 //                    .usingSurfaceView()//使用SurfaceView
 //                    .setCustomMediaPlayer(new ExoMediaPlayer(this))

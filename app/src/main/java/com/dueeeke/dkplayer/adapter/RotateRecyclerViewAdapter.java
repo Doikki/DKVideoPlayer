@@ -45,7 +45,7 @@ public class RotateRecyclerViewAdapter extends RecyclerView.Adapter<RotateRecycl
                 .into(holder.controller.getThumb());
         holder.ijkVideoView.setPlayerConfig(holder.mPlayerConfig);
         holder.ijkVideoView.setUrl(videoBean.getUrl());
-        holder.ijkVideoView.setTitle(videoBean.getTitle());
+        holder.controller.setTitle(videoBean.getTitle());
         holder.ijkVideoView.setVideoController(holder.controller);
         holder.title.setText(videoBean.getTitle());
     }

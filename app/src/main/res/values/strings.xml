@@ -41,4 +41,5 @@
     <string name="str_switch_player">多播放器切换</string>
     <string name="str_start_pip">悬浮窗</string>
     <string name="str_cache">缓存</string>
+    <string name="str_play_list">连续播放一个列表</string>
 </resources>
