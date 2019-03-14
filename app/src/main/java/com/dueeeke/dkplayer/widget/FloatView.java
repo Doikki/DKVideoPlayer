@@ -25,10 +25,13 @@ public class FloatView extends FrameLayout{
     private WindowManager mWindowManager;
     private WindowManager.LayoutParams mParams;
 
+    private int mDownRawX, mDownRawY;//手指按下时相对于屏幕的坐标
+    private int mDownX, mDownY;//手指按下时相对于悬浮窗的坐标
+
     public FloatView(@NonNull Context context, int x, int y) {
         super(context);
-        floatX = x;
-        floatY = y;
+        mDownX = x;
+        mDownY = y;
         init();
     }
 
@@ -43,7 +46,6 @@ public class FloatView extends FrameLayout{
     private void initWindow() {
         mWindowManager = PlayerUtils.getWindowManager(getContext().getApplicationContext());
         mParams = new WindowManager.LayoutParams();
-//        mParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT; // 设置window type
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             mParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
         }else {
@@ -58,8 +60,8 @@ public class FloatView extends FrameLayout{
         int width = PlayerUtils.dp2px(getContext(), 250);
         mParams.width = width;
         mParams.height = width * 9 / 16;
-        mParams.x = floatX;
-        mParams.y = floatY;
+        mParams.x = mDownX;
+        mParams.y = mDownY;
     }
 
     /**
@@ -116,55 +118,35 @@ public class FloatView extends FrameLayout{
         }
     }
 
-
-    private int downX, downY;
-
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-
         boolean intercepted = false;
-
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 intercepted = false;
-                downX = (int) ev.getRawX();
-                downY = (int) ev.getRawY();
+                mDownRawX = (int) ev.getRawX();
+                mDownRawY = (int) ev.getRawY();
+                mDownX = (int) ev.getX();
+                mDownY = (int) (ev.getY() + PlayerUtils.getStatusBarHeight(getContext()));
                 break;
             case MotionEvent.ACTION_MOVE:
-
-                float absDeltaX = Math.abs(ev.getRawX() - downX);
-                float absDeltaY = Math.abs(ev.getRawY() - downY);
+                float absDeltaX = Math.abs(ev.getRawX() - mDownRawX);
+                float absDeltaY = Math.abs(ev.getRawY() - mDownRawY);
                 intercepted = absDeltaX > ViewConfiguration.get(getContext()).getScaledTouchSlop() ||
                         absDeltaY > ViewConfiguration.get(getContext()).getScaledTouchSlop();
                 break;
-            case MotionEvent.ACTION_UP:
-                break;
         }
-
         return intercepted;
     }
 
-    private int floatX;
-    private int floatY;
-    private boolean firstTouch = true;
-
-
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        int x = (int) event.getRawX();
-        int y = (int) event.getRawY();
         switch (event.getAction()) {
-            case MotionEvent.ACTION_UP:
-                firstTouch = true;
-                break;
             case MotionEvent.ACTION_MOVE:
-                if (firstTouch) {
-                    floatX = (int) event.getX();
-                    floatY = (int) (event.getY() + PlayerUtils.getStatusBarHeight(getContext()));
-                    firstTouch = false;
-                }
-                mParams.x = x - floatX;
-                mParams.y = y - floatY;
+                int x = (int) event.getRawX();
+                int y = (int) event.getRawY();
+                mParams.x = x - mDownX;
+                mParams.y = y - mDownY;
                 mWindowManager.updateViewLayout(this, mParams);
                 break;
         }
