@@ -142,6 +142,10 @@
             android:name=".activity.extend.PlayListActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.extend.PadActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="landscape" />
     </application>
 
 </manifest>

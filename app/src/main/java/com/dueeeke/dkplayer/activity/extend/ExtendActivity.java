@@ -63,4 +63,8 @@ public class ExtendActivity extends AppCompatActivity{
     public void playList(View view) {
         startActivity(new Intent(this, PlayListActivity.class));
     }
+
+    public void pad(View view) {
+        startActivity(new Intent(this, PadActivity.class));
+    }
 }
