@@ -7,6 +7,7 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.view.Gravity;
 import android.view.MotionEvent;
+import android.view.ViewConfiguration;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
@@ -115,9 +116,32 @@ public class FloatView extends FrameLayout{
         }
     }
 
+
+    private int downX, downY;
+
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        return ev.getAction() != MotionEvent.ACTION_DOWN;
+
+        boolean intercepted = false;
+
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                intercepted = false;
+                downX = (int) ev.getRawX();
+                downY = (int) ev.getRawY();
+                break;
+            case MotionEvent.ACTION_MOVE:
+
+                float absDeltaX = Math.abs(ev.getRawX() - downX);
+                float absDeltaY = Math.abs(ev.getRawY() - downY);
+                intercepted = absDeltaX > ViewConfiguration.get(getContext()).getScaledTouchSlop() ||
+                        absDeltaY > ViewConfiguration.get(getContext()).getScaledTouchSlop();
+                break;
+            case MotionEvent.ACTION_UP:
+                break;
+        }
+
+        return intercepted;
     }
 
     private int floatX;
@@ -127,8 +151,8 @@ public class FloatView extends FrameLayout{
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        final int X = (int) event.getRawX();
-        final int Y = (int) event.getRawY();
+        int x = (int) event.getRawX();
+        int y = (int) event.getRawY();
         switch (event.getAction()) {
             case MotionEvent.ACTION_UP:
                 firstTouch = true;
@@ -139,8 +163,8 @@ public class FloatView extends FrameLayout{
                     floatY = (int) (event.getY() + PlayerUtils.getStatusBarHeight(getContext()));
                     firstTouch = false;
                 }
-                mParams.x = X - floatX;
-                mParams.y = Y - floatY;
+                mParams.x = x - floatX;
+                mParams.y = y - floatY;
                 mWindowManager.updateViewLayout(this, mParams);
                 break;
         }

@@ -5,9 +5,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
@@ -145,30 +143,5 @@ public class FloatController extends GestureVideoController implements View.OnCl
             playButton.setVisibility(GONE);
             mShowing = false;
         }
-    }
-
-    private float downX;
-    private float downY;
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        switch (ev.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                downX = ev.getX();
-                downY = ev.getY();
-                // True if the child does not want the parent to intercept touch events.
-                getParent().requestDisallowInterceptTouchEvent(true);
-                break;
-            case MotionEvent.ACTION_MOVE:
-                float absDeltaX = Math.abs(ev.getX() - downX);
-                float absDeltaY = Math.abs(ev.getY() - downY);
-                if (absDeltaX > ViewConfiguration.get(getContext()).getScaledTouchSlop() ||
-                        absDeltaY > ViewConfiguration.get(getContext()).getScaledTouchSlop()) {
-                    getParent().requestDisallowInterceptTouchEvent(false);
-                }
-            case MotionEvent.ACTION_UP:
-                break;
-        }
-        return super.dispatchTouchEvent(ev);
     }
 }
