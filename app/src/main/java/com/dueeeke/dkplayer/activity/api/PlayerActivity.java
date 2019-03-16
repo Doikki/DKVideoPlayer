@@ -13,7 +13,6 @@ import com.dueeeke.dkplayer.util.IntentKeys;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.IjkVideoView;
-import com.dueeeke.videoplayer.player.PlayerConfig;
 import com.dueeeke.videoplayer.util.L;
 
 /**
@@ -45,14 +44,7 @@ public class PlayerActivity extends AppCompatActivity {
             }
             String title = intent.getStringExtra(IntentKeys.TITLE);
             controller.setTitle(title);
-            ijkVideoView.setPlayerConfig(new PlayerConfig.Builder()
-                    .autoRotate()//自动旋转屏幕
-//                    .enableMediaCodec()//启动硬解码
-//                    .usingSurfaceView()//使用SurfaceView
-//                    .setCustomMediaPlayer(new ExoMediaPlayer(this))
-//                    .setCustomMediaPlayer(new AndroidMediaPlayer(this))
-                    .build());
-//            ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_CENTER_CROP);
+
             ijkVideoView.setUrl(intent.getStringExtra("url"));
             ijkVideoView.setVideoController(controller);
             ijkVideoView.start();

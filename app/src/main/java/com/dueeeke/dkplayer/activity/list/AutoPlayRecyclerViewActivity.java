@@ -49,7 +49,7 @@ public class AutoPlayRecyclerViewActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.rv);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(new VideoRecyclerViewAdapter(DataUtil.getVideoList(), this));
+        recyclerView.setAdapter(new VideoRecyclerViewAdapter(DataUtil.getVideoList()));
         recyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
             @Override
             public void onChildViewAttachedToWindow(View view) {

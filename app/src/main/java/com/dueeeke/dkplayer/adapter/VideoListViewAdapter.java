@@ -10,10 +10,10 @@ import android.widget.LinearLayout;
 import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.bean.VideoBean;
+import com.dueeeke.dkplayer.util.ProgressManagerImpl;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.player.IjkPlayer;
 import com.dueeeke.videoplayer.player.IjkVideoView;
-import com.dueeeke.videoplayer.player.PlayerConfig;
 
 import java.util.List;
 
@@ -56,7 +56,6 @@ public class VideoListViewAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        viewHolder.ijkVideoView.setPlayerConfig(viewHolder.mPlayerConfig);
         viewHolder.ijkVideoView.setUrl(videoBean.getUrl());
         viewHolder.ijkVideoView.setVideoController(viewHolder.controller);
         viewHolder.controller.setTitle(videoBean.getTitle());
@@ -73,26 +72,22 @@ public class VideoListViewAdapter extends BaseAdapter {
     private class ViewHolder {
         private IjkVideoView ijkVideoView;
         private StandardVideoController controller;
-        private PlayerConfig mPlayerConfig;
 
         ViewHolder(View itemView) {
             this.ijkVideoView = itemView.findViewById(R.id.video_player);
             int widthPixels = context.getResources().getDisplayMetrics().widthPixels;
             ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels * 9 / 16 + 1));
             controller = new StandardVideoController(context);
-            mPlayerConfig = new PlayerConfig.Builder()
-//                    .enableCache()
-//                    .autoRotate()
-                    .setCustomMediaPlayer(new IjkPlayer(context){
-                        @Override
-                        public void setOptions() {
-                            //精准seek
-                            mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "enable-accurate-seek", 1);
-                        }
-                    })
-                    .addToPlayerManager()
-                    .savingProgress()
-                    .build();
+            ijkVideoView.addToVideoViewManager();
+            //保存播放进度
+            ijkVideoView.setProgressManager(new ProgressManagerImpl());
+            ijkVideoView.setCustomMediaPlayer(new IjkPlayer(context) {
+                @Override
+                public void setOptions() {
+                    //精准seek
+                    mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "enable-accurate-seek", 1);
+                }
+            });
         }
     }
 }

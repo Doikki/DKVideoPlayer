@@ -14,7 +14,6 @@ import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.dkplayer.widget.controller.RotateInFullscreenController;
 import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.IjkVideoView;
-import com.dueeeke.videoplayer.player.PlayerConfig;
 
 import java.util.List;
 
@@ -43,7 +42,6 @@ public class RotateRecyclerViewAdapter extends RecyclerView.Adapter<RotateRecycl
                 .crossFade()
                 .placeholder(android.R.color.darker_gray)
                 .into(holder.controller.getThumb());
-        holder.ijkVideoView.setPlayerConfig(holder.mPlayerConfig);
         holder.ijkVideoView.setUrl(videoBean.getUrl());
         holder.controller.setTitle(videoBean.getTitle());
         holder.ijkVideoView.setVideoController(holder.controller);
@@ -60,7 +58,6 @@ public class RotateRecyclerViewAdapter extends RecyclerView.Adapter<RotateRecycl
         private IjkVideoView ijkVideoView;
         private RotateInFullscreenController controller;
         private TextView title;
-        private PlayerConfig mPlayerConfig;
 
         VideoHolder(View itemView) {
             super(itemView);
@@ -88,12 +85,8 @@ public class RotateRecyclerViewAdapter extends RecyclerView.Adapter<RotateRecycl
             });
             controller = new RotateInFullscreenController(context);
             title = itemView.findViewById(R.id.tv_title);
-            mPlayerConfig = new PlayerConfig.Builder()
-//                        .enableCache()
-//                        .autoRotate()//不能开启自动旋转
-                    .addToPlayerManager()//required
-//                        .savingProgress()
-                    .build();
+            //必须调用
+            ijkVideoView.addToVideoViewManager();
         }
     }
 }

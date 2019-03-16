@@ -14,7 +14,6 @@ import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.player.AbstractPlayer;
 import com.dueeeke.videoplayer.player.IjkPlayer;
 import com.dueeeke.videoplayer.player.IjkVideoView;
-import com.dueeeke.videoplayer.player.PlayerConfig;
 
 /**
  * 多播放器切换
@@ -44,11 +43,6 @@ public class SwitchPlayerActivity extends AppCompatActivity implements View.OnCl
         findViewById(R.id.btn_exo).setOnClickListener(this);
 
         mController = new StandardVideoController(this);
-        ijkVideoView.setPlayerConfig(new PlayerConfig.Builder()
-                .autoRotate()//自动旋转屏幕
-//                .usingSurfaceView()//使用SurfaceView
-//                .enableCache()
-                .build());
         ijkVideoView.setUrl(URL);
         ijkVideoView.setVideoController(mController);
         ijkVideoView.start();
@@ -74,13 +68,7 @@ public class SwitchPlayerActivity extends AppCompatActivity implements View.OnCl
         ijkVideoView.release();
         ijkVideoView.setUrl(URL);
         ijkVideoView.setVideoController(mController);
-
-        ijkVideoView.setPlayerConfig(new PlayerConfig.Builder()
-                .autoRotate()//自动旋转屏幕
-//                .usingSurfaceView()//使用SurfaceView
-                .setCustomMediaPlayer(player)
-//                .setLooping()
-                .build());
+        ijkVideoView.setCustomMediaPlayer(player);
         ijkVideoView.start();
 
     }

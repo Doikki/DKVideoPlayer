@@ -13,7 +13,6 @@ import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.util.PIPManager;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
-import com.dueeeke.videoplayer.player.PlayerConfig;
 import com.yanzhenjie.permission.AndPermission;
 
 public class PIPActivity extends AppCompatActivity{
@@ -52,10 +51,6 @@ public class PIPActivity extends AppCompatActivity{
                     .into(controller.getThumb());
             ijkVideoView.setUrl(URL);
             controller.setTitle("香港卫视");
-            PlayerConfig config = new PlayerConfig.Builder()
-                    .autoRotate()
-                    .build();
-            ijkVideoView.setPlayerConfig(config);
         }
         playerContainer.addView(ijkVideoView);
     }

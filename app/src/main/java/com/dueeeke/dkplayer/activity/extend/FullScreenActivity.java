@@ -9,7 +9,6 @@ import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.widget.controller.FullScreenController;
 import com.dueeeke.dkplayer.widget.videoview.FullScreenIjkVideoView;
 import com.dueeeke.videoplayer.player.IjkVideoView;
-import com.dueeeke.videoplayer.player.PlayerConfig;
 
 /**
  * 全屏播放
@@ -31,8 +30,6 @@ public class FullScreenActivity extends AppCompatActivity{
 
         ijkVideoView = new FullScreenIjkVideoView(this);
         setContentView(ijkVideoView);
-        PlayerConfig config = new PlayerConfig.Builder().autoRotate().build();
-        ijkVideoView.setPlayerConfig(config);
         ijkVideoView.setUrl("http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv");
         FullScreenController controller = new FullScreenController(this);
         controller.setTitle("这是一个标题");

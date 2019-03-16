@@ -21,7 +21,6 @@ import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.widget.CenteredImageSpan;
 import com.dueeeke.dkplayer.widget.videoview.DanmukuVideoView;
 import com.dueeeke.videocontroller.StandardVideoController;
-import com.dueeeke.videoplayer.player.PlayerConfig;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 
 import java.util.HashMap;
@@ -64,8 +63,6 @@ public class DanmakuActivity extends AppCompatActivity {
 
         initDanMuView();
         danmukuVideoView.addDanmukuView(mDanmakuView, mContext, mParser);
-        PlayerConfig config = new PlayerConfig.Builder().setLooping().build();
-        danmukuVideoView.setPlayerConfig(config);
         StandardVideoController standardVideoController = new StandardVideoController(this);
         standardVideoController.setTitle("网易公开课-如何掌控你的自由时间");
         danmukuVideoView.setVideoController(standardVideoController);

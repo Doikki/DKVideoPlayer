@@ -10,7 +10,6 @@ import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.widget.controller.DefinitionController;
 import com.dueeeke.dkplayer.widget.videoview.DefinitionIjkVideoView;
 import com.dueeeke.videoplayer.player.IjkPlayer;
-import com.dueeeke.videoplayer.player.PlayerConfig;
 
 import java.util.LinkedHashMap;
 
@@ -39,16 +38,13 @@ public class DefinitionPlayerActivity extends AppCompatActivity {
 
         DefinitionController controller = new DefinitionController(this);
         controller.setTitle("韩雪：积极的悲观主义者");
-        ijkVideoView.setPlayerConfig(new PlayerConfig.Builder()
-                .setCustomMediaPlayer(new IjkPlayer(this) {
-                    @Override
-                    public void setOptions() {
-                        //精准seek
-                        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "enable-accurate-seek", 1);
-                    }
-                })
-                .autoRotate()//自动旋转屏幕
-                .build());
+        ijkVideoView.setCustomMediaPlayer(new IjkPlayer(this) {
+            @Override
+            public void setOptions() {
+                //精准seek
+                mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "enable-accurate-seek", 1);
+            }
+        });
 
         LinkedHashMap<String, String> videos = new LinkedHashMap<>();
         videos.put("标清", "http://mov.bn.netease.com/open-movie/nos/flv/2017/07/24/SCP786QON_sd.flv");

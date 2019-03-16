@@ -21,7 +21,6 @@ import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.dkplayer.widget.controller.TikTokController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
-import com.dueeeke.videoplayer.player.PlayerConfig;
 
 import java.util.List;
 
@@ -53,8 +52,7 @@ public class TikTokActivity extends AppCompatActivity {
         setStatusBarTransparent();
 
         mIjkVideoView = new IjkVideoView(this);
-        PlayerConfig config = new PlayerConfig.Builder().setLooping().build();
-        mIjkVideoView.setPlayerConfig(config);
+        mIjkVideoView.setLooping(true);
         mTikTokController = new TikTokController(this);
         mIjkVideoView.setVideoController(mTikTokController);
         mRecyclerView = findViewById(R.id.rv);

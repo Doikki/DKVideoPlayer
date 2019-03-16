@@ -9,7 +9,6 @@ import android.view.MenuItem;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
-import com.dueeeke.videoplayer.player.PlayerConfig;
 
 /**
  * 播放raw/assets视频
@@ -30,14 +29,6 @@ public class PlayRawAssetsActivity extends AppCompatActivity {
         }
         ijkVideoView = findViewById(R.id.player);
         StandardVideoController controller = new StandardVideoController(this);
-        ijkVideoView.setPlayerConfig(new PlayerConfig.Builder()
-                .autoRotate()//自动旋转屏幕
-//                    .enableCache()//启用边播边存
-//                .enableMediaCodec()//启动硬解码
-//                .usingSurfaceView()//使用SurfaceView
-                //ijkplayer不支持assets播放,需切换成MediaPlayer
-//                .setCustomMediaPlayer(new AndroidMediaPlayer(this))
-                .build());
         //播放assets文件
 //        AssetManager am = getResources().getAssets();
 //        AssetFileDescriptor afd = null;

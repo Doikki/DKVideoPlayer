@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
-import com.dueeeke.videoplayer.player.PlayerConfig;
 
 public class MultiPlayerActivity extends AppCompatActivity{
 
@@ -31,13 +30,13 @@ public class MultiPlayerActivity extends AppCompatActivity{
         mPlayer1 = findViewById(R.id.player_1);
         mPlayer1.setUrl(VOD_URL);
 
-        mPlayer1.setPlayerConfig(new PlayerConfig.Builder().disableAudioFocus().build());
+        mPlayer1.setEnableAudioFocus(false);
         StandardVideoController controller1 = new StandardVideoController(this);
         mPlayer1.setVideoController(controller1);
 
         mPlayer2 = findViewById(R.id.player_2);
         mPlayer2.setUrl(VOD_URL);
-        mPlayer2.setPlayerConfig(new PlayerConfig.Builder().disableAudioFocus().build());
+        mPlayer2.setEnableAudioFocus(false);
         StandardVideoController controller2 = new StandardVideoController(this);
         mPlayer2.setVideoController(controller2);
     }

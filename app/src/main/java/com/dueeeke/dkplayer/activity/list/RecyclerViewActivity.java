@@ -44,7 +44,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
     private void initView() {
         RecyclerView recyclerView = findViewById(R.id.rv);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new VideoRecyclerViewAdapter(DataUtil.getVideoList(), this));
+        recyclerView.setAdapter(new VideoRecyclerViewAdapter(DataUtil.getVideoList()));
         recyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
             @Override
             public void onChildViewAttachedToWindow(View view) {

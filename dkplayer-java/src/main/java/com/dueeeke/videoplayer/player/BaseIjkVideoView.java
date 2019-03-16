@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.AssetFileDescriptor;
+import android.content.res.TypedArray;
 import android.media.AudioManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,12 +13,12 @@ import android.util.AttributeSet;
 import android.view.OrientationEventListener;
 import android.widget.FrameLayout;
 
+import com.dueeeke.videoplayer.R;
 import com.dueeeke.videoplayer.controller.BaseVideoController;
 import com.dueeeke.videoplayer.controller.MediaPlayerControl;
 import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.listener.PlayerEventListener;
 import com.dueeeke.videoplayer.util.PlayerUtils;
-import com.dueeeke.videoplayer.util.ProgressUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,17 +70,32 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     protected static final int REVERSE_LANDSCAPE = 3;
 
     protected boolean mIsLockFullScreen;//是否锁定屏幕
-    protected PlayerConfig mPlayerConfig;//播放器配置
 
     public static boolean IS_PLAY_ON_MOBILE_NETWORK = false;//记录是否在移动网络下播放视频
 
     protected List<OnVideoViewStateChangeListener> mOnVideoViewStateChangeListeners;
+
+    @Nullable
+    protected ProgressManager mProgressManager;
+
+    protected boolean mAutoRotate;
+
+    protected boolean mUsingSurfaceView;
+
+    protected boolean mIsLooping;
+
+    protected boolean mEnableAudioFocus;
+
+    protected boolean mEnableMediaCodec;
+
+    protected boolean mAddToVideoViewManager;
 
     /**
      * 加速度传感器监听
      */
     protected OrientationEventListener mOrientationEventListener = new OrientationEventListener(getContext()) { // 加速度传感器监听，用于自动旋转屏幕
         private long mLastTime;
+
         @Override
         public void onOrientationChanged(int orientation) {
             long currentTime = System.currentTimeMillis();
@@ -102,7 +118,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      * 竖屏
      */
     protected void onOrientationPortrait(Activity activity) {
-        if (mIsLockFullScreen || !mPlayerConfig.mAutoRotate || mCurrentOrientation == PORTRAIT)
+        if (mIsLockFullScreen || !mAutoRotate || mCurrentOrientation == PORTRAIT)
             return;
         if ((mCurrentOrientation == LANDSCAPE || mCurrentOrientation == REVERSE_LANDSCAPE) && !isFullScreen()) {
             mCurrentOrientation = PORTRAIT;
@@ -161,7 +177,13 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
 
     public BaseIjkVideoView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mPlayerConfig = new PlayerConfig.Builder().build();
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.BaseIjkVideoView);
+        mAutoRotate = typedArray.getBoolean(R.styleable.BaseIjkVideoView_autoRotate, false);
+        mUsingSurfaceView = typedArray.getBoolean(R.styleable.BaseIjkVideoView_usingSurfaceView, false);
+        mIsLooping = typedArray.getBoolean(R.styleable.BaseIjkVideoView_looping, false);
+        mEnableAudioFocus = typedArray.getBoolean(R.styleable.BaseIjkVideoView_enableAudioFocus, true);
+        mEnableMediaCodec = typedArray.getBoolean(R.styleable.BaseIjkVideoView_enableMediaCodec, false);
+        typedArray.recycle();
     }
 
     /**
@@ -169,16 +191,12 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      */
     protected void initPlayer() {
         if (mMediaPlayer == null) {
-            if (mPlayerConfig.mAbstractPlayer != null) {
-                mMediaPlayer = mPlayerConfig.mAbstractPlayer;
-            } else {
-                mMediaPlayer = new IjkPlayer(getContext());
-            }
+            mMediaPlayer = new IjkPlayer(getContext());
             mMediaPlayer.bindVideoView(this);
             mMediaPlayer.initPlayer();
-            mMediaPlayer.setEnableMediaCodec(mPlayerConfig.enableMediaCodec);
-            mMediaPlayer.setLooping(mPlayerConfig.isLooping);
         }
+        mMediaPlayer.setEnableMediaCodec(mEnableMediaCodec);
+        mMediaPlayer.setLooping(mIsLooping);
     }
 
     protected abstract void setPlayState(int playState);
@@ -220,14 +238,14 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      * 第一次播放
      */
     protected void startPlay() {
-        if (!mPlayerConfig.disableAudioFocus) {
+        if (mEnableAudioFocus) {
             mAudioManager = (AudioManager) getContext().getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
             mAudioFocusHelper = new AudioFocusHelper();
         }
-        if (mPlayerConfig.savingProgress) {
-            mCurrentPosition = ProgressUtil.getSavedProgress(mCurrentUrl);
+        if (mProgressManager != null) {
+            mCurrentPosition = mProgressManager.getSavedProgress(mCurrentUrl);
         }
-        if (mPlayerConfig.mAutoRotate)
+        if (mAutoRotate)
             mOrientationEventListener.enable();
         initPlayer();
         startPrepare(false);
@@ -273,8 +291,8 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      * 停止播放
      */
     public void stopPlayback() {
-        if (mPlayerConfig.savingProgress && isInPlaybackState())
-            ProgressUtil.saveProgress(mCurrentUrl, mCurrentPosition);
+        if (mProgressManager != null && isInPlaybackState())
+            mProgressManager.saveProgress(mCurrentUrl, mCurrentPosition);
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
             setPlayState(STATE_IDLE);
@@ -289,8 +307,8 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      * 释放播放器
      */
     public void release() {
-        if (mPlayerConfig.savingProgress && isInPlaybackState())
-            ProgressUtil.saveProgress(mCurrentUrl, mCurrentPosition);
+        if (mProgressManager != null && isInPlaybackState())
+            mProgressManager.saveProgress(mCurrentUrl, mCurrentPosition);
         if (mMediaPlayer != null) {
             mMediaPlayer.release();
             mMediaPlayer = null;
@@ -470,10 +488,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         }
     }
 
-    public void setPlayerConfig(PlayerConfig config) {
-        this.mPlayerConfig = config;
-    }
-
     /**
      * 获取当前播放器的状态
      */
@@ -558,6 +572,68 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         if (mMediaPlayer != null) {
             mMediaPlayer.setVolume(v1, v2);
         }
+    }
+
+    /**
+     * 设置进度管理器，用于保存播放进度
+     */
+    public void setProgressManager(@Nullable ProgressManager progressManager) {
+        this.mProgressManager = progressManager;
+    }
+
+    /**
+     * 循环播放， 默认不循环播放
+     */
+    public void setLooping(boolean looping) {
+        mIsLooping = looping;
+        if (mMediaPlayer != null) {
+            mMediaPlayer.setLooping(looping);
+        }
+    }
+
+    /**
+     * 是否自动旋转， 默认不自动旋转
+     */
+    public void setAutoRotate(boolean autoRotate) {
+        mAutoRotate = autoRotate;
+    }
+
+    /**
+     * 是否启用SurfaceView，默认不启用
+     */
+    public void setUsingSurfaceView(boolean usingSurfaceView) {
+        mUsingSurfaceView = usingSurfaceView;
+    }
+
+    /**
+     * 是否开启AudioFocus监听， 默认开启
+     */
+    public void setEnableAudioFocus(boolean enableAudioFocus) {
+        mEnableAudioFocus = enableAudioFocus;
+    }
+
+    /**
+     * 是否使用MediaCodec进行解码（硬解码），默认不开启，使用软解
+     */
+    public void setEnableMediaCodec(boolean enableMediaCodec) {
+        mEnableMediaCodec = enableMediaCodec;
+    }
+
+    /**
+     * 添加到{@link VideoViewManager},如需集成到RecyclerView或ListView请开启此选项
+     * 用于实现同一列表同时只播放一个视频
+     */
+    public void addToVideoViewManager() {
+        mAddToVideoViewManager = true;
+    }
+
+    /**
+     * 自定义播放核心，继承{@link AbstractPlayer}实现自己的播放核心
+     */
+    public void setCustomMediaPlayer(@NonNull AbstractPlayer abstractPlayer) {
+        mMediaPlayer = abstractPlayer;
+        mMediaPlayer.bindVideoView(this);
+        mMediaPlayer.initPlayer();
     }
 
     /**

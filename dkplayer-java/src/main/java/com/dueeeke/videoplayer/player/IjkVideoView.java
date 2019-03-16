@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.SurfaceTexture;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -92,7 +93,7 @@ public class IjkVideoView extends BaseIjkVideoView {
     }
 
     protected void addDisplay() {
-        if (mPlayerConfig.usingSurfaceView) {
+        if (mUsingSurfaceView || Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             addSurfaceView();
         } else {
             addTextureView();
@@ -108,8 +109,11 @@ public class IjkVideoView extends BaseIjkVideoView {
         if (mVideoController != null)
             mVideoController.setPlayState(playState);
         if (mOnVideoViewStateChangeListeners != null) {
-            for (OnVideoViewStateChangeListener listener : mOnVideoViewStateChangeListeners) {
-                listener.onPlayStateChanged(playState);
+            for (int i = 0, z = mOnVideoViewStateChangeListeners.size(); i < z; i++) {
+                OnVideoViewStateChangeListener listener = mOnVideoViewStateChangeListeners.get(i);
+                if (listener != null) {
+                    listener.onPlayStateChanged(playState);
+                }
             }
         }
     }
@@ -123,15 +127,18 @@ public class IjkVideoView extends BaseIjkVideoView {
         if (mVideoController != null)
             mVideoController.setPlayerState(playerState);
         if (mOnVideoViewStateChangeListeners != null) {
-            for (OnVideoViewStateChangeListener listener : mOnVideoViewStateChangeListeners) {
-                listener.onPlayerStateChanged(playerState);
+            for (int i = 0, z = mOnVideoViewStateChangeListeners.size(); i < z; i++) {
+                OnVideoViewStateChangeListener listener = mOnVideoViewStateChangeListeners.get(i);
+                if (listener != null) {
+                    listener.onPlayerStateChanged(playerState);
+                }
             }
         }
     }
 
     @Override
     protected void startPlay() {
-        if (mPlayerConfig.addToPlayerManager) {
+        if (mAddToVideoViewManager) {
             VideoViewManager.instance().releaseVideoPlayer();
             VideoViewManager.instance().setCurrentVideoPlayer(this);
         }
@@ -265,7 +272,7 @@ public class IjkVideoView extends BaseIjkVideoView {
         Activity activity = PlayerUtils.scanForActivity(mVideoController.getContext());
         if (activity == null) return;
         if (!mIsFullScreen) return;
-        if (!mPlayerConfig.mAutoRotate) mOrientationEventListener.disable();
+        if (!mAutoRotate) mOrientationEventListener.disable();
         PlayerUtils.showActionBar(mVideoController.getContext());
         this.removeView(mHideNavBarView);
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -313,7 +320,7 @@ public class IjkVideoView extends BaseIjkVideoView {
     public void onVideoSizeChanged(int videoWidth, int videoHeight) {
         mVideoSize[0] = videoWidth;
         mVideoSize[1] = videoHeight;
-        if (mPlayerConfig.usingSurfaceView) {
+        if (mUsingSurfaceView) {
             mSurfaceView.setScreenScale(mCurrentScreenScale);
             mSurfaceView.setVideoSize(videoWidth, videoHeight);
         } else {
@@ -330,7 +337,7 @@ public class IjkVideoView extends BaseIjkVideoView {
             mHideNavBarView.setSystemUiVisibility(FULLSCREEN_FLAGS);
         }
 
-        if (isInPlaybackState() && (mPlayerConfig.mAutoRotate || mIsFullScreen)) {
+        if (isInPlaybackState() && (mAutoRotate || mIsFullScreen)) {
             if (hasFocus) {
                 postDelayed(new Runnable() {
                     @Override

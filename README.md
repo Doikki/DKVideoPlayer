@@ -71,17 +71,6 @@ ijkVideoView.setTitle("网易公开课-如何掌控你的自由时间"); //设�
 StandardVideoController controller = new StandardVideoController(this);
 ijkVideoView.setVideoController(controller); //设置控制器，如需定制可继承BaseVideoController
 ijkVideoView.start(); //开始播放，不调用则不自动播放
-
-//高级设置（可选，须在start()之前调用方可生效）
-PlayerConfig playerConfig = new PlayerConfig.Builder()
-        .autoRotate() //启用重力感应自动进入/退出全屏功能
-        .enableMediaCodec()//启动硬解码，启用后可能导致视频黑屏，音画不同步
-        .usingSurfaceView() //启用SurfaceView显示视频，不调用默认使用TextureView
-        .savingProgress() //保存播放进度
-        .disableAudioFocus() //关闭AudioFocusChange监听
-        .setLooping() //循环播放当前正在播放的视频
-        .build();
-ijkVideoView.setPlayerConfig(playerConfig);
 ```
 
 4.在`Activity`中
@@ -126,7 +115,7 @@ ijkVideoView.setPlayerConfig(playerConfig);
 ## 截图
 |API演示|列表播放|扩展功能|画中画
 |:---:|:---:|:---:|:---:|
-![](https://github.com/dueeeke/dkplayer/blob/master/art/1.jpg)|![](https://github.com/dueeeke/dkplayer/blob/master/art/2.jpg)|![](https://github.com/dueeeke/dkplayer/blob/master/art/3.jpg)|![](https://github.com/dueeeke/dkplayer/blob/master/art/4.jpg)
+![](https://github.com/dueeeke/dkplayer/blob/master/art/1.png)|![](https://github.com/dueeeke/dkplayer/blob/master/art/2.png)|![](https://github.com/dueeeke/dkplayer/blob/master/art/3.png)|![](https://github.com/dueeeke/dkplayer/blob/master/art/4.png)
 
 ## 混淆
 	-keep class tv.danmaku.ijk.** { *; }

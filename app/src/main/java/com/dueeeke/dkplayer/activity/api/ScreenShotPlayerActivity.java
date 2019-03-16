@@ -12,7 +12,6 @@ import android.widget.ImageView;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
-import com.dueeeke.videoplayer.player.PlayerConfig;
 
 /**
  * 截图
@@ -36,12 +35,6 @@ public class ScreenShotPlayerActivity extends AppCompatActivity {
         ijkVideoView = findViewById(R.id.player);
         mScreenShot = findViewById(R.id.iv_screen_shot);
         StandardVideoController controller = new StandardVideoController(this);
-        ijkVideoView.setPlayerConfig(new PlayerConfig.Builder()
-                .autoRotate()//自动旋转屏幕
-//                    .enableCache()//启用边播边存
-//                .enableMediaCodec()//启动硬解码
-//                .usingSurfaceView()//使用SurfaceView
-                .build());
         ijkVideoView.setUrl("http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv");
         ijkVideoView.setVideoController(controller);
         ijkVideoView.start();
