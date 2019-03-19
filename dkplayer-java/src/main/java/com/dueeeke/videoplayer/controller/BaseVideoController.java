@@ -90,7 +90,7 @@ public abstract class BaseVideoController extends FrameLayout {
                     @Override
                     public void onClick(View v) {
                         hideStatusView();
-                        mMediaPlayer.retry();
+                        mMediaPlayer.replay(false);
                     }
                 });
                 this.addView(mStatusView, 0);
@@ -173,8 +173,6 @@ public abstract class BaseVideoController extends FrameLayout {
         Date date = new Date();
         return simpleDateFormat.format(date);
     }
-
-
 
     protected String stringForTime(int timeMs) {
         int totalSeconds = timeMs / 1000;

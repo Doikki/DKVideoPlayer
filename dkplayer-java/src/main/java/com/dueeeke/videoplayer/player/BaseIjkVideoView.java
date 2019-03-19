@@ -24,9 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import tv.danmaku.ijk.media.player.IMediaPlayer;
-import tv.danmaku.ijk.media.player.IjkMediaPlayer;
-
 /**
  * 播放器
  * Created by Devlin_n on 2017/4/7.
@@ -35,6 +32,7 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlayerControl, PlayerEventListener {
 
     protected AbstractPlayer mMediaPlayer;//播放器
+    protected AbstractPlayer mTempMediaPlayer;
     @Nullable
     protected BaseVideoController mVideoController;//控制器
     protected boolean mIsMute;//是否静音
@@ -190,11 +188,13 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      * 初始化播放器
      */
     protected void initPlayer() {
-        if (mMediaPlayer == null) {
+        if (mTempMediaPlayer != null) {
+            mMediaPlayer = mTempMediaPlayer;
+        } else {
             mMediaPlayer = new IjkPlayer(getContext());
-            mMediaPlayer.bindVideoView(this);
-            mMediaPlayer.initPlayer();
         }
+        mMediaPlayer.bindVideoView(this);
+        mMediaPlayer.initPlayer();
         mMediaPlayer.setEnableMediaCodec(mEnableMediaCodec);
         mMediaPlayer.setLooping(mIsLooping);
     }
@@ -464,13 +464,13 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     @Override
     public void onInfo(int what, int extra) {
         switch (what) {
-            case IMediaPlayer.MEDIA_INFO_BUFFERING_START:
+            case AbstractPlayer.MEDIA_INFO_BUFFERING_START:
                 setPlayState(STATE_BUFFERING);
                 break;
-            case IMediaPlayer.MEDIA_INFO_BUFFERING_END:
+            case AbstractPlayer.MEDIA_INFO_BUFFERING_END:
                 setPlayState(STATE_BUFFERED);
                 break;
-            case IjkMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START: // 视频开始渲染
+            case AbstractPlayer.MEDIA_INFO_VIDEO_RENDERING_START: // 视频开始渲染
                 setPlayState(STATE_PLAYING);
                 if (getWindowVisibility() != VISIBLE) pause();
                 break;
@@ -519,15 +519,6 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         if (isInPlaybackState()) {
             mMediaPlayer.setSpeed(speed);
         }
-    }
-
-    /**
-     * 重新播放
-     */
-    @Override
-    public void refresh() {
-        mCurrentPosition = 0;
-        retry();
     }
 
     /**
@@ -631,9 +622,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      * 自定义播放核心，继承{@link AbstractPlayer}实现自己的播放核心
      */
     public void setCustomMediaPlayer(@NonNull AbstractPlayer abstractPlayer) {
-        mMediaPlayer = abstractPlayer;
-        mMediaPlayer.bindVideoView(this);
-        mMediaPlayer.initPlayer();
+        mTempMediaPlayer = abstractPlayer;
     }
 
     /**
@@ -679,42 +668,36 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
 
         /**
          * Requests to obtain the audio focus
-         *
-         * @return True if the focus was granted
          */
-        boolean requestFocus() {
+        void requestFocus() {
             if (currentFocus == AudioManager.AUDIOFOCUS_GAIN) {
-                return true;
+                return;
             }
 
             if (mAudioManager == null) {
-                return false;
+                return;
             }
 
             int status = mAudioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
             if (AudioManager.AUDIOFOCUS_REQUEST_GRANTED == status) {
                 currentFocus = AudioManager.AUDIOFOCUS_GAIN;
-                return true;
+                return;
             }
 
             startRequested = true;
-            return false;
         }
 
         /**
          * Requests the system to drop the audio focus
-         *
-         * @return True if the focus was lost
          */
-        boolean abandonFocus() {
+        void abandonFocus() {
 
             if (mAudioManager == null) {
-                return false;
+                return;
             }
 
             startRequested = false;
-            int status = mAudioManager.abandonAudioFocus(this);
-            return AudioManager.AUDIOFOCUS_REQUEST_GRANTED == status;
+            mAudioManager.abandonAudioFocus(this);
         }
     }
 }

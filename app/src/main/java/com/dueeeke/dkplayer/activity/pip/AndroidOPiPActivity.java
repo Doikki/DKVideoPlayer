@@ -215,7 +215,7 @@ public class AndroidOPiPActivity extends AppCompatActivity {
                                     mIjkVideoView.pause();
                                     break;
                                 case CONTROL_TYPE_REPLAY:
-                                    mIjkVideoView.retry();
+                                    mIjkVideoView.replay(true);
                                     break;
                             }
                         }

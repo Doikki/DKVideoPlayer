@@ -14,6 +14,29 @@ import java.util.Map;
 
 public abstract class AbstractPlayer {
 
+    /**
+     * 开始渲染视频画面
+     */
+    public static final int MEDIA_INFO_VIDEO_RENDERING_START = 3;
+
+    /**
+     * 缓冲开始
+     */
+    public static final int MEDIA_INFO_BUFFERING_START = 701;
+
+    /**
+     * 缓冲结束
+     */
+    public static final int MEDIA_INFO_BUFFERING_END = 702;
+
+    /**
+     * 视频旋转信息
+     */
+    public static final int MEDIA_INFO_VIDEO_ROTATION_CHANGED = 10001;
+
+    /**
+     * 播放器事件回调
+     */
     protected PlayerEventListener mPlayerEventListener;
 
     /**

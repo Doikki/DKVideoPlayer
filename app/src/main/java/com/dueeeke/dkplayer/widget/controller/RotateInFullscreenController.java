@@ -93,7 +93,7 @@ public class RotateInFullscreenController extends StandardVideoController {
             mMediaPlayer.start();
             mMediaPlayer.startFullScreen();
         } else if (i == R.id.iv_replay) {
-            mMediaPlayer.retry();
+            mMediaPlayer.replay(true);
             mMediaPlayer.startFullScreen();
         }
     }

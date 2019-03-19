@@ -33,7 +33,6 @@ import com.google.android.exoplayer2.video.VideoListener;
 
 import java.util.Map;
 
-import tv.danmaku.ijk.media.player.IMediaPlayer;
 
 public class ExoMediaPlayer extends AbstractPlayer implements VideoListener {
 
@@ -81,7 +80,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener {
 
     private MediaSource getMediaSource() {
         Uri contentUri = Uri.parse(mDataSource);
-        if (contentUri.getScheme().equals("rtmp")) {
+        if ("rtmp".equals(contentUri.getScheme())) {
             RtmpDataSourceFactory rtmpDataSourceFactory = new RtmpDataSourceFactory(null);
             return new ExtractorMediaSource.Factory(rtmpDataSourceFactory)
                     .createMediaSource(contentUri);
@@ -301,7 +300,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener {
                         case Player.STATE_ENDED:
                         case Player.STATE_READY:
                             if (mPlayerEventListener != null) {
-                                mPlayerEventListener.onInfo(IMediaPlayer.MEDIA_INFO_BUFFERING_END, mInternalPlayer.getBufferedPercentage());
+                                mPlayerEventListener.onInfo(MEDIA_INFO_BUFFERING_END, mInternalPlayer.getBufferedPercentage());
                             }
                             mIsBuffering = false;
                             break;
@@ -323,7 +322,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener {
                     case Player.STATE_BUFFERING:
                         if (!mIsPreparing) {
                             if (mPlayerEventListener != null) {
-                                mPlayerEventListener.onInfo(IMediaPlayer.MEDIA_INFO_BUFFERING_START, mInternalPlayer.getBufferedPercentage());
+                                mPlayerEventListener.onInfo(MEDIA_INFO_BUFFERING_START, mInternalPlayer.getBufferedPercentage());
                             }
                             mIsBuffering = true;
                         }
@@ -357,7 +356,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener {
         if (mPlayerEventListener != null) {
             mPlayerEventListener.onVideoSizeChanged(width, height);
             if (unappliedRotationDegrees > 0) {
-                mPlayerEventListener.onInfo(IMediaPlayer.MEDIA_INFO_VIDEO_ROTATION_CHANGED, unappliedRotationDegrees);
+                mPlayerEventListener.onInfo(MEDIA_INFO_VIDEO_ROTATION_CHANGED, unappliedRotationDegrees);
             }
         }
     }
@@ -365,6 +364,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener {
     @Override
     public void onRenderedFirstFrame() {
         if (mPlayerEventListener != null && mIsPreparing)
-            mPlayerEventListener.onInfo(IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START, 0);
+            mPlayerEventListener.onInfo(MEDIA_INFO_VIDEO_RENDERING_START, 0);
     }
 }

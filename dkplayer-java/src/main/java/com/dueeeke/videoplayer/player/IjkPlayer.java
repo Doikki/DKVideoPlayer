@@ -80,13 +80,17 @@ public class IjkPlayer extends AbstractPlayer {
         try {
             mMediaPlayer.pause();
         } catch (IllegalStateException e) {
-            e.printStackTrace();
+            mPlayerEventListener.onError();
         }
     }
 
     @Override
     public void start() {
-        mMediaPlayer.start();
+        try {
+            mMediaPlayer.start();
+        } catch (IllegalStateException e) {
+            mPlayerEventListener.onError();
+        }
     }
 
     @Override
@@ -94,7 +98,7 @@ public class IjkPlayer extends AbstractPlayer {
         try {
             mMediaPlayer.stop();
         } catch (IllegalStateException e) {
-            e.printStackTrace();
+            mPlayerEventListener.onError();
         }
     }
 
@@ -126,14 +130,13 @@ public class IjkPlayer extends AbstractPlayer {
         try {
             mMediaPlayer.seekTo((int) time);
         } catch (IllegalStateException e) {
-            e.printStackTrace();
+            mPlayerEventListener.onError();
         }
     }
 
     @Override
     public void release() {
-        if (mMediaPlayer != null)
-            mMediaPlayer.release();
+        mMediaPlayer.release();
     }
 
     @Override

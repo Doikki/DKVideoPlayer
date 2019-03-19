@@ -128,10 +128,8 @@ public class StandardVideoController extends GestureVideoController implements V
             doLockUnlock();
         } else if (i == R.id.iv_play || i == R.id.thumb) {
             doPauseResume();
-        } else if (i == R.id.iv_replay) {
-            mMediaPlayer.retry();
-        } else if (i == R.id.iv_refresh) {
-            mMediaPlayer.refresh();
+        } else if (i == R.id.iv_replay || i == R.id.iv_refresh) {
+            mMediaPlayer.replay(true);
         }
     }
 

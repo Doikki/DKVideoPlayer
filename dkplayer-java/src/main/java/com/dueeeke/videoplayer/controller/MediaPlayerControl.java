@@ -32,13 +32,11 @@ public interface MediaPlayerControl {
 
     void setScreenScale(int screenScale);
 
-    void retry();
-
     void setSpeed(float speed);
 
     long getTcpSpeed();
 
-    void refresh();
+    void replay(boolean resetPosition);
 
     void setMirrorRotation(boolean enable);
 

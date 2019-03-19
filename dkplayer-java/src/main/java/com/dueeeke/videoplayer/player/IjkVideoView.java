@@ -25,8 +25,6 @@ import com.dueeeke.videoplayer.util.PlayerUtils;
 import com.dueeeke.videoplayer.widget.ResizeSurfaceView;
 import com.dueeeke.videoplayer.widget.ResizeTextureView;
 
-import tv.danmaku.ijk.media.player.IjkMediaPlayer;
-
 /**
  * 播放器
  * Created by Devlin_n on 2017/4/7.
@@ -84,7 +82,7 @@ public class IjkVideoView extends BaseIjkVideoView {
     }
 
     /**
-     * 创建播放器实例，设置播放地址及播放器参数
+     * 创建播放器实例，设置播放器参数，并且添加用于显示视频的View
      */
     @Override
     protected void initPlayer() {
@@ -296,20 +294,11 @@ public class IjkVideoView extends BaseIjkVideoView {
         return mIsFullScreen;
     }
 
-    /**
-     * 重试
-     */
-    @Override
-    public void retry() {
-        addDisplay();
-        startPrepare(true);
-    }
-
     @Override
     public void onInfo(int what, int extra) {
         super.onInfo(what, extra);
         switch (what) {
-            case IjkMediaPlayer.MEDIA_INFO_VIDEO_ROTATION_CHANGED:
+            case AbstractPlayer.MEDIA_INFO_VIDEO_ROTATION_CHANGED:
                 if (mTextureView != null)
                     mTextureView.setRotation(extra);
                 break;
@@ -351,6 +340,18 @@ public class IjkVideoView extends BaseIjkVideoView {
         }
     }
 
+    /**
+     * 重新播放
+     * @param resetPosition 是否从头开始播放
+     */
+    @Override
+    public void replay(boolean resetPosition) {
+        if (resetPosition) {
+            mCurrentPosition = 0;
+        }
+        addDisplay();
+        startPrepare(true);
+    }
 
     /**
      * 设置控制器
