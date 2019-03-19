@@ -4,9 +4,6 @@ A video player based on [IjkPlayer](https://github.com/Bilibili/ijkplayer).
 [![](https://www.jitpack.io/v/dueeeke/dkplayer.svg)](https://www.jitpack.io/#dueeeke/dkplayer)
 [![API](https://img.shields.io/badge/API-16%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=16)
 
-#### [Wiki](https://github.com/dueeeke/dkplayer/wiki)
-#### [Demo](https://fir.im/1r3u)
-
 ## 特性
 * **支持直播和点播。**
 * **支持调整显示比例:默认、原始大小、16:9、4:3、铺满屏幕、居中裁剪。**
@@ -27,91 +24,10 @@ A video player based on [IjkPlayer](https://github.com/Bilibili/ijkplayer).
 * **无缝衔接播放demo。**
 * **抖音demo。**
 
+#### [Demo](https://fir.im/1r3u)
+
 ## 使用
-
-1.添加类库
-```
-gradle
-
-allprojects {
-    repositories {
-        ...
-        maven { url 'https://jitpack.io' }
-    }
-}
-
-dependencies {
-    # 必选，可兼容市面上绝大部分设备
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-java:2.5.6'
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv7a:2.5.6'
-
-    # 可选，用于兼容一些其他的CPU架构
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv5:2.5.6'
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-arm64:2.5.6'
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86:2.5.6'
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-x86_64:2.5.6'
-
-    # 可选，里面包含StandardVideoController的实现
-    implementation 'com.github.dueeeke.dkplayer:dkplayer-ui:2.5.6'
-}
-```
-或者将library下载并导入项目中使用
-
-2.添加布局
-```xml
-<com.dueeeke.videoplayer.player.IjkVideoView
-        android:id="@+id/player"
-        android:layout_width="match_parent"
-        android:layout_height="300dp" />
-```
-
-3.设置视频地址、标题、Controller等
-```java
-ijkVideoView.setUrl(URL_VOD); //设置视频地址
-StandardVideoController controller = new StandardVideoController(this);
-controller.setTitle("网易公开课-如何掌控你的自由时间"); //设置视频标题
-ijkVideoView.setVideoController(controller); //设置控制器，如需定制可继承BaseVideoController
-ijkVideoView.start(); //开始播放，不调用则不自动播放
-```
-
-4.在`Activity`中
-```java
-@Override
-    protected void onPause() {
-        super.onPause();
-        ijkVideoView.pause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        ijkVideoView.resume();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        ijkVideoView.release();
-    }
-    
-
-    @Override
-    public void onBackPressed() {
-        if (!ijkVideoView.onBackPressed()) {
-            super.onBackPressed();
-        }
-    }
-```
-
-5.在`AndroidManifest.xml`中
-```
-<activity
-    android:name=".PlayerActivity"
-    android:configChanges="orientation|screenSize|keyboardHidden"
-    android:screenOrientation="portrait" /> <!-- or android:screenOrientation="landscape"-->
-```
-
-其他API的用法参照demo
+#### [Wiki](https://github.com/dueeeke/dkplayer/wiki)
 
 ## 截图
 |API演示|列表播放|扩展功能|画中画
