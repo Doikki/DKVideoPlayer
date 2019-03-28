@@ -1,6 +1,5 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven'
-group='com.github.dueeeke'
+apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -15,5 +14,14 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     compileOnly "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
-    compileOnly project(':dkplayer-java')
+    api project(':dkplayer-java')
+}
+
+publish {
+    userOrg = USER_ORG
+    groupId = GROUP_ID
+    artifactId = 'dkplayer-ui'
+    publishVersion = PUBLISH_VERSION
+    desc = DESC
+    website = WEBSITE
 }

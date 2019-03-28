@@ -1,6 +1,5 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven'
-group='com.github.dueeeke'
+apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -20,4 +19,13 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+publish {
+    userOrg = USER_ORG
+    groupId = GROUP_ID
+    artifactId = 'dkplayer-arm64'
+    publishVersion = PUBLISH_VERSION
+    desc = DESC
+    website = WEBSITE
 }

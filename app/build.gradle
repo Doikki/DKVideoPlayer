@@ -13,7 +13,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 30
-        versionName "2.5.6"
+        versionName PUBLISH_VERSION
 
         ndk {
             //打包时保留armeabi-v7a x86 so
