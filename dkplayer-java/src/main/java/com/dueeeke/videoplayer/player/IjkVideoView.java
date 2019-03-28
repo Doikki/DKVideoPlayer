@@ -50,8 +50,10 @@ public class IjkVideoView extends BaseIjkVideoView {
 
     protected int[] mVideoSize = {0, 0};
 
-    private static final int FULLSCREEN_FLAGS = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+    protected static final int FULLSCREEN_FLAGS = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+    protected boolean mIsTinyScreen;//是否处于小屏状态
+    protected int[] mTinyScreenSize = {0, 0};
 
     public IjkVideoView(@NonNull Context context) {
         this(context, null);
@@ -134,16 +136,6 @@ public class IjkVideoView extends BaseIjkVideoView {
         }
     }
 
-    @Override
-    protected void startPlay() {
-        if (mAddToVideoViewManager) {
-            VideoViewManager.instance().releaseVideoPlayer();
-            VideoViewManager.instance().setCurrentVideoPlayer(this);
-        }
-        if (checkNetwork()) return;
-        super.startPlay();
-    }
-
     /**
      * 添加SurfaceView
      */
@@ -213,17 +205,6 @@ public class IjkVideoView extends BaseIjkVideoView {
         mPlayerContainer.addView(mTextureView, 0, params);
     }
 
-    protected boolean checkNetwork() {
-        if (PlayerUtils.getNetworkType(getContext()) == PlayerUtils.NETWORK_MOBILE
-                && !IS_PLAY_ON_MOBILE_NETWORK) {
-            if (mVideoController != null) {
-                mVideoController.showStatusView();
-            }
-            return true;
-        }
-        return false;
-    }
-
     @Override
     public void release() {
         super.release();
@@ -241,20 +222,23 @@ public class IjkVideoView extends BaseIjkVideoView {
      */
     @Override
     public void startFullScreen() {
+        if (mIsFullScreen) return;
         if (mVideoController == null) return;
         Activity activity = PlayerUtils.scanForActivity(mVideoController.getContext());
         if (activity == null) return;
-        if (mIsFullScreen) return;
-        PlayerUtils.hideActionBar(mVideoController.getContext());
+        //隐藏ActionBar
+        PlayerUtils.hideActionBar(activity);
+        //隐藏NavigationBar
         this.addView(mHideNavBarView);
         activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        //从当前FrameLayout中移除播放器视图
         this.removeView(mPlayerContainer);
-        ViewGroup contentView = activity
-                .findViewById(android.R.id.content);
+        ViewGroup contentView = activity.findViewById(android.R.id.content);
         LayoutParams params = new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
+        //将播放器视图添加到ContentView（就是setContentView的ContentView）中即实现了全屏
         contentView.addView(mPlayerContainer, params);
         mOrientationEventListener.enable();
         mIsFullScreen = true;
@@ -266,22 +250,24 @@ public class IjkVideoView extends BaseIjkVideoView {
      */
     @Override
     public void stopFullScreen() {
+        if (!mIsFullScreen) return;
         if (mVideoController == null) return;
         Activity activity = PlayerUtils.scanForActivity(mVideoController.getContext());
         if (activity == null) return;
-        if (!mIsFullScreen) return;
         if (!mAutoRotate) mOrientationEventListener.disable();
-        PlayerUtils.showActionBar(mVideoController.getContext());
+        //显示ActionBar
+        PlayerUtils.showActionBar(activity);
+        //显示NavigationBar
         this.removeView(mHideNavBarView);
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        ViewGroup contentView = activity
-                .findViewById(android.R.id.content);
+        ViewGroup contentView = activity.findViewById(android.R.id.content);
+        //把播放器视图从ContentView（就是setContentView的ContentView）中移除
         contentView.removeView(mPlayerContainer);
         LayoutParams params = new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
+        //将播放器视图添加到当前FrameLayout中即退出了全屏
         this.addView(mPlayerContainer, params);
-        this.requestFocus();
         mIsFullScreen = false;
         setPlayerState(PLAYER_NORMAL);
     }
@@ -292,6 +278,58 @@ public class IjkVideoView extends BaseIjkVideoView {
     @Override
     public boolean isFullScreen() {
         return mIsFullScreen;
+    }
+
+
+    /**
+     * 开启小屏
+     */
+    public void startTinyScreen() {
+        if (mIsTinyScreen) return;
+        Activity activity = PlayerUtils.scanForActivity(getContext());
+        if (activity == null) return;
+        mOrientationEventListener.disable();
+        this.removeView(mPlayerContainer);
+        ViewGroup contentView = activity.findViewById(android.R.id.content);
+        int width = mTinyScreenSize[0];
+        if (width <= 0) {
+            width = PlayerUtils.getScreenWidth(activity, false) / 2;
+        }
+
+        int height = mTinyScreenSize[1];
+        if (height <= 0) {
+            height = width * 9 / 16;
+        }
+
+        LayoutParams params = new LayoutParams(width, height);
+        contentView.addView(mPlayerContainer, params);
+        mIsTinyScreen = true;
+        setPlayerState(PLAYER_TINY_SCREEN);
+    }
+
+    /**
+     * 退出小屏
+     */
+    public void stopTinyScreen() {
+        if (!mIsTinyScreen) return;
+
+        Activity activity = PlayerUtils.scanForActivity(getContext());
+        if (activity == null) return;
+
+        ViewGroup contentView = activity.findViewById(android.R.id.content);
+        contentView.removeView(mPlayerContainer);
+        LayoutParams params = new LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT);
+        this.addView(mPlayerContainer, params);
+        if (mAutoRotate) mOrientationEventListener.enable();
+
+        mIsTinyScreen = false;
+        setPlayerState(PLAYER_NORMAL);
+    }
+
+    public boolean isTinyScreen() {
+        return mIsTinyScreen;
     }
 
     @Override
@@ -369,13 +407,6 @@ public class IjkVideoView extends BaseIjkVideoView {
     }
 
     /**
-     * 改变返回键逻辑，用于activity
-     */
-    public boolean onBackPressed() {
-        return mVideoController != null && mVideoController.onBackPressed();
-    }
-
-    /**
      * 设置视频比例
      */
     @Override
@@ -433,5 +464,13 @@ public class IjkVideoView extends BaseIjkVideoView {
             mSurfaceView.setRotation(rotation);
             mSurfaceView.requestLayout();
         }
+    }
+
+    /**
+     * 设置小屏的宽高
+     * @param tinyScreenSize 其中tinyScreenSize[0]是宽，tinyScreenSize[1]是高
+     */
+    public void setTinyScreenSize(int[] tinyScreenSize) {
+        this.mTinyScreenSize = tinyScreenSize;
     }
 }

@@ -5,7 +5,7 @@ package com.dueeeke.videoplayer.player;
  */
 public class VideoViewManager {
 
-    private IjkVideoView mPlayer;
+    private BaseIjkVideoView mPlayer;
 
     private VideoViewManager() {
     }
@@ -23,11 +23,11 @@ public class VideoViewManager {
         return sInstance;
     }
 
-    public void setCurrentVideoPlayer(IjkVideoView player) {
+    public void setCurrentVideoPlayer(BaseIjkVideoView player) {
         mPlayer = player;
     }
 
-    public IjkVideoView getCurrentVideoPlayer() {
+    public BaseIjkVideoView getCurrentVideoPlayer() {
         return mPlayer;
     }
 

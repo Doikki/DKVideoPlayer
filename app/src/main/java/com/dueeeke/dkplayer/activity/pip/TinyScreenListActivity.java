@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.bumptech.glide.Glide;
@@ -15,25 +16,25 @@ import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.adapter.FloatRecyclerViewAdapter;
 import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.dkplayer.util.DataUtil;
-import com.dueeeke.dkplayer.util.PIPManager;
+import com.dueeeke.dkplayer.widget.controller.FloatController;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
-import com.yanzhenjie.permission.AndPermission;
 
 import java.util.List;
 
 /**
- * 悬浮播放终极版
  * Created by Devlin_n on 2017/5/31.
  */
 
-public class PIPListActivity extends AppCompatActivity implements FloatRecyclerViewAdapter.OnChildViewClickListener {
+public class TinyScreenListActivity extends AppCompatActivity implements FloatRecyclerViewAdapter.OnChildViewClickListener {
 
-    private FrameLayout mPlayer, mThumb;
-    private PIPManager mPIPManager;
     private IjkVideoView mIjkVideoView;
     private StandardVideoController mStandardVideoController;
+    private FloatController mFloatController;
     private List<VideoBean> mVideoList;
+
+    private int mCurrentPlayingPosition = -1;
+    private FrameLayout mPlayer, mThumb;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,13 +42,15 @@ public class PIPListActivity extends AppCompatActivity implements FloatRecyclerV
         setContentView(R.layout.activity_recycler_view);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle(R.string.str_pip_in_list);
+            actionBar.setTitle(R.string.str_recycler_view);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        mPIPManager = PIPManager.getInstance();
-        mIjkVideoView = mPIPManager.getIjkVideoView();
-        mStandardVideoController = new StandardVideoController(this);
         initView();
+
+        mIjkVideoView = new IjkVideoView(this);
+        mStandardVideoController = new StandardVideoController(this);
+        mIjkVideoView.setVideoController(mStandardVideoController);
+        mFloatController = new FloatController(this);
     }
 
     @Override
@@ -72,12 +75,15 @@ public class PIPListActivity extends AppCompatActivity implements FloatRecyclerV
                 FrameLayout thumb = view.findViewById(R.id.layout_thumb);
                 if (player == null || thumb == null) return;
                 int position = (int) player.getTag(R.id.key_position);
-                if (position == mPIPManager.getPlayingPosition()) {
-                    mPIPManager.stopFloatWindow();
+                if (position == mCurrentPlayingPosition) {
+                    mIjkVideoView.stopTinyScreen();
                     thumb.setVisibility(View.GONE);
                     mStandardVideoController.setPlayState(mIjkVideoView.getCurrentPlayState());
                     mStandardVideoController.setPlayerState(mIjkVideoView.getCurrentPlayerState());
                     mIjkVideoView.setVideoController(mStandardVideoController);
+                    if (mIjkVideoView.getParent() instanceof ViewGroup) {
+                        ((ViewGroup) mIjkVideoView.getParent()).removeView(mIjkVideoView);
+                    }
                     player.addView(mIjkVideoView);
                     mThumb = thumb;
                     mPlayer = player;
@@ -90,56 +96,46 @@ public class PIPListActivity extends AppCompatActivity implements FloatRecyclerV
                 FrameLayout thumb = view.findViewById(R.id.layout_thumb);
                 if (player == null || thumb == null) return;
                 int position = (int) player.getTag(R.id.key_position);
-                if (position == mPIPManager.getPlayingPosition()) {
+                if (position == mCurrentPlayingPosition) {
                     if (mThumb != null) mThumb.setVisibility(View.VISIBLE);
-                    startFloatWindow();
+                    mIjkVideoView.startTinyScreen();
+                    mFloatController.setPlayState(mIjkVideoView.getCurrentPlayState());
+                    mFloatController.setPlayerState(mIjkVideoView.getCurrentPlayerState());
+                    mIjkVideoView.setVideoController(mFloatController);
                 }
             }
         });
     }
 
-    private void startFloatWindow() {
-        AndPermission
-                .with(this)
-                .overlay()
-                .onGranted(data -> {
-                    mPIPManager.startFloatWindow();
-                })
-                .onDenied(data -> {
-
-                })
-                .start();
-    }
-
     @Override
     protected void onPause() {
         super.onPause();
-        mPIPManager.pause();
+        mIjkVideoView.pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mPIPManager.resume();
+        mIjkVideoView.resume();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mPIPManager.reset();
+        mIjkVideoView.release();
     }
 
     @Override
     public void onBackPressed() {
-        if (mPIPManager.onBackPress()) return;
-        super.onBackPressed();
-
+        if (!mIjkVideoView.onBackPressed()){
+            super.onBackPressed();
+        }
     }
 
     @Override
     public void onChildViewClick(View itemView, View childView, int position) {
-        if (mPIPManager.getPlayingPosition() == position) return;
-        if (mPIPManager.isStartFloatWindow()) mPIPManager.stopFloatWindow();
+        if (mCurrentPlayingPosition == position) return;
+        if (mIjkVideoView.isTinyScreen()) mIjkVideoView.stopTinyScreen();
         if (mPlayer != null) mPlayer.removeAllViews();
         if (mThumb != null) mThumb.setVisibility(View.VISIBLE);
         FrameLayout player = itemView.findViewById(R.id.player_container);
@@ -152,9 +148,8 @@ public class PIPListActivity extends AppCompatActivity implements FloatRecyclerV
         mIjkVideoView.start();
         player.addView(mIjkVideoView);
         thumb.setVisibility(View.GONE);
-        mPIPManager.setPlayingPosition(position);
+        mCurrentPlayingPosition = position;
         mPlayer = player;
         mThumb = thumb;
-
     }
 }

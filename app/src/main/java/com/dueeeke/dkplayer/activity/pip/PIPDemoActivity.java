@@ -49,4 +49,8 @@ public class PIPDemoActivity extends AppCompatActivity {
             Toast.makeText(this, "Only support Android O ~", Toast.LENGTH_SHORT).show();
         }
     }
+
+    public void tinyScreen(View view) {
+        startActivity(new Intent(this, TinyScreenListActivity.class));
+    }
 }

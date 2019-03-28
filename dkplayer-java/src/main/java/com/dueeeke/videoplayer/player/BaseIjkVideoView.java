@@ -56,6 +56,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
 
     public static final int PLAYER_NORMAL = 10;        // 普通播放器
     public static final int PLAYER_FULL_SCREEN = 11;   // 全屏播放器
+    public static final int PLAYER_TINY_SCREEN = 12;   // 小屏播放器
     protected int mCurrentPlayerState = PLAYER_NORMAL;
 
     protected AudioManager mAudioManager;//系统音频管理器
@@ -238,17 +239,38 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
      * 第一次播放
      */
     protected void startPlay() {
+        if (mAddToVideoViewManager) {
+            VideoViewManager.instance().releaseVideoPlayer();
+            VideoViewManager.instance().setCurrentVideoPlayer(this);
+        }
+
+        if (checkNetwork()) return;
+
         if (mEnableAudioFocus) {
             mAudioManager = (AudioManager) getContext().getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
             mAudioFocusHelper = new AudioFocusHelper();
         }
+
         if (mProgressManager != null) {
             mCurrentPosition = mProgressManager.getSavedProgress(mCurrentUrl);
         }
+
         if (mAutoRotate)
             mOrientationEventListener.enable();
+
         initPlayer();
         startPrepare(false);
+    }
+
+    protected boolean checkNetwork() {
+        if (PlayerUtils.getNetworkType(getContext()) == PlayerUtils.NETWORK_MOBILE
+                && !IS_PLAY_ON_MOBILE_NETWORK) {
+            if (mVideoController != null) {
+                mVideoController.showStatusView();
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -626,6 +648,14 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     }
 
     /**
+     * 设置调用{@link #start()}后在移动环境下是否继续播放，默认不继续播放
+     * 注意：由于{@link #IS_PLAY_ON_MOBILE_NETWORK}是static的，设置一次之后会记住状态，不需要重复设置
+     */
+    public void setPlayOnMobileNetwork(boolean playOnMobileNetwork) {
+        IS_PLAY_ON_MOBILE_NETWORK = playOnMobileNetwork;
+    }
+
+    /**
      * 音频焦点改变监听
      */
     private class AudioFocusHelper implements AudioManager.OnAudioFocusChangeListener {
@@ -699,5 +729,12 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
             startRequested = false;
             mAudioManager.abandonAudioFocus(this);
         }
+    }
+
+    /**
+     * 改变返回键逻辑，用于activity
+     */
+    public boolean onBackPressed() {
+        return mVideoController != null && mVideoController.onBackPressed();
     }
 }

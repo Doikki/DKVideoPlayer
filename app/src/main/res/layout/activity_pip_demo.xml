@@ -18,4 +18,10 @@
         android:layout_height="wrap_content"
         android:onClick="pipAndroidO"
         android:text="@string/str_pip_android_o" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="tinyScreen"
+        android:text="列表滑动进入小屏" />
 </LinearLayout>

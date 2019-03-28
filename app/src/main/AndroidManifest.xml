@@ -146,6 +146,10 @@
             android:name=".activity.extend.PadActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="landscape" />
+        <activity
+            android:name=".activity.pip.TinyScreenListActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
