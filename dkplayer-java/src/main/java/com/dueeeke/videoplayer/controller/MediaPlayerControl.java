@@ -45,4 +45,10 @@ public interface MediaPlayerControl {
     int[] getVideoSize();
 
     void setRotation(float rotation);
+
+    void startTinyScreen();
+
+    void stopTinyScreen();
+
+    boolean isTinyScreen();
 }

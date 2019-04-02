@@ -20,7 +20,6 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.dueeeke.videoplayer.controller.BaseVideoController;
-import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 import com.dueeeke.videoplayer.widget.ResizeSurfaceView;
 import com.dueeeke.videoplayer.widget.ResizeTextureView;
@@ -97,42 +96,6 @@ public class IjkVideoView extends BaseIjkVideoView {
             addSurfaceView();
         } else {
             addTextureView();
-        }
-    }
-
-    /**
-     * 向Controller设置播放状态，用于控制Controller的ui展示
-     */
-    @Override
-    protected void setPlayState(int playState) {
-        mCurrentPlayState = playState;
-        if (mVideoController != null)
-            mVideoController.setPlayState(playState);
-        if (mOnVideoViewStateChangeListeners != null) {
-            for (int i = 0, z = mOnVideoViewStateChangeListeners.size(); i < z; i++) {
-                OnVideoViewStateChangeListener listener = mOnVideoViewStateChangeListeners.get(i);
-                if (listener != null) {
-                    listener.onPlayStateChanged(playState);
-                }
-            }
-        }
-    }
-
-    /**
-     * 向Controller设置播放器状态，包含全屏状态和非全屏状态
-     */
-    @Override
-    protected void setPlayerState(int playerState) {
-        mCurrentPlayerState = playerState;
-        if (mVideoController != null)
-            mVideoController.setPlayerState(playerState);
-        if (mOnVideoViewStateChangeListeners != null) {
-            for (int i = 0, z = mOnVideoViewStateChangeListeners.size(); i < z; i++) {
-                OnVideoViewStateChangeListener listener = mOnVideoViewStateChangeListeners.get(i);
-                if (listener != null) {
-                    listener.onPlayerStateChanged(playerState);
-                }
-            }
         }
     }
 
@@ -302,6 +265,7 @@ public class IjkVideoView extends BaseIjkVideoView {
         }
 
         LayoutParams params = new LayoutParams(width, height);
+        params.gravity = Gravity.BOTTOM|Gravity.END;
         contentView.addView(mPlayerContainer, params);
         mIsTinyScreen = true;
         setPlayerState(PLAYER_TINY_SCREEN);
@@ -347,7 +311,7 @@ public class IjkVideoView extends BaseIjkVideoView {
     public void onVideoSizeChanged(int videoWidth, int videoHeight) {
         mVideoSize[0] = videoWidth;
         mVideoSize[1] = videoHeight;
-        if (mUsingSurfaceView) {
+        if (mUsingSurfaceView || Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             mSurfaceView.setScreenScale(mCurrentScreenScale);
             mSurfaceView.setVideoSize(videoWidth, videoHeight);
         } else {

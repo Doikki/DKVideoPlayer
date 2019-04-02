@@ -200,9 +200,39 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         mMediaPlayer.setLooping(mIsLooping);
     }
 
-    protected abstract void setPlayState(int playState);
+    /**
+     * 向Controller设置播放状态，用于控制Controller的ui展示
+     */
+    protected void setPlayState(int playState) {
+        mCurrentPlayState = playState;
+        if (mVideoController != null)
+            mVideoController.setPlayState(playState);
+        if (mOnVideoViewStateChangeListeners != null) {
+            for (int i = 0, z = mOnVideoViewStateChangeListeners.size(); i < z; i++) {
+                OnVideoViewStateChangeListener listener = mOnVideoViewStateChangeListeners.get(i);
+                if (listener != null) {
+                    listener.onPlayStateChanged(playState);
+                }
+            }
+        }
+    }
 
-    protected abstract void setPlayerState(int playerState);
+    /**
+     * 向Controller设置播放器状态，包含全屏状态和非全屏状态
+     */
+    protected void setPlayerState(int playerState) {
+        mCurrentPlayerState = playerState;
+        if (mVideoController != null)
+            mVideoController.setPlayerState(playerState);
+        if (mOnVideoViewStateChangeListeners != null) {
+            for (int i = 0, z = mOnVideoViewStateChangeListeners.size(); i < z; i++) {
+                OnVideoViewStateChangeListener listener = mOnVideoViewStateChangeListeners.get(i);
+                if (listener != null) {
+                    listener.onPlayerStateChanged(playerState);
+                }
+            }
+        }
+    }
 
     /**
      * 开始准备播放（直接播放）
@@ -217,7 +247,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         }
         mMediaPlayer.prepareAsync();
         setPlayState(STATE_PREPARING);
-        setPlayerState(isFullScreen() ? PLAYER_FULL_SCREEN : PLAYER_NORMAL);
+        setPlayerState(isFullScreen() ? PLAYER_FULL_SCREEN : isTinyScreen() ? PLAYER_TINY_SCREEN : PLAYER_NORMAL);
     }
 
     /**
