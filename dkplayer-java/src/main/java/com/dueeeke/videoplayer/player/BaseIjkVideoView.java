@@ -1,11 +1,13 @@
 package com.dueeeke.videoplayer.player;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.TypedArray;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -293,6 +295,17 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     }
 
     protected boolean checkNetwork() {
+        //播放本地文件、Asset、raw时不检测网络
+        if (mAssetFileDescriptor != null) {
+            return false;
+        } else if (!TextUtils.isEmpty(mCurrentUrl)) {
+            Uri uri = Uri.parse(mCurrentUrl);
+            if (ContentResolver.SCHEME_ANDROID_RESOURCE.equals(uri.getScheme())
+                    || ContentResolver.SCHEME_FILE.equals(uri.getScheme())) {
+                return false;
+            }
+        }
+
         if (PlayerUtils.getNetworkType(getContext()) == PlayerUtils.NETWORK_MOBILE
                 && !IS_PLAY_ON_MOBILE_NETWORK) {
             if (mVideoController != null) {
