@@ -399,6 +399,18 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     }
 
     /**
+     * 设置播放状态监听
+     */
+    public void setOnVideoViewStateChangeListener(@NonNull OnVideoViewStateChangeListener listener) {
+        if (mOnVideoViewStateChangeListeners == null) {
+            mOnVideoViewStateChangeListeners = new ArrayList<>();
+        } else {
+            mOnVideoViewStateChangeListeners.clear();
+        }
+        mOnVideoViewStateChangeListeners.add(listener);
+    }
+
+    /**
      * 移除所有播放状态监听
      */
     public void clearOnVideoViewStateChangeListeners() {
