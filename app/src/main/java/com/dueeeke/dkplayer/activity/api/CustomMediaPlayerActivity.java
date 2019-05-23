@@ -43,7 +43,7 @@ public class CustomMediaPlayerActivity extends AppCompatActivity {
 //        String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath();
 //        String url = "file://" + absolutePath + File.separator + "test.ffconcat";
         //concat测试地址
-        String concatUrl = "http://pl.feixiong.tv/Admin/Service/plconcat?url=http%3A%2F%2Fv.youku.com%2Fv_show%2Fid_XMjg4ODUzMDQyNA%3D%3D.html&source_id=1&sel_type=FLV&stream_type=SD";
+        String concatUrl = "http://155.138.214.164/test/test.ffconcat";
 
         ijkVideoView = findViewById(R.id.player);
         StandardVideoController controller = new StandardVideoController(this);

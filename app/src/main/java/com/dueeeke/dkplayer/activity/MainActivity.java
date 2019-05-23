@@ -49,10 +49,8 @@ public class MainActivity extends AppCompatActivity {
                 .runtime()
                 .permission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .onDenied(data -> {
-
                 })
                 .onGranted(data -> {
-
                 })
                 .start();
     }
