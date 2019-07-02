@@ -10,6 +10,7 @@ import android.view.View;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.util.IntentKeys;
+import com.dueeeke.dkplayer.util.ProgressManagerImpl;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.IjkVideoView;
@@ -44,14 +45,16 @@ public class PlayerActivity extends AppCompatActivity {
             }
             String title = intent.getStringExtra(IntentKeys.TITLE);
             controller.setTitle(title);
+            ijkVideoView.setVideoController(controller);
 
             ijkVideoView.setUrl(intent.getStringExtra("url"));
-            ijkVideoView.setVideoController(controller);
-            ijkVideoView.start();
 
+            //保存播放进度
+            ijkVideoView.setProgressManager(new ProgressManagerImpl());
             //播放状态监听
             ijkVideoView.addOnVideoViewStateChangeListener(mOnVideoViewStateChangeListener);
 
+            ijkVideoView.start();
         }
     }
 

@@ -10,8 +10,10 @@ import android.widget.RadioGroup;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videocontroller.StandardVideoController;
+import com.dueeeke.videoplayer.player.AbstractPlayer;
 import com.dueeeke.videoplayer.player.IjkPlayer;
 import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.PlayerFactory;
 
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
@@ -59,18 +61,39 @@ public class CustomMediaPlayerActivity extends AppCompatActivity {
                     break;
             }
         });
-        ijkVideoView.setCustomMediaPlayer(new IjkPlayer(this) {
+//        ijkVideoView.setCustomMediaPlayer(new IjkPlayer(this) {
+//            @Override
+//            public void setOptions() {
+//                super.setOptions();
+//                //支持concat
+//                mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "safe", 0);
+//                mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "protocol_whitelist",
+//                        "rtmp,concat,ffconcat,file,subfile,http,https,tls,rtp,tcp,udp,crypto,rtsp");
+//                //使用tcp方式拉取rtsp流，默认是通过udp方式
+//                mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "rtsp_transport", "tcp");
+//            }
+//        });
+
+        class MyPlayerFactory extends PlayerFactory {
+
             @Override
-            public void setOptions() {
-                super.setOptions();
-                //支持concat
-                mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "safe", 0);
-                mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "protocol_whitelist",
-                        "rtmp,concat,ffconcat,file,subfile,http,https,tls,rtp,tcp,udp,crypto,rtsp");
-                //使用tcp方式拉取rtsp流，默认是通过udp方式
-                mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "rtsp_transport", "tcp");
+            public AbstractPlayer createPlayer() {
+                return new IjkPlayer(CustomMediaPlayerActivity.this) {
+                    @Override
+                    public void setOptions() {
+                        super.setOptions();
+                        //支持concat
+                        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "safe", 0);
+                        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "protocol_whitelist",
+                                "rtmp,concat,ffconcat,file,subfile,http,https,tls,rtp,tcp,udp,crypto,rtsp");
+                        //使用tcp方式拉取rtsp流，默认是通过udp方式
+                        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "rtsp_transport", "tcp");
+                    }
+                };
             }
-        });
+        }
+
+        ijkVideoView.setPlayerFactory(new MyPlayerFactory());
     }
 
 

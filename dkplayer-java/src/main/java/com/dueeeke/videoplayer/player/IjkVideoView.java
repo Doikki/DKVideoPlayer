@@ -47,6 +47,7 @@ import java.util.Map;
 
 public class IjkVideoView extends FrameLayout implements MediaPlayerControl, PlayerEventListener {
     protected AbstractPlayer mMediaPlayer;//播放器
+    protected PlayerFactory mPlayerFactory;//工厂类，用于实例化播放核心
     @Nullable
     protected BaseVideoController mVideoController;//控制器
 
@@ -119,13 +120,15 @@ public class IjkVideoView extends FrameLayout implements MediaPlayerControl, Pla
 
     protected boolean mAutoRotate;
 
-    protected boolean mUsingSurfaceView;
+    protected boolean mUsingSurfaceView;//启用SurfaceView
 
-    protected boolean mIsLooping;
+    protected boolean mIsLooping;//循环洗脑播放
 
-    protected boolean mEnableAudioFocus;
+    protected boolean mEnableAudioFocus;//监听音频焦点变化
 
-    protected boolean mEnableMediaCodec;
+    protected boolean mEnableMediaCodec;//启用MediaCodec解码
+
+    protected boolean mEnableParallelPlay;//支持多开
 
     public IjkVideoView(@NonNull Context context) {
         this(context, null);
@@ -144,16 +147,19 @@ public class IjkVideoView extends FrameLayout implements MediaPlayerControl, Pla
         mUsingSurfaceView = config.mUsingSurfaceView;
         mEnableMediaCodec = config.mEnableMediaCodec;
         mEnableAudioFocus = config.mEnableAudioFocus;
+        mEnableParallelPlay = config.mEnableParallelPlay;
         mProgressManager = config.mProgressManager;
+        mPlayerFactory = config.mPlayerFactory == null ? IjkPlayerFactory.create(context) : config.mPlayerFactory;
 
         //读取xml中的配置，并综合全局配置
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.IjkVideoView);
-        mAutoRotate = typedArray.getBoolean(R.styleable.IjkVideoView_autoRotate, mAutoRotate);
-        mUsingSurfaceView = typedArray.getBoolean(R.styleable.IjkVideoView_usingSurfaceView, mUsingSurfaceView);
-        mEnableAudioFocus = typedArray.getBoolean(R.styleable.IjkVideoView_enableAudioFocus, mEnableAudioFocus);
-        mEnableMediaCodec = typedArray.getBoolean(R.styleable.IjkVideoView_enableMediaCodec, mEnableMediaCodec);
-        mIsLooping = typedArray.getBoolean(R.styleable.IjkVideoView_looping, false);
-        typedArray.recycle();
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.IjkVideoView);
+        mAutoRotate = a.getBoolean(R.styleable.IjkVideoView_autoRotate, mAutoRotate);
+        mUsingSurfaceView = a.getBoolean(R.styleable.IjkVideoView_usingSurfaceView, mUsingSurfaceView);
+        mEnableAudioFocus = a.getBoolean(R.styleable.IjkVideoView_enableAudioFocus, mEnableAudioFocus);
+        mEnableMediaCodec = a.getBoolean(R.styleable.IjkVideoView_enableMediaCodec, mEnableMediaCodec);
+        mEnableParallelPlay = a.getBoolean(R.styleable.IjkVideoView_enableParallelPlay, mEnableParallelPlay);
+        mIsLooping = a.getBoolean(R.styleable.IjkVideoView_looping, false);
+        a.recycle();
 
         initView();
     }
@@ -171,351 +177,6 @@ public class IjkVideoView extends FrameLayout implements MediaPlayerControl, Pla
 
         mHideNavBarView = new View(getContext());
         mHideNavBarView.setSystemUiVisibility(FULLSCREEN_FLAGS);
-    }
-
-    /**
-     * 进入全屏
-     */
-    @Override
-    public void startFullScreen() {
-        if (mIsFullScreen) return;
-        if (mVideoController == null) return;
-        Activity activity = PlayerUtils.scanForActivity(mVideoController.getContext());
-        if (activity == null) return;
-        //隐藏ActionBar
-        PlayerUtils.hideActionBar(activity);
-        //隐藏NavigationBar
-        this.addView(mHideNavBarView);
-        activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        //从当前FrameLayout中移除播放器视图
-        this.removeView(mPlayerContainer);
-        ViewGroup contentView = activity.findViewById(android.R.id.content);
-        LayoutParams params = new LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT);
-        //将播放器视图添加到ContentView（就是setContentView的ContentView）中即实现了全屏
-        contentView.addView(mPlayerContainer, params);
-        mOrientationEventListener.enable();
-        mIsFullScreen = true;
-        setPlayerState(PLAYER_FULL_SCREEN);
-    }
-
-    /**
-     * 退出全屏
-     */
-    @Override
-    public void stopFullScreen() {
-        if (!mIsFullScreen) return;
-        if (mVideoController == null) return;
-        Activity activity = PlayerUtils.scanForActivity(mVideoController.getContext());
-        if (activity == null) return;
-        if (!mAutoRotate) mOrientationEventListener.disable();
-        //显示ActionBar
-        PlayerUtils.showActionBar(activity);
-        //显示NavigationBar
-        this.removeView(mHideNavBarView);
-        activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        ViewGroup contentView = activity.findViewById(android.R.id.content);
-        //把播放器视图从ContentView（就是setContentView的ContentView）中移除
-        contentView.removeView(mPlayerContainer);
-        LayoutParams params = new LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT);
-        //将播放器视图添加到当前FrameLayout中即退出了全屏
-        this.addView(mPlayerContainer, params);
-        mIsFullScreen = false;
-        setPlayerState(PLAYER_NORMAL);
-    }
-
-    /**
-     * 判断是否处于全屏状态
-     */
-    @Override
-    public boolean isFullScreen() {
-        return mIsFullScreen;
-    }
-
-
-    /**
-     * 开启小屏
-     */
-    public void startTinyScreen() {
-        if (mIsTinyScreen) return;
-        Activity activity = PlayerUtils.scanForActivity(getContext());
-        if (activity == null) return;
-        mOrientationEventListener.disable();
-        this.removeView(mPlayerContainer);
-        ViewGroup contentView = activity.findViewById(android.R.id.content);
-        int width = mTinyScreenSize[0];
-        if (width <= 0) {
-            width = PlayerUtils.getScreenWidth(activity, false) / 2;
-        }
-
-        int height = mTinyScreenSize[1];
-        if (height <= 0) {
-            height = width * 9 / 16;
-        }
-
-        LayoutParams params = new LayoutParams(width, height);
-        params.gravity = Gravity.BOTTOM|Gravity.END;
-        contentView.addView(mPlayerContainer, params);
-        mIsTinyScreen = true;
-        setPlayerState(PLAYER_TINY_SCREEN);
-    }
-
-    /**
-     * 退出小屏
-     */
-    public void stopTinyScreen() {
-        if (!mIsTinyScreen) return;
-
-        Activity activity = PlayerUtils.scanForActivity(getContext());
-        if (activity == null) return;
-
-        ViewGroup contentView = activity.findViewById(android.R.id.content);
-        contentView.removeView(mPlayerContainer);
-        LayoutParams params = new LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT);
-        this.addView(mPlayerContainer, params);
-        if (mAutoRotate) mOrientationEventListener.enable();
-
-        mIsTinyScreen = false;
-        setPlayerState(PLAYER_NORMAL);
-    }
-
-    public boolean isTinyScreen() {
-        return mIsTinyScreen;
-    }
-
-
-    @Override
-    public void onVideoSizeChanged(int videoWidth, int videoHeight) {
-        mVideoSize[0] = videoWidth;
-        mVideoSize[1] = videoHeight;
-        if (mUsingSurfaceView || Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            mSurfaceView.setScreenScale(mCurrentScreenScale);
-            mSurfaceView.setVideoSize(videoWidth, videoHeight);
-        } else {
-            mTextureView.setScreenScale(mCurrentScreenScale);
-            mTextureView.setVideoSize(videoWidth, videoHeight);
-        }
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) {
-            //重新获得焦点时保持全屏状态
-            mHideNavBarView.setSystemUiVisibility(FULLSCREEN_FLAGS);
-        }
-
-        if (isInPlaybackState() && (mAutoRotate || mIsFullScreen)) {
-            if (hasFocus) {
-                postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mOrientationEventListener.enable();
-                    }
-                }, 800);
-            } else {
-                mOrientationEventListener.disable();
-            }
-        }
-    }
-
-    /**
-     * 设置控制器
-     */
-    public void setVideoController(@Nullable BaseVideoController mediaController) {
-        mPlayerContainer.removeView(mVideoController);
-        mVideoController = mediaController;
-        if (mediaController != null) {
-            mediaController.setMediaPlayer(this);
-            LayoutParams params = new LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT);
-            mPlayerContainer.addView(mVideoController, params);
-        }
-    }
-
-    /**
-     * 设置视频比例
-     */
-    @Override
-    public void setScreenScale(int screenScale) {
-        this.mCurrentScreenScale = screenScale;
-        if (mSurfaceView != null) {
-            mSurfaceView.setScreenScale(screenScale);
-        } else if (mTextureView != null) {
-            mTextureView.setScreenScale(screenScale);
-        }
-    }
-
-    /**
-     * 设置镜像旋转，暂不支持SurfaceView
-     */
-    @Override
-    public void setMirrorRotation(boolean enable) {
-        if (mTextureView != null) {
-            mTextureView.setScaleX(enable ? -1 : 1);
-        }
-    }
-
-    /**
-     * 截图，暂不支持SurfaceView
-     */
-    @Override
-    public Bitmap doScreenShot() {
-        if (mTextureView != null) {
-            return mTextureView.getBitmap();
-        }
-        return null;
-    }
-
-    /**
-     * 获取视频宽高,其中width: mVideoSize[0], height: mVideoSize[1]
-     */
-    @Override
-    public int[] getVideoSize() {
-        return mVideoSize;
-    }
-
-    /**
-     * 旋转视频画面
-     *
-     * @param rotation 角度
-     */
-    @Override
-    public void setRotation(float rotation) {
-        if (mTextureView != null) {
-            mTextureView.setRotation(rotation);
-            mTextureView.requestLayout();
-        }
-
-        if (mSurfaceView != null) {
-            mSurfaceView.setRotation(rotation);
-            mSurfaceView.requestLayout();
-        }
-    }
-
-    /**
-     * 设置小屏的宽高
-     * @param tinyScreenSize 其中tinyScreenSize[0]是宽，tinyScreenSize[1]是高
-     */
-    public void setTinyScreenSize(int[] tinyScreenSize) {
-        this.mTinyScreenSize = tinyScreenSize;
-    }
-
-    /**
-     * 加速度传感器监听
-     */
-    protected OrientationEventListener mOrientationEventListener = new OrientationEventListener(getContext()) { // 加速度传感器监听，用于自动旋转屏幕
-        private long mLastTime;
-
-        @Override
-        public void onOrientationChanged(int orientation) {
-            long currentTime = System.currentTimeMillis();
-            if (currentTime - mLastTime < 300) return;//300毫秒检测一次
-            if (mVideoController == null) return;
-            Activity activity = PlayerUtils.scanForActivity(mVideoController.getContext());
-            if (activity == null) return;
-            if (orientation >= 340) { //屏幕顶部朝上
-                onOrientationPortrait(activity);
-            } else if (orientation >= 260 && orientation <= 280) { //屏幕左边朝上
-                onOrientationLandscape(activity);
-            } else if (orientation >= 70 && orientation <= 90) { //屏幕右边朝上
-                onOrientationReverseLandscape(activity);
-            }
-            mLastTime = currentTime;
-        }
-    };
-
-    /**
-     * 竖屏
-     */
-    protected void onOrientationPortrait(Activity activity) {
-        if (mIsLockFullScreen || !mAutoRotate || mCurrentOrientation == PORTRAIT)
-            return;
-        if ((mCurrentOrientation == LANDSCAPE || mCurrentOrientation == REVERSE_LANDSCAPE) && !isFullScreen()) {
-            mCurrentOrientation = PORTRAIT;
-            return;
-        }
-        mCurrentOrientation = PORTRAIT;
-        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        stopFullScreen();
-    }
-
-    /**
-     * 横屏
-     */
-    protected void onOrientationLandscape(Activity activity) {
-        if (mCurrentOrientation == LANDSCAPE) return;
-        if (mCurrentOrientation == PORTRAIT
-                && activity.getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
-                && isFullScreen()) {
-            mCurrentOrientation = LANDSCAPE;
-            return;
-        }
-        mCurrentOrientation = LANDSCAPE;
-        if (!isFullScreen()) {
-            startFullScreen();
-        }
-        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-    }
-
-    /**
-     * 反向横屏
-     */
-    protected void onOrientationReverseLandscape(Activity activity) {
-        if (mCurrentOrientation == REVERSE_LANDSCAPE) return;
-        if (mCurrentOrientation == PORTRAIT
-                && activity.getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-                && isFullScreen()) {
-            mCurrentOrientation = REVERSE_LANDSCAPE;
-            return;
-        }
-        mCurrentOrientation = REVERSE_LANDSCAPE;
-        if (!isFullScreen()) {
-            startFullScreen();
-        }
-
-        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
-    }
-
-    /**
-     * 向Controller设置播放状态，用于控制Controller的ui展示
-     */
-    protected void setPlayState(int playState) {
-        mCurrentPlayState = playState;
-        if (mVideoController != null)
-            mVideoController.setPlayState(playState);
-        if (mOnVideoViewStateChangeListeners != null) {
-            for (int i = 0, z = mOnVideoViewStateChangeListeners.size(); i < z; i++) {
-                OnVideoViewStateChangeListener listener = mOnVideoViewStateChangeListeners.get(i);
-                if (listener != null) {
-                    listener.onPlayStateChanged(playState);
-                }
-            }
-        }
-    }
-
-    /**
-     * 向Controller设置播放器状态，包含全屏状态和非全屏状态
-     */
-    protected void setPlayerState(int playerState) {
-        mCurrentPlayerState = playerState;
-        if (mVideoController != null)
-            mVideoController.setPlayerState(playerState);
-        if (mOnVideoViewStateChangeListeners != null) {
-            for (int i = 0, z = mOnVideoViewStateChangeListeners.size(); i < z; i++) {
-                OnVideoViewStateChangeListener listener = mOnVideoViewStateChangeListeners.get(i);
-                if (listener != null) {
-                    listener.onPlayerStateChanged(playerState);
-                }
-            }
-        }
     }
 
     /**
@@ -537,8 +198,10 @@ public class IjkVideoView extends FrameLayout implements MediaPlayerControl, Pla
      * 第一次播放
      */
     protected void startPlay() {
-        VideoViewManager.instance().releaseVideoPlayer();
-        VideoViewManager.instance().setCurrentVideoPlayer(this);
+        if (!mEnableParallelPlay) {
+            VideoViewManager.instance().releaseVideoPlayer();
+            VideoViewManager.instance().setCurrentVideoPlayer(this);
+        }
 
         if (checkNetwork()) return;
 
@@ -583,9 +246,7 @@ public class IjkVideoView extends FrameLayout implements MediaPlayerControl, Pla
      * 初始化播放器
      */
     protected void initPlayer() {
-        if (mMediaPlayer == null) {
-            mMediaPlayer = new IjkPlayer(getContext());
-        }
+        mMediaPlayer = mPlayerFactory.createPlayer();
         mMediaPlayer.bindVideoView(this);
         mMediaPlayer.initPlayer();
         mMediaPlayer.setEnableMediaCodec(mEnableMediaCodec);
@@ -724,6 +385,7 @@ public class IjkVideoView extends FrameLayout implements MediaPlayerControl, Pla
 
     /**
      * 停止播放
+     *
      * @deprecated 使用release代替
      */
     @Deprecated
@@ -738,31 +400,34 @@ public class IjkVideoView extends FrameLayout implements MediaPlayerControl, Pla
         if (mProgressManager != null && isInPlaybackState())
             mProgressManager.saveProgress(mCurrentUrl, mCurrentPosition);
         if (!isInIdleState()) {
-            VideoViewManager.instance().setCurrentVideoPlayer(null);
+            if (!mEnableParallelPlay) {
+                VideoViewManager.instance().setCurrentVideoPlayer(null);
+            }
             mMediaPlayer.release();
             mMediaPlayer = null;
-            setPlayState(STATE_IDLE);
-            if (mAudioFocusHelper != null)
-                mAudioFocusHelper.abandonFocus();
             setKeepScreenOn(false);
-
-            onPlayStopped();
-
-            mPlayerContainer.removeView(mTextureView);
-            mPlayerContainer.removeView(mSurfaceView);
+            if (mAudioFocusHelper != null) {
+                mAudioFocusHelper.abandonFocus();
+            }
+            mOrientationEventListener.disable();
+            if (mVideoController != null) {
+                mVideoController.hideStatusView();
+            }
+            if (mTextureView != null) {
+                mPlayerContainer.removeView(mTextureView);
+            }
+            if (mSurfaceView != null) {
+                mPlayerContainer.removeView(mSurfaceView);
+            }
             if (mSurfaceTexture != null) {
                 mSurfaceTexture.release();
                 mSurfaceTexture = null;
             }
+            mIsLockFullScreen = false;
+            mCurrentPosition = 0;
             mCurrentScreenScale = SCREEN_SCALE_DEFAULT;
+            setPlayState(STATE_IDLE);
         }
-    }
-
-    private void onPlayStopped() {
-        if (mVideoController != null) mVideoController.hideStatusView();
-        mOrientationEventListener.disable();
-        mIsLockFullScreen = false;
-        mCurrentPosition = 0;
     }
 
     /**
@@ -783,6 +448,7 @@ public class IjkVideoView extends FrameLayout implements MediaPlayerControl, Pla
 
     /**
      * 重新播放
+     *
      * @param resetPosition 是否从头开始播放
      */
     @Override
@@ -1044,14 +710,27 @@ public class IjkVideoView extends FrameLayout implements MediaPlayerControl, Pla
 
     /**
      * 自定义播放核心，继承{@link AbstractPlayer}实现自己的播放核心
+     * @deprecated 使用 {@link #setPlayerFactory(PlayerFactory)} ()} 代替
      */
+    @Deprecated
     public void setCustomMediaPlayer(@NonNull AbstractPlayer abstractPlayer) {
         mMediaPlayer = abstractPlayer;
     }
 
     /**
+     * 自定义播放核心，继承{@link PlayerFactory}实现自己的播放核心
+     */
+    public void setPlayerFactory(PlayerFactory playerFactory) {
+        if (playerFactory == null) {
+            throw new IllegalArgumentException("PlayerFactory can not be null!");
+        }
+        mPlayerFactory = playerFactory;
+    }
+
+    /**
      * 设置调用{@link #start()}后在移动环境下是否继续播放，默认不继续播放
-     * @deprecated 使用VideoViewConfig代替
+     *
+     * @deprecated 使用 {@link VideoViewConfig}代替
      */
     @Deprecated
     public void setPlayOnMobileNetwork(boolean playOnMobileNetwork) {
@@ -1060,10 +739,364 @@ public class IjkVideoView extends FrameLayout implements MediaPlayerControl, Pla
     /**
      * 添加到{@link VideoViewManager},如需集成到RecyclerView或ListView请开启此选项
      * 用于实现同一列表同时只播放一个视频
+     *
      * @deprecated 默认会添加到VideoViewManager，不再需要调用此方法
      */
     @Deprecated
     public void addToVideoViewManager() {
+    }
+
+    /**
+     * 支持多开
+     */
+    public void setEnableParallelPlay(boolean enableParallelPlay) {
+        mEnableParallelPlay = enableParallelPlay;
+    }
+
+    /**
+     * 进入全屏
+     */
+    @Override
+    public void startFullScreen() {
+        if (mIsFullScreen) return;
+        if (mVideoController == null) return;
+        Activity activity = PlayerUtils.scanForActivity(mVideoController.getContext());
+        if (activity == null) return;
+        //隐藏ActionBar
+        PlayerUtils.hideActionBar(activity);
+        //隐藏NavigationBar
+        this.addView(mHideNavBarView);
+        activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        //从当前FrameLayout中移除播放器视图
+        this.removeView(mPlayerContainer);
+        ViewGroup contentView = activity.findViewById(android.R.id.content);
+        LayoutParams params = new LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT);
+        //将播放器视图添加到ContentView（就是setContentView的ContentView）中即实现了全屏
+        contentView.addView(mPlayerContainer, params);
+        mOrientationEventListener.enable();
+        mIsFullScreen = true;
+        setPlayerState(PLAYER_FULL_SCREEN);
+    }
+
+    /**
+     * 退出全屏
+     */
+    @Override
+    public void stopFullScreen() {
+        if (!mIsFullScreen) return;
+        if (mVideoController == null) return;
+        Activity activity = PlayerUtils.scanForActivity(mVideoController.getContext());
+        if (activity == null) return;
+        if (!mAutoRotate) mOrientationEventListener.disable();
+        //显示ActionBar
+        PlayerUtils.showActionBar(activity);
+        //显示NavigationBar
+        this.removeView(mHideNavBarView);
+        activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        ViewGroup contentView = activity.findViewById(android.R.id.content);
+        //把播放器视图从ContentView（就是setContentView的ContentView）中移除
+        contentView.removeView(mPlayerContainer);
+        LayoutParams params = new LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT);
+        //将播放器视图添加到当前FrameLayout中即退出了全屏
+        this.addView(mPlayerContainer, params);
+        mIsFullScreen = false;
+        setPlayerState(PLAYER_NORMAL);
+    }
+
+    /**
+     * 判断是否处于全屏状态
+     */
+    @Override
+    public boolean isFullScreen() {
+        return mIsFullScreen;
+    }
+
+
+    /**
+     * 开启小屏
+     */
+    public void startTinyScreen() {
+        if (mIsTinyScreen) return;
+        Activity activity = PlayerUtils.scanForActivity(getContext());
+        if (activity == null) return;
+        mOrientationEventListener.disable();
+        this.removeView(mPlayerContainer);
+        ViewGroup contentView = activity.findViewById(android.R.id.content);
+        int width = mTinyScreenSize[0];
+        if (width <= 0) {
+            width = PlayerUtils.getScreenWidth(activity, false) / 2;
+        }
+
+        int height = mTinyScreenSize[1];
+        if (height <= 0) {
+            height = width * 9 / 16;
+        }
+
+        LayoutParams params = new LayoutParams(width, height);
+        params.gravity = Gravity.BOTTOM | Gravity.END;
+        contentView.addView(mPlayerContainer, params);
+        mIsTinyScreen = true;
+        setPlayerState(PLAYER_TINY_SCREEN);
+    }
+
+    /**
+     * 退出小屏
+     */
+    public void stopTinyScreen() {
+        if (!mIsTinyScreen) return;
+
+        Activity activity = PlayerUtils.scanForActivity(getContext());
+        if (activity == null) return;
+
+        ViewGroup contentView = activity.findViewById(android.R.id.content);
+        contentView.removeView(mPlayerContainer);
+        LayoutParams params = new LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT);
+        this.addView(mPlayerContainer, params);
+        if (mAutoRotate) mOrientationEventListener.enable();
+
+        mIsTinyScreen = false;
+        setPlayerState(PLAYER_NORMAL);
+    }
+
+    public boolean isTinyScreen() {
+        return mIsTinyScreen;
+    }
+
+
+    @Override
+    public void onVideoSizeChanged(int videoWidth, int videoHeight) {
+        mVideoSize[0] = videoWidth;
+        mVideoSize[1] = videoHeight;
+        if (mUsingSurfaceView || Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            mSurfaceView.setScreenScale(mCurrentScreenScale);
+            mSurfaceView.setVideoSize(videoWidth, videoHeight);
+        } else {
+            mTextureView.setScreenScale(mCurrentScreenScale);
+            mTextureView.setVideoSize(videoWidth, videoHeight);
+        }
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            //重新获得焦点时保持全屏状态
+            mHideNavBarView.setSystemUiVisibility(FULLSCREEN_FLAGS);
+        }
+
+        if (isInPlaybackState() && (mAutoRotate || mIsFullScreen)) {
+            if (hasFocus) {
+                postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mOrientationEventListener.enable();
+                    }
+                }, 800);
+            } else {
+                mOrientationEventListener.disable();
+            }
+        }
+    }
+
+    /**
+     * 设置控制器
+     */
+    public void setVideoController(@Nullable BaseVideoController mediaController) {
+        mPlayerContainer.removeView(mVideoController);
+        mVideoController = mediaController;
+        if (mediaController != null) {
+            mediaController.setMediaPlayer(this);
+            LayoutParams params = new LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT);
+            mPlayerContainer.addView(mVideoController, params);
+        }
+    }
+
+    /**
+     * 设置视频比例
+     */
+    @Override
+    public void setScreenScale(int screenScale) {
+        this.mCurrentScreenScale = screenScale;
+        if (mSurfaceView != null) {
+            mSurfaceView.setScreenScale(screenScale);
+        } else if (mTextureView != null) {
+            mTextureView.setScreenScale(screenScale);
+        }
+    }
+
+    /**
+     * 设置镜像旋转，暂不支持SurfaceView
+     */
+    @Override
+    public void setMirrorRotation(boolean enable) {
+        if (mTextureView != null) {
+            mTextureView.setScaleX(enable ? -1 : 1);
+        }
+    }
+
+    /**
+     * 截图，暂不支持SurfaceView
+     */
+    @Override
+    public Bitmap doScreenShot() {
+        if (mTextureView != null) {
+            return mTextureView.getBitmap();
+        }
+        return null;
+    }
+
+    /**
+     * 获取视频宽高,其中width: mVideoSize[0], height: mVideoSize[1]
+     */
+    @Override
+    public int[] getVideoSize() {
+        return mVideoSize;
+    }
+
+    /**
+     * 旋转视频画面
+     *
+     * @param rotation 角度
+     */
+    @Override
+    public void setRotation(float rotation) {
+        if (mTextureView != null) {
+            mTextureView.setRotation(rotation);
+            mTextureView.requestLayout();
+        }
+
+        if (mSurfaceView != null) {
+            mSurfaceView.setRotation(rotation);
+            mSurfaceView.requestLayout();
+        }
+    }
+
+    /**
+     * 设置小屏的宽高
+     *
+     * @param tinyScreenSize 其中tinyScreenSize[0]是宽，tinyScreenSize[1]是高
+     */
+    public void setTinyScreenSize(int[] tinyScreenSize) {
+        this.mTinyScreenSize = tinyScreenSize;
+    }
+
+    /**
+     * 加速度传感器监听
+     */
+    protected OrientationEventListener mOrientationEventListener = new OrientationEventListener(getContext()) { // 加速度传感器监听，用于自动旋转屏幕
+        private long mLastTime;
+
+        @Override
+        public void onOrientationChanged(int orientation) {
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - mLastTime < 300) return;//300毫秒检测一次
+            if (mVideoController == null) return;
+            Activity activity = PlayerUtils.scanForActivity(mVideoController.getContext());
+            if (activity == null) return;
+            if (orientation >= 340) { //屏幕顶部朝上
+                onOrientationPortrait(activity);
+            } else if (orientation >= 260 && orientation <= 280) { //屏幕左边朝上
+                onOrientationLandscape(activity);
+            } else if (orientation >= 70 && orientation <= 90) { //屏幕右边朝上
+                onOrientationReverseLandscape(activity);
+            }
+            mLastTime = currentTime;
+        }
+    };
+
+    /**
+     * 竖屏
+     */
+    protected void onOrientationPortrait(Activity activity) {
+        if (mIsLockFullScreen || !mAutoRotate || mCurrentOrientation == PORTRAIT)
+            return;
+        if ((mCurrentOrientation == LANDSCAPE || mCurrentOrientation == REVERSE_LANDSCAPE) && !isFullScreen()) {
+            mCurrentOrientation = PORTRAIT;
+            return;
+        }
+        mCurrentOrientation = PORTRAIT;
+        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        stopFullScreen();
+    }
+
+    /**
+     * 横屏
+     */
+    protected void onOrientationLandscape(Activity activity) {
+        if (mCurrentOrientation == LANDSCAPE) return;
+        if (mCurrentOrientation == PORTRAIT
+                && activity.getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
+                && isFullScreen()) {
+            mCurrentOrientation = LANDSCAPE;
+            return;
+        }
+        mCurrentOrientation = LANDSCAPE;
+        if (!isFullScreen()) {
+            startFullScreen();
+        }
+        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+    }
+
+    /**
+     * 反向横屏
+     */
+    protected void onOrientationReverseLandscape(Activity activity) {
+        if (mCurrentOrientation == REVERSE_LANDSCAPE) return;
+        if (mCurrentOrientation == PORTRAIT
+                && activity.getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                && isFullScreen()) {
+            mCurrentOrientation = REVERSE_LANDSCAPE;
+            return;
+        }
+        mCurrentOrientation = REVERSE_LANDSCAPE;
+        if (!isFullScreen()) {
+            startFullScreen();
+        }
+
+        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+    }
+
+    /**
+     * 向Controller设置播放状态，用于控制Controller的ui展示
+     */
+    protected void setPlayState(int playState) {
+        mCurrentPlayState = playState;
+        if (mVideoController != null)
+            mVideoController.setPlayState(playState);
+        if (mOnVideoViewStateChangeListeners != null) {
+            for (int i = 0, z = mOnVideoViewStateChangeListeners.size(); i < z; i++) {
+                OnVideoViewStateChangeListener listener = mOnVideoViewStateChangeListeners.get(i);
+                if (listener != null) {
+                    listener.onPlayStateChanged(playState);
+                }
+            }
+        }
+    }
+
+    /**
+     * 向Controller设置播放器状态，包含全屏状态和非全屏状态
+     */
+    protected void setPlayerState(int playerState) {
+        mCurrentPlayerState = playerState;
+        if (mVideoController != null)
+            mVideoController.setPlayerState(playerState);
+        if (mOnVideoViewStateChangeListeners != null) {
+            for (int i = 0, z = mOnVideoViewStateChangeListeners.size(); i < z; i++) {
+                OnVideoViewStateChangeListener listener = mOnVideoViewStateChangeListeners.get(i);
+                if (listener != null) {
+                    listener.onPlayerStateChanged(playerState);
+                }
+            }
+        }
     }
 
     /**
