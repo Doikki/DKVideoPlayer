@@ -9,7 +9,9 @@ import android.view.MenuItem;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.widget.controller.DefinitionController;
 import com.dueeeke.dkplayer.widget.videoview.DefinitionIjkVideoView;
+import com.dueeeke.videoplayer.player.AbstractPlayer;
 import com.dueeeke.videoplayer.player.IjkPlayer;
+import com.dueeeke.videoplayer.player.PlayerFactory;
 
 import java.util.LinkedHashMap;
 
@@ -38,11 +40,24 @@ public class DefinitionPlayerActivity extends AppCompatActivity {
 
         DefinitionController controller = new DefinitionController(this);
         controller.setTitle("韩雪：积极的悲观主义者");
-        ijkVideoView.setCustomMediaPlayer(new IjkPlayer(this) {
+//        ijkVideoView.setCustomMediaPlayer(new IjkPlayer(this) {
+//            @Override
+//            public void setOptions() {
+//                //精准seek
+//                mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "enable-accurate-seek", 1);
+//            }
+//        });
+
+        ijkVideoView.setPlayerFactory(new PlayerFactory() {
             @Override
-            public void setOptions() {
-                //精准seek
-                mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "enable-accurate-seek", 1);
+            public AbstractPlayer createPlayer() {
+                return new IjkPlayer(DefinitionPlayerActivity.this) {
+                    @Override
+                    public void setOptions() {
+                        //精准seek
+                        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "enable-accurate-seek", 1);
+                    }
+                };
             }
         });
 

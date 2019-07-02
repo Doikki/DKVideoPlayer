@@ -12,7 +12,7 @@ import com.squareup.leakcanary.LeakCanary;
  * Created by Devlin_n on 2017/4/22.
  */
 
-public class MyApplication extends Application{
+public class MyApplication extends Application {
 
     private static MyApplication instance;
 
@@ -26,10 +26,15 @@ public class MyApplication extends Application{
         LeakCanary.install(this);
         //播放器配置，注意：此为全局配置，按需开启
         VideoViewManager.setConfig(VideoViewConfig.newBuilder()
+//                .setPlayerFactory(IjkPlayerFactory.create(this))
+//                .setPlayerFactory(ExoMediaPlayerFactory.create(this))
+//                .setPlayerFactory(AndroidMediaPlayerFactory.create(this))
                 .setLogEnabled(BuildConfig.DEBUG)
                 .setAutoRotate(true)
 //                .setEnableMediaCodec(true)
 //                .setUsingSurfaceView(true)
+//                .setEnableParallelPlay(true)
+//                .setEnableAudioFocus(false)
                 .build());
     }
 

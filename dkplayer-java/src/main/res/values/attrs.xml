@@ -6,5 +6,6 @@
         <attr name="enableAudioFocus" format="boolean"/>
         <attr name="enableMediaCodec" format="boolean"/>
         <attr name="usingSurfaceView" format="boolean"/>
+        <attr name="enableParallelPlay" format="boolean"/>
     </declare-styleable>
 </resources>

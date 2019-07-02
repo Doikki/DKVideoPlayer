@@ -32,7 +32,7 @@ public class ListViewActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         ListView listView = findViewById(R.id.lv);
-        listView.setAdapter(new VideoListViewAdapter(DataUtil.getVideoList(), this));
+        listView.setAdapter(new VideoListViewAdapter(DataUtil.getVideoList()));
 
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
 

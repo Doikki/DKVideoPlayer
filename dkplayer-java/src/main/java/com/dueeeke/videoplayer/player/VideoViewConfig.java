@@ -21,9 +21,14 @@ public class VideoViewConfig {
 
     public final boolean mEnableAudioFocus;
 
-    public final ProgressManager mProgressManager;
+    public final boolean mEnableParallelPlay;
 
     public final boolean mIsEnableLog;
+
+    public final ProgressManager mProgressManager;
+
+    public final PlayerFactory mPlayerFactory;
+
 
     private VideoViewConfig(Builder builder) {
         mIsEnableLog = builder.mIsEnableLog;
@@ -33,6 +38,8 @@ public class VideoViewConfig {
         mEnableMediaCodec = builder.mEnableMediaCodec;
         mEnableAudioFocus = builder.mEnableAudioFocus;
         mProgressManager = builder.mProgressManager;
+        mEnableParallelPlay = builder.mEnableParallelPlay;
+        mPlayerFactory = builder.mPlayerFactory;
     }
 
 
@@ -43,9 +50,10 @@ public class VideoViewConfig {
         private boolean mUsingSurfaceView;
         private boolean mAutoRotate;
         private boolean mEnableMediaCodec;
-        private boolean mEnableAudioFocus;
-
+        private boolean mEnableAudioFocus = true;
+        private boolean mEnableParallelPlay;
         private ProgressManager mProgressManager;
+        private PlayerFactory mPlayerFactory;
 
         /**
          * 是否通过重力感应切换全屏/半屏播放器， 默认不开启
@@ -96,10 +104,26 @@ public class VideoViewConfig {
         }
 
         /**
+         * 支持多开
+         */
+        public Builder setEnableParallelPlay(boolean enableParallelPlay) {
+            mEnableParallelPlay = enableParallelPlay;
+            return this;
+        }
+
+        /**
          * 是否打印日志
          */
         public Builder setLogEnabled(boolean enableLog) {
             mIsEnableLog = enableLog;
+            return this;
+        }
+
+        /**
+         * 自定义播放核心
+         */
+        public Builder setPlayerFactory(PlayerFactory factory) {
+            mPlayerFactory = factory;
             return this;
         }
 

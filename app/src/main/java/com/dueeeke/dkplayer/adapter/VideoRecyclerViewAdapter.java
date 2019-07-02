@@ -1,5 +1,6 @@
 package com.dueeeke.dkplayer.adapter;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,9 +11,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
+import com.dueeeke.dkplayer.app.MyApplication;
 import com.dueeeke.dkplayer.bean.VideoBean;
+import com.dueeeke.dkplayer.player.ExoMediaPlayerFactory;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.PlayerFactory;
 
 import java.util.List;
 
@@ -20,19 +24,24 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
 
     private List<VideoBean> videos;
 
+//    private ProgressManagerImpl mProgressManager;
+
+    private PlayerFactory mPlayerFactory = ExoMediaPlayerFactory.create(MyApplication.getInstance());
+
     public VideoRecyclerViewAdapter(List<VideoBean> videos) {
         this.videos = videos;
     }
 
     @Override
-    public VideoHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    @NonNull
+    public VideoHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_video_auto_play, parent, false);
         return new VideoHolder(itemView);
 
     }
 
     @Override
-    public void onBindViewHolder(final VideoHolder holder, int position) {
+    public void onBindViewHolder(@NonNull VideoHolder holder, int position) {
 
         VideoBean videoBean = videos.get(position);
         ImageView thumb = holder.controller.getThumb();
@@ -42,10 +51,16 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
                 .placeholder(android.R.color.white)
                 .into(thumb);
         holder.ijkVideoView.setUrl(videoBean.getUrl());
-//        holder.ijkVideoView.setCustomMediaPlayer(new ExoMediaPlayer(holder.ijkVideoView.getContext()));
         holder.controller.setTitle(videoBean.getTitle());
         holder.ijkVideoView.setVideoController(holder.controller);
         holder.title.setText(videoBean.getTitle());
+
+        //保存播放进度
+//        if (mProgressManager == null)
+//            mProgressManager = new ProgressManagerImpl();
+//        holder.ijkVideoView.setProgressManager(mProgressManager);
+//        holder.ijkVideoView.setCustomMediaPlayer(new ExoMediaPlayer(holder.itemView.getContext()));
+        holder.ijkVideoView.setPlayerFactory(mPlayerFactory);
     }
 
     @Override

@@ -30,13 +30,17 @@ public class MultiPlayerActivity extends AppCompatActivity{
         mPlayer1 = findViewById(R.id.player_1);
         mPlayer1.setUrl(VOD_URL);
 
+        //这两项必须设置
         mPlayer1.setEnableAudioFocus(false);
+        mPlayer1.setEnableParallelPlay(true);
         StandardVideoController controller1 = new StandardVideoController(this);
         mPlayer1.setVideoController(controller1);
 
         mPlayer2 = findViewById(R.id.player_2);
         mPlayer2.setUrl(VOD_URL);
+        //这两项必须设置
         mPlayer2.setEnableAudioFocus(false);
+        mPlayer2.setEnableParallelPlay(true);
         StandardVideoController controller2 = new StandardVideoController(this);
         mPlayer2.setVideoController(controller2);
     }

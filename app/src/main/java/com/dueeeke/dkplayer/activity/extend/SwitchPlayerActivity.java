@@ -8,12 +8,12 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.dueeeke.dkplayer.R;
-import com.dueeeke.dkplayer.player.AndroidMediaPlayer;
-import com.dueeeke.dkplayer.player.ExoMediaPlayer;
+import com.dueeeke.dkplayer.player.AndroidMediaPlayerFactory;
+import com.dueeeke.dkplayer.player.ExoMediaPlayerFactory;
 import com.dueeeke.videocontroller.StandardVideoController;
-import com.dueeeke.videoplayer.player.AbstractPlayer;
-import com.dueeeke.videoplayer.player.IjkPlayer;
+import com.dueeeke.videoplayer.player.IjkPlayerFactory;
 import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.PlayerFactory;
 
 /**
  * 多播放器切换
@@ -52,23 +52,42 @@ public class SwitchPlayerActivity extends AppCompatActivity implements View.OnCl
     public void onClick(View v) {
 
         int id = v.getId();
-        AbstractPlayer player = null;
+//        AbstractPlayer player = null;
+//        switch (id) {
+//            case R.id.btn_ijk:
+//                player = new IjkPlayer(this);
+//                break;
+//            case R.id.btn_media:
+//                player = new AndroidMediaPlayer(this);
+//                break;
+//            case R.id.btn_exo:
+//                player = new ExoMediaPlayer(this);
+//                break;
+//        }
+//
+//        ijkVideoView.release();
+//        ijkVideoView.setUrl(URL);
+//        ijkVideoView.setVideoController(mController);
+//        ijkVideoView.setCustomMediaPlayer(player);
+//        ijkVideoView.start();
+
+        PlayerFactory factory = null;
         switch (id) {
             case R.id.btn_ijk:
-                player = new IjkPlayer(this);
+                factory = IjkPlayerFactory.create(this);
                 break;
             case R.id.btn_media:
-                player = new AndroidMediaPlayer(this);
+                factory = AndroidMediaPlayerFactory.create(this);
                 break;
             case R.id.btn_exo:
-                player = new ExoMediaPlayer(this);
+                factory = ExoMediaPlayerFactory.create(this);
                 break;
         }
 
         ijkVideoView.release();
         ijkVideoView.setUrl(URL);
         ijkVideoView.setVideoController(mController);
-        ijkVideoView.setCustomMediaPlayer(player);
+        ijkVideoView.setPlayerFactory(factory);
         ijkVideoView.start();
 
     }
