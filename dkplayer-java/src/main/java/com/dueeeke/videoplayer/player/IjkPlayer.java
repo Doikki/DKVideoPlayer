@@ -29,6 +29,8 @@ public class IjkPlayer extends AbstractPlayer {
     @Override
     public void initPlayer() {
         mMediaPlayer = new IjkMediaPlayer();
+        //native日志
+        IjkMediaPlayer.native_setLogLevel(VideoViewManager.getConfig().mIsEnableLog ? IjkMediaPlayer.IJK_LOG_DEBUG : IjkMediaPlayer.IJK_LOG_SILENT);
         setOptions();
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mMediaPlayer.setOnErrorListener(onErrorListener);
@@ -136,7 +138,16 @@ public class IjkPlayer extends AbstractPlayer {
 
     @Override
     public void release() {
-        mMediaPlayer.release();
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    mMediaPlayer.release();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
     }
 
     @Override

@@ -58,7 +58,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
 //                    Log.d("@@@@@@", "onChildViewDetachedFromWindow: called");
 //                    int tag = (int) ijkVideoView.getTag();
 //                    Log.d("@@@@@@", "onChildViewDetachedFromWindow: position: " + tag);
-                    ijkVideoView.stopPlayback();
+                    ijkVideoView.release();
                 }
             }
         });

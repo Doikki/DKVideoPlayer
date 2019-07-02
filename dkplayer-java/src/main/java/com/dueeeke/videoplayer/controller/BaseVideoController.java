@@ -12,8 +12,8 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.dueeeke.videoplayer.R;
-import com.dueeeke.videoplayer.player.BaseIjkVideoView;
 import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoViewManager;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 import com.dueeeke.videoplayer.widget.StatusView;
 
@@ -105,7 +105,7 @@ public abstract class BaseVideoController extends FrameLayout {
             @Override
             public void onClick(View v) {
                 hideStatusView();
-                BaseIjkVideoView.IS_PLAY_ON_MOBILE_NETWORK = true;
+                VideoViewManager.instance().setPlayOnMobileNetwork(true);
                 mMediaPlayer.start();
             }
         });

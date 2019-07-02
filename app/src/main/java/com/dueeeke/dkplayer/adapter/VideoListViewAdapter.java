@@ -24,6 +24,8 @@ public class VideoListViewAdapter extends BaseAdapter {
     private List<VideoBean> videos;
     private Context context;
 
+    private ProgressManagerImpl mProgressManager;
+
     public VideoListViewAdapter(List<VideoBean> videos, Context context) {
         this.videos = videos;
         this.context = context;
@@ -65,6 +67,19 @@ public class VideoListViewAdapter extends BaseAdapter {
                 .placeholder(android.R.color.darker_gray)
                 .into(viewHolder.controller.getThumb());
 
+        viewHolder.ijkVideoView.setCustomMediaPlayer(new IjkPlayer(context) {
+            @Override
+            public void setOptions() {
+                //精准seek
+                mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "enable-accurate-seek", 1);
+            }
+        });
+
+        //保存播放进度
+        if (mProgressManager == null)
+            mProgressManager = new ProgressManagerImpl();
+        viewHolder.ijkVideoView.setProgressManager(mProgressManager);
+
         return convertView;
     }
 
@@ -78,16 +93,6 @@ public class VideoListViewAdapter extends BaseAdapter {
             int widthPixels = context.getResources().getDisplayMetrics().widthPixels;
             ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels * 9 / 16 + 1));
             controller = new StandardVideoController(context);
-            ijkVideoView.addToVideoViewManager();
-            //保存播放进度
-            ijkVideoView.setProgressManager(new ProgressManagerImpl());
-            ijkVideoView.setCustomMediaPlayer(new IjkPlayer(context) {
-                @Override
-                public void setOptions() {
-                    //精准seek
-                    mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "enable-accurate-seek", 1);
-                }
-            });
         }
     }
 }

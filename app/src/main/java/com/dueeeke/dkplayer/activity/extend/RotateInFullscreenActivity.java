@@ -27,7 +27,7 @@ public class RotateInFullscreenActivity extends AppCompatActivity{
         mIjkVideoView = findViewById(R.id.player);
         mController = new RotateInFullscreenController(this);
         mIjkVideoView.setVideoController(mController);
-//        mIjkVideoView.setPlayerConfig(new PlayerConfig.Builder().enableMediaCodec().build());
+//        mIjkVideoView.setPlayerConfig(new VideoViewConfig.Builder().enableMediaCodec().build());
 //        String path = Environment.getExternalStorageDirectory().getAbsolutePath();
 //        String url = "file://"  + path + File.separator + "test.mp4";
 //        String url = "http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv";

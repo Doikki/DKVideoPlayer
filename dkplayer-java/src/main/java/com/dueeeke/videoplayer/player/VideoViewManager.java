@@ -1,16 +1,47 @@
 package com.dueeeke.videoplayer.player;
 
 /**
- * 视频播放器管理器，需要配合addToPlayerManager()使用
+ * 视频播放器管理器，管理当前正在播放的IjkVideoView，以及播放器配置
  */
 public class VideoViewManager {
 
-    private BaseIjkVideoView mPlayer;
+    /**
+     * 当前正在播放的IjkVideoView
+     */
+    private IjkVideoView mPlayer;
+
+    private boolean mPlayOnMobileNetwork;
 
     private VideoViewManager() {
+        mPlayOnMobileNetwork = getConfig().mPlayOnMobileNetwork;
     }
 
     private static VideoViewManager sInstance;
+
+    private static VideoViewConfig sConfig;
+
+    public static void setConfig(VideoViewConfig config) {
+        if (sConfig == null) {
+            synchronized (VideoViewConfig.class) {
+                if (sConfig == null) {
+                    sConfig = config == null ? VideoViewConfig.newBuilder().build() : config;
+                }
+            }
+        }
+    }
+
+    public static VideoViewConfig getConfig() {
+        setConfig(null);
+        return sConfig;
+    }
+
+    public boolean playOnMobileNetwork() {
+        return mPlayOnMobileNetwork;
+    }
+
+    public void setPlayOnMobileNetwork(boolean playOnMobileNetwork) {
+        mPlayOnMobileNetwork = playOnMobileNetwork;
+    }
 
     public static VideoViewManager instance() {
         if (sInstance == null) {
@@ -23,11 +54,11 @@ public class VideoViewManager {
         return sInstance;
     }
 
-    public void setCurrentVideoPlayer(BaseIjkVideoView player) {
+    public void setCurrentVideoPlayer(IjkVideoView player) {
         mPlayer = player;
     }
 
-    public BaseIjkVideoView getCurrentVideoPlayer() {
+    public IjkVideoView getCurrentVideoPlayer() {
         return mPlayer;
     }
 
@@ -36,10 +67,6 @@ public class VideoViewManager {
             mPlayer.release();
             mPlayer = null;
         }
-    }
-
-    public void stopPlayback() {
-        if (mPlayer != null) mPlayer.stopPlayback();
     }
 
     public boolean onBackPressed() {

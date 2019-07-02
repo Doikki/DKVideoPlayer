@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="BaseIjkVideoView">
+    <declare-styleable name="IjkVideoView">
         <attr name="looping" format="boolean"/>
         <attr name="autoRotate" format="boolean"/>
         <attr name="enableAudioFocus" format="boolean"/>
