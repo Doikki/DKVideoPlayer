@@ -82,7 +82,7 @@ public class ListViewActivity extends AppCompatActivity {
                 if (gcView != null) {
                     IjkVideoView ijkVideoView = gcView.findViewById(R.id.video_player);
                     if (ijkVideoView != null && !ijkVideoView.isFullScreen()) {
-                        ijkVideoView.stopPlayback();
+                        ijkVideoView.release();
                     }
                 }
             }

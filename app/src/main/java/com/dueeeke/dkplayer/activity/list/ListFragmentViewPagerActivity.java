@@ -89,7 +89,7 @@ public class ListFragmentViewPagerActivity extends AppCompatActivity implements 
 
     @Override
     public void onPageSelected(int position) {
-        mVideoViewManager.stopPlayback();
+        mVideoViewManager.releaseVideoPlayer();
     }
 
     @Override

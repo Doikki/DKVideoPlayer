@@ -117,7 +117,7 @@ public class SeamlessPlayActivity extends AppCompatActivity {
                         playerContainer.removeView(ijkVideoView);
                     }
 
-                    ijkVideoView.stopPlayback();
+                    ijkVideoView.release();
                 }
             }
         });

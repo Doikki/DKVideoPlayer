@@ -65,7 +65,7 @@ public class RotateRecyclerViewAdapter extends RecyclerView.Adapter<RotateRecycl
             int widthPixels = context.getResources().getDisplayMetrics().widthPixels;
             ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels * 9 / 16 + 1));
             //这段代码用于实现小屏时静音，全屏时有声音
-            ijkVideoView.addOnVideoViewStateChangeListener(new OnVideoViewStateChangeListener() {
+            ijkVideoView.setOnVideoViewStateChangeListener(new OnVideoViewStateChangeListener() {
                 @Override
                 public void onPlayerStateChanged(int playerState) {
                     if (playerState == IjkVideoView.PLAYER_FULL_SCREEN) {
@@ -85,8 +85,6 @@ public class RotateRecyclerViewAdapter extends RecyclerView.Adapter<RotateRecycl
             });
             controller = new RotateInFullscreenController(context);
             title = itemView.findViewById(R.id.tv_title);
-            //必须调用
-            ijkVideoView.addToVideoViewManager();
         }
     }
 }

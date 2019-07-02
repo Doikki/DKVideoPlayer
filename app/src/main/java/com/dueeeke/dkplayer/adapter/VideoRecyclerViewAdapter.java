@@ -42,6 +42,7 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
                 .placeholder(android.R.color.white)
                 .into(thumb);
         holder.ijkVideoView.setUrl(videoBean.getUrl());
+//        holder.ijkVideoView.setCustomMediaPlayer(new ExoMediaPlayer(holder.ijkVideoView.getContext()));
         holder.controller.setTitle(videoBean.getTitle());
         holder.ijkVideoView.setVideoController(holder.controller);
         holder.title.setText(videoBean.getTitle());
@@ -65,8 +66,6 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
             ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels * 9 / 16 + 1));
             controller = new StandardVideoController(itemView.getContext());
             title = itemView.findViewById(R.id.tv_title);
-            ijkVideoView.addToVideoViewManager();
-            ijkVideoView.setAutoRotate(true);
         }
     }
 }
