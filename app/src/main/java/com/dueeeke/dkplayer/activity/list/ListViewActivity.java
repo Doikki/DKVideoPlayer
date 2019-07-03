@@ -100,7 +100,7 @@ public class ListViewActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        VideoViewManager.instance().releaseVideoPlayer();
+        VideoViewManager.instance().release();
     }
 
     @Override

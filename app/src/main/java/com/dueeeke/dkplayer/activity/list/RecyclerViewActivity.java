@@ -6,6 +6,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -42,9 +43,10 @@ public class RecyclerViewActivity extends AppCompatActivity {
     }
 
     private void initView() {
+        VideoRecyclerViewAdapter adapter = new VideoRecyclerViewAdapter(DataUtil.getVideoList());
         RecyclerView recyclerView = findViewById(R.id.rv);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new VideoRecyclerViewAdapter(DataUtil.getVideoList()));
+        recyclerView.setAdapter(adapter);
         recyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
             @Override
             public void onChildViewAttachedToWindow(View view) {
@@ -55,11 +57,18 @@ public class RecyclerViewActivity extends AppCompatActivity {
             public void onChildViewDetachedFromWindow(View view) {
                 VideoView ijkVideoView = view.findViewById(R.id.video_player);
                 if (ijkVideoView != null && !ijkVideoView.isFullScreen()) {
-//                    Log.d("@@@@@@", "onChildViewDetachedFromWindow: called");
+                    Log.d("@@@@@@", "onChildViewDetachedFromWindow: called");
 //                    int tag = (int) ijkVideoView.getTag();
 //                    Log.d("@@@@@@", "onChildViewDetachedFromWindow: position: " + tag);
                     ijkVideoView.release();
                 }
+            }
+        });
+
+        findViewById(R.id.add).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adapter.addData(DataUtil.getVideoList());
             }
         });
     }
@@ -67,7 +76,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        VideoViewManager.instance().releaseVideoPlayer();
+        VideoViewManager.instance().release();
     }
 
     @Override

@@ -121,7 +121,7 @@ public class AutoPlayRecyclerViewActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        VideoViewManager.instance().releaseVideoPlayer();
+        VideoViewManager.instance().release();
     }
 
     @Override

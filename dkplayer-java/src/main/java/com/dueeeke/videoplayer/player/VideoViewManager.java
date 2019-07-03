@@ -1,5 +1,8 @@
 package com.dueeeke.videoplayer.player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 视频播放器管理器，管理当前正在播放的VideoView，以及播放器配置
  */
@@ -8,7 +11,7 @@ public class VideoViewManager {
     /**
      * 当前正在播放的VideoView
      */
-    private VideoView mPlayer;
+    private List<VideoView> mVideoViews = new ArrayList<>();
 
     private boolean mPlayOnMobileNetwork;
 
@@ -54,22 +57,60 @@ public class VideoViewManager {
         return sInstance;
     }
 
-    public void setCurrentVideoPlayer(VideoView player) {
-        mPlayer = player;
+
+    public void addVideoView(VideoView videoView) {
+        mVideoViews.add(videoView);
     }
 
-    public VideoView getCurrentVideoPlayer() {
-        return mPlayer;
+    public void removeVideoView(VideoView videoView) {
+        mVideoViews.remove(videoView);
     }
 
+    public List<VideoView> getVideoViews() {
+        return mVideoViews;
+    }
+
+    @Deprecated
     public void releaseVideoPlayer() {
-        if (mPlayer != null) {
-            mPlayer.release();
-            mPlayer = null;
+        release();
+    }
+
+    public void pause() {
+        for (int i = 0; i < mVideoViews.size(); i++) {
+            VideoView vv = mVideoViews.get(i);
+            if (vv != null) {
+                vv.pause();
+            }
+        }
+    }
+
+    public void resume() {
+        for (int i = 0; i < mVideoViews.size(); i++) {
+            VideoView vv = mVideoViews.get(i);
+            if (vv != null) {
+                vv.resume();
+            }
+        }
+    }
+
+    public void release() {
+        for (int i = 0; i < mVideoViews.size(); i++) {
+            VideoView vv = mVideoViews.get(i);
+            if (vv != null) {
+                vv.release();
+                i--;
+            }
         }
     }
 
     public boolean onBackPressed() {
-        return mPlayer != null && mPlayer.onBackPressed();
+        for (int i = 0; i < mVideoViews.size(); i++) {
+            VideoView vv = mVideoViews.get(i);
+            if (vv != null) {
+                boolean b = vv.onBackPressed();
+                if (b) return true;
+            }
+        }
+        return false;
     }
 }

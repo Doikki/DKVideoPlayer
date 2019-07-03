@@ -18,7 +18,8 @@ import com.dueeeke.dkplayer.util.IntentKeys;
 
 public class ApiActivity extends AppCompatActivity {
 
-    private static final String VOD_URL = "http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv";
+//    private static final String VOD_URL = "http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv";
+    private static final String VOD_URL = "http://vfx.mtime.cn/Video/2019/03/12/mp4/190312143927981075.mp4";
 //    private static final String VOD_URL = "http://155.138.214.164/test/1.mp4";
 //    private static final String VOD_URL = "http://youku163.zuida-bofang.com/20190113/24356_0cbc9d8f/index.m3u8";
 //    private static final String VOD_URL = "http://sohu.zuida-163sina.com/20190303/ZRkvZAiK/index.m3u8";
@@ -88,6 +89,6 @@ public class ApiActivity extends AppCompatActivity {
     }
 
     public void multiPlayer(View view) {
-        startActivity(new Intent(this, MultiPlayerActivity.class));
+        startActivity(new Intent(this, ParallelPlayActivity.class));
     }
 }

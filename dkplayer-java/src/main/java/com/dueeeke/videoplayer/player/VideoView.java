@@ -61,6 +61,8 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
     protected boolean mIsFullScreen;//是否处于全屏状态
     //通过添加和移除这个view来实现隐藏和显示系统navigation bar，可以避免出现一些奇奇怪怪的问题
     protected View mHideNavBarView;
+    protected static final int FULLSCREEN_FLAGS = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
 
     public static final int SCREEN_SCALE_DEFAULT = 0;
     public static final int SCREEN_SCALE_16_9 = 1;
@@ -73,8 +75,6 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
 
     protected int[] mVideoSize = {0, 0};
 
-    protected static final int FULLSCREEN_FLAGS = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
     protected boolean mIsTinyScreen;//是否处于小屏状态
     protected int[] mTinyScreenSize = {0, 0};
 
@@ -200,9 +200,9 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
      */
     protected void startPlay() {
         if (!mEnableParallelPlay) {
-            VideoViewManager.instance().releaseVideoPlayer();
-            VideoViewManager.instance().setCurrentVideoPlayer(this);
+            VideoViewManager.instance().release();
         }
+        VideoViewManager.instance().addVideoView(this);
 
         if (checkNetwork()) return;
 
@@ -401,9 +401,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
         if (mProgressManager != null && isInPlaybackState())
             mProgressManager.saveProgress(mCurrentUrl, mCurrentPosition);
         if (!isInIdleState()) {
-            if (!mEnableParallelPlay) {
-                VideoViewManager.instance().setCurrentVideoPlayer(null);
-            }
+            VideoViewManager.instance().removeVideoView(this);
             mMediaPlayer.release();
             mMediaPlayer = null;
             setKeepScreenOn(false);

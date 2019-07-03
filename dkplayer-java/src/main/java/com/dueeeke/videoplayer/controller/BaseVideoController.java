@@ -83,18 +83,16 @@ public abstract class BaseVideoController extends FrameLayout {
     public void setPlayState(int playState) {
         mCurrentPlayState = playState;
         hideStatusView();
-        switch (playState) {
-            case VideoView.STATE_ERROR:
-                mStatusView.setMessage(getResources().getString(R.string.dkplayer_error_message));
-                mStatusView.setButtonTextAndAction(getResources().getString(R.string.dkplayer_retry), new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        hideStatusView();
-                        mMediaPlayer.replay(false);
-                    }
-                });
-                this.addView(mStatusView, 0);
-                break;
+        if (playState == VideoView.STATE_ERROR) {
+            mStatusView.setMessage(getResources().getString(R.string.dkplayer_error_message));
+            mStatusView.setButtonTextAndAction(getResources().getString(R.string.dkplayer_retry), new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    hideStatusView();
+                    mMediaPlayer.replay(false);
+                }
+            });
+            this.addView(mStatusView, 0);
         }
     }
 

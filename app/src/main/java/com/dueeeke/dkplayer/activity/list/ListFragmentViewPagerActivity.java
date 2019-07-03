@@ -72,7 +72,7 @@ public class ListFragmentViewPagerActivity extends AppCompatActivity implements 
     @Override
     protected void onPause() {
         super.onPause();
-        mVideoViewManager.releaseVideoPlayer();
+        mVideoViewManager.release();
     }
 
     @Override
@@ -89,7 +89,7 @@ public class ListFragmentViewPagerActivity extends AppCompatActivity implements 
 
     @Override
     public void onPageSelected(int position) {
-        mVideoViewManager.releaseVideoPlayer();
+        mVideoViewManager.release();
     }
 
     @Override

@@ -15,18 +15,19 @@ import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.player.VideoView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecyclerViewAdapter.VideoHolder> {
 
-    private List<VideoBean> videos;
+    private List<VideoBean> videos = new ArrayList<>();
 
 //    private ProgressManagerImpl mProgressManager;
 
 //    private PlayerFactory mPlayerFactory = ExoMediaPlayerFactory.create(MyApplication.getInstance());
 
     public VideoRecyclerViewAdapter(List<VideoBean> videos) {
-        this.videos = videos;
+        this.videos.addAll(videos);
     }
 
     @Override
@@ -63,6 +64,13 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
     @Override
     public int getItemCount() {
         return videos.size();
+    }
+
+    public void addData(List<VideoBean> videoList) {
+        int size = videos.size();
+        videos.addAll(videoList);
+        //使用此方法添加数据，使用notifyDataSetChanged会导致正在播放的视频中断
+        notifyItemRangeChanged(size, videos.size());
     }
 
     public class VideoHolder extends RecyclerView.ViewHolder {
