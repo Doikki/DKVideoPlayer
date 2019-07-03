@@ -1,14 +1,14 @@
 package com.dueeeke.videoplayer.player;
 
 /**
- * 视频播放器管理器，管理当前正在播放的IjkVideoView，以及播放器配置
+ * 视频播放器管理器，管理当前正在播放的VideoView，以及播放器配置
  */
 public class VideoViewManager {
 
     /**
-     * 当前正在播放的IjkVideoView
+     * 当前正在播放的VideoView
      */
-    private IjkVideoView mPlayer;
+    private VideoView mPlayer;
 
     private boolean mPlayOnMobileNetwork;
 
@@ -54,11 +54,11 @@ public class VideoViewManager {
         return sInstance;
     }
 
-    public void setCurrentVideoPlayer(IjkVideoView player) {
+    public void setCurrentVideoPlayer(VideoView player) {
         mPlayer = player;
     }
 
-    public IjkVideoView getCurrentVideoPlayer() {
+    public VideoView getCurrentVideoPlayer() {
         return mPlayer;
     }
 

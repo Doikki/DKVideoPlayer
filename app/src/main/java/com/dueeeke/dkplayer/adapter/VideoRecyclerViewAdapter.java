@@ -11,12 +11,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
-import com.dueeeke.dkplayer.app.MyApplication;
 import com.dueeeke.dkplayer.bean.VideoBean;
-import com.dueeeke.dkplayer.player.ExoMediaPlayerFactory;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.player.IjkVideoView;
-import com.dueeeke.videoplayer.player.PlayerFactory;
 
 import java.util.List;
 
@@ -26,7 +23,7 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
 
 //    private ProgressManagerImpl mProgressManager;
 
-    private PlayerFactory mPlayerFactory = ExoMediaPlayerFactory.create(MyApplication.getInstance());
+//    private PlayerFactory mPlayerFactory = ExoMediaPlayerFactory.create(MyApplication.getInstance());
 
     public VideoRecyclerViewAdapter(List<VideoBean> videos) {
         this.videos = videos;
@@ -60,7 +57,7 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
 //            mProgressManager = new ProgressManagerImpl();
 //        holder.ijkVideoView.setProgressManager(mProgressManager);
 //        holder.ijkVideoView.setCustomMediaPlayer(new ExoMediaPlayer(holder.itemView.getContext()));
-        holder.ijkVideoView.setPlayerFactory(mPlayerFactory);
+//        holder.ijkVideoView.setPlayerFactory(mPlayerFactory);
     }
 
     @Override

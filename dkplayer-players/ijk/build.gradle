@@ -13,13 +13,14 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    compileOnly "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+    compileOnly project(':dkplayer-java')
+    api "tv.danmaku.ijk.media:ijkplayer-java:$rootProject.ijkPlayerVersion"
 }
 
 publish {
     userOrg = USER_ORG
     groupId = GROUP_ID
-    artifactId = 'dkplayer-java'
+    artifactId = 'player-ijk'
     publishVersion = PUBLISH_VERSION
     desc = DESC
     website = WEBSITE

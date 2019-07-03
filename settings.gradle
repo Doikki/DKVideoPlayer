@@ -1,1 +1,6 @@
-include ':app', ':dkplayer-java', ':dkplayer-armv7a', ':dkplayer-arm64', ':dkplayer-armv5', ':dkplayer-x86', ':dkplayer-x86_64', ':dkplayer-ui'
+include ':app'
+include ':dkplayer-java'
+include ':dkplayer-ui'
+include 'dkplayer-players:ijk'
+include 'dkplayer-players:ijk-armv7a', 'dkplayer-players:ijk-arm64', 'dkplayer-players:ijk-armv5', 'dkplayer-players:ijk-x86', 'dkplayer-players:ijk-x86_64'
+include 'dkplayer-players:exo'
