@@ -9,17 +9,22 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
     }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    compileOnly "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 }
 
 publish {
     userOrg = USER_ORG
     groupId = GROUP_ID
-    artifactId = 'dkplayer-java'
+    artifactId = 'ijk-x86_64'
     publishVersion = PUBLISH_VERSION
     desc = DESC
     website = WEBSITE

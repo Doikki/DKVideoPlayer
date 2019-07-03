@@ -13,13 +13,17 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    compileOnly "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+    compileOnly project(':dkplayer-java')
+    api ('com.google.android.exoplayer:exoplayer:2.9.6') {
+        exclude group:'com.android.support'
+    }
+    api 'com.google.android.exoplayer:extension-rtmp:2.9.6'
 }
 
 publish {
     userOrg = USER_ORG
     groupId = GROUP_ID
-    artifactId = 'dkplayer-java'
+    artifactId = 'player-exo'
     publishVersion = PUBLISH_VERSION
     desc = DESC
     website = WEBSITE

@@ -79,19 +79,19 @@ dependencies {
     implementation 'com.github.ctiao:DanmakuFlameMaster:0.9.25'
     implementation 'com.github.ctiao:ndkbitmap-armv7a:0.9.21'
     implementation "com.android.support:design:$rootProject.supportLibraryVersion"
-    implementation 'com.google.android.exoplayer:exoplayer:2.8.2'
-    implementation 'com.google.android.exoplayer:extension-rtmp:2.8.2'
+
     //缓存
     implementation 'com.danikula:videocache:2.7.1'
 
-
     implementation project(':dkplayer-java')
     implementation project(':dkplayer-ui')
-    implementation project(':dkplayer-armv7a')
-    implementation project(':dkplayer-arm64')
-    implementation project(':dkplayer-armv5')
-    implementation project(':dkplayer-x86')
-    implementation project(':dkplayer-x86_64')
+    implementation project(path: ':dkplayer-players:ijk')
+    implementation project(path: ':dkplayer-players:exo')
+    implementation project(path: ':dkplayer-players:ijk-armv5')
+    implementation project(path: ':dkplayer-players:ijk-x86')
+    implementation project(path: ':dkplayer-players:ijk-arm64')
+    implementation project(path: ':dkplayer-players:ijk-armv7a')
+    implementation project(path: ':dkplayer-players:ijk-x86_64')
 //    implementation 'com.github.dueeeke.dkplayer:dkplayer-java:2.5.5'
 //    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv7a:2.5.5'
 //    implementation 'com.github.dueeeke.dkplayer:dkplayer-armv5:2.5.5'

@@ -122,8 +122,8 @@ public class VideoViewConfig {
         /**
          * 自定义播放核心
          */
-        public Builder setPlayerFactory(PlayerFactory factory) {
-            mPlayerFactory = factory;
+        public Builder setPlayerFactory(PlayerFactory playerFactory) {
+            mPlayerFactory = playerFactory;
             return this;
         }
 

@@ -9,8 +9,8 @@ import android.view.MenuItem;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.widget.controller.DefinitionController;
 import com.dueeeke.dkplayer.widget.videoview.DefinitionIjkVideoView;
+import com.dueeeke.videoplayer.ijk.IjkPlayer;
 import com.dueeeke.videoplayer.player.AbstractPlayer;
-import com.dueeeke.videoplayer.player.IjkPlayer;
 import com.dueeeke.videoplayer.player.PlayerFactory;
 
 import java.util.LinkedHashMap;
