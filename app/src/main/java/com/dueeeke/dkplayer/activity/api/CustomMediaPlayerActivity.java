@@ -45,7 +45,7 @@ public class CustomMediaPlayerActivity extends AppCompatActivity {
 //        String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath();
 //        String url = "file://" + absolutePath + File.separator + "test.ffconcat";
         //concat测试地址
-        String concatUrl = "http://155.138.214.164/test/test.ffconcat";
+        String concatUrl = "http://64.154.38.44/test.ffconcat";
 
         ijkVideoView = findViewById(R.id.player);
         StandardVideoController controller = new StandardVideoController(this);
