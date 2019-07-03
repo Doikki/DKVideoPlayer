@@ -20,7 +20,7 @@ import com.dueeeke.videoplayer.player.VideoView;
 
 public class ScreenShotPlayerActivity extends AppCompatActivity {
 
-    private VideoView ijkVideoView;
+    private VideoView mVideoView;
     private ImageView mScreenShot;
 
     @Override
@@ -32,12 +32,12 @@ public class ScreenShotPlayerActivity extends AppCompatActivity {
             actionBar.setTitle(R.string.str_screen_shot);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        ijkVideoView = findViewById(R.id.player);
+        mVideoView = findViewById(R.id.player);
         mScreenShot = findViewById(R.id.iv_screen_shot);
         StandardVideoController controller = new StandardVideoController(this);
-        ijkVideoView.setUrl("http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv");
-        ijkVideoView.setVideoController(controller);
-        ijkVideoView.start();
+        mVideoView.setUrl("http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv");
+        mVideoView.setVideoController(controller);
+        mVideoView.start();
     }
 
     @Override
@@ -51,31 +51,31 @@ public class ScreenShotPlayerActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        ijkVideoView.pause();
+        mVideoView.pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        ijkVideoView.resume();
+        mVideoView.resume();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ijkVideoView.release();
+        mVideoView.release();
     }
 
 
     @Override
     public void onBackPressed() {
-        if (!ijkVideoView.onBackPressed()) {
+        if (!mVideoView.onBackPressed()) {
             super.onBackPressed();
         }
     }
 
     public void doScreenShot(View view) {
-        Bitmap bitmap = ijkVideoView.doScreenShot();
+        Bitmap bitmap = mVideoView.doScreenShot();
         mScreenShot.setImageBitmap(bitmap);
     }
 }

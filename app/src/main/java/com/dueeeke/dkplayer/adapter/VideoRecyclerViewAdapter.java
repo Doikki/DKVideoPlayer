@@ -48,17 +48,17 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
                 .crossFade()
                 .placeholder(android.R.color.white)
                 .into(thumb);
-        holder.ijkVideoView.setUrl(videoBean.getUrl());
+        holder.mVideoView.setUrl(videoBean.getUrl());
         holder.controller.setTitle(videoBean.getTitle());
-        holder.ijkVideoView.setVideoController(holder.controller);
+        holder.mVideoView.setVideoController(holder.controller);
         holder.title.setText(videoBean.getTitle());
 
         //保存播放进度
 //        if (mProgressManager == null)
 //            mProgressManager = new ProgressManagerImpl();
-//        holder.ijkVideoView.setProgressManager(mProgressManager);
-//        holder.ijkVideoView.setCustomMediaPlayer(new ExoMediaPlayer(holder.itemView.getContext()));
-//        holder.ijkVideoView.setPlayerFactory(mPlayerFactory);
+//        holder.mVideoView.setProgressManager(mProgressManager);
+//        holder.mVideoView.setCustomMediaPlayer(new ExoMediaPlayer(holder.itemView.getContext()));
+//        holder.mVideoView.setPlayerFactory(mPlayerFactory);
     }
 
     @Override
@@ -75,15 +75,15 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
 
     public class VideoHolder extends RecyclerView.ViewHolder {
 
-        private VideoView ijkVideoView;
+        private VideoView mVideoView;
         private StandardVideoController controller;
         private TextView title;
 
         VideoHolder(View itemView) {
             super(itemView);
-            ijkVideoView = itemView.findViewById(R.id.video_player);
+            mVideoView = itemView.findViewById(R.id.video_player);
             int widthPixels = itemView.getContext().getResources().getDisplayMetrics().widthPixels;
-            ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels * 9 / 16 + 1));
+            mVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels * 9 / 16 + 1));
             controller = new StandardVideoController(itemView.getContext());
             title = itemView.findViewById(R.id.tv_title);
         }

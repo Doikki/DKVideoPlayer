@@ -42,9 +42,9 @@ public class RotateRecyclerViewAdapter extends RecyclerView.Adapter<RotateRecycl
                 .crossFade()
                 .placeholder(android.R.color.darker_gray)
                 .into(holder.controller.getThumb());
-        holder.ijkVideoView.setUrl(videoBean.getUrl());
+        holder.mVideoView.setUrl(videoBean.getUrl());
         holder.controller.setTitle(videoBean.getTitle());
-        holder.ijkVideoView.setVideoController(holder.controller);
+        holder.mVideoView.setVideoController(holder.controller);
         holder.title.setText(videoBean.getTitle());
     }
 
@@ -55,31 +55,31 @@ public class RotateRecyclerViewAdapter extends RecyclerView.Adapter<RotateRecycl
 
     public class VideoHolder extends RecyclerView.ViewHolder {
 
-        private VideoView ijkVideoView;
+        private VideoView mVideoView;
         private RotateInFullscreenController controller;
         private TextView title;
 
         VideoHolder(View itemView) {
             super(itemView);
-            ijkVideoView = itemView.findViewById(R.id.video_player);
+            mVideoView = itemView.findViewById(R.id.video_player);
             int widthPixels = context.getResources().getDisplayMetrics().widthPixels;
-            ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels * 9 / 16 + 1));
+            mVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels * 9 / 16 + 1));
             //这段代码用于实现小屏时静音，全屏时有声音
-            ijkVideoView.setOnVideoViewStateChangeListener(new OnVideoViewStateChangeListener() {
+            mVideoView.setOnVideoViewStateChangeListener(new OnVideoViewStateChangeListener() {
                 @Override
                 public void onPlayerStateChanged(int playerState) {
                     if (playerState == VideoView.PLAYER_FULL_SCREEN) {
-                        ijkVideoView.setMute(false);
+                        mVideoView.setMute(false);
                     } else if (playerState == VideoView.PLAYER_NORMAL) {
-                        ijkVideoView.setMute(true);
+                        mVideoView.setMute(true);
                     }
                 }
 
                 @Override
                 public void onPlayStateChanged(int playState) {
                     //小屏状态下播放出来之后，把声音关闭
-                    if (playState == VideoView.STATE_PREPARED && !ijkVideoView.isFullScreen()) {
-                        ijkVideoView.setMute(true);
+                    if (playState == VideoView.STATE_PREPARED && !mVideoView.isFullScreen()) {
+                        mVideoView.setMute(true);
                     }
                 }
             });

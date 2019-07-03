@@ -3,6 +3,7 @@ package com.dueeeke.dkplayer.app;
 import android.app.Application;
 
 import com.dueeeke.videoplayer.BuildConfig;
+import com.dueeeke.videoplayer.ijk.IjkPlayerFactory;
 import com.dueeeke.videoplayer.player.VideoViewConfig;
 import com.dueeeke.videoplayer.player.VideoViewManager;
 import com.squareup.leakcanary.LeakCanary;
@@ -27,13 +28,13 @@ public class MyApplication extends Application {
         //播放器配置，注意：此为全局配置，按需开启
         VideoViewManager.setConfig(VideoViewConfig.newBuilder()
                 .setLogEnabled(BuildConfig.DEBUG)
-//                .setPlayerFactory(IjkPlayerFactory.create(this))
+                .setPlayerFactory(IjkPlayerFactory.create(this))
 //                .setPlayerFactory(ExoMediaPlayerFactory.create(this))
 //                .setAutoRotate(true)
 //                .setEnableMediaCodec(true)
 //                .setUsingSurfaceView(true)
-                .setEnableParallelPlay(true)
-                .setEnableAudioFocus(false)
+//                .setEnableParallelPlay(true)
+//                .setEnableAudioFocus(false)
                 .build());
     }
 

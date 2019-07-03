@@ -25,7 +25,7 @@ import java.util.List;
 
 public class PlayListActivity extends AppCompatActivity {
 
-    private VideoView ijkVideoView;
+    private VideoView mVideoView;
 
     private List<VideoBean> data = DataUtil.getVideoList();
 
@@ -33,8 +33,8 @@ public class PlayListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ijkVideoView = new VideoView(this);
-        setContentView(ijkVideoView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, PlayerUtils.dp2px(this, 240)));
+        mVideoView = new VideoView(this);
+        setContentView(mVideoView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, PlayerUtils.dp2px(this, 240)));
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle(R.string.str_play_list);
@@ -44,12 +44,12 @@ public class PlayListActivity extends AppCompatActivity {
 
         //加载第一条数据
         VideoBean videoBean = data.get(0);
-        ijkVideoView.setUrl(videoBean.getUrl());
+        mVideoView.setUrl(videoBean.getUrl());
         mStandardVideoController.setTitle(videoBean.getTitle());
-        ijkVideoView.setVideoController(mStandardVideoController);
+        mVideoView.setVideoController(mStandardVideoController);
 
         //监听播放结束
-        ijkVideoView.addOnVideoViewStateChangeListener(new OnVideoViewStateChangeListener() {
+        mVideoView.addOnVideoViewStateChangeListener(new OnVideoViewStateChangeListener() {
             private int mCurrentVideoPosition;
             @Override
             public void onPlayerStateChanged(int playerState) {
@@ -62,20 +62,20 @@ public class PlayListActivity extends AppCompatActivity {
                     if (data != null) {
                         mCurrentVideoPosition++;
                         if (mCurrentVideoPosition >= data.size()) return;
-                        ijkVideoView.release();
+                        mVideoView.release();
                         //重新设置数据
                         VideoBean videoBean = data.get(mCurrentVideoPosition);
-                        ijkVideoView.setUrl(videoBean.getUrl());
+                        mVideoView.setUrl(videoBean.getUrl());
                         mStandardVideoController.setTitle(videoBean.getTitle());
-                        ijkVideoView.setVideoController(mStandardVideoController);
+                        mVideoView.setVideoController(mStandardVideoController);
                         //开始播放
-                        ijkVideoView.start();
+                        mVideoView.start();
                     }
                 }
             }
         });
 
-        ijkVideoView.start();
+        mVideoView.start();
 
     }
 
@@ -90,7 +90,7 @@ public class PlayListActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        ijkVideoView.pause();
+        mVideoView.pause();
     }
 
     @Override
@@ -101,13 +101,13 @@ public class PlayListActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ijkVideoView.release();
+        mVideoView.release();
     }
 
 
     @Override
     public void onBackPressed() {
-        if (!ijkVideoView.onBackPressed()) {
+        if (!mVideoView.onBackPressed()) {
             super.onBackPressed();
         }
     }

@@ -49,8 +49,8 @@ public class VideoListViewAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        viewHolder.ijkVideoView.setUrl(videoBean.getUrl());
-        viewHolder.ijkVideoView.setVideoController(viewHolder.controller);
+        viewHolder.mVideoView.setUrl(videoBean.getUrl());
+        viewHolder.mVideoView.setVideoController(viewHolder.controller);
         viewHolder.controller.setTitle(videoBean.getTitle());
         Glide.with(viewHolder.controller.getThumb().getContext())
                 .load(videoBean.getThumb())
@@ -62,13 +62,13 @@ public class VideoListViewAdapter extends BaseAdapter {
 
 
     private class ViewHolder {
-        private VideoView ijkVideoView;
+        private VideoView mVideoView;
         private StandardVideoController controller;
 
         ViewHolder(View itemView) {
-            this.ijkVideoView = itemView.findViewById(R.id.video_player);
+            this.mVideoView = itemView.findViewById(R.id.video_player);
             int widthPixels = itemView.getContext().getResources().getDisplayMetrics().widthPixels;
-            ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels * 9 / 16 + 1));
+            mVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels * 9 / 16 + 1));
             controller = new StandardVideoController(itemView.getContext());
         }
     }

@@ -22,7 +22,7 @@ import com.dueeeke.videoplayer.player.PlayerFactory;
 
 public class SwitchPlayerActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private VideoView ijkVideoView;
+    private VideoView mVideoView;
     private StandardVideoController mController;
     private static final String URL = "http://cdnxdc.tanzi88.com/XDC/dvideo/2017/12/29/fc821f9a8673d2994f9c2cb9b27233a3.mp4";
 //    private static final String URL = "http://zaixian.jingpin88.com/20180430/IGBXbalb/index.m3u8";
@@ -37,15 +37,15 @@ public class SwitchPlayerActivity extends AppCompatActivity implements View.OnCl
             actionBar.setTitle(R.string.str_switch_player);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        ijkVideoView = findViewById(R.id.player);
+        mVideoView = findViewById(R.id.player);
         findViewById(R.id.btn_ijk).setOnClickListener(this);
         findViewById(R.id.btn_media).setOnClickListener(this);
         findViewById(R.id.btn_exo).setOnClickListener(this);
 
         mController = new StandardVideoController(this);
-        ijkVideoView.setUrl(URL);
-        ijkVideoView.setVideoController(mController);
-        ijkVideoView.start();
+        mVideoView.setUrl(URL);
+        mVideoView.setVideoController(mController);
+        mVideoView.start();
     }
 
     @Override
@@ -65,11 +65,11 @@ public class SwitchPlayerActivity extends AppCompatActivity implements View.OnCl
 //                break;
 //        }
 //
-//        ijkVideoView.release();
-//        ijkVideoView.setUrl(URL);
-//        ijkVideoView.setVideoController(mController);
-//        ijkVideoView.setCustomMediaPlayer(player);
-//        ijkVideoView.start();
+//        mVideoView.release();
+//        mVideoView.setUrl(URL);
+//        mVideoView.setVideoController(mController);
+//        mVideoView.setCustomMediaPlayer(player);
+//        mVideoView.start();
 
         PlayerFactory factory = null;
         switch (id) {
@@ -84,11 +84,11 @@ public class SwitchPlayerActivity extends AppCompatActivity implements View.OnCl
                 break;
         }
 
-        ijkVideoView.release();
-        ijkVideoView.setUrl(URL);
-        ijkVideoView.setVideoController(mController);
-        ijkVideoView.setPlayerFactory(factory);
-        ijkVideoView.start();
+        mVideoView.release();
+        mVideoView.setUrl(URL);
+        mVideoView.setVideoController(mController);
+        mVideoView.setPlayerFactory(factory);
+        mVideoView.start();
 
     }
 
@@ -103,25 +103,25 @@ public class SwitchPlayerActivity extends AppCompatActivity implements View.OnCl
     @Override
     protected void onPause() {
         super.onPause();
-        ijkVideoView.pause();
+        mVideoView.pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        ijkVideoView.resume();
+        mVideoView.resume();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ijkVideoView.release();
+        mVideoView.release();
     }
 
 
     @Override
     public void onBackPressed() {
-        if (!ijkVideoView.onBackPressed()) {
+        if (!mVideoView.onBackPressed()) {
             super.onBackPressed();
         }
     }

@@ -17,7 +17,7 @@ import com.dueeeke.videoplayer.player.VideoView;
 
 public class FullScreenActivity extends AppCompatActivity{
 
-    private FullScreenVideoView ijkVideoView;
+    private FullScreenVideoView mVideoView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -28,38 +28,38 @@ public class FullScreenActivity extends AppCompatActivity{
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        ijkVideoView = new FullScreenVideoView(this);
-        setContentView(ijkVideoView);
-        ijkVideoView.setUrl("http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv");
+        mVideoView = new FullScreenVideoView(this);
+        setContentView(mVideoView);
+        mVideoView.setUrl("http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv");
         FullScreenController controller = new FullScreenController(this);
         controller.setTitle("这是一个标题");
-        ijkVideoView.setVideoController(controller);
-        ijkVideoView.setScreenScale(VideoView.SCREEN_SCALE_16_9);
-        ijkVideoView.start();
+        mVideoView.setVideoController(controller);
+        mVideoView.setScreenScale(VideoView.SCREEN_SCALE_16_9);
+        mVideoView.start();
 
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        ijkVideoView.pause();
+        mVideoView.pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        ijkVideoView.resume();
+        mVideoView.resume();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ijkVideoView.release();
+        mVideoView.release();
     }
 
     @Override
     public void onBackPressed() {
-        if (!ijkVideoView.onBackPressed()){
+        if (!mVideoView.onBackPressed()){
             super.onBackPressed();
         }
     }
