@@ -7,13 +7,13 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videocontroller.StandardVideoController;
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 
 public class MultiPlayerActivity extends AppCompatActivity{
 
     private static final String VOD_URL = "http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv";
-    private IjkVideoView mPlayer1;
-    private IjkVideoView mPlayer2;
+    private VideoView mPlayer1;
+    private VideoView mPlayer2;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

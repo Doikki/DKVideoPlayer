@@ -10,7 +10,7 @@ import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.videocontroller.StandardVideoController;
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 
 import java.util.List;
 
@@ -62,7 +62,7 @@ public class VideoListViewAdapter extends BaseAdapter {
 
 
     private class ViewHolder {
-        private IjkVideoView ijkVideoView;
+        private VideoView ijkVideoView;
         private StandardVideoController controller;
 
         ViewHolder(View itemView) {

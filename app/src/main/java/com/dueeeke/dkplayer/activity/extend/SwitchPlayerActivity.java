@@ -12,7 +12,7 @@ import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.exo.ExoMediaPlayerFactory;
 import com.dueeeke.videoplayer.ijk.IjkPlayerFactory;
 import com.dueeeke.videoplayer.player.AndroidMediaPlayerFactory;
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.player.PlayerFactory;
 
 /**
@@ -22,7 +22,7 @@ import com.dueeeke.videoplayer.player.PlayerFactory;
 
 public class SwitchPlayerActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private IjkVideoView ijkVideoView;
+    private VideoView ijkVideoView;
     private StandardVideoController mController;
     private static final String URL = "http://cdnxdc.tanzi88.com/XDC/dvideo/2017/12/29/fc821f9a8673d2994f9c2cb9b27233a3.mp4";
 //    private static final String URL = "http://zaixian.jingpin88.com/20180430/IGBXbalb/index.m3u8";

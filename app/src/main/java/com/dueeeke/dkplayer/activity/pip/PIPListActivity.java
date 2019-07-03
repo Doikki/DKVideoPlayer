@@ -17,7 +17,7 @@ import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.dkplayer.util.PIPManager;
 import com.dueeeke.videocontroller.StandardVideoController;
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 import com.yanzhenjie.permission.AndPermission;
 
 import java.util.List;
@@ -31,7 +31,7 @@ public class PIPListActivity extends AppCompatActivity implements FloatRecyclerV
 
     private FrameLayout mPlayer, mThumb;
     private PIPManager mPIPManager;
-    private IjkVideoView mIjkVideoView;
+    private VideoView mVideoView;
     private StandardVideoController mStandardVideoController;
     private List<VideoBean> mVideoList;
 
@@ -45,7 +45,7 @@ public class PIPListActivity extends AppCompatActivity implements FloatRecyclerV
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         mPIPManager = PIPManager.getInstance();
-        mIjkVideoView = mPIPManager.getIjkVideoView();
+        mVideoView = mPIPManager.getVideoView();
         mStandardVideoController = new StandardVideoController(this);
         initView();
     }
@@ -75,10 +75,10 @@ public class PIPListActivity extends AppCompatActivity implements FloatRecyclerV
                 if (position == mPIPManager.getPlayingPosition()) {
                     mPIPManager.stopFloatWindow();
                     thumb.setVisibility(View.GONE);
-                    mStandardVideoController.setPlayState(mIjkVideoView.getCurrentPlayState());
-                    mStandardVideoController.setPlayerState(mIjkVideoView.getCurrentPlayerState());
-                    mIjkVideoView.setVideoController(mStandardVideoController);
-                    player.addView(mIjkVideoView);
+                    mStandardVideoController.setPlayState(mVideoView.getCurrentPlayState());
+                    mStandardVideoController.setPlayerState(mVideoView.getCurrentPlayerState());
+                    mVideoView.setVideoController(mStandardVideoController);
+                    player.addView(mVideoView);
                     mThumb = thumb;
                     mPlayer = player;
                 }
@@ -145,12 +145,12 @@ public class PIPListActivity extends AppCompatActivity implements FloatRecyclerV
         FrameLayout player = itemView.findViewById(R.id.player_container);
         FrameLayout thumb = itemView.findViewById(R.id.layout_thumb);
         VideoBean videoBean = mVideoList.get(position);
-        mIjkVideoView.release();
-        mIjkVideoView.setUrl(videoBean.getUrl());
+        mVideoView.release();
+        mVideoView.setUrl(videoBean.getUrl());
         Glide.with(this).load(videoBean.getThumb()).into(mStandardVideoController.getThumb());
-        mIjkVideoView.setVideoController(mStandardVideoController);
-        mIjkVideoView.start();
-        player.addView(mIjkVideoView);
+        mVideoView.setVideoController(mStandardVideoController);
+        mVideoView.start();
+        player.addView(mVideoView);
         thumb.setVisibility(View.GONE);
         mPIPManager.setPlayingPosition(position);
         mPlayer = player;

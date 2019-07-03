@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.dueeeke.dkplayer.widget.videoview.RotateIjkVideoView
+    <com.dueeeke.dkplayer.widget.videoview.RotateVideoView
         android:id="@+id/player"
         android:layout_width="match_parent"
         android:layout_height="250dp" />

@@ -12,7 +12,7 @@ import android.view.View;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.adapter.VideoRecyclerViewAdapter;
 import com.dueeeke.dkplayer.util.DataUtil;
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.player.VideoViewManager;
 
 /**
@@ -53,7 +53,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
 
             @Override
             public void onChildViewDetachedFromWindow(View view) {
-                IjkVideoView ijkVideoView = view.findViewById(R.id.video_player);
+                VideoView ijkVideoView = view.findViewById(R.id.video_player);
                 if (ijkVideoView != null && !ijkVideoView.isFullScreen()) {
 //                    Log.d("@@@@@@", "onChildViewDetachedFromWindow: called");
 //                    int tag = (int) ijkVideoView.getTag();

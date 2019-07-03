@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.util.PIPManager;
 import com.dueeeke.videocontroller.StandardVideoController;
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 import com.yanzhenjie.permission.AndPermission;
 
 public class PIPActivity extends AppCompatActivity{
@@ -32,7 +32,7 @@ public class PIPActivity extends AppCompatActivity{
         }
         FrameLayout playerContainer = findViewById(R.id.player_container);
         mPIPManager = PIPManager.getInstance();
-        IjkVideoView ijkVideoView = mPIPManager.getIjkVideoView();
+        VideoView ijkVideoView = mPIPManager.getVideoView();
         StandardVideoController controller = new StandardVideoController(this);
         ijkVideoView.setVideoController(controller);
         if (mPIPManager.isStartFloatWindow()) {

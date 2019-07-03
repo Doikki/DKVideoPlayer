@@ -11,7 +11,7 @@ import android.widget.ImageView;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videocontroller.StandardVideoController;
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 
 /**
  * 截图
@@ -20,7 +20,7 @@ import com.dueeeke.videoplayer.player.IjkVideoView;
 
 public class ScreenShotPlayerActivity extends AppCompatActivity {
 
-    private IjkVideoView ijkVideoView;
+    private VideoView ijkVideoView;
     private ImageView mScreenShot;
 
     @Override

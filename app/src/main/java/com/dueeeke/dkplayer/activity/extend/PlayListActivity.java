@@ -13,7 +13,7 @@ import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 
 import java.util.List;
@@ -25,7 +25,7 @@ import java.util.List;
 
 public class PlayListActivity extends AppCompatActivity {
 
-    private IjkVideoView ijkVideoView;
+    private VideoView ijkVideoView;
 
     private List<VideoBean> data = DataUtil.getVideoList();
 
@@ -33,7 +33,7 @@ public class PlayListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ijkVideoView = new IjkVideoView(this);
+        ijkVideoView = new VideoView(this);
         setContentView(ijkVideoView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, PlayerUtils.dp2px(this, 240)));
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -58,7 +58,7 @@ public class PlayListActivity extends AppCompatActivity {
 
             @Override
             public void onPlayStateChanged(int playState) {
-                if (playState == IjkVideoView.STATE_PLAYBACK_COMPLETED) {
+                if (playState == VideoView.STATE_PLAYBACK_COMPLETED) {
                     if (data != null) {
                         mCurrentVideoPosition++;
                         if (mCurrentVideoPosition >= data.size()) return;

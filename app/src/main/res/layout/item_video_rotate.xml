@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
-    <com.dueeeke.dkplayer.widget.videoview.RotateIjkVideoView
+    <com.dueeeke.dkplayer.widget.videoview.RotateVideoView
         android:id="@+id/video_player"
         android:layout_width="match_parent"
         android:layout_height="200dp" />

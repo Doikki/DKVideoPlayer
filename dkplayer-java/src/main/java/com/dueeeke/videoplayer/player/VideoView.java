@@ -153,13 +153,13 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
         mPlayerFactory = config.mPlayerFactory == null ? AndroidMediaPlayerFactory.create(context) : config.mPlayerFactory;
 
         //读取xml中的配置，并综合全局配置
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.IjkVideoView);
-        mAutoRotate = a.getBoolean(R.styleable.IjkVideoView_autoRotate, mAutoRotate);
-        mUsingSurfaceView = a.getBoolean(R.styleable.IjkVideoView_usingSurfaceView, mUsingSurfaceView);
-        mEnableAudioFocus = a.getBoolean(R.styleable.IjkVideoView_enableAudioFocus, mEnableAudioFocus);
-        mEnableMediaCodec = a.getBoolean(R.styleable.IjkVideoView_enableMediaCodec, mEnableMediaCodec);
-        mEnableParallelPlay = a.getBoolean(R.styleable.IjkVideoView_enableParallelPlay, mEnableParallelPlay);
-        mIsLooping = a.getBoolean(R.styleable.IjkVideoView_looping, false);
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.VideoView);
+        mAutoRotate = a.getBoolean(R.styleable.VideoView_autoRotate, mAutoRotate);
+        mUsingSurfaceView = a.getBoolean(R.styleable.VideoView_usingSurfaceView, mUsingSurfaceView);
+        mEnableAudioFocus = a.getBoolean(R.styleable.VideoView_enableAudioFocus, mEnableAudioFocus);
+        mEnableMediaCodec = a.getBoolean(R.styleable.VideoView_enableMediaCodec, mEnableMediaCodec);
+        mEnableParallelPlay = a.getBoolean(R.styleable.VideoView_enableParallelPlay, mEnableParallelPlay);
+        mIsLooping = a.getBoolean(R.styleable.VideoView_looping, false);
         a.recycle();
 
         initView();

@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.interf.ControllerListener;
 import com.dueeeke.videoplayer.controller.BaseVideoController;
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 
 /**
@@ -88,11 +88,11 @@ public class AdController extends BaseVideoController implements View.OnClickLis
     public void setPlayState(int playState) {
         super.setPlayState(playState);
         switch (playState) {
-            case IjkVideoView.STATE_PLAYING:
+            case VideoView.STATE_PLAYING:
                 post(mShowProgress);
                 playButton.setSelected(true);
                 break;
-            case IjkVideoView.STATE_PAUSED:
+            case VideoView.STATE_PAUSED:
                 playButton.setSelected(false);
                 break;
         }
@@ -102,11 +102,11 @@ public class AdController extends BaseVideoController implements View.OnClickLis
     public void setPlayerState(int playerState) {
         super.setPlayerState(playerState);
         switch (playerState) {
-            case IjkVideoView.PLAYER_NORMAL:
+            case VideoView.PLAYER_NORMAL:
                 back.setVisibility(GONE);
                 fullScreen.setSelected(false);
                 break;
-            case IjkVideoView.PLAYER_FULL_SCREEN:
+            case VideoView.PLAYER_FULL_SCREEN:
                 back.setVisibility(VISIBLE);
                 fullScreen.setSelected(true);
                 break;
@@ -131,7 +131,7 @@ public class AdController extends BaseVideoController implements View.OnClickLis
         if (mMediaPlayer.isFullScreen()) {
             PlayerUtils.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             mMediaPlayer.stopFullScreen();
-            setPlayerState(IjkVideoView.PLAYER_NORMAL);
+            setPlayerState(VideoView.PLAYER_NORMAL);
             return true;
         }
         return super.onBackPressed();

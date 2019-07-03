@@ -8,7 +8,7 @@ import android.view.MenuItem;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videocontroller.StandardVideoController;
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 
 /**
  * 播放raw/assets视频
@@ -16,7 +16,7 @@ import com.dueeeke.videoplayer.player.IjkVideoView;
 
 public class PlayRawAssetsActivity extends AppCompatActivity {
 
-    private IjkVideoView ijkVideoView;
+    private VideoView ijkVideoView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

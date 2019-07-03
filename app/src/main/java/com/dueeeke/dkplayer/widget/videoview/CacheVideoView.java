@@ -9,25 +9,25 @@ import android.util.AttributeSet;
 import com.danikula.videocache.CacheListener;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.dueeeke.dkplayer.util.VideoCacheManager;
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 
 import java.io.File;
 
-public class CacheIjkVideoView extends IjkVideoView {
+public class CacheVideoView extends VideoView {
 
     protected HttpProxyCacheServer mCacheServer;
     protected int mBufferedPercentage;
     protected boolean mIsCacheEnabled = true; //默认打开缓存
 
-    public CacheIjkVideoView(@NonNull Context context) {
+    public CacheVideoView(@NonNull Context context) {
         super(context);
     }
 
-    public CacheIjkVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public CacheVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public CacheIjkVideoView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public CacheVideoView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 

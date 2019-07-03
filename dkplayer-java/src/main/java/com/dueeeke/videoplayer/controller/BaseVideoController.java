@@ -12,7 +12,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.dueeeke.videoplayer.R;
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.player.VideoViewManager;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 import com.dueeeke.videoplayer.widget.StatusView;
@@ -84,7 +84,7 @@ public abstract class BaseVideoController extends FrameLayout {
         mCurrentPlayState = playState;
         hideStatusView();
         switch (playState) {
-            case IjkVideoView.STATE_ERROR:
+            case VideoView.STATE_ERROR:
                 mStatusView.setMessage(getResources().getString(R.string.dkplayer_error_message));
                 mStatusView.setButtonTextAndAction(getResources().getString(R.string.dkplayer_retry), new OnClickListener() {
                     @Override
@@ -120,7 +120,7 @@ public abstract class BaseVideoController extends FrameLayout {
     }
 
     protected void doPauseResume() {
-        if (mCurrentPlayState == IjkVideoView.STATE_BUFFERING) return;
+        if (mCurrentPlayState == VideoView.STATE_BUFFERING) return;
         if (mMediaPlayer.isPlaying()) {
             mMediaPlayer.pause();
         } else {

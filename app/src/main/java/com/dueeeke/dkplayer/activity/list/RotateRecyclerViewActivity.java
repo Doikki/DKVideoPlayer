@@ -13,7 +13,7 @@ import android.view.View;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.adapter.RotateRecyclerViewAdapter;
 import com.dueeeke.dkplayer.util.DataUtil;
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.player.VideoViewManager;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
@@ -57,7 +57,7 @@ public class RotateRecyclerViewActivity extends AppCompatActivity {
 
             @Override
             public void onChildViewDetachedFromWindow(View view) {
-                IjkVideoView ijkVideoView = view.findViewById(R.id.video_player);
+                VideoView ijkVideoView = view.findViewById(R.id.video_player);
                 if (ijkVideoView != null && !ijkVideoView.isFullScreen()) {
 //                    Log.d("@@@@@@", "onChildViewDetachedFromWindow: called");
 //                    int tag = (int) ijkVideoView.getTag();
@@ -94,7 +94,7 @@ public class RotateRecyclerViewActivity extends AppCompatActivity {
                 //循环遍历可视区域videoview,如果完全可见就开始播放
                 for (int i = 0; i < visibleCount; i++) {
                     if (view == null || view.getChildAt(i) == null) continue;
-                    IjkVideoView ijkVideoView = view.getChildAt(i).findViewById(R.id.video_player);
+                    VideoView ijkVideoView = view.getChildAt(i).findViewById(R.id.video_player);
                     if (ijkVideoView != null) {
                         Rect rect = new Rect();
                         ijkVideoView.getLocalVisibleRect(rect);
@@ -111,7 +111,7 @@ public class RotateRecyclerViewActivity extends AppCompatActivity {
         recyclerView.post(() -> {
             //自动播放第一个
             View view = recyclerView.getChildAt(0);
-            IjkVideoView ijkVideoView = view.findViewById(R.id.video_player);
+            VideoView ijkVideoView = view.findViewById(R.id.video_player);
             ijkVideoView.start();
         });
 

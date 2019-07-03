@@ -8,7 +8,7 @@ import android.widget.ImageView;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videoplayer.controller.BaseVideoController;
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.L;
 
 /**
@@ -47,15 +47,15 @@ public class TikTokController extends BaseVideoController {
         super.setPlayState(playState);
 
         switch (playState) {
-            case IjkVideoView.STATE_IDLE:
+            case VideoView.STATE_IDLE:
                 L.e("STATE_IDLE");
                 thumb.setVisibility(VISIBLE);
                 break;
-            case IjkVideoView.STATE_PLAYING:
+            case VideoView.STATE_PLAYING:
                 L.e("STATE_PLAYING");
                 thumb.setVisibility(GONE);
                 break;
-            case IjkVideoView.STATE_PREPARED:
+            case VideoView.STATE_PREPARED:
                 L.e("STATE_PREPARED");
                 break;
         }
