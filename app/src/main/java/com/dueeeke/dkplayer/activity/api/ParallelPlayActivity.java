@@ -8,17 +8,19 @@ import android.support.v7.app.AppCompatActivity;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.player.VideoView;
+import com.dueeeke.videoplayer.player.VideoViewManager;
 
-public class MultiPlayerActivity extends AppCompatActivity{
+/**
+ * 多开
+ */
+public class ParallelPlayActivity extends AppCompatActivity{
 
-    private static final String VOD_URL = "http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv";
-    private VideoView mPlayer1;
-    private VideoView mPlayer2;
+    private static final String VOD_URL = "http://vfx.mtime.cn/Video/2019/03/12/mp4/190312143927981075.mp4";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_multiplayer);
+        setContentView(R.layout.activity_parallel_play);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle(R.string.str_multi_player);
@@ -26,43 +28,47 @@ public class MultiPlayerActivity extends AppCompatActivity{
         }
 
 
-
-        mPlayer1 = findViewById(R.id.player_1);
-        mPlayer1.setUrl(VOD_URL);
+        VideoView player1 = findViewById(R.id.player_1);
+        player1.setUrl(VOD_URL);
 
         //这两项必须设置
-        mPlayer1.setEnableAudioFocus(false);
-        mPlayer1.setEnableParallelPlay(true);
+        player1.setEnableAudioFocus(false);
+        player1.setEnableParallelPlay(true);
         StandardVideoController controller1 = new StandardVideoController(this);
-        mPlayer1.setVideoController(controller1);
+        player1.setVideoController(controller1);
 
-        mPlayer2 = findViewById(R.id.player_2);
-        mPlayer2.setUrl(VOD_URL);
+        VideoView player2 = findViewById(R.id.player_2);
+        player2.setUrl(VOD_URL);
         //这两项必须设置
-        mPlayer2.setEnableAudioFocus(false);
-        mPlayer2.setEnableParallelPlay(true);
+        player2.setEnableAudioFocus(false);
+        player2.setEnableParallelPlay(true);
         StandardVideoController controller2 = new StandardVideoController(this);
-        mPlayer2.setVideoController(controller2);
+        player2.setVideoController(controller2);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mPlayer1.pause();
-        mPlayer2.pause();
+        VideoViewManager.instance().pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mPlayer1.resume();
-        mPlayer2.resume();
+        VideoViewManager.instance().resume();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mPlayer1.release();
-        mPlayer2.release();
+        VideoViewManager.instance().release();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (VideoViewManager.instance().onBackPressed()) {
+            return;
+        }
+        super.onBackPressed();
     }
 }

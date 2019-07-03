@@ -154,6 +154,7 @@ public class StandardVideoController extends GestureVideoController implements V
                 mBackButton.setVisibility(View.GONE);
                 mLockButton.setVisibility(View.GONE);
                 mTitle.setVisibility(View.INVISIBLE);
+                mTitle.setNeedFocus(false);
                 mSysTime.setVisibility(View.GONE);
                 mBatteryLevel.setVisibility(View.GONE);
                 mTopContainer.setVisibility(View.GONE);
@@ -165,6 +166,7 @@ public class StandardVideoController extends GestureVideoController implements V
                 mFullScreenButton.setSelected(true);
                 mBackButton.setVisibility(View.VISIBLE);
                 mTitle.setVisibility(View.VISIBLE);
+                mTitle.setNeedFocus(true);
                 mSysTime.setVisibility(View.VISIBLE);
                 mBatteryLevel.setVisibility(View.VISIBLE);
                 if (mShowing) {
