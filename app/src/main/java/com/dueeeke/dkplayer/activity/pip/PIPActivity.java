@@ -18,7 +18,7 @@ import com.yanzhenjie.permission.AndPermission;
 public class PIPActivity extends AppCompatActivity{
     private PIPManager mPIPManager;
 //    private static final String URL = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
-    private static final String URL = "http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv";
+    private static final String URL = "http://vfx.mtime.cn/Video/2019/03/12/mp4/190312143927981075.mp4";
 //    private static final String URL = "http://youku163.zuida-bofang.com/20190126/26805_c313a74d/index.m3u8";
 
     @Override

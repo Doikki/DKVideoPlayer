@@ -14,11 +14,11 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     compileOnly project(':dkplayer-java')
-    api 'com.google.android.exoplayer:exoplayer-core:2.9.6'
-    api 'com.google.android.exoplayer:exoplayer-dash:2.9.6'
-    api 'com.google.android.exoplayer:exoplayer-hls:2.9.6'
-    api 'com.google.android.exoplayer:exoplayer-smoothstreaming:2.9.6'
-    api 'com.google.android.exoplayer:extension-rtmp:2.9.6'
+    api "com.google.android.exoplayer:exoplayer-core:$rootProject.exoPlayerVersion"
+    api "com.google.android.exoplayer:exoplayer-dash:$rootProject.exoPlayerVersion"
+    api "com.google.android.exoplayer:exoplayer-hls:$rootProject.exoPlayerVersion"
+    api "com.google.android.exoplayer:exoplayer-smoothstreaming:$rootProject.exoPlayerVersion"
+    api "com.google.android.exoplayer:extension-rtmp:$rootProject.exoPlayerVersion"
 }
 
 publish {

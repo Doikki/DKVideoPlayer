@@ -12,7 +12,7 @@ android {
         applicationId "com.dueeeke.dkplayer"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 30
+        versionCode 31
         versionName PUBLISH_VERSION
 
         ndk {
@@ -94,15 +94,15 @@ dependencies {
     implementation project(path: ':dkplayer-players:ijk-x86_64')
 
 
-//    implementation 'com.github.dueeeke.dkplayer:dkplayer-java:2.6.0'
-//    implementation 'com.github.dueeeke.dkplayer:dkplayer-ui:2.6.0'
+//    implementation 'com.github.dueeeke.dkplayer:dkplayer-java:3.0.0'
+//    implementation 'com.github.dueeeke.dkplayer:dkplayer-ui:3.0.0'
 //
-//    implementation 'com.github.dueeeke.dkplayer:player-exo:2.6.0'
+//    implementation 'com.github.dueeeke.dkplayer:player-exo:3.0.0'
 //
-//    implementation 'com.github.dueeeke.dkplayer:player-ijk:2.6.0'
-//    implementation 'com.github.dueeeke.dkplayer:ijk-armv7a:2.6.0'
-//    implementation 'com.github.dueeeke.dkplayer:ijk-armv5:2.6.0'
-//    implementation 'com.github.dueeeke.dkplayer:ijk-arm64:2.6.0'
-//    implementation 'com.github.dueeeke.dkplayer:ijk-x86:2.6.0'
-//    implementation 'com.github.dueeeke.dkplayer:ijk-x86_64:2.6.0'
+//    implementation 'com.github.dueeeke.dkplayer:player-ijk:3.0.0'
+//    implementation 'com.github.dueeeke.dkplayer:ijk-armv7a:3.0.0'
+//    implementation 'com.github.dueeeke.dkplayer:ijk-armv5:3.0.0'
+//    implementation 'com.github.dueeeke.dkplayer:ijk-arm64:3.0.0'
+//    implementation 'com.github.dueeeke.dkplayer:ijk-x86:3.0.0'
+//    implementation 'com.github.dueeeke.dkplayer:ijk-x86_64:3.0.0'
 }

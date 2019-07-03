@@ -98,7 +98,7 @@ public class AndroidOPiPActivity extends AppCompatActivity {
         mWidthPixels = getResources().getDisplayMetrics().widthPixels;
         mVideoView.setLayoutParams(new LinearLayout.LayoutParams(mWidthPixels, mWidthPixels * 9 / 16 + 1));
 
-        mVideoView.setUrl("http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv");
+        mVideoView.setUrl("http://vfx.mtime.cn/Video/2019/03/12/mp4/190312143927981075.mp4");
         mStandardVideoController = new StandardVideoController(this);
         mVideoView.setVideoController(mStandardVideoController);
         mVideoView.start();

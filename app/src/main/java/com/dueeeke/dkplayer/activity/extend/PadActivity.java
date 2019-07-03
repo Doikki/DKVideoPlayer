@@ -18,7 +18,7 @@ public class PadActivity extends AppCompatActivity {
         setContentView(R.layout.activity_pad);
         mVideoView = findViewById(R.id.video_view);
 
-        mVideoView.setUrl("http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv");
+        mVideoView.setUrl("http://vfx.mtime.cn/Video/2019/03/12/mp4/190312143927981075.mp4");
 
         mVideoView.setVideoController(new PadController(this));
 
