@@ -57,12 +57,12 @@ public class RotateRecyclerViewActivity extends AppCompatActivity {
 
             @Override
             public void onChildViewDetachedFromWindow(View view) {
-                VideoView ijkVideoView = view.findViewById(R.id.video_player);
-                if (ijkVideoView != null && !ijkVideoView.isFullScreen()) {
+                VideoView videoView = view.findViewById(R.id.video_player);
+                if (videoView != null && !videoView.isFullScreen()) {
 //                    Log.d("@@@@@@", "onChildViewDetachedFromWindow: called");
-//                    int tag = (int) ijkVideoView.getTag();
+//                    int tag = (int) videoView.getTag();
 //                    Log.d("@@@@@@", "onChildViewDetachedFromWindow: position: " + tag);
-                    ijkVideoView.release();
+                    videoView.release();
                 }
             }
         });
@@ -94,13 +94,13 @@ public class RotateRecyclerViewActivity extends AppCompatActivity {
                 //循环遍历可视区域videoview,如果完全可见就开始播放
                 for (int i = 0; i < visibleCount; i++) {
                     if (view == null || view.getChildAt(i) == null) continue;
-                    VideoView ijkVideoView = view.getChildAt(i).findViewById(R.id.video_player);
-                    if (ijkVideoView != null) {
+                    VideoView videoView = view.getChildAt(i).findViewById(R.id.video_player);
+                    if (videoView != null) {
                         Rect rect = new Rect();
-                        ijkVideoView.getLocalVisibleRect(rect);
-                        int videoHeight = ijkVideoView.getHeight();
+                        videoView.getLocalVisibleRect(rect);
+                        int videoHeight = videoView.getHeight();
                         if (rect.top == 0 && rect.bottom == videoHeight) {
-                            ijkVideoView.start();
+                            videoView.start();
                             return;
                         }
                     }
@@ -111,8 +111,8 @@ public class RotateRecyclerViewActivity extends AppCompatActivity {
         recyclerView.post(() -> {
             //自动播放第一个
             View view = recyclerView.getChildAt(0);
-            VideoView ijkVideoView = view.findViewById(R.id.video_player);
-            ijkVideoView.start();
+            VideoView videoView = view.findViewById(R.id.video_player);
+            videoView.start();
         });
 
     }

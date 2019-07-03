@@ -24,7 +24,7 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 public class DefinitionPlayerActivity extends AppCompatActivity {
 
-    private DefinitionVideoView ijkVideoView;
+    private DefinitionVideoView mVideoView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,11 +36,11 @@ public class DefinitionPlayerActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        ijkVideoView = findViewById(R.id.player);
+        mVideoView = findViewById(R.id.player);
 
         DefinitionController controller = new DefinitionController(this);
         controller.setTitle("韩雪：积极的悲观主义者");
-//        ijkVideoView.setCustomMediaPlayer(new IjkPlayer(this) {
+//        mVideoView.setCustomMediaPlayer(new IjkPlayer(this) {
 //            @Override
 //            public void setOptions() {
 //                //精准seek
@@ -48,7 +48,7 @@ public class DefinitionPlayerActivity extends AppCompatActivity {
 //            }
 //        });
 
-        ijkVideoView.setPlayerFactory(new PlayerFactory() {
+        mVideoView.setPlayerFactory(new PlayerFactory() {
             @Override
             public AbstractPlayer createPlayer() {
                 return new IjkPlayer(DefinitionPlayerActivity.this) {
@@ -65,9 +65,9 @@ public class DefinitionPlayerActivity extends AppCompatActivity {
         videos.put("标清", "http://mov.bn.netease.com/open-movie/nos/flv/2017/07/24/SCP786QON_sd.flv");
         videos.put("高清", "http://mov.bn.netease.com/open-movie/nos/flv/2017/07/24/SCP786QON_hd.flv");
         videos.put("超清", "http://mov.bn.netease.com/open-movie/nos/flv/2017/07/24/SCP786QON_shd.flv");
-        ijkVideoView.setDefinitionVideos(videos);
-        ijkVideoView.setVideoController(controller);
-        ijkVideoView.start();
+        mVideoView.setDefinitionVideos(videos);
+        mVideoView.setVideoController(controller);
+        mVideoView.start();
     }
 
     @Override
@@ -81,25 +81,25 @@ public class DefinitionPlayerActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        ijkVideoView.pause();
+        mVideoView.pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        ijkVideoView.resume();
+        mVideoView.resume();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ijkVideoView.release();
+        mVideoView.release();
     }
 
 
     @Override
     public void onBackPressed() {
-        if (!ijkVideoView.onBackPressed()) {
+        if (!mVideoView.onBackPressed()) {
             super.onBackPressed();
         }
     }

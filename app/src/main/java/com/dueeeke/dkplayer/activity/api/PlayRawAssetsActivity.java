@@ -16,7 +16,7 @@ import com.dueeeke.videoplayer.player.VideoView;
 
 public class PlayRawAssetsActivity extends AppCompatActivity {
 
-    private VideoView ijkVideoView;
+    private VideoView mVideoView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -27,7 +27,7 @@ public class PlayRawAssetsActivity extends AppCompatActivity {
             actionBar.setTitle(R.string.str_raw_or_assets);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        ijkVideoView = findViewById(R.id.player);
+        mVideoView = findViewById(R.id.player);
         StandardVideoController controller = new StandardVideoController(this);
         //播放assets文件
 //        AssetManager am = getResources().getAssets();
@@ -37,14 +37,14 @@ public class PlayRawAssetsActivity extends AppCompatActivity {
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
-//        ijkVideoView.setAssetFileDescriptor(afd);
+//        mVideoView.setAssetFileDescriptor(afd);
 
         //播放raw
         String url = "android.resource://" + getPackageName() + "/" + R.raw.movie;
-        ijkVideoView.setUrl(url);
+        mVideoView.setUrl(url);
 
-        ijkVideoView.setVideoController(controller);
-        ijkVideoView.start();
+        mVideoView.setVideoController(controller);
+        mVideoView.start();
     }
 
     @Override
@@ -58,24 +58,24 @@ public class PlayRawAssetsActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        ijkVideoView.pause();
+        mVideoView.pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        ijkVideoView.resume();
+        mVideoView.resume();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ijkVideoView.release();
+        mVideoView.release();
     }
 
     @Override
     public void onBackPressed() {
-        if (!ijkVideoView.onBackPressed()) {
+        if (!mVideoView.onBackPressed()) {
             super.onBackPressed();
         }
     }

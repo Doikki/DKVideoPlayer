@@ -22,7 +22,7 @@ import com.dueeeke.videoplayer.player.VideoView;
 
 public class ADActivity extends AppCompatActivity {
 
-    private CacheVideoView ijkVideoView;
+    private CacheVideoView mVideoView;
     private static final String URL_VOD = "http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv";
 //    private static final String URL_VOD = "http://baobab.wdjcdn.com/14564977406580.mp4";
     //    private static final String URL_VOD = "http://uploads.cutv.com:8088/video/data/201703/10/encode_file/515b6a95601ba6b39620358f2677a17358c2472411d53.mp4";
@@ -38,7 +38,7 @@ public class ADActivity extends AppCompatActivity {
             actionBar.setTitle(R.string.str_ad);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        ijkVideoView = findViewById(R.id.player);
+        mVideoView = findViewById(R.id.player);
 
         AdController adController = new AdController(this);
         adController.setControllerListener(new ControllerListener() {
@@ -53,12 +53,12 @@ public class ADActivity extends AppCompatActivity {
             }
         });
 
-        ijkVideoView.setUrl(URL_AD);
-        ijkVideoView.setCacheEnabled(true);
-        ijkVideoView.setVideoController(adController);
+        mVideoView.setUrl(URL_AD);
+        mVideoView.setCacheEnabled(true);
+        mVideoView.setVideoController(adController);
 
         //监听播放结束
-        ijkVideoView.addOnVideoViewStateChangeListener(new OnVideoViewStateChangeListener() {
+        mVideoView.addOnVideoViewStateChangeListener(new OnVideoViewStateChangeListener() {
             @Override
             public void onPlayerStateChanged(int playerState) {
 
@@ -72,25 +72,25 @@ public class ADActivity extends AppCompatActivity {
             }
         });
 
-        ijkVideoView.start();
+        mVideoView.start();
     }
 
     /**
      * 播放正片
      */
     private void playVideo() {
-        ijkVideoView.release();
+        mVideoView.release();
         //重新设置数据
-        ijkVideoView.setUrl(URL_VOD);
-        ijkVideoView.setCacheEnabled(false);
+        mVideoView.setUrl(URL_VOD);
+        mVideoView.setCacheEnabled(false);
         if (mStandardVideoController == null) {
             mStandardVideoController = new StandardVideoController(ADActivity.this);
         }
         mStandardVideoController.setTitle("正片标题");
         //更换控制器
-        ijkVideoView.setVideoController(mStandardVideoController);
+        mVideoView.setVideoController(mStandardVideoController);
         //开始播放
-        ijkVideoView.start();
+        mVideoView.start();
     }
 
     @Override
@@ -104,7 +104,7 @@ public class ADActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        ijkVideoView.pause();
+        mVideoView.pause();
     }
 
     @Override
@@ -115,13 +115,13 @@ public class ADActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ijkVideoView.release();
+        mVideoView.release();
     }
 
 
     @Override
     public void onBackPressed() {
-        if (!ijkVideoView.onBackPressed()) {
+        if (!mVideoView.onBackPressed()) {
             super.onBackPressed();
         }
     }

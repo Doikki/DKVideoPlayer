@@ -107,17 +107,17 @@ public class SeamlessPlayActivity extends AppCompatActivity {
             @Override
             public void onChildViewDetachedFromWindow(View view) {
                 FrameLayout playerContainer = view.findViewById(R.id.player_container);
-                VideoView ijkVideoView = view.findViewById(R.id.video_player);
-                if (ijkVideoView != null && !ijkVideoView.isFullScreen()) {
+                VideoView videoView = view.findViewById(R.id.video_player);
+                if (videoView != null && !videoView.isFullScreen()) {
 //                    Log.d("@@@@@@", "onChildViewDetachedFromWindow: called");
-//                    int tag = (int) ijkVideoView.getTag();
+//                    int tag = (int) videoView.getTag();
 //                    Log.d("@@@@@@", "onChildViewDetachedFromWindow: position: " + tag);
 
                     if (playerContainer != null) {
-                        playerContainer.removeView(ijkVideoView);
+                        playerContainer.removeView(videoView);
                     }
 
-                    ijkVideoView.release();
+                    videoView.release();
                 }
             }
         });

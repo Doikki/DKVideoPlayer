@@ -32,27 +32,27 @@ public class PIPActivity extends AppCompatActivity{
         }
         FrameLayout playerContainer = findViewById(R.id.player_container);
         mPIPManager = PIPManager.getInstance();
-        VideoView ijkVideoView = mPIPManager.getVideoView();
+        VideoView videoView = mPIPManager.getVideoView();
         StandardVideoController controller = new StandardVideoController(this);
-        ijkVideoView.setVideoController(controller);
+        videoView.setVideoController(controller);
         if (mPIPManager.isStartFloatWindow()) {
             mPIPManager.stopFloatWindow();
-            controller.setPlayerState(ijkVideoView.getCurrentPlayerState());
-            controller.setPlayState(ijkVideoView.getCurrentPlayState());
+            controller.setPlayerState(videoView.getCurrentPlayerState());
+            controller.setPlayState(videoView.getCurrentPlayState());
         } else {
             mPIPManager.setActClass(PIPActivity.class);
 //        int widthPixels = getResources().getDisplayMetrics().widthPixels;
-//        ijkVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 4 * 3));
+//        videoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 4 * 3));
             Glide.with(this)
                     .load("http://sh.people.com.cn/NMediaFile/2016/0112/LOCAL201601121344000138197365721.jpg")
                     .asBitmap()
                     .animate(R.anim.dkplayer_anim_alpha_in)
                     .placeholder(android.R.color.darker_gray)
                     .into(controller.getThumb());
-            ijkVideoView.setUrl(URL);
+            videoView.setUrl(URL);
             controller.setTitle("香港卫视");
         }
-        playerContainer.addView(ijkVideoView);
+        playerContainer.addView(videoView);
     }
 
     @Override

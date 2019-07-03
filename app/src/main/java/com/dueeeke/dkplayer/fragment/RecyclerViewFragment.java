@@ -46,12 +46,12 @@ public class RecyclerViewFragment extends Fragment{
 
             @Override
             public void onChildViewDetachedFromWindow(View view) {
-                VideoView ijkVideoView = view.findViewById(R.id.video_player);
-                if (ijkVideoView != null && !ijkVideoView.isFullScreen()) {
+                VideoView videoView = view.findViewById(R.id.video_player);
+                if (videoView != null && !videoView.isFullScreen()) {
 //                    Log.d("@@@@@@", "onChildViewDetachedFromWindow: called");
-//                    int tag = (int) ijkVideoView.getTag();
+//                    int tag = (int) videoView.getTag();
 //                    Log.d("@@@@@@", "onChildViewDetachedFromWindow: position: " + tag);
-                    ijkVideoView.release();
+                    videoView.release();
                 }
             }
         });

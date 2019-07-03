@@ -24,7 +24,7 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 public class CustomMediaPlayerActivity extends AppCompatActivity {
 
-    private VideoView ijkVideoView;
+    private VideoView mVideoView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,21 +47,21 @@ public class CustomMediaPlayerActivity extends AppCompatActivity {
         //concat测试地址
         String concatUrl = "http://64.154.38.44/test.ffconcat";
 
-        ijkVideoView = findViewById(R.id.player);
+        mVideoView = findViewById(R.id.player);
         StandardVideoController controller = new StandardVideoController(this);
-        ijkVideoView.setVideoController(controller);
+        mVideoView.setVideoController(controller);
         RadioGroup radioGroup = findViewById(R.id.rg_type);
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             switch (checkedId) {
                 case R.id.concat:
-                    ijkVideoView.setUrl(concatUrl);
+                    mVideoView.setUrl(concatUrl);
                     break;
                 case R.id.rtsp:
-                    ijkVideoView.setUrl(rtspUrl);
+                    mVideoView.setUrl(rtspUrl);
                     break;
             }
         });
-//        ijkVideoView.setCustomMediaPlayer(new IjkPlayer(this) {
+//        mVideoView.setCustomMediaPlayer(new IjkPlayer(this) {
 //            @Override
 //            public void setOptions() {
 //                super.setOptions();
@@ -93,13 +93,13 @@ public class CustomMediaPlayerActivity extends AppCompatActivity {
             }
         }
 
-        ijkVideoView.setPlayerFactory(new MyPlayerFactory());
+        mVideoView.setPlayerFactory(new MyPlayerFactory());
     }
 
 
     public void startPlay(View view) {
-        ijkVideoView.release();
-        ijkVideoView.start();
+        mVideoView.release();
+        mVideoView.start();
     }
 
     @Override
@@ -113,25 +113,25 @@ public class CustomMediaPlayerActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        ijkVideoView.pause();
+        mVideoView.pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        ijkVideoView.resume();
+        mVideoView.resume();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ijkVideoView.release();
+        mVideoView.release();
     }
 
 
     @Override
     public void onBackPressed() {
-        if (!ijkVideoView.onBackPressed()) {
+        if (!mVideoView.onBackPressed()) {
             super.onBackPressed();
         }
     }

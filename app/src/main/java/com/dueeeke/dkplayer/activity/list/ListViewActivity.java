@@ -80,9 +80,9 @@ public class ListViewActivity extends AppCompatActivity {
 
             private void gcView(View gcView) {
                 if (gcView != null) {
-                    VideoView ijkVideoView = gcView.findViewById(R.id.video_player);
-                    if (ijkVideoView != null && !ijkVideoView.isFullScreen()) {
-                        ijkVideoView.release();
+                    VideoView videoView = gcView.findViewById(R.id.video_player);
+                    if (videoView != null && !videoView.isFullScreen()) {
+                        videoView.release();
                     }
                 }
             }

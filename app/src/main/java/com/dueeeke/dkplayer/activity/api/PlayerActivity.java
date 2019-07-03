@@ -23,7 +23,7 @@ import com.dueeeke.videoplayer.util.L;
 
 public class PlayerActivity extends AppCompatActivity {
 
-    private VideoView ijkVideoView;
+    private VideoView mVideoView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,7 +34,7 @@ public class PlayerActivity extends AppCompatActivity {
             actionBar.setTitle("Player");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        ijkVideoView = findViewById(R.id.player);
+        mVideoView = findViewById(R.id.player);
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -45,16 +45,16 @@ public class PlayerActivity extends AppCompatActivity {
             }
             String title = intent.getStringExtra(IntentKeys.TITLE);
             controller.setTitle(title);
-            ijkVideoView.setVideoController(controller);
+            mVideoView.setVideoController(controller);
 
-            ijkVideoView.setUrl(intent.getStringExtra("url"));
+            mVideoView.setUrl(intent.getStringExtra("url"));
 
             //保存播放进度
-            ijkVideoView.setProgressManager(new ProgressManagerImpl());
+            mVideoView.setProgressManager(new ProgressManagerImpl());
             //播放状态监听
-            ijkVideoView.addOnVideoViewStateChangeListener(mOnVideoViewStateChangeListener);
+            mVideoView.addOnVideoViewStateChangeListener(mOnVideoViewStateChangeListener);
 
-            ijkVideoView.start();
+            mVideoView.start();
         }
     }
 
@@ -78,7 +78,7 @@ public class PlayerActivity extends AppCompatActivity {
                     break;
                 case VideoView.STATE_PREPARED:
                     //需在此时获取视频宽高
-                    int[] videoSize = ijkVideoView.getVideoSize();
+                    int[] videoSize = mVideoView.getVideoSize();
                     L.d("视频宽：" + videoSize[0]);
                     L.d("视频高：" + videoSize[1]);
                     break;
@@ -109,76 +109,76 @@ public class PlayerActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        ijkVideoView.pause();
+        mVideoView.pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        ijkVideoView.resume();
+        mVideoView.resume();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ijkVideoView.release();
+        mVideoView.release();
     }
 
 
     @Override
     public void onBackPressed() {
-        if (!ijkVideoView.onBackPressed()) {
+        if (!mVideoView.onBackPressed()) {
             super.onBackPressed();
         }
     }
 
     public void screenScaleDefault(View view) {
-        ijkVideoView.setScreenScale(VideoView.SCREEN_SCALE_DEFAULT);
+        mVideoView.setScreenScale(VideoView.SCREEN_SCALE_DEFAULT);
     }
 
     public void screenScale169(View view) {
-        ijkVideoView.setScreenScale(VideoView.SCREEN_SCALE_16_9);
+        mVideoView.setScreenScale(VideoView.SCREEN_SCALE_16_9);
     }
 
     public void screenScale43(View view) {
-        ijkVideoView.setScreenScale(VideoView.SCREEN_SCALE_4_3);
+        mVideoView.setScreenScale(VideoView.SCREEN_SCALE_4_3);
     }
 
     public void screenScaleOriginal(View view) {
-        ijkVideoView.setScreenScale(VideoView.SCREEN_SCALE_ORIGINAL);
+        mVideoView.setScreenScale(VideoView.SCREEN_SCALE_ORIGINAL);
     }
 
     public void screenScaleMatch(View view) {
-        ijkVideoView.setScreenScale(VideoView.SCREEN_SCALE_MATCH_PARENT);
+        mVideoView.setScreenScale(VideoView.SCREEN_SCALE_MATCH_PARENT);
     }
 
     public void screenScaleCenterCrop(View view) {
-        ijkVideoView.setScreenScale(VideoView.SCREEN_SCALE_CENTER_CROP);
+        mVideoView.setScreenScale(VideoView.SCREEN_SCALE_CENTER_CROP);
     }
 
     int i = 0;
     public void setMirrorRotate(View view) {
-        ijkVideoView.setMirrorRotation(i % 2 == 0);
+        mVideoView.setMirrorRotation(i % 2 == 0);
         i++;
     }
 
     public void setSpeed0_75(View view) {
-        ijkVideoView.setSpeed(0.75f);
+        mVideoView.setSpeed(0.75f);
     }
 
     public void setSpeed0_5(View view) {
-        ijkVideoView.setSpeed(0.5f);
+        mVideoView.setSpeed(0.5f);
     }
 
     public void setSpeed1_0(View view) {
-        ijkVideoView.setSpeed(1.0f);
+        mVideoView.setSpeed(1.0f);
     }
 
     public void setSpeed1_5(View view) {
-        ijkVideoView.setSpeed(1.5f);
+        mVideoView.setSpeed(1.5f);
     }
 
     public void setSpeed2_0(View view) {
-        ijkVideoView.setSpeed(2.0f);
+        mVideoView.setSpeed(2.0f);
     }
 }

@@ -17,7 +17,7 @@ import com.dueeeke.videoplayer.player.VideoView;
 public class PIPManager {
 
     private static PIPManager instance;
-    private VideoView ijkVideoView;
+    private VideoView mVideoView;
     private FloatView floatView;
     private FloatController mFloatController;
     private boolean isShowing;
@@ -34,8 +34,8 @@ public class PIPManager {
 
 
     private PIPManager() {
-        ijkVideoView = new VideoView(MyApplication.getInstance());
-//        ijkVideoView.setVideoListener(mMyVideoListener);
+        mVideoView = new VideoView(MyApplication.getInstance());
+//        mVideoView.setVideoListener(mMyVideoListener);
 //        mKeyReceiver = new KeyReceiver();
         mFloatController = new FloatController(MyApplication.getInstance());
 //        IntentFilter homeFilter = new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
@@ -55,16 +55,16 @@ public class PIPManager {
     }
 
     public VideoView getVideoView() {
-        return ijkVideoView;
+        return mVideoView;
     }
 
     public void startFloatWindow() {
         if (isShowing) return;
         removePlayerFormParent();
-        mFloatController.setPlayState(ijkVideoView.getCurrentPlayState());
-        mFloatController.setPlayerState(ijkVideoView.getCurrentPlayerState());
-        ijkVideoView.setVideoController(mFloatController);
-        floatView.addView(ijkVideoView);
+        mFloatController.setPlayState(mVideoView.getCurrentPlayState());
+        mFloatController.setPlayerState(mVideoView.getCurrentPlayerState());
+        mVideoView.setVideoController(mFloatController);
+        floatView.addView(mVideoView);
         floatView.addToWindow();
         isShowing = true;
     }
@@ -77,9 +77,9 @@ public class PIPManager {
     }
 
     private void removePlayerFormParent() {
-        ViewParent parent = ijkVideoView.getParent();
+        ViewParent parent = mVideoView.getParent();
         if (parent instanceof ViewGroup) {
-            ((ViewGroup) parent).removeView(ijkVideoView);
+            ((ViewGroup) parent).removeView(mVideoView);
         }
     }
 
@@ -93,25 +93,25 @@ public class PIPManager {
 
     public void pause() {
         if (isShowing) return;
-        ijkVideoView.pause();
+        mVideoView.pause();
     }
 
     public void resume() {
         if (isShowing) return;
-        ijkVideoView.resume();
+        mVideoView.resume();
     }
 
     public void reset() {
         if (isShowing) return;
         removePlayerFormParent();
-        ijkVideoView.setVideoController(null);
-        ijkVideoView.release();
+        mVideoView.setVideoController(null);
+        mVideoView.release();
         mPlayingPosition = -1;
         mActClass = null;
     }
 
     public boolean onBackPress() {
-        return !isShowing && ijkVideoView.onBackPressed();
+        return !isShowing && mVideoView.onBackPressed();
     }
 
     public boolean isStartFloatWindow() {
@@ -123,7 +123,7 @@ public class PIPManager {
      */
     public void setFloatViewVisible() {
         if (isShowing) {
-            ijkVideoView.resume();
+            mVideoView.resume();
             floatView.setVisibility(View.VISIBLE);
         }
     }
