@@ -19,7 +19,7 @@ import android.widget.TextView;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.interf.DefinitionMediaPlayerControl;
 import com.dueeeke.videocontroller.StandardVideoController;
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.L;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 
@@ -71,10 +71,10 @@ public class DefinitionController extends StandardVideoController {
     public void setPlayerState(int playerState) {
         super.setPlayerState(playerState);
         switch (playerState) {
-            case IjkVideoView.PLAYER_NORMAL:
+            case VideoView.PLAYER_NORMAL:
                 multiRate.setVisibility(GONE);
                 break;
-            case IjkVideoView.PLAYER_FULL_SCREEN:
+            case VideoView.PLAYER_FULL_SCREEN:
                 multiRate.setVisibility(VISIBLE);
                 break;
         }

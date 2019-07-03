@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videocontroller.StandardVideoController;
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 
 public class RotateInFullscreenController extends StandardVideoController {
@@ -68,7 +68,7 @@ public class RotateInFullscreenController extends StandardVideoController {
     public void setPlayerState(int playerState) {
         super.setPlayerState(playerState);
         switch (playerState) {
-            case IjkVideoView.PLAYER_FULL_SCREEN:
+            case VideoView.PLAYER_FULL_SCREEN:
                 mFullScreenButton.setSelected(false);
                 getThumb().setVisibility(GONE);
                 break;

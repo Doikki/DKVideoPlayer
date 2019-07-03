@@ -8,19 +8,19 @@ import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 
-public class RotateIjkVideoView extends IjkVideoView {
-    public RotateIjkVideoView(@NonNull Context context) {
+public class RotateVideoView extends VideoView {
+    public RotateVideoView(@NonNull Context context) {
         super(context);
     }
 
-    public RotateIjkVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public RotateVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public RotateIjkVideoView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public RotateVideoView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 

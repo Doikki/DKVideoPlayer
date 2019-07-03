@@ -10,10 +10,10 @@ import android.widget.Toast;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.interf.ControllerListener;
 import com.dueeeke.dkplayer.widget.controller.AdController;
-import com.dueeeke.dkplayer.widget.videoview.CacheIjkVideoView;
+import com.dueeeke.dkplayer.widget.videoview.CacheVideoView;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 
 /**
  * 广告
@@ -22,7 +22,7 @@ import com.dueeeke.videoplayer.player.IjkVideoView;
 
 public class ADActivity extends AppCompatActivity {
 
-    private CacheIjkVideoView ijkVideoView;
+    private CacheVideoView ijkVideoView;
     private static final String URL_VOD = "http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv";
 //    private static final String URL_VOD = "http://baobab.wdjcdn.com/14564977406580.mp4";
     //    private static final String URL_VOD = "http://uploads.cutv.com:8088/video/data/201703/10/encode_file/515b6a95601ba6b39620358f2677a17358c2472411d53.mp4";
@@ -66,7 +66,7 @@ public class ADActivity extends AppCompatActivity {
 
             @Override
             public void onPlayStateChanged(int playState) {
-                if (playState == IjkVideoView.STATE_PLAYBACK_COMPLETED) {
+                if (playState == VideoView.STATE_PLAYBACK_COMPLETED) {
                     playVideo();
                 }
             }

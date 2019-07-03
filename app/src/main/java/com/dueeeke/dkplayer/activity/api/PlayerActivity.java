@@ -13,7 +13,7 @@ import com.dueeeke.dkplayer.util.IntentKeys;
 import com.dueeeke.dkplayer.util.ProgressManagerImpl;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.L;
 
 /**
@@ -23,7 +23,7 @@ import com.dueeeke.videoplayer.util.L;
 
 public class PlayerActivity extends AppCompatActivity {
 
-    private IjkVideoView ijkVideoView;
+    private VideoView ijkVideoView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,9 +62,9 @@ public class PlayerActivity extends AppCompatActivity {
         @Override
         public void onPlayerStateChanged(int playerState) {
             switch (playerState) {
-                case IjkVideoView.PLAYER_NORMAL://小屏
+                case VideoView.PLAYER_NORMAL://小屏
                     break;
-                case IjkVideoView.PLAYER_FULL_SCREEN://全屏
+                case VideoView.PLAYER_FULL_SCREEN://全屏
                     break;
             }
         }
@@ -72,27 +72,27 @@ public class PlayerActivity extends AppCompatActivity {
         @Override
         public void onPlayStateChanged(int playState) {
             switch (playState) {
-                case IjkVideoView.STATE_IDLE:
+                case VideoView.STATE_IDLE:
                     break;
-                case IjkVideoView.STATE_PREPARING:
+                case VideoView.STATE_PREPARING:
                     break;
-                case IjkVideoView.STATE_PREPARED:
+                case VideoView.STATE_PREPARED:
                     //需在此时获取视频宽高
                     int[] videoSize = ijkVideoView.getVideoSize();
                     L.d("视频宽：" + videoSize[0]);
                     L.d("视频高：" + videoSize[1]);
                     break;
-                case IjkVideoView.STATE_PLAYING:
+                case VideoView.STATE_PLAYING:
                     break;
-                case IjkVideoView.STATE_PAUSED:
+                case VideoView.STATE_PAUSED:
                     break;
-                case IjkVideoView.STATE_BUFFERING:
+                case VideoView.STATE_BUFFERING:
                     break;
-                case IjkVideoView.STATE_BUFFERED:
+                case VideoView.STATE_BUFFERED:
                     break;
-                case IjkVideoView.STATE_PLAYBACK_COMPLETED:
+                case VideoView.STATE_PLAYBACK_COMPLETED:
                     break;
-                case IjkVideoView.STATE_ERROR:
+                case VideoView.STATE_ERROR:
                     break;
             }
         }
@@ -133,27 +133,27 @@ public class PlayerActivity extends AppCompatActivity {
     }
 
     public void screenScaleDefault(View view) {
-        ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_DEFAULT);
+        ijkVideoView.setScreenScale(VideoView.SCREEN_SCALE_DEFAULT);
     }
 
     public void screenScale169(View view) {
-        ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_16_9);
+        ijkVideoView.setScreenScale(VideoView.SCREEN_SCALE_16_9);
     }
 
     public void screenScale43(View view) {
-        ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_4_3);
+        ijkVideoView.setScreenScale(VideoView.SCREEN_SCALE_4_3);
     }
 
     public void screenScaleOriginal(View view) {
-        ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_ORIGINAL);
+        ijkVideoView.setScreenScale(VideoView.SCREEN_SCALE_ORIGINAL);
     }
 
     public void screenScaleMatch(View view) {
-        ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_MATCH_PARENT);
+        ijkVideoView.setScreenScale(VideoView.SCREEN_SCALE_MATCH_PARENT);
     }
 
     public void screenScaleCenterCrop(View view) {
-        ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_CENTER_CROP);
+        ijkVideoView.setScreenScale(VideoView.SCREEN_SCALE_CENTER_CROP);
     }
 
     int i = 0;

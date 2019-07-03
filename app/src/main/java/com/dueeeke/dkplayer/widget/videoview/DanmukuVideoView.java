@@ -20,7 +20,7 @@ import android.widget.FrameLayout;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.widget.CenteredImageSpan;
 import com.dueeeke.videoplayer.BuildConfig;
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 
 import master.flame.danmaku.controller.IDanmakuView;
@@ -37,7 +37,7 @@ import master.flame.danmaku.ui.widget.DanmakuView;
 /**
  * 包含弹幕的播放器
  */
-public class DanmukuVideoView extends IjkVideoView {
+public class DanmukuVideoView extends VideoView {
     private DanmakuView mDanmakuView;
     private DanmakuContext mContext;
     private BaseDanmakuParser mParser;

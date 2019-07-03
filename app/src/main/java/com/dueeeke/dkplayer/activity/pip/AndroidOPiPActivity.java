@@ -24,7 +24,7 @@ import android.widget.LinearLayout;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 
 import java.util.ArrayList;
 
@@ -86,7 +86,7 @@ public class AndroidOPiPActivity extends AppCompatActivity {
      */
     private BroadcastReceiver mReceiver;
 
-    private IjkVideoView mIjkVideoView;
+    private VideoView mVideoView;
     private StandardVideoController mStandardVideoController;
     private int mWidthPixels;
 
@@ -94,15 +94,15 @@ public class AndroidOPiPActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pip_android_o);
-        mIjkVideoView = findViewById(R.id.player);
+        mVideoView = findViewById(R.id.player);
         mWidthPixels = getResources().getDisplayMetrics().widthPixels;
-        mIjkVideoView.setLayoutParams(new LinearLayout.LayoutParams(mWidthPixels, mWidthPixels * 9 / 16 + 1));
+        mVideoView.setLayoutParams(new LinearLayout.LayoutParams(mWidthPixels, mWidthPixels * 9 / 16 + 1));
 
-        mIjkVideoView.setUrl("http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv");
+        mVideoView.setUrl("http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv");
         mStandardVideoController = new StandardVideoController(this);
-        mIjkVideoView.setVideoController(mStandardVideoController);
-        mIjkVideoView.start();
-        mIjkVideoView.addOnVideoViewStateChangeListener(new OnVideoViewStateChangeListener() {
+        mVideoView.setVideoController(mStandardVideoController);
+        mVideoView.start();
+        mVideoView.addOnVideoViewStateChangeListener(new OnVideoViewStateChangeListener() {
             @Override
             public void onPlayerStateChanged(int playerState) {
 
@@ -111,15 +111,15 @@ public class AndroidOPiPActivity extends AppCompatActivity {
             @Override
             public void onPlayStateChanged(int playState) {
                 switch (playState) {
-                    case IjkVideoView.STATE_PAUSED:
+                    case VideoView.STATE_PAUSED:
                         updatePictureInPictureActions(
                                 R.drawable.dkplayer_ic_action_play_arrow, "播放", CONTROL_TYPE_PLAY, REQUEST_PLAY);
                         break;
-                    case IjkVideoView.STATE_PLAYING:
+                    case VideoView.STATE_PLAYING:
                         updatePictureInPictureActions(
                                 R.drawable.dkplayer_ic_action_pause, "暂停", CONTROL_TYPE_PAUSE, REQUEST_PAUSE);
                         break;
-                    case IjkVideoView.STATE_PLAYBACK_COMPLETED:
+                    case VideoView.STATE_PLAYBACK_COMPLETED:
                         updatePictureInPictureActions(
                                 R.drawable.dkplayer_ic_action_replay, "重新播放", CONTROL_TYPE_REPLAY, REQUEST_REPLAY);
                         break;
@@ -170,18 +170,18 @@ public class AndroidOPiPActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        mIjkVideoView.start();
+        mVideoView.start();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        mIjkVideoView.release();
+        mVideoView.release();
     }
 
     @Override
     public void onBackPressed() {
-        if (mIjkVideoView.onBackPressed()) return;
+        if (mVideoView.onBackPressed()) return;
         super.onBackPressed();
     }
 
@@ -190,8 +190,8 @@ public class AndroidOPiPActivity extends AppCompatActivity {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig);
         Log.d("pip", "onPictureInPictureModeChanged: " + isInPictureInPictureMode);
         if (isInPictureInPictureMode) {
-            mIjkVideoView.setVideoController(null);
-            mIjkVideoView.setLayoutParams(new LinearLayout.LayoutParams(
+            mVideoView.setVideoController(null);
+            mVideoView.setLayoutParams(new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT));
             // Starts receiving events from action items in PiP mode.
@@ -209,13 +209,13 @@ public class AndroidOPiPActivity extends AppCompatActivity {
                             final int controlType = intent.getIntExtra(EXTRA_CONTROL_TYPE, 0);
                             switch (controlType) {
                                 case CONTROL_TYPE_PLAY:
-                                    mIjkVideoView.start();
+                                    mVideoView.start();
                                     break;
                                 case CONTROL_TYPE_PAUSE:
-                                    mIjkVideoView.pause();
+                                    mVideoView.pause();
                                     break;
                                 case CONTROL_TYPE_REPLAY:
-                                    mIjkVideoView.replay(true);
+                                    mVideoView.replay(true);
                                     break;
                             }
                         }
@@ -225,12 +225,12 @@ public class AndroidOPiPActivity extends AppCompatActivity {
             // We are out of PiP mode. We can stop receiving events from it.
             unregisterReceiver(mReceiver);
             mReceiver = null;
-            Log.d("pip", "onPictureInPictureModeChanged: " + mIjkVideoView);
-            mIjkVideoView.setLayoutParams(new LinearLayout.LayoutParams(
+            Log.d("pip", "onPictureInPictureModeChanged: " + mVideoView);
+            mVideoView.setLayoutParams(new LinearLayout.LayoutParams(
                     mWidthPixels,
                     mWidthPixels * 9 / 16 + 1));
-            mIjkVideoView.setVideoController(mStandardVideoController);
-            mIjkVideoView.requestLayout();
+            mVideoView.setVideoController(mStandardVideoController);
+            mVideoView.requestLayout();
         }
     }
 }

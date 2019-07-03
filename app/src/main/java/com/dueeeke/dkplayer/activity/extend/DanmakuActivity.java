@@ -12,7 +12,7 @@ import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.widget.videoview.DanmukuVideoView;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 
 /**
  * 弹幕播放
@@ -49,7 +49,7 @@ public class DanmakuActivity extends AppCompatActivity {
 
             @Override
             public void onPlayStateChanged(int playState) {
-                if (playState == IjkVideoView.STATE_PREPARED) {
+                if (playState == VideoView.STATE_PREPARED) {
                     simulateDanmu();
                 }
             }

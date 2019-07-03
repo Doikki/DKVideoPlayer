@@ -13,7 +13,7 @@ import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.dkplayer.widget.controller.RotateInFullscreenController;
 import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 
 import java.util.List;
 
@@ -55,7 +55,7 @@ public class RotateRecyclerViewAdapter extends RecyclerView.Adapter<RotateRecycl
 
     public class VideoHolder extends RecyclerView.ViewHolder {
 
-        private IjkVideoView ijkVideoView;
+        private VideoView ijkVideoView;
         private RotateInFullscreenController controller;
         private TextView title;
 
@@ -68,9 +68,9 @@ public class RotateRecyclerViewAdapter extends RecyclerView.Adapter<RotateRecycl
             ijkVideoView.setOnVideoViewStateChangeListener(new OnVideoViewStateChangeListener() {
                 @Override
                 public void onPlayerStateChanged(int playerState) {
-                    if (playerState == IjkVideoView.PLAYER_FULL_SCREEN) {
+                    if (playerState == VideoView.PLAYER_FULL_SCREEN) {
                         ijkVideoView.setMute(false);
-                    } else if (playerState == IjkVideoView.PLAYER_NORMAL) {
+                    } else if (playerState == VideoView.PLAYER_NORMAL) {
                         ijkVideoView.setMute(true);
                     }
                 }
@@ -78,7 +78,7 @@ public class RotateRecyclerViewAdapter extends RecyclerView.Adapter<RotateRecycl
                 @Override
                 public void onPlayStateChanged(int playState) {
                     //小屏状态下播放出来之后，把声音关闭
-                    if (playState == IjkVideoView.STATE_PREPARED && !ijkVideoView.isFullScreen()) {
+                    if (playState == VideoView.STATE_PREPARED && !ijkVideoView.isFullScreen()) {
                         ijkVideoView.setMute(true);
                     }
                 }

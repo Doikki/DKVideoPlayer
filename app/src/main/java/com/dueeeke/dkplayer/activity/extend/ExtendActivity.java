@@ -11,7 +11,7 @@ import android.view.View;
 import com.dueeeke.dkplayer.R;
 
 /**
- * 基于IjkVideoView扩展的功能
+ * 基于VideoView扩展的功能
  * Created by xinyu on 2018/1/3.
  */
 

@@ -2,7 +2,7 @@ package com.dueeeke.dkplayer.util;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.app.MyApplication;
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 
 /**
  * 无缝播放
@@ -10,12 +10,12 @@ import com.dueeeke.videoplayer.player.IjkVideoView;
 
 public class SeamlessPlayHelper {
 
-    private IjkVideoView mIjkVideoView;
+    private VideoView mVideoView;
     private static SeamlessPlayHelper instance;
 
     private SeamlessPlayHelper() {
-        mIjkVideoView = new IjkVideoView(MyApplication.getInstance());
-        mIjkVideoView.setId(R.id.video_player);
+        mVideoView = new VideoView(MyApplication.getInstance());
+        mVideoView.setId(R.id.video_player);
     }
 
     public static SeamlessPlayHelper getInstance() {
@@ -30,8 +30,8 @@ public class SeamlessPlayHelper {
     }
 
 
-    public IjkVideoView getIjkVideoView() {
-        return mIjkVideoView;
+    public VideoView getVideoView() {
+        return mVideoView;
     }
 
 

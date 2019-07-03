@@ -7,8 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.widget.controller.FullScreenController;
-import com.dueeeke.dkplayer.widget.videoview.FullScreenIjkVideoView;
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.dkplayer.widget.videoview.FullScreenVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 
 /**
  * 全屏播放
@@ -17,7 +17,7 @@ import com.dueeeke.videoplayer.player.IjkVideoView;
 
 public class FullScreenActivity extends AppCompatActivity{
 
-    private FullScreenIjkVideoView ijkVideoView;
+    private FullScreenVideoView ijkVideoView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -28,13 +28,13 @@ public class FullScreenActivity extends AppCompatActivity{
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        ijkVideoView = new FullScreenIjkVideoView(this);
+        ijkVideoView = new FullScreenVideoView(this);
         setContentView(ijkVideoView);
         ijkVideoView.setUrl("http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv");
         FullScreenController controller = new FullScreenController(this);
         controller.setTitle("这是一个标题");
         ijkVideoView.setVideoController(controller);
-        ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_16_9);
+        ijkVideoView.setScreenScale(VideoView.SCREEN_SCALE_16_9);
         ijkVideoView.start();
 
     }

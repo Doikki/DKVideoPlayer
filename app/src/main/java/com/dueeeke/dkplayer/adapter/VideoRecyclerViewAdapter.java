@@ -13,7 +13,7 @@ import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.videocontroller.StandardVideoController;
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 
 import java.util.List;
 
@@ -67,7 +67,7 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
 
     public class VideoHolder extends RecyclerView.ViewHolder {
 
-        private IjkVideoView ijkVideoView;
+        private VideoView ijkVideoView;
         private StandardVideoController controller;
         private TextView title;
 

@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 
 import com.dueeeke.dkplayer.interf.DefinitionMediaPlayerControl;
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 
 import java.util.LinkedHashMap;
 
@@ -15,19 +15,19 @@ import java.util.LinkedHashMap;
  * Created by xinyu on 2018/4/16.
  */
 
-public class DefinitionIjkVideoView extends IjkVideoView implements DefinitionMediaPlayerControl {
+public class DefinitionVideoView extends VideoView implements DefinitionMediaPlayerControl {
     private LinkedHashMap<String, String> mDefinitionMap;
     private String mCurrentDefinition;
 
-    public DefinitionIjkVideoView(@NonNull Context context) {
+    public DefinitionVideoView(@NonNull Context context) {
         super(context);
     }
 
-    public DefinitionIjkVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public DefinitionVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public DefinitionIjkVideoView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public DefinitionVideoView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 

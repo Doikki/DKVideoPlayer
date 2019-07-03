@@ -12,7 +12,7 @@ import android.widget.ListView;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.adapter.VideoListViewAdapter;
 import com.dueeeke.dkplayer.util.DataUtil;
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.player.VideoViewManager;
 
 /**
@@ -80,7 +80,7 @@ public class ListViewActivity extends AppCompatActivity {
 
             private void gcView(View gcView) {
                 if (gcView != null) {
-                    IjkVideoView ijkVideoView = gcView.findViewById(R.id.video_player);
+                    VideoView ijkVideoView = gcView.findViewById(R.id.video_player);
                     if (ijkVideoView != null && !ijkVideoView.isFullScreen()) {
                         ijkVideoView.release();
                     }

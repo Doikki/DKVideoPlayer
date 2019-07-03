@@ -8,7 +8,7 @@ import android.view.MenuItem;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.widget.controller.DefinitionController;
-import com.dueeeke.dkplayer.widget.videoview.DefinitionIjkVideoView;
+import com.dueeeke.dkplayer.widget.videoview.DefinitionVideoView;
 import com.dueeeke.videoplayer.ijk.IjkPlayer;
 import com.dueeeke.videoplayer.player.AbstractPlayer;
 import com.dueeeke.videoplayer.player.PlayerFactory;
@@ -24,7 +24,7 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 public class DefinitionPlayerActivity extends AppCompatActivity {
 
-    private DefinitionIjkVideoView ijkVideoView;
+    private DefinitionVideoView ijkVideoView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

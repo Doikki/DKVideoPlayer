@@ -12,7 +12,7 @@ import android.widget.ProgressBar;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.util.PIPManager;
 import com.dueeeke.videoplayer.controller.GestureVideoController;
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 
 /**
  * 悬浮播放控制器
@@ -71,45 +71,45 @@ public class FloatController extends GestureVideoController implements View.OnCl
     public void setPlayState(int playState) {
         super.setPlayState(playState);
         switch (playState) {
-            case IjkVideoView.STATE_IDLE:
+            case VideoView.STATE_IDLE:
                 playButton.setSelected(false);
                 playButton.setVisibility(VISIBLE);
                 proLoading.setVisibility(GONE);
                 break;
-            case IjkVideoView.STATE_PLAYING:
+            case VideoView.STATE_PLAYING:
                 playButton.setSelected(true);
                 playButton.setVisibility(GONE);
                 proLoading.setVisibility(GONE);
                 hide();
                 break;
-            case IjkVideoView.STATE_PAUSED:
+            case VideoView.STATE_PAUSED:
                 playButton.setSelected(false);
                 playButton.setVisibility(VISIBLE);
                 proLoading.setVisibility(GONE);
                 show(0);
                 break;
-            case IjkVideoView.STATE_PREPARING:
+            case VideoView.STATE_PREPARING:
                 playButton.setVisibility(GONE);
                 proLoading.setVisibility(VISIBLE);
                 break;
-            case IjkVideoView.STATE_PREPARED:
+            case VideoView.STATE_PREPARED:
                 playButton.setVisibility(GONE);
                 proLoading.setVisibility(GONE);
                 break;
-            case IjkVideoView.STATE_ERROR:
+            case VideoView.STATE_ERROR:
                 proLoading.setVisibility(GONE);
                 playButton.setVisibility(GONE);
                 break;
-            case IjkVideoView.STATE_BUFFERING:
+            case VideoView.STATE_BUFFERING:
                 playButton.setVisibility(GONE);
                 proLoading.setVisibility(VISIBLE);
                 break;
-            case IjkVideoView.STATE_BUFFERED:
+            case VideoView.STATE_BUFFERED:
                 playButton.setVisibility(GONE);
                 proLoading.setVisibility(GONE);
                 playButton.setSelected(mMediaPlayer.isPlaying());
                 break;
-            case IjkVideoView.STATE_PLAYBACK_COMPLETED:
+            case VideoView.STATE_PLAYBACK_COMPLETED:
                 show(0);
                 removeCallbacks(mShowProgress);
                 break;
@@ -123,7 +123,7 @@ public class FloatController extends GestureVideoController implements View.OnCl
     }
 
     private void show(int timeout) {
-        if (mCurrentPlayState == IjkVideoView.STATE_BUFFERING) return;
+        if (mCurrentPlayState == VideoView.STATE_BUFFERING) return;
         if (!mShowing) {
             playButton.setVisibility(VISIBLE);
         }
@@ -138,7 +138,7 @@ public class FloatController extends GestureVideoController implements View.OnCl
 
     @Override
     public void hide() {
-        if (mCurrentPlayState == IjkVideoView.STATE_BUFFERING) return;
+        if (mCurrentPlayState == VideoView.STATE_BUFFERING) return;
         if (mShowing) {
             playButton.setVisibility(GONE);
             mShowing = false;

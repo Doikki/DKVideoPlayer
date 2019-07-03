@@ -20,7 +20,7 @@ import com.dueeeke.dkplayer.adapter.TikTokAdapter;
 import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.dkplayer.widget.controller.TikTokController;
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ import java.util.List;
 public class TikTokActivity extends AppCompatActivity {
 
     private static final String TAG = "TikTokActivity";
-    private IjkVideoView mIjkVideoView;
+    private VideoView mVideoView;
     private TikTokController mTikTokController;
     private int mCurrentPosition;
     private RecyclerView mRecyclerView;
@@ -51,10 +51,10 @@ public class TikTokActivity extends AppCompatActivity {
 
         setStatusBarTransparent();
 
-        mIjkVideoView = new IjkVideoView(this);
-        mIjkVideoView.setLooping(true);
+        mVideoView = new VideoView(this);
+        mVideoView.setLooping(true);
         mTikTokController = new TikTokController(this);
-        mIjkVideoView.setVideoController(mTikTokController);
+        mVideoView.setVideoController(mTikTokController);
         mRecyclerView = findViewById(R.id.rv);
 
         mVideoList = DataUtil.getTikTokVideoList();
@@ -73,7 +73,7 @@ public class TikTokActivity extends AppCompatActivity {
             @Override
             public void onPageRelease(boolean isNext, int position) {
                 if (mCurrentPosition == position) {
-                    mIjkVideoView.release();
+                    mVideoView.release();
                 }
             }
 
@@ -93,14 +93,14 @@ public class TikTokActivity extends AppCompatActivity {
                 .load(mVideoList.get(position).getThumb())
                 .placeholder(android.R.color.white)
                 .into(mTikTokController.getThumb());
-        ViewParent parent = mIjkVideoView.getParent();
+        ViewParent parent = mVideoView.getParent();
         if (parent instanceof FrameLayout) {
-            ((FrameLayout) parent).removeView(mIjkVideoView);
+            ((FrameLayout) parent).removeView(mVideoView);
         }
-        frameLayout.addView(mIjkVideoView);
-        mIjkVideoView.setUrl(mVideoList.get(position).getUrl());
-        mIjkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_CENTER_CROP);
-        mIjkVideoView.start();
+        frameLayout.addView(mVideoView);
+        mVideoView.setUrl(mVideoList.get(position).getUrl());
+        mVideoView.setScreenScale(VideoView.SCREEN_SCALE_CENTER_CROP);
+        mVideoView.start();
     }
 
     /**
@@ -125,18 +125,18 @@ public class TikTokActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        mIjkVideoView.pause();
+        mVideoView.pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mIjkVideoView.resume();
+        mVideoView.resume();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mIjkVideoView.release();
+        mVideoView.release();
     }
 }

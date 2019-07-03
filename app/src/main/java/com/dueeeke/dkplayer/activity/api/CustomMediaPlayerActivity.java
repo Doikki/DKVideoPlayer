@@ -12,7 +12,7 @@ import com.dueeeke.dkplayer.R;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.ijk.IjkPlayer;
 import com.dueeeke.videoplayer.player.AbstractPlayer;
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.player.PlayerFactory;
 
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
@@ -24,7 +24,7 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 public class CustomMediaPlayerActivity extends AppCompatActivity {
 
-    private IjkVideoView ijkVideoView;
+    private VideoView ijkVideoView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

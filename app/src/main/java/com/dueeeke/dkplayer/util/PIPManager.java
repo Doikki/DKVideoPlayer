@@ -7,7 +7,7 @@ import android.view.ViewParent;
 import com.dueeeke.dkplayer.app.MyApplication;
 import com.dueeeke.dkplayer.widget.FloatView;
 import com.dueeeke.dkplayer.widget.controller.FloatController;
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 
 /**
  * 悬浮播放
@@ -17,7 +17,7 @@ import com.dueeeke.videoplayer.player.IjkVideoView;
 public class PIPManager {
 
     private static PIPManager instance;
-    private IjkVideoView ijkVideoView;
+    private VideoView ijkVideoView;
     private FloatView floatView;
     private FloatController mFloatController;
     private boolean isShowing;
@@ -34,7 +34,7 @@ public class PIPManager {
 
 
     private PIPManager() {
-        ijkVideoView = new IjkVideoView(MyApplication.getInstance());
+        ijkVideoView = new VideoView(MyApplication.getInstance());
 //        ijkVideoView.setVideoListener(mMyVideoListener);
 //        mKeyReceiver = new KeyReceiver();
         mFloatController = new FloatController(MyApplication.getInstance());
@@ -54,7 +54,7 @@ public class PIPManager {
         return instance;
     }
 
-    public IjkVideoView getIjkVideoView() {
+    public VideoView getVideoView() {
         return ijkVideoView;
     }
 

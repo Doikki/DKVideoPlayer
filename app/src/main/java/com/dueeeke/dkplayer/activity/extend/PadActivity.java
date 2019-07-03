@@ -6,46 +6,46 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.widget.controller.PadController;
-import com.dueeeke.videoplayer.player.IjkVideoView;
+import com.dueeeke.videoplayer.player.VideoView;
 
 public class PadActivity extends AppCompatActivity {
 
-    private IjkVideoView mIjkVideoView;
+    private VideoView mVideoView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pad);
-        mIjkVideoView = findViewById(R.id.video_view);
+        mVideoView = findViewById(R.id.video_view);
 
-        mIjkVideoView.setUrl("http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv");
+        mVideoView.setUrl("http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv");
 
-        mIjkVideoView.setVideoController(new PadController(this));
+        mVideoView.setVideoController(new PadController(this));
 
-        mIjkVideoView.start();
+        mVideoView.start();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mIjkVideoView.pause();
+        mVideoView.pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mIjkVideoView.resume();
+        mVideoView.resume();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mIjkVideoView.release();
+        mVideoView.release();
     }
 
     @Override
     public void onBackPressed() {
-        if (!mIjkVideoView.onBackPressed()) {
+        if (!mVideoView.onBackPressed()) {
             super.onBackPressed();
         }
     }
