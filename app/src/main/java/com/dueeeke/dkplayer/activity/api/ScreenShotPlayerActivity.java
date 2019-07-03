@@ -35,7 +35,7 @@ public class ScreenShotPlayerActivity extends AppCompatActivity {
         mVideoView = findViewById(R.id.player);
         mScreenShot = findViewById(R.id.iv_screen_shot);
         StandardVideoController controller = new StandardVideoController(this);
-        mVideoView.setUrl("http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv");
+        mVideoView.setUrl("http://vfx.mtime.cn/Video/2019/03/12/mp4/190312143927981075.mp4");
         mVideoView.setVideoController(controller);
         mVideoView.start();
     }

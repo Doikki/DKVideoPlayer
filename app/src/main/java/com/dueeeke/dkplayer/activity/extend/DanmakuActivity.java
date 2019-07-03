@@ -22,7 +22,7 @@ import com.dueeeke.videoplayer.player.VideoView;
 public class DanmakuActivity extends AppCompatActivity {
 
     private DanmukuVideoView danmukuVideoView;
-    private static final String URL_VOD = "http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv";
+    private static final String URL_VOD = "http://vfx.mtime.cn/Video/2019/03/12/mp4/190312143927981075.mp4";
     //    private static final String URL_VOD = "http://uploads.cutv.com:8088/video/data/201703/10/encode_file/515b6a95601ba6b39620358f2677a17358c2472411d53.mp4";
 
     @Override

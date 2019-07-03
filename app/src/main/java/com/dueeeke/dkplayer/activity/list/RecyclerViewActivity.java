@@ -6,7 +6,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -57,7 +56,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
             public void onChildViewDetachedFromWindow(View view) {
                 VideoView videoView = view.findViewById(R.id.video_player);
                 if (videoView != null && !videoView.isFullScreen()) {
-                    Log.d("@@@@@@", "onChildViewDetachedFromWindow: called");
+//                    Log.d("@@@@@@", "onChildViewDetachedFromWindow: called");
 //                    int tag = (int) videoView.getTag();
 //                    Log.d("@@@@@@", "onChildViewDetachedFromWindow: position: " + tag);
                     videoView.release();
@@ -65,7 +64,9 @@ public class RecyclerViewActivity extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.add).setOnClickListener(new View.OnClickListener() {
+        View view = findViewById(R.id.add);
+        view.setVisibility(View.VISIBLE);
+        view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 adapter.addData(DataUtil.getVideoList());

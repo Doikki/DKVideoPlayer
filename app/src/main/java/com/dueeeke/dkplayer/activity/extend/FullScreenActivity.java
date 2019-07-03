@@ -30,7 +30,7 @@ public class FullScreenActivity extends AppCompatActivity{
 
         mVideoView = new FullScreenVideoView(this);
         setContentView(mVideoView);
-        mVideoView.setUrl("http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv");
+        mVideoView.setUrl("http://vfx.mtime.cn/Video/2019/03/12/mp4/190312143927981075.mp4");
         FullScreenController controller = new FullScreenController(this);
         controller.setTitle("这是一个标题");
         mVideoView.setVideoController(controller);

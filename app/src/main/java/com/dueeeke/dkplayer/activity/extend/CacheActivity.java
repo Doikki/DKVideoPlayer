@@ -12,7 +12,7 @@ public class CacheActivity extends AppCompatActivity {
 
     private CacheVideoView mCacheVideoView;
 
-    private static final String URL = "http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv";
+    private static final String URL = "http://vfx.mtime.cn/Video/2019/03/12/mp4/190312143927981075.mp4";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
