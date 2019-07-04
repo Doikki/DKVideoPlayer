@@ -13,6 +13,7 @@ import android.graphics.SurfaceTexture;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -32,6 +33,7 @@ import com.dueeeke.videoplayer.controller.BaseVideoController;
 import com.dueeeke.videoplayer.controller.MediaPlayerControl;
 import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.listener.PlayerEventListener;
+import com.dueeeke.videoplayer.util.L;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 import com.dueeeke.videoplayer.widget.ResizeSurfaceView;
 import com.dueeeke.videoplayer.widget.ResizeTextureView;
@@ -235,7 +237,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
         }
 
         if (mVideoController != null
-                && PlayerUtils.getNetworkType(getContext()) == PlayerUtils.NETWORK_MOBILE
+                && PlayerUtils.getNetworkType(getContext()) == PlayerUtils.NETWORK_WIFI
                 && !VideoViewManager.instance().playOnMobileNetwork()) {
             mVideoController.showStatusView();
             return true;
@@ -398,10 +400,12 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
      * 释放播放器
      */
     public void release() {
-        if (mProgressManager != null && isInPlaybackState())
-            mProgressManager.saveProgress(mCurrentUrl, mCurrentPosition);
+        VideoViewManager.instance().removeVideoView(this);
+        if (mVideoController != null) {
+            mVideoController.hideStatusView();
+        }
         if (!isInIdleState()) {
-            VideoViewManager.instance().removeVideoView(this);
+            saveProgress();
             mMediaPlayer.release();
             mMediaPlayer = null;
             setKeepScreenOn(false);
@@ -409,24 +413,30 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
                 mAudioFocusHelper.abandonFocus();
             }
             mOrientationEventListener.disable();
-            if (mVideoController != null) {
-                mVideoController.hideStatusView();
-            }
+
             if (mTextureView != null) {
                 mPlayerContainer.removeView(mTextureView);
-            }
-            if (mSurfaceView != null) {
+                if (mSurfaceTexture != null) {
+                    mSurfaceTexture.release();
+                    mSurfaceTexture = null;
+                }
+            } else if (mSurfaceView != null) {
                 mPlayerContainer.removeView(mSurfaceView);
             }
-            if (mSurfaceTexture != null) {
-                mSurfaceTexture.release();
-                mSurfaceTexture = null;
-            }
+
             mIsLockFullScreen = false;
             mCurrentPosition = 0;
             mCurrentScreenScale = SCREEN_SCALE_DEFAULT;
             setPlayState(STATE_IDLE);
         }
+    }
+
+    /**
+     * 保存播放进度
+     */
+    protected void saveProgress() {
+        if (mProgressManager != null && isInPlaybackState())
+            mProgressManager.saveProgress(mCurrentUrl, mCurrentPosition);
     }
 
     /**
@@ -1219,5 +1229,13 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
      */
     public boolean onBackPressed() {
         return mVideoController != null && mVideoController.onBackPressed();
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        L.d("onSaveInstanceState: " + mCurrentPosition);
+        //activity切到后台后可能被系统回收，故在此处进行进度保存
+        saveProgress();
+        return super.onSaveInstanceState();
     }
 }
