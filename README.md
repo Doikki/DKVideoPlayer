@@ -8,7 +8,7 @@ A video player for Android.
 
 ### 特性
 #### 功能支持情况
-| 功能  | MediaPlayer  | IikPlayer  | ExoPlayer  |
+| 功能  | MediaPlayer  | IjkPlayer  | ExoPlayer  |
 | :------------ | :------------ | :------------ | :------------ |
 |  调整显示比例 | 支持  | 支持  |  支持 |
 |  滑动调节播放进度、声音、亮度 | 支持  |  支持 | 支持  |
