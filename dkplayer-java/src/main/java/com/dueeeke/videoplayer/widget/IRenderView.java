@@ -22,7 +22,7 @@ public interface IRenderView {
      * 设置screen scale type
      * @param scaleType 类型
      */
-    void setAspectRatio(int scaleType);
+    void setScaleType(int scaleType);
 
     /**
      * 获取真实的RenderView

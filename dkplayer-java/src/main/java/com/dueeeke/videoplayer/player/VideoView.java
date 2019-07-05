@@ -829,7 +829,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
         mVideoSize[1] = videoHeight;
 
         if (mRenderView != null) {
-            mRenderView.setAspectRatio(mCurrentScreenScale);
+            mRenderView.setScaleType(mCurrentScreenScale);
             mRenderView.setVideoSize(videoWidth, videoHeight);
         }
     }
@@ -877,7 +877,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
     @Override
     public void setScreenScale(int screenScale) {
         if (mRenderView != null) {
-            mRenderView.setAspectRatio(screenScale);
+            mRenderView.setScaleType(screenScale);
             mCurrentScreenScale = screenScale;
         }
     }

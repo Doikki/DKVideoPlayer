@@ -45,7 +45,7 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
     }
 
     @Override
-    public void setAspectRatio(int aspectRatio) {
+    public void setScaleType(int aspectRatio) {
         mMeasureHelper.setAspectRatio(aspectRatio);
         requestLayout();
     }
