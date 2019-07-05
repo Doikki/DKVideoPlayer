@@ -237,7 +237,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
         }
 
         if (mVideoController != null
-                && PlayerUtils.getNetworkType(getContext()) == PlayerUtils.NETWORK_WIFI
+                && PlayerUtils.getNetworkType(getContext()) == PlayerUtils.NETWORK_MOBILE
                 && !VideoViewManager.instance().playOnMobileNetwork()) {
             mVideoController.showStatusView();
             return true;
