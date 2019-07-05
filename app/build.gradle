@@ -12,7 +12,7 @@ android {
         applicationId "com.dueeeke.dkplayer"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 31
+        versionCode 32
         versionName PUBLISH_VERSION
 
         ndk {
