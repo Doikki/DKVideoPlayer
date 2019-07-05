@@ -13,6 +13,10 @@ public class ProgressManagerImpl extends ProgressManager {
     @Override
     public void saveProgress(String url, long progress) {
         if (TextUtils.isEmpty(url)) return;
+        if (progress == 0) {
+            clearSavedProgressByUrl(url);
+            return;
+        }
         progressMap.put(url.hashCode(), progress);
     }
 

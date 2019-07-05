@@ -435,7 +435,8 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
      * 保存播放进度
      */
     protected void saveProgress() {
-        if (mProgressManager != null && isInPlaybackState())
+        L.d("saveProgress: " + mCurrentPosition);
+        if (mCurrentPosition != 0 && mProgressManager != null)
             mProgressManager.saveProgress(mCurrentUrl, mCurrentPosition);
     }
 
@@ -562,6 +563,10 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
         setPlayState(STATE_PLAYBACK_COMPLETED);
         setKeepScreenOn(false);
         mCurrentPosition = 0;
+        if (mProgressManager != null) {
+            //播放完成，清除进度
+            mProgressManager.saveProgress(mCurrentUrl, 0);
+        }
     }
 
     @Override
