@@ -33,6 +33,12 @@
                 android:layout_height="wrap_content"
                 android:onClick="pip"
                 android:text="@string/str_pip" />
+            <TextView
+                android:id="@+id/curr_player"
+                android:layout_width="match_parent"
+                android:textColor="@android:color/black"
+                android:gravity="center"
+                android:layout_height="50dp" />
         </LinearLayout>
 
     </ScrollView>

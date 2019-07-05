@@ -4,7 +4,16 @@
     <item android:id="@+id/close_float_window"
         android:title="关闭悬浮窗"/>
     <item android:id="@+id/clear_cache"
-        android:title="清除缓存">
-
+        android:title="清除缓存"/>
+    <item android:id="@+id/switch_player"
+        android:title="@string/str_switch_player_btn">
+        <menu>
+            <item android:id="@+id/ijk"
+                android:title="IjkPlayer"/>
+            <item android:id="@+id/exo"
+                android:title="ExoPlayer"/>
+            <item android:id="@+id/media"
+                android:title="MediaPlayer"/>
+        </menu>
     </item>
 </menu>

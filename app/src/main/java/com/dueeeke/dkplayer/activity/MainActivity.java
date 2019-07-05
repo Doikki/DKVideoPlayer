@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dueeeke.dkplayer.R;
@@ -20,12 +21,22 @@ import com.dueeeke.dkplayer.activity.list.ListActivity;
 import com.dueeeke.dkplayer.activity.pip.PIPDemoActivity;
 import com.dueeeke.dkplayer.util.PIPManager;
 import com.dueeeke.dkplayer.util.VideoCacheManager;
+import com.dueeeke.videoplayer.exo.ExoMediaPlayerFactory;
+import com.dueeeke.videoplayer.ijk.IjkPlayerFactory;
+import com.dueeeke.videoplayer.player.AndroidMediaPlayerFactory;
+import com.dueeeke.videoplayer.player.PlayerFactory;
+import com.dueeeke.videoplayer.player.VideoViewConfig;
+import com.dueeeke.videoplayer.player.VideoViewManager;
 import com.yanzhenjie.permission.AndPermission;
+
+import java.lang.reflect.Field;
 
 public class MainActivity extends AppCompatActivity {
 
     private EditText editText;
     private boolean isLive;
+
+    private TextView mCurrentPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +44,23 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         editText = findViewById(R.id.et);
+        mCurrentPlayer = findViewById(R.id.curr_player);
+        VideoViewConfig config = VideoViewManager.getConfig();
+        try {
+            Field mPlayerFactoryField = config.getClass().getDeclaredField("mPlayerFactory");
+            mPlayerFactoryField.setAccessible(true);
+            Object playerFactory = mPlayerFactoryField.get(config);
+            String msg = getString(R.string.str_current_player);
+            if (playerFactory instanceof IjkPlayerFactory) {
+                mCurrentPlayer.setText(msg + "IjkPlayer");
+            } else if (playerFactory instanceof ExoMediaPlayerFactory) {
+                mCurrentPlayer.setText(msg + "ExoPlayer");
+            } else {
+                mCurrentPlayer.setText(msg + "MediaPlayer");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         ((RadioGroup) findViewById(R.id.rg)).setOnCheckedChangeListener((group, checkedId) -> {
             switch (checkedId) {
@@ -68,6 +96,32 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(this, "清除缓存成功", Toast.LENGTH_SHORT).show();
                 }
                 break;
+        }
+
+        //切换播放核心，不推荐这么做，我这么写只是为了方便测试
+        VideoViewConfig config = VideoViewManager.getConfig();
+        try {
+            Field mPlayerFactoryField = config.getClass().getDeclaredField("mPlayerFactory");
+            mPlayerFactoryField.setAccessible(true);
+            PlayerFactory playerFactory = null;
+            String msg = getString(R.string.str_current_player);
+            switch (itemId) {
+                case R.id.ijk:
+                    playerFactory = IjkPlayerFactory.create(this);
+                    mCurrentPlayer.setText(msg + "IjkPlayer");
+                    break;
+                case R.id.exo:
+                    playerFactory = ExoMediaPlayerFactory.create(this);
+                    mCurrentPlayer.setText(msg + "ExoPlayer");
+                    break;
+                case R.id.media:
+                    playerFactory = AndroidMediaPlayerFactory.create(this);
+                    mCurrentPlayer.setText(msg + "MediaPlayer");
+                    break;
+            }
+            mPlayerFactoryField.set(config, playerFactory);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return super.onOptionsItemSelected(item);
     }

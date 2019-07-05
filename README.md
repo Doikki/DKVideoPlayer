@@ -5,24 +5,37 @@ A video player for Android.
 [![API](https://img.shields.io/badge/API-16%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=16)
 
 ### 特性
-* 支持直播和点播。
-* 支持调整显示比例:默认、原始大小、16:9、4:3、铺满屏幕、居中裁剪。
-* 支持滑动调节播放进度、声音、亮度；双击播放、暂停；保存播放进度。
-* 支持边播边缓存，使用了[AndroidVideoCache](https://github.com/danikula/AndroidVideoCache)。
-* 支持弹幕，使用了[DanmakuFlameMaster](https://github.com/Bilibili/DanmakuFlameMaster)。
-* 支持Https，rtsp，concat协议。
-* 支持播放本地视频以及raw和assets视频。
-* 支持重力感应自动进入/退出全屏以及手动进入/退出全屏，全屏状态下可锁定。
-* 完美实现列表播放（RecyclerView和ListView），列表自动播放。
-* 支持列表小窗全局悬浮播放，Android 8.0画中画功能。
-* 支持连续播放一个列表的视频。
-* 支持广告播放。
-* 支持清晰度切换。
-* 支持扩展自定义播放内核，MediaPlayer、ExoPlayer、IjkPlayer等。
-* 支持完全自定义控制层。
-* 支持多路播放器同时播放，没有任何控制UI的纯播放
-* 无缝衔接播放demo。
-* 抖音demo。
+#### 功能支持情况
+| 功能  | MediaPlayer  | IikPlayer  | ExoPlayer  |
+| :------------ | :------------ | :------------ | :------------ |
+|  调整显示比例 | 支持  | 支持  |  支持 |
+|  滑动调节播放进度、声音、亮度 | 支持  |  支持 | 支持  |
+|  双击播放、暂停 | 支持  |  支持 | 支持  |
+|  重力感应自动进入/退出全屏以及手动进入/退出全屏 | 支持  |  支持 | 支持  |
+|  列表小窗全局悬浮播放 | 支持  |  支持 | 支持  |
+|  连续播放一个列表的视频 | 支持  |  支持 | 支持  |
+|  广告播放 | 支持  |  支持 | 支持  |
+|  边播边缓存，使用了[ AndroidVideoCache ](https://github.com/danikula/AndroidVideoCache)实现 | 支持  |  支持 | 支持  |
+|  弹幕，使用[ DanmakuFlameMaster ](https://github.com/Bilibili/DanmakuFlameMaster)实现 | 支持  |  支持 | 支持  |
+|  多路播放器同时播放 | 支持  |  支持 | 支持  |
+|  没有任何控制UI的纯播放 | 支持  |  支持 | 支持  |
+|  Android 8.0画中画 | 支持  |  支持 | 支持  |
+|  无缝衔接播放 | 支持  |  支持 | 支持  |
+|  抖音 | 支持  |  支持 | 支持  |
+
+#### 协议/格式支持情况
+| 协议/格式  | MediaPlayer  | IikPlayer  | ExoPlayer  |
+| :------------ | :------------ | :------------ | :------------ |
+|  https | 支持  | 支持  |  支持 |
+|  rtsp | 不支持  |  支持 | 不支持  |
+|  rtmp | 不支持  |  支持 | 支持  |
+|  ffconcat | 不支持  |  支持 | 不支持  |
+|  file（本地视频） | 不支持  |  支持 | 不支持  |
+|  android.resource（raw） | 支持  | 不支持 | 不支持  |
+|  assets中的视频 | 支持  |  支持 | 不支持  |
+|  mp4 | 支持  |  支持 | 支持  |
+|  m3u8 | 支持  |  支持 | 支持  |
+|  flv | 支持  |  支持 | 可播放，无法seek进度  |
 
 ##### [Demo](https://fir.im/1r3u)
 

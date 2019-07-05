@@ -18,8 +18,7 @@ import com.dueeeke.videoplayer.player.PlayerFactory;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 /**
- * 播放器演示
- * Created by Devlin_n on 2017/4/7.
+ * rtsp/concat,只有ijkplayer支持
  */
 
 public class CustomMediaPlayerActivity extends AppCompatActivity {

@@ -42,4 +42,6 @@
     <string name="str_start_pip">悬浮窗</string>
     <string name="str_cache">缓存</string>
     <string name="str_play_list">连续播放一个列表</string>
+    <string name="str_switch_player_btn">切换播放核心</string>
+    <string name="str_current_player">当前播放核心是：</string>
 </resources>
