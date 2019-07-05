@@ -1,5 +1,7 @@
 package com.dueeeke.dkplayer.activity.api;
 
+import android.content.res.AssetFileDescriptor;
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
@@ -9,6 +11,8 @@ import android.view.MenuItem;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.player.VideoView;
+
+import java.io.IOException;
 
 /**
  * 播放raw/assets视频
@@ -30,18 +34,18 @@ public class PlayRawAssetsActivity extends AppCompatActivity {
         mVideoView = findViewById(R.id.player);
         StandardVideoController controller = new StandardVideoController(this);
         //播放assets文件
-//        AssetManager am = getResources().getAssets();
-//        AssetFileDescriptor afd = null;
-//        try {
-//            afd = am.openFd("test.mp4");
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        mVideoView.setAssetFileDescriptor(afd);
+        AssetManager am = getResources().getAssets();
+        AssetFileDescriptor afd = null;
+        try {
+            afd = am.openFd("test.mp4");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        mVideoView.setAssetFileDescriptor(afd);
 
         //播放raw
-        String url = "android.resource://" + getPackageName() + "/" + R.raw.movie;
-        mVideoView.setUrl(url);
+//        String url = "android.resource://" + getPackageName() + "/" + R.raw.movie;
+//        mVideoView.setUrl(url);
 
         mVideoView.setVideoController(controller);
         mVideoView.start();
