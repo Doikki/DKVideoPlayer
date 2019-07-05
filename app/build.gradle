@@ -17,7 +17,7 @@ android {
 
         ndk {
             //打包时保留armeabi-v7a x86 so
-            abiFilters "armeabi-v7a", "x86"
+//            abiFilters "armeabi-v7a", "x86"
         }
     }
 

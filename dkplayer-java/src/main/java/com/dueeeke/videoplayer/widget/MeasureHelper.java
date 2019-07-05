@@ -1,30 +1,37 @@
 package com.dueeeke.videoplayer.widget;
 
-import android.content.Context;
-import android.util.AttributeSet;
-import android.view.TextureView;
+import android.view.View;
 
 import com.dueeeke.videoplayer.player.VideoView;
 
-/**
- * 用于显示video的，做了横屏与竖屏的匹配，还有需要rotation需求的
- */
+import java.lang.ref.WeakReference;
 
-public class ResizeTextureView extends TextureView {
+public class MeasureHelper {
+
+    private WeakReference<View> mWeakView;
+
+    public MeasureHelper(View view) {
+        mWeakView = new WeakReference<View>(view);
+    }
+
+    public View getView() {
+        if (mWeakView == null)
+            return null;
+        return mWeakView.get();
+    }
 
     private int mVideoWidth;
 
     private int mVideoHeight;
 
-    private int screenType;
+    private int mCurrentAspectRatio;
 
-    public ResizeTextureView(Context context) {
-        super(context);
+    private int mVideoRotationDegree;
+
+    public void setVideoRotation(int videoRotationDegree) {
+        mVideoRotationDegree = videoRotationDegree;
     }
 
-    public ResizeTextureView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
 
     public void setVideoSize(int width, int height) {
         mVideoWidth = width;
@@ -32,29 +39,22 @@ public class ResizeTextureView extends TextureView {
 
     }
 
-    public void setScreenScale(int type) {
-        screenType = type;
-        requestLayout();
+    public void setAspectRatio(int aspectRatio) {
+        mCurrentAspectRatio = aspectRatio;
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-//        Log.i("@@@@", "onMeasure(" + MeasureSpec.toString(widthMeasureSpec) + ", "
-//                + MeasureSpec.toString(heightMeasureSpec) + ")");
-        if (getRotation() == 90 || getRotation() == 270) { // 软解码时处理旋转信息，交换宽高
+    public int[] doMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        if (mVideoRotationDegree == 90 || mVideoRotationDegree == 270) { // 软解码时处理旋转信息，交换宽高
             widthMeasureSpec = widthMeasureSpec + heightMeasureSpec;
             heightMeasureSpec = widthMeasureSpec - heightMeasureSpec;
             widthMeasureSpec = widthMeasureSpec - heightMeasureSpec;
         }
 
-        int width = getDefaultSize(mVideoWidth, widthMeasureSpec);
-        int height = getDefaultSize(mVideoHeight, heightMeasureSpec);
-
-//        Log.d("@@@@", "onMeasure: width" + width + "    height:" + height);
-
+        int width = View.getDefaultSize(mVideoWidth, widthMeasureSpec);
+        int height = View.getDefaultSize(mVideoHeight, heightMeasureSpec);
 
         //如果设置了比例
-        switch (screenType) {
+        switch (mCurrentAspectRatio) {
             case VideoView.SCREEN_SCALE_ORIGINAL:
                 width = mVideoWidth;
                 height = mVideoHeight;
@@ -87,15 +87,16 @@ public class ResizeTextureView extends TextureView {
                     }
                 }
                 break;
+            case VideoView.SCREEN_SCALE_DEFAULT:
             default:
                 if (mVideoWidth > 0 && mVideoHeight > 0) {
 
-                    int widthSpecMode = MeasureSpec.getMode(widthMeasureSpec);
-                    int widthSpecSize = MeasureSpec.getSize(widthMeasureSpec);
-                    int heightSpecMode = MeasureSpec.getMode(heightMeasureSpec);
-                    int heightSpecSize = MeasureSpec.getSize(heightMeasureSpec);
+                    int widthSpecMode = View.MeasureSpec.getMode(widthMeasureSpec);
+                    int widthSpecSize = View.MeasureSpec.getSize(widthMeasureSpec);
+                    int heightSpecMode = View.MeasureSpec.getMode(heightMeasureSpec);
+                    int heightSpecSize = View.MeasureSpec.getSize(heightMeasureSpec);
 
-                    if (widthSpecMode == MeasureSpec.EXACTLY && heightSpecMode == MeasureSpec.EXACTLY) {
+                    if (widthSpecMode == View.MeasureSpec.EXACTLY && heightSpecMode == View.MeasureSpec.EXACTLY) {
                         // the size is fixed
                         width = widthSpecSize;
                         height = heightSpecSize;
@@ -108,19 +109,19 @@ public class ResizeTextureView extends TextureView {
                             //Log.i("@@@", "image too tall, correcting");
                             height = width * mVideoHeight / mVideoWidth;
                         }
-                    } else if (widthSpecMode == MeasureSpec.EXACTLY) {
+                    } else if (widthSpecMode == View.MeasureSpec.EXACTLY) {
                         // only the width is fixed, adjust the height to match aspect ratio if possible
                         width = widthSpecSize;
                         height = width * mVideoHeight / mVideoWidth;
-                        if (heightSpecMode == MeasureSpec.AT_MOST && height > heightSpecSize) {
+                        if (heightSpecMode == View.MeasureSpec.AT_MOST && height > heightSpecSize) {
                             // couldn't match aspect ratio within the constraints
                             height = heightSpecSize;
                         }
-                    } else if (heightSpecMode == MeasureSpec.EXACTLY) {
+                    } else if (heightSpecMode == View.MeasureSpec.EXACTLY) {
                         // only the height is fixed, adjust the width to match aspect ratio if possible
                         height = heightSpecSize;
                         width = height * mVideoWidth / mVideoHeight;
-                        if (widthSpecMode == MeasureSpec.AT_MOST && width > widthSpecSize) {
+                        if (widthSpecMode == View.MeasureSpec.AT_MOST && width > widthSpecSize) {
                             // couldn't match aspect ratio within the constraints
                             width = widthSpecSize;
                         }
@@ -128,12 +129,12 @@ public class ResizeTextureView extends TextureView {
                         // neither the width nor the height are fixed, try to use actual video size
                         width = mVideoWidth;
                         height = mVideoHeight;
-                        if (heightSpecMode == MeasureSpec.AT_MOST && height > heightSpecSize) {
+                        if (heightSpecMode == View.MeasureSpec.AT_MOST && height > heightSpecSize) {
                             // too tall, decrease both width and height
                             height = heightSpecSize;
                             width = height * mVideoWidth / mVideoHeight;
                         }
-                        if (widthSpecMode == MeasureSpec.AT_MOST && width > widthSpecSize) {
+                        if (widthSpecMode == View.MeasureSpec.AT_MOST && width > widthSpecSize) {
                             // too wide, decrease both width and height
                             width = widthSpecSize;
                             height = width * mVideoHeight / mVideoWidth;
@@ -144,6 +145,7 @@ public class ResizeTextureView extends TextureView {
                 }
                 break;
         }
-        setMeasuredDimension(width, height);
+
+        return new int[]{width, height};
     }
 }

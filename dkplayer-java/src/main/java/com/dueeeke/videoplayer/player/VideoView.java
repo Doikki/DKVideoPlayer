@@ -8,11 +8,8 @@ import android.content.res.AssetFileDescriptor;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.PixelFormat;
-import android.graphics.SurfaceTexture;
 import android.media.AudioManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,9 +17,6 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.OrientationEventListener;
-import android.view.Surface;
-import android.view.SurfaceHolder;
-import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -35,9 +29,11 @@ import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.listener.PlayerEventListener;
 import com.dueeeke.videoplayer.util.L;
 import com.dueeeke.videoplayer.util.PlayerUtils;
-import com.dueeeke.videoplayer.widget.ResizeSurfaceView;
-import com.dueeeke.videoplayer.widget.ResizeTextureView;
+import com.dueeeke.videoplayer.widget.IRenderView;
+import com.dueeeke.videoplayer.widget.SurfaceRenderView;
+import com.dueeeke.videoplayer.widget.TextureRenderView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -53,9 +49,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
     @Nullable
     protected BaseVideoController mVideoController;//控制器
 
-    protected ResizeSurfaceView mSurfaceView;
-    protected ResizeTextureView mTextureView;
-    protected SurfaceTexture mSurfaceTexture;
+    protected IRenderView mRenderView;
     /**
      * 真正承载播放器视图的容器
      */
@@ -73,7 +67,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
     public static final int SCREEN_SCALE_ORIGINAL = 4;
     public static final int SCREEN_SCALE_CENTER_CROP = 5;
 
-    protected int mCurrentScreenScale = SCREEN_SCALE_DEFAULT;
+    protected int mCurrentScreenScale;
 
     protected int[] mVideoSize = {0, 0};
 
@@ -153,6 +147,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
         mProgressManager = config.mProgressManager;
         //默认使用系统的MediaPlayer进行解码
         mPlayerFactory = config.mPlayerFactory == null ? AndroidMediaPlayerFactory.create(context) : config.mPlayerFactory;
+        mCurrentScreenScale = config.mScreenScaleType;
 
         //读取xml中的配置，并综合全局配置
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.VideoView);
@@ -162,6 +157,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
         mEnableMediaCodec = a.getBoolean(R.styleable.VideoView_enableMediaCodec, mEnableMediaCodec);
         mEnableParallelPlay = a.getBoolean(R.styleable.VideoView_enableParallelPlay, mEnableParallelPlay);
         mIsLooping = a.getBoolean(R.styleable.VideoView_looping, false);
+        mCurrentScreenScale = a.getInt(R.styleable.VideoView_screenScaleType, mCurrentScreenScale);
         a.recycle();
 
         initView();
@@ -258,80 +254,20 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
     }
 
     protected void addDisplay() {
-        if (mUsingSurfaceView || Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            addSurfaceView();
-        } else {
-            addTextureView();
+        if (mRenderView != null) {
+            mPlayerContainer.removeView(mRenderView.getView());
+            mRenderView.release();
         }
-    }
-
-    /**
-     * 添加SurfaceView
-     */
-    private void addSurfaceView() {
-        mPlayerContainer.removeView(mSurfaceView);
-        mSurfaceView = new ResizeSurfaceView(getContext());
-        SurfaceHolder surfaceHolder = mSurfaceView.getHolder();
-        surfaceHolder.addCallback(new SurfaceHolder.Callback() {
-            @Override
-            public void surfaceCreated(SurfaceHolder holder) {
-            }
-
-            @Override
-            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-                if (mMediaPlayer != null) {
-                    mMediaPlayer.setDisplay(holder);
-                }
-            }
-
-            @Override
-            public void surfaceDestroyed(SurfaceHolder holder) {
-            }
-        });
-        surfaceHolder.setFormat(PixelFormat.RGBA_8888);
+        if (mUsingSurfaceView) {
+            mRenderView = new SurfaceRenderView(getContext(), mMediaPlayer);
+        } else {
+            mRenderView = new TextureRenderView(getContext(), mMediaPlayer);
+        }
         LayoutParams params = new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 Gravity.CENTER);
-        mPlayerContainer.addView(mSurfaceView, 0, params);
-    }
-
-    /**
-     * 添加TextureView
-     */
-    private void addTextureView() {
-        mPlayerContainer.removeView(mTextureView);
-        mSurfaceTexture = null;
-        mTextureView = new ResizeTextureView(getContext());
-        mTextureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
-            @Override
-            public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int width, int height) {
-                if (mSurfaceTexture != null) {
-                    mTextureView.setSurfaceTexture(mSurfaceTexture);
-                } else {
-                    mSurfaceTexture = surfaceTexture;
-                    mMediaPlayer.setSurface(new Surface(surfaceTexture));
-                }
-            }
-
-            @Override
-            public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int width, int height) {
-            }
-
-            @Override
-            public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
-                return mSurfaceTexture == null;
-            }
-
-            @Override
-            public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {
-            }
-        });
-        LayoutParams params = new LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                Gravity.CENTER);
-        mPlayerContainer.addView(mTextureView, 0, params);
+        mPlayerContainer.addView(mRenderView.getView(), 0, params);
     }
 
     /**
@@ -389,7 +325,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
     /**
      * 停止播放
      *
-     * @deprecated 使用release代替
+     * @deprecated 使用 {@link #release()} 代替
      */
     @Deprecated
     public void stopPlayback() {
@@ -408,20 +344,22 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
             saveProgress();
             mMediaPlayer.release();
             mMediaPlayer = null;
+            if (mAssetFileDescriptor != null) {
+                try {
+                    mAssetFileDescriptor.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
             setKeepScreenOn(false);
             if (mAudioFocusHelper != null) {
                 mAudioFocusHelper.abandonFocus();
             }
             mOrientationEventListener.disable();
 
-            if (mTextureView != null) {
-                mPlayerContainer.removeView(mTextureView);
-                if (mSurfaceTexture != null) {
-                    mSurfaceTexture.release();
-                    mSurfaceTexture = null;
-                }
-            } else if (mSurfaceView != null) {
-                mPlayerContainer.removeView(mSurfaceView);
+            if (mRenderView != null) {
+                mPlayerContainer.removeView(mRenderView.getView());
+                mRenderView.release();
             }
 
             mIsLockFullScreen = false;
@@ -583,8 +521,8 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
                 if (getWindowVisibility() != VISIBLE) pause();
                 break;
             case AbstractPlayer.MEDIA_INFO_VIDEO_ROTATION_CHANGED:
-                if (mTextureView != null)
-                    mTextureView.setRotation(extra);
+                if (mRenderView != null)
+                    mRenderView.setVideoRotation(extra);
                 break;
         }
     }
@@ -724,6 +662,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
 
     /**
      * 自定义播放核心，继承{@link AbstractPlayer}实现自己的播放核心
+     *
      * @deprecated 使用 {@link #setPlayerFactory(PlayerFactory)} ()} 代替
      */
     @Deprecated
@@ -888,12 +827,10 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
     public void onVideoSizeChanged(int videoWidth, int videoHeight) {
         mVideoSize[0] = videoWidth;
         mVideoSize[1] = videoHeight;
-        if (mUsingSurfaceView || Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            mSurfaceView.setScreenScale(mCurrentScreenScale);
-            mSurfaceView.setVideoSize(videoWidth, videoHeight);
-        } else {
-            mTextureView.setScreenScale(mCurrentScreenScale);
-            mTextureView.setVideoSize(videoWidth, videoHeight);
+
+        if (mRenderView != null) {
+            mRenderView.setAspectRatio(mCurrentScreenScale);
+            mRenderView.setVideoSize(videoWidth, videoHeight);
         }
     }
 
@@ -939,11 +876,9 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
      */
     @Override
     public void setScreenScale(int screenScale) {
-        this.mCurrentScreenScale = screenScale;
-        if (mSurfaceView != null) {
-            mSurfaceView.setScreenScale(screenScale);
-        } else if (mTextureView != null) {
-            mTextureView.setScreenScale(screenScale);
+        if (mRenderView != null) {
+            mRenderView.setAspectRatio(screenScale);
+            mCurrentScreenScale = screenScale;
         }
     }
 
@@ -952,8 +887,8 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
      */
     @Override
     public void setMirrorRotation(boolean enable) {
-        if (mTextureView != null) {
-            mTextureView.setScaleX(enable ? -1 : 1);
+        if (mRenderView != null) {
+            mRenderView.getView().setScaleX(enable ? -1 : 1);
         }
     }
 
@@ -962,8 +897,8 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
      */
     @Override
     public Bitmap doScreenShot() {
-        if (mTextureView != null) {
-            return mTextureView.getBitmap();
+        if (mRenderView != null) {
+            return mRenderView.doScreenShot();
         }
         return null;
     }
@@ -983,14 +918,8 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
      */
     @Override
     public void setRotation(float rotation) {
-        if (mTextureView != null) {
-            mTextureView.setRotation(rotation);
-            mTextureView.requestLayout();
-        }
-
-        if (mSurfaceView != null) {
-            mSurfaceView.setRotation(rotation);
-            mSurfaceView.requestLayout();
+        if (mRenderView != null) {
+            mRenderView.setVideoRotation((int) rotation);
         }
     }
 

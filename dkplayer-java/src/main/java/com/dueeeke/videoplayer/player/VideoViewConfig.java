@@ -29,6 +29,7 @@ public class VideoViewConfig {
 
     public final PlayerFactory mPlayerFactory;
 
+    public final int mScreenScaleType;
 
     private VideoViewConfig(Builder builder) {
         mIsEnableLog = builder.mIsEnableLog;
@@ -40,6 +41,7 @@ public class VideoViewConfig {
         mProgressManager = builder.mProgressManager;
         mEnableParallelPlay = builder.mEnableParallelPlay;
         mPlayerFactory = builder.mPlayerFactory;
+        mScreenScaleType = builder.mScreenScaleType;
     }
 
 
@@ -54,6 +56,7 @@ public class VideoViewConfig {
         private boolean mEnableParallelPlay;
         private ProgressManager mProgressManager;
         private PlayerFactory mPlayerFactory;
+        private int mScreenScaleType;
 
         /**
          * 是否通过重力感应切换全屏/半屏播放器， 默认不开启
@@ -124,6 +127,14 @@ public class VideoViewConfig {
          */
         public Builder setPlayerFactory(PlayerFactory playerFactory) {
             mPlayerFactory = playerFactory;
+            return this;
+        }
+
+        /**
+         * 设置视频比例
+         */
+        public Builder setScreenScale(int screenScaleType) {
+            mScreenScaleType = screenScaleType;
             return this;
         }
 
