@@ -349,8 +349,6 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
                     mAssetFileDescriptor.close();
                 } catch (IOException e) {
                     e.printStackTrace();
-                } finally {
-                    mAssetFileDescriptor = null;
                 }
             }
             setKeepScreenOn(false);
@@ -366,8 +364,6 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
 
             mIsLockFullScreen = false;
             mCurrentPosition = 0;
-            mCurrentUrl = null;
-            mHeaders = null;
             setPlayState(STATE_IDLE);
         }
     }

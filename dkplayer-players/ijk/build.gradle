@@ -1,27 +1,24 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.novoda.bintray-release'
+apply from: '../../constants.gradle'
 
 android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
+    compileSdkVersion project.ext.compileSdkVersion
+    buildToolsVersion project.ext.buildToolsVersion
 
     defaultConfig {
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
+        minSdkVersion project.ext.minSdkVersion
+        targetSdkVersion project.ext.targetSdkVersion
     }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     compileOnly project(':dkplayer-java')
-    api "tv.danmaku.ijk.media:ijkplayer-java:$rootProject.ijkPlayerVersion"
+    api "tv.danmaku.ijk.media:ijkplayer-java:$project.ijkPlayerVersion"
 }
 
-publish {
-    userOrg = USER_ORG
-    groupId = GROUP_ID
-    artifactId = 'player-ijk'
-    publishVersion = PUBLISH_VERSION
-    desc = DESC
-    website = WEBSITE
+ext {
+    releaseArtifact = 'player-ijk'
 }
+
+apply from: '../../publish.gradle'

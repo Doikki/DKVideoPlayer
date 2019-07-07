@@ -1,26 +1,23 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.novoda.bintray-release'
+apply from: '../constants.gradle'
 
 android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
+    compileSdkVersion project.ext.compileSdkVersion
+    buildToolsVersion project.ext.buildToolsVersion
 
     defaultConfig {
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
+        minSdkVersion project.ext.minSdkVersion
+        targetSdkVersion project.ext.targetSdkVersion
     }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    compileOnly "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+    compileOnly 'com.android.support:appcompat-v7:' + project.ext.supportLibraryVersion
 }
 
-publish {
-    userOrg = USER_ORG
-    groupId = GROUP_ID
-    artifactId = 'dkplayer-java'
-    publishVersion = PUBLISH_VERSION
-    desc = DESC
-    website = WEBSITE
+ext {
+    releaseArtifact = 'dkplayer-java'
 }
+
+apply from: '../publish.gradle'

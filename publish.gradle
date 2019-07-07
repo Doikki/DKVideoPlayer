@@ -1,0 +1,9 @@
+apply plugin: 'bintray-release'
+publish {
+    artifactId = releaseArtifact
+    desc = 'A video player for Android.'
+    publishVersion = releaseVersion
+    userOrg = 'dueeeke'
+    groupId = 'com.github.dueeeke.dkplayer'
+    website = 'https://github.com/dueeeke/dkplayer'
+}
