@@ -54,6 +54,13 @@ public class PlayerActivity extends AppCompatActivity {
             //播放状态监听
             mVideoView.addOnVideoViewStateChangeListener(mOnVideoViewStateChangeListener);
 
+            //使用IjkPlayer解码
+//            mVideoView.setPlayerFactory(IjkPlayerFactory.create(this));
+            //使用ExoPlayer解码
+//            mVideoView.setPlayerFactory(ExoMediaPlayerFactory.create(this));
+            //使用MediaPlayer解码
+//            mVideoView.setPlayerFactory(AndroidMediaPlayerFactory.create(this));
+
             mVideoView.start();
         }
     }

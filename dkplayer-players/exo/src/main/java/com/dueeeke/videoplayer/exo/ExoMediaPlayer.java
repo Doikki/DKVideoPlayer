@@ -34,7 +34,7 @@ import com.google.android.exoplayer2.video.VideoListener;
 import java.util.Map;
 
 
-public class ExoMediaPlayer extends AbstractPlayer implements VideoListener {
+public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Player.EventListener {
 
     private Context mAppContext;
     private SimpleExoPlayer mInternalPlayer;
@@ -44,8 +44,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener {
     private PlaybackParameters mSpeedPlaybackParameters;
     private int lastReportedPlaybackState;
     private boolean lastReportedPlayWhenReady;
-    private boolean mIsPreparing = true;
-    private boolean mIsBuffering = false;
+    private boolean mIsPreparing;
+    private boolean mIsBuffering;
     private DataSource.Factory mediaDataSourceFactory;
     private Map<String, String> mHeaders;
     private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
@@ -62,7 +62,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener {
                 new AdaptiveTrackSelection.Factory();
         DefaultTrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
         mInternalPlayer = ExoPlayerFactory.newSimpleInstance(mAppContext, trackSelector);
-        mInternalPlayer.addListener(mDefaultEventListener);
+        mInternalPlayer.addListener(this);
         mInternalPlayer.addVideoListener(this);
     }
 
@@ -163,9 +163,10 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener {
         if (mSpeedPlaybackParameters != null) {
             mInternalPlayer.setPlaybackParameters(mSpeedPlaybackParameters);
         }
-        if (mSurface != null)
+        if (mSurface != null) {
             mInternalPlayer.setVideoSurface(mSurface);
-
+        }
+        mIsPreparing = true;
         mInternalPlayer.prepare(mMediaSource);
         mInternalPlayer.setPlayWhenReady(true);
     }
@@ -203,17 +204,19 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener {
     public void release() {
         if (mInternalPlayer != null) {
             mInternalPlayer.release();
-            mInternalPlayer.removeListener(mDefaultEventListener);
+            mInternalPlayer.removeListener(this);
             mInternalPlayer.removeVideoListener(this);
             mInternalPlayer = null;
         }
 
         mSurface = null;
         mDataSource = null;
-        mIsPreparing = true;
+        mHeaders = null;
+        mIsPreparing = false;
         mIsBuffering = false;
         lastReportedPlaybackState = Player.STATE_IDLE;
         lastReportedPlayWhenReady = false;
+        mSpeedPlaybackParameters = null;
     }
 
     @Override
@@ -275,7 +278,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener {
 
     @Override
     public void setSpeed(float speed) {
-        PlaybackParameters playbackParameters = new PlaybackParameters(speed, speed);
+        PlaybackParameters playbackParameters = new PlaybackParameters(speed);
         mSpeedPlaybackParameters = playbackParameters;
         if (mInternalPlayer != null) {
             mInternalPlayer.setPlaybackParameters(playbackParameters);
@@ -288,66 +291,49 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener {
         return 0;
     }
 
-    private Player.DefaultEventListener mDefaultEventListener = new Player.DefaultEventListener() {
-        @Override
-        public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-            super.onPlayerStateChanged(playWhenReady, playbackState);
-            //重新播放状态顺序为：STATE_IDLE -》STATE_BUFFERING -》STATE_READY
-            //缓冲时顺序为：STATE_BUFFERING -》STATE_READY
-            if (lastReportedPlayWhenReady != playWhenReady || lastReportedPlaybackState != playbackState) {
-                if (mIsBuffering) {
-                    switch (playbackState) {
-                        case Player.STATE_ENDED:
-                        case Player.STATE_READY:
-                            if (mPlayerEventListener != null) {
-                                mPlayerEventListener.onInfo(MEDIA_INFO_BUFFERING_END, mInternalPlayer.getBufferedPercentage());
-                            }
-                            mIsBuffering = false;
-                            break;
-                    }
-                }
-
-                if (mIsPreparing) {
-                    if (playbackState == Player.STATE_READY) {
+    @Override
+    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+        if (lastReportedPlayWhenReady != playWhenReady || lastReportedPlaybackState != playbackState) {
+            switch (playbackState) {
+                case Player.STATE_READY:
+                    if (mIsPreparing) {
                         if (mPlayerEventListener != null) {
                             mPlayerEventListener.onPrepared();
+                            mPlayerEventListener.onInfo(MEDIA_INFO_VIDEO_RENDERING_START, 0);
                         }
                         mIsPreparing = false;
-                    }
-                }
-
-                switch (playbackState) {
-                    case Player.STATE_BUFFERING:
-                        if (!mIsPreparing) {
-                            if (mPlayerEventListener != null) {
-                                mPlayerEventListener.onInfo(MEDIA_INFO_BUFFERING_START, mInternalPlayer.getBufferedPercentage());
-                            }
-                            mIsBuffering = true;
-                        }
-                        break;
-                    case Player.STATE_READY:
-                        break;
-                    case Player.STATE_ENDED:
+                    } else if (mIsBuffering) {
                         if (mPlayerEventListener != null) {
-                            mPlayerEventListener.onCompletion();
+                            mPlayerEventListener.onInfo(MEDIA_INFO_BUFFERING_END, mInternalPlayer.getBufferedPercentage());
                         }
-                        break;
-                    default:
-                        break;
-                }
+                        mIsBuffering = false;
+                    }
+                    break;
+                case Player.STATE_BUFFERING:
+                    if (!mIsPreparing) {
+                        if (mPlayerEventListener != null) {
+                            mPlayerEventListener.onInfo(MEDIA_INFO_BUFFERING_START, mInternalPlayer.getBufferedPercentage());
+                        }
+                        mIsBuffering = true;
+                    }
+                    break;
+                case Player.STATE_ENDED:
+                    if (mPlayerEventListener != null) {
+                        mPlayerEventListener.onCompletion();
+                    }
+                    break;
             }
-            lastReportedPlayWhenReady = playWhenReady;
-            lastReportedPlaybackState = playbackState;
         }
+        lastReportedPlayWhenReady = playWhenReady;
+        lastReportedPlaybackState = playbackState;
+    }
 
-        @Override
-        public void onPlayerError(ExoPlaybackException error) {
-            super.onPlayerError(error);
-            if (mPlayerEventListener != null) {
-                mPlayerEventListener.onError();
-            }
+    @Override
+    public void onPlayerError(ExoPlaybackException error) {
+        if (mPlayerEventListener != null) {
+            mPlayerEventListener.onError();
         }
-    };
+    }
 
     @Override
     public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
@@ -357,11 +343,5 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener {
                 mPlayerEventListener.onInfo(MEDIA_INFO_VIDEO_ROTATION_CHANGED, unappliedRotationDegrees);
             }
         }
-    }
-
-    @Override
-    public void onRenderedFirstFrame() {
-        if (mPlayerEventListener != null && mIsPreparing)
-            mPlayerEventListener.onInfo(MEDIA_INFO_VIDEO_RENDERING_START, 0);
     }
 }
