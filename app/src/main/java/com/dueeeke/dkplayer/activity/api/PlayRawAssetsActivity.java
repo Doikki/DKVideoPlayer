@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videocontroller.StandardVideoController;
@@ -33,21 +34,48 @@ public class PlayRawAssetsActivity extends AppCompatActivity {
         }
         mVideoView = findViewById(R.id.player);
         StandardVideoController controller = new StandardVideoController(this);
-        //播放assets文件
-        AssetManager am = getResources().getAssets();
-        AssetFileDescriptor afd = null;
-        try {
-            afd = am.openFd("test.mp4");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        mVideoView.setAssetFileDescriptor(afd);
-
-        //播放raw
-//        String url = "android.resource://" + getPackageName() + "/" + R.raw.movie;
-//        mVideoView.setUrl(url);
-
         mVideoView.setVideoController(controller);
+    }
+
+
+    public void onButtonClick(View view) {
+        mVideoView.release();
+        switch (view.getId()) {
+            case R.id.btn_raw:
+                //IjkPlayer,MediaPlayer
+                String url = "android.resource://" + getPackageName() + "/" + R.raw.movie;
+
+                //ExoPlayer请使用如下方式
+//                DataSpec dataSpec = new DataSpec(RawResourceDataSource.buildRawResourceUri(R.raw.movie));
+//                RawResourceDataSource rawResourceDataSource = new RawResourceDataSource(this);
+//                try {
+//                    rawResourceDataSource.open(dataSpec);
+//                } catch (RawResourceDataSource.RawResourceDataSourceException e) {
+//                    e.printStackTrace();
+//                }
+//                String url = rawResourceDataSource.getUri().toString();
+
+
+                mVideoView.setUrl(url);
+
+                break;
+            case R.id.btn_assets:
+                //IjkPlayer,MediaPlayer
+                AssetManager am = getResources().getAssets();
+                AssetFileDescriptor afd = null;
+                try {
+                    afd = am.openFd("test.mp4");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                mVideoView.setAssetFileDescriptor(afd);
+
+                //ExoPlayer请使用如下方式
+//                mVideoView.setUrl("file:///android_asset/" + "test.mp4");
+
+                break;
+        }
+
         mVideoView.start();
     }
 

@@ -349,6 +349,8 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
                     mAssetFileDescriptor.close();
                 } catch (IOException e) {
                     e.printStackTrace();
+                } finally {
+                    mAssetFileDescriptor = null;
                 }
             }
             setKeepScreenOn(false);
@@ -364,7 +366,8 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
 
             mIsLockFullScreen = false;
             mCurrentPosition = 0;
-            mCurrentScreenScale = SCREEN_SCALE_DEFAULT;
+            mCurrentUrl = null;
+            mHeaders = null;
             setPlayState(STATE_IDLE);
         }
     }
@@ -876,9 +879,9 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
      */
     @Override
     public void setScreenScale(int screenScale) {
+        mCurrentScreenScale = screenScale;
         if (mRenderView != null) {
             mRenderView.setScaleType(screenScale);
-            mCurrentScreenScale = screenScale;
         }
     }
 

@@ -74,7 +74,7 @@ public class IjkPlayer extends AbstractPlayer {
     @Override
     public void setDataSource(AssetFileDescriptor fd) {
         try {
-            mMediaPlayer.setDataSource(fd.getFileDescriptor());
+            mMediaPlayer.setDataSource(new RawDataSourceProvider(fd));
         } catch (Exception e) {
             mPlayerEventListener.onError();
         }

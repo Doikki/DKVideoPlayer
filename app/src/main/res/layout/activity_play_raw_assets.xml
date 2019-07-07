@@ -9,9 +9,19 @@
         android:layout_width="match_parent"
         android:layout_height="250dp"/>
 
-    <!--<FrameLayout-->
-        <!--android:id="@+id/content"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"/>-->
+
+    <Button
+        android:id="@+id/btn_raw"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onButtonClick"
+        android:text="raw"/>
+
+    <Button
+        android:id="@+id/btn_assets"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onButtonClick"
+        android:text="assets"/>
 
 </LinearLayout>

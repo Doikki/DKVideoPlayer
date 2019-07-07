@@ -10,27 +10,16 @@
         android:layout_width="match_parent"
         android:layout_height="240dp"
         app:screenScaleType="type_default"/>
-
-    <RadioGroup
-        android:id="@+id/rg_type"
+    <Button
+        android:id="@+id/concat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <RadioButton
-            android:id="@+id/concat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="分段视频concat"/>
-        <RadioButton
-            android:id="@+id/rtsp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="rtsp"/>
-    </RadioGroup>
-
+        android:onClick="onButtonClick"
+        android:text="分段视频concat"/>
     <Button
-        android:layout_width="wrap_content"
+        android:id="@+id/rtsp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="startPlay"
-        android:text="开始播放"/>
+        android:onClick="onButtonClick"
+        android:text="rtsp"/>
 </LinearLayout>
