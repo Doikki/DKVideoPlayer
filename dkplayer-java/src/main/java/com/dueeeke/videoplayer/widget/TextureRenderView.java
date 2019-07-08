@@ -27,7 +27,7 @@ public class TextureRenderView extends TextureView implements IRenderView, Textu
 
 
     private void initView() {
-        mMeasureHelper = new MeasureHelper(this);
+        mMeasureHelper = new MeasureHelper();
         setSurfaceTextureListener(this);
     }
 
@@ -46,8 +46,8 @@ public class TextureRenderView extends TextureView implements IRenderView, Textu
     }
 
     @Override
-    public void setScaleType(int aspectRatio) {
-        mMeasureHelper.setAspectRatio(aspectRatio);
+    public void setScaleType(int scaleType) {
+        mMeasureHelper.setScreenScale(scaleType);
         requestLayout();
     }
 

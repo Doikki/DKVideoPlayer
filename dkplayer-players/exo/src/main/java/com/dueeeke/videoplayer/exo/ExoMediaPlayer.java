@@ -27,6 +27,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoListener;
@@ -127,8 +128,12 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
      * @return A new HttpDataSource factory.
      */
     private DataSource.Factory getHttpDataSourceFactory(boolean useBandwidthMeter) {
-        DefaultHttpDataSourceFactory dataSourceFactory = new DefaultHttpDataSourceFactory(Util.getUserAgent(mAppContext,
-                mAppContext.getApplicationInfo().name), useBandwidthMeter ? null : BANDWIDTH_METER);
+        DefaultHttpDataSourceFactory dataSourceFactory = new DefaultHttpDataSourceFactory(
+                Util.getUserAgent(mAppContext, mAppContext.getApplicationInfo().name),
+                useBandwidthMeter ? null : BANDWIDTH_METER,
+                DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
+                DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,
+                true);
         if (mHeaders != null && mHeaders.size() > 0) {
             for (Map.Entry<String, String> header : mHeaders.entrySet()) {
                 dataSourceFactory.getDefaultRequestProperties().set(header.getKey(), header.getValue());

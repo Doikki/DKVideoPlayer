@@ -24,7 +24,7 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
     }
 
     private void initView() {
-        mMeasureHelper = new MeasureHelper(this);
+        mMeasureHelper = new MeasureHelper();
         SurfaceHolder surfaceHolder = getHolder();
         surfaceHolder.addCallback(this);
         surfaceHolder.setFormat(PixelFormat.RGBA_8888);
@@ -45,8 +45,8 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
     }
 
     @Override
-    public void setScaleType(int aspectRatio) {
-        mMeasureHelper.setAspectRatio(aspectRatio);
+    public void setScaleType(int scaleType) {
+        mMeasureHelper.setScreenScale(scaleType);
         requestLayout();
     }
 

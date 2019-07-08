@@ -4,27 +4,13 @@ import android.view.View;
 
 import com.dueeeke.videoplayer.player.VideoView;
 
-import java.lang.ref.WeakReference;
-
 public class MeasureHelper {
-
-    private WeakReference<View> mWeakView;
-
-    public MeasureHelper(View view) {
-        mWeakView = new WeakReference<View>(view);
-    }
-
-    public View getView() {
-        if (mWeakView == null)
-            return null;
-        return mWeakView.get();
-    }
 
     private int mVideoWidth;
 
     private int mVideoHeight;
 
-    private int mCurrentAspectRatio;
+    private int mCurrentScreenScale;
 
     private int mVideoRotationDegree;
 
@@ -36,11 +22,10 @@ public class MeasureHelper {
     public void setVideoSize(int width, int height) {
         mVideoWidth = width;
         mVideoHeight = height;
-
     }
 
-    public void setAspectRatio(int aspectRatio) {
-        mCurrentAspectRatio = aspectRatio;
+    public void setScreenScale(int screenScale) {
+        mCurrentScreenScale = screenScale;
     }
 
     public int[] doMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -54,7 +39,7 @@ public class MeasureHelper {
         int height = View.getDefaultSize(mVideoHeight, heightMeasureSpec);
 
         //如果设置了比例
-        switch (mCurrentAspectRatio) {
+        switch (mCurrentScreenScale) {
             case VideoView.SCREEN_SCALE_ORIGINAL:
                 width = mVideoWidth;
                 height = mVideoHeight;
