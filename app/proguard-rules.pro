@@ -29,6 +29,9 @@
 -keep class com.dueeeke.videoplayer.** { *; }
 -dontwarn com.dueeeke.videoplayer.**
 
+-keep class com.google.android.exoplayer2.** { *; }
+-dontwarn com.google.android.exoplayer2.**
+
 
 -dontwarn com.yanzhenjie.permission.**
 
