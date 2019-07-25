@@ -89,8 +89,9 @@ public class AndroidMediaPlayer extends AbstractPlayer {
 
     @Override
     public void reset() {
+        mMediaPlayer.release();
+        initPlayer();
         mMediaPlayer.setVolume(1, 1);
-        mMediaPlayer.reset();
         mMediaPlayer.setLooping(isLooping);
     }
 

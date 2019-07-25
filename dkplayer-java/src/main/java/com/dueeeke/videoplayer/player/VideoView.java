@@ -246,7 +246,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
      */
     protected void initPlayer() {
         mMediaPlayer = mPlayerFactory.createPlayer();
-        mMediaPlayer.bindVideoView(this);
+        mMediaPlayer.setPlayerEventListener(this);
         mMediaPlayer.initPlayer();
         mMediaPlayer.setEnableMediaCodec(mEnableMediaCodec);
         mMediaPlayer.setLooping(mIsLooping);

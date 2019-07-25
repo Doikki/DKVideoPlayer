@@ -154,7 +154,7 @@ public abstract class AbstractPlayer {
     /**
      * 绑定VideoView
      */
-    public void bindVideoView(PlayerEventListener playerEventListener) {
+    public void setPlayerEventListener(PlayerEventListener playerEventListener) {
         this.mPlayerEventListener = playerEventListener;
     }
 

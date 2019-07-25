@@ -1,14 +1,14 @@
 package com.dueeeke.dkplayer.util;
 
+import android.support.v4.util.LruCache;
 import android.text.TextUtils;
 
 import com.dueeeke.videoplayer.player.ProgressManager;
 
-import java.util.LinkedHashMap;
-
 public class ProgressManagerImpl extends ProgressManager {
 
-    private static LinkedHashMap<Integer, Long> progressMap = new LinkedHashMap<>();
+    //保存100条记录
+    private static LruCache<Integer, Long> mCache = new LruCache<>(100);
 
     @Override
     public void saveProgress(String url, long progress) {
@@ -17,19 +17,22 @@ public class ProgressManagerImpl extends ProgressManager {
             clearSavedProgressByUrl(url);
             return;
         }
-        progressMap.put(url.hashCode(), progress);
+        mCache.put(url.hashCode(), progress);
     }
 
     @Override
     public long getSavedProgress(String url) {
-        return TextUtils.isEmpty(url) ? 0 : progressMap.containsKey(url.hashCode()) ? progressMap.get(url.hashCode()) : 0;
+        if (TextUtils.isEmpty(url)) return 0;
+        Long pro = mCache.get(url.hashCode());
+        if (pro == null) return 0;
+        return pro;
     }
 
     public void clearAllSavedProgress() {
-        progressMap.clear();
+        mCache.evictAll();
     }
 
     public void clearSavedProgressByUrl(String url) {
-        progressMap.remove(url.hashCode());
+        mCache.remove(url.hashCode());
     }
 }

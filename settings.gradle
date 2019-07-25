@@ -1,4 +1,4 @@
-include ':app'
+include ':dkplayer-sample'
 include ':dkplayer-java'
 include ':dkplayer-ui'
 include 'dkplayer-players:ijk'
