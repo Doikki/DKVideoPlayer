@@ -217,6 +217,7 @@ public class StandardVideoController extends GestureVideoController implements V
                 L.e("STATE_PAUSED");
                 mPlayButton.setSelected(false);
                 mStartPlayButton.setVisibility(GONE);
+                removeCallbacks(mShowProgress);
                 break;
             case VideoView.STATE_PREPARING:
                 L.e("STATE_PREPARING");
@@ -238,6 +239,7 @@ public class StandardVideoController extends GestureVideoController implements V
                 mThumb.setVisibility(GONE);
                 mBottomProgress.setVisibility(GONE);
                 mTopContainer.setVisibility(GONE);
+                removeCallbacks(mShowProgress);
                 break;
             case VideoView.STATE_BUFFERING:
                 L.e("STATE_BUFFERING");

@@ -20,6 +20,7 @@ import com.dueeeke.dkplayer.activity.extend.ExtendActivity;
 import com.dueeeke.dkplayer.activity.list.ListActivity;
 import com.dueeeke.dkplayer.activity.pip.PIPDemoActivity;
 import com.dueeeke.dkplayer.util.PIPManager;
+import com.dueeeke.dkplayer.util.Utils;
 import com.dueeeke.dkplayer.util.VideoCacheManager;
 import com.dueeeke.videoplayer.exo.ExoMediaPlayerFactory;
 import com.dueeeke.videoplayer.ijk.IjkPlayerFactory;
@@ -45,21 +46,15 @@ public class MainActivity extends AppCompatActivity {
 
         editText = findViewById(R.id.et);
         mCurrentPlayer = findViewById(R.id.curr_player);
-        VideoViewConfig config = VideoViewManager.getConfig();
-        try {
-            Field mPlayerFactoryField = config.getClass().getDeclaredField("mPlayerFactory");
-            mPlayerFactoryField.setAccessible(true);
-            Object playerFactory = mPlayerFactoryField.get(config);
-            String msg = getString(R.string.str_current_player);
-            if (playerFactory instanceof IjkPlayerFactory) {
-                mCurrentPlayer.setText(msg + "IjkPlayer");
-            } else if (playerFactory instanceof ExoMediaPlayerFactory) {
-                mCurrentPlayer.setText(msg + "ExoPlayer");
-            } else {
-                mCurrentPlayer.setText(msg + "MediaPlayer");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+
+        Object playerFactory = Utils.getCurrentPlayerFactory();
+        String msg = getString(R.string.str_current_player);
+        if (playerFactory instanceof IjkPlayerFactory) {
+            mCurrentPlayer.setText(msg + "IjkPlayer");
+        } else if (playerFactory instanceof ExoMediaPlayerFactory) {
+            mCurrentPlayer.setText(msg + "ExoPlayer");
+        } else {
+            mCurrentPlayer.setText(msg + "MediaPlayer");
         }
 
         ((RadioGroup) findViewById(R.id.rg)).setOnCheckedChangeListener((group, checkedId) -> {

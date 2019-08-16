@@ -4,11 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.dueeeke.dkplayer.R;
+import com.dueeeke.dkplayer.activity.BaseActivity;
 import com.dueeeke.dkplayer.util.IntentKeys;
 import com.dueeeke.dkplayer.util.ProgressManagerImpl;
 import com.dueeeke.videocontroller.StandardVideoController;
@@ -21,7 +21,7 @@ import com.dueeeke.videoplayer.util.L;
  * Created by Devlin_n on 2017/4/7.
  */
 
-public class PlayerActivity extends AppCompatActivity {
+public class PlayerActivity extends BaseActivity {
 
     private VideoView mVideoView;
 
@@ -63,6 +63,11 @@ public class PlayerActivity extends AppCompatActivity {
 
             mVideoView.start();
         }
+    }
+
+    @Override
+    protected VideoView getVideoView() {
+        return mVideoView;
     }
 
     private OnVideoViewStateChangeListener mOnVideoViewStateChangeListener = new OnVideoViewStateChangeListener() {

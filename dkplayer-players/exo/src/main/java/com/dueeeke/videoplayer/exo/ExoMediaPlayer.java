@@ -179,8 +179,9 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
 
     @Override
     public void reset() {
-        release();
-        initPlayer();
+        if (mInternalPlayer != null) {
+            mInternalPlayer.stop(true);
+        }
     }
 
     @Override
@@ -209,10 +210,15 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
     @Override
     public void release() {
         if (mInternalPlayer != null) {
-            mInternalPlayer.release();
             mInternalPlayer.removeListener(this);
             mInternalPlayer.removeVideoListener(this);
-            mInternalPlayer = null;
+            new Thread() {
+                @Override
+                public void run() {
+                    mInternalPlayer.release();
+                    mInternalPlayer = null;
+                }
+            }.start();
         }
 
         mSurface = null;
@@ -310,7 +316,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
                         mIsPreparing = false;
                     } else if (mIsBuffering) {
                         if (mPlayerEventListener != null) {
-                            mPlayerEventListener.onInfo(MEDIA_INFO_BUFFERING_END, mInternalPlayer.getBufferedPercentage());
+                            mPlayerEventListener.onInfo(MEDIA_INFO_BUFFERING_END, getBufferedPercentage());
                         }
                         mIsBuffering = false;
                     }
@@ -318,7 +324,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
                 case Player.STATE_BUFFERING:
                     if (!mIsPreparing) {
                         if (mPlayerEventListener != null) {
-                            mPlayerEventListener.onInfo(MEDIA_INFO_BUFFERING_START, mInternalPlayer.getBufferedPercentage());
+                            mPlayerEventListener.onInfo(MEDIA_INFO_BUFFERING_START, getBufferedPercentage());
                         }
                         mIsBuffering = true;
                     }
