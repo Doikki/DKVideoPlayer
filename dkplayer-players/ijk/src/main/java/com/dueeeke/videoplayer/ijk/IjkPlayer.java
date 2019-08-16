@@ -12,6 +12,7 @@ import android.view.SurfaceHolder;
 import com.dueeeke.videoplayer.player.AbstractPlayer;
 import com.dueeeke.videoplayer.player.VideoViewManager;
 
+import java.util.List;
 import java.util.Map;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
@@ -78,6 +79,11 @@ public class IjkPlayer extends AbstractPlayer {
         } catch (Exception e) {
             mPlayerEventListener.onError();
         }
+    }
+
+    @Override
+    public void setDataSources(List<String> paths) {
+
     }
 
     @Override

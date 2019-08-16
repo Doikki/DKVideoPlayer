@@ -33,9 +33,9 @@ public class CacheVideoView extends VideoView {
 
 
     @Override
-    protected void startPrepare(boolean needReset) {
+    protected void startPrepare(boolean reset) {
         if (TextUtils.isEmpty(mCurrentUrl) && mAssetFileDescriptor == null) return;
-        if (needReset) mMediaPlayer.reset();
+        if (reset) mMediaPlayer.reset();
         if (mAssetFileDescriptor != null) {
             mMediaPlayer.setDataSource(mAssetFileDescriptor);
         } else if (mIsCacheEnabled && !mCurrentUrl.startsWith("file://")) { //本地文件不能缓存

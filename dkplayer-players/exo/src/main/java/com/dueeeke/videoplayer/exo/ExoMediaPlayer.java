@@ -14,64 +14,62 @@ import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ext.rtmp.RtmpDataSourceFactory;
+import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
-import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
-import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource;
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoListener;
 
+import java.util.List;
 import java.util.Map;
 
 
 public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Player.EventListener {
 
-    private Context mAppContext;
-    private SimpleExoPlayer mInternalPlayer;
-    private MediaSource mMediaSource;
-    private String mDataSource;
-    private Surface mSurface;
-    private PlaybackParameters mSpeedPlaybackParameters;
-    private int lastReportedPlaybackState;
-    private boolean lastReportedPlayWhenReady;
-    private boolean mIsPreparing;
-    private boolean mIsBuffering;
-    private DataSource.Factory mediaDataSourceFactory;
-    private Map<String, String> mHeaders;
-    private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
+    protected Context mAppContext;
+    protected SimpleExoPlayer mInternalPlayer;
+    protected MediaSource mMediaSource;
+    protected Surface mSurface;
+    protected PlaybackParameters mSpeedPlaybackParameters;
+    protected DataSource.Factory mDataSourceFactory;
+    protected String mUserAgent;
+    protected DefaultHttpDataSourceFactory mHttpDataSourceFactory;
+
+    protected int mLastReportedPlaybackState;
+    protected boolean mLastReportedPlayWhenReady;
+    protected boolean mIsPreparing;
+    protected boolean mIsBuffering;
 
     public ExoMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
-        lastReportedPlaybackState = Player.STATE_IDLE;
-        mediaDataSourceFactory = getDataSourceFactory(true);
+        mLastReportedPlaybackState = Player.STATE_IDLE;
+        mUserAgent = Util.getUserAgent(mAppContext, mAppContext.getApplicationInfo().name);
+        mDataSourceFactory = getDataSourceFactory();
     }
 
     @Override
     public void initPlayer() {
-        TrackSelection.Factory videoTrackSelectionFactory =
-                new AdaptiveTrackSelection.Factory();
-        DefaultTrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
-        mInternalPlayer = ExoPlayerFactory.newSimpleInstance(mAppContext, trackSelector);
+        mInternalPlayer = ExoPlayerFactory.newSimpleInstance(mAppContext);
         mInternalPlayer.addListener(this);
         mInternalPlayer.addVideoListener(this);
     }
 
     @Override
     public void setDataSource(String path, Map<String, String> headers) {
-        mDataSource = path;
-        mMediaSource = getMediaSource();
-        mHeaders = headers;
+        mMediaSource = getMediaSource(path);
+
+        if (headers != null && headers.size() > 0) {
+            for (Map.Entry<String, String> header : headers.entrySet()) {
+                mHttpDataSourceFactory.getDefaultRequestProperties().set(header.getKey(), header.getValue());
+            }
+        }
     }
 
     @Override
@@ -79,67 +77,57 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
         //no support
     }
 
-    private MediaSource getMediaSource() {
-        Uri contentUri = Uri.parse(mDataSource);
+    @Override
+    public void setDataSources(List<String> paths) {
+        mMediaSource = new ConcatenatingMediaSource();
+        for (String path : paths) {
+            ((ConcatenatingMediaSource) mMediaSource).addMediaSource(getMediaSource(path));
+        }
+    }
+
+    private MediaSource getMediaSource(String uri) {
+        Uri contentUri = Uri.parse(uri);
         if ("rtmp".equals(contentUri.getScheme())) {
-            RtmpDataSourceFactory rtmpDataSourceFactory = new RtmpDataSourceFactory(null);
-            return new ExtractorMediaSource.Factory(rtmpDataSourceFactory)
+            return new ExtractorMediaSource.Factory(new RtmpDataSourceFactory(null))
                     .createMediaSource(contentUri);
         }
-        int contentType = Util.inferContentType(mDataSource);
+        int contentType = Util.inferContentType(uri);
         switch (contentType) {
             case C.TYPE_DASH:
-                return new DashMediaSource.Factory(
-                        new DefaultDashChunkSource.Factory(mediaDataSourceFactory),
-                        getDataSourceFactory(false))
-                        .createMediaSource(contentUri);
+                return new DashMediaSource.Factory(mDataSourceFactory).createMediaSource(contentUri);
             case C.TYPE_SS:
-                return new SsMediaSource.Factory(
-                        new DefaultSsChunkSource.Factory(mediaDataSourceFactory),
-                        getDataSourceFactory(false))
-                        .createMediaSource(contentUri);
+                return new SsMediaSource.Factory(mDataSourceFactory).createMediaSource(contentUri);
             case C.TYPE_HLS:
-                return new HlsMediaSource.Factory(mediaDataSourceFactory)
-                        .createMediaSource(contentUri);
+                return new HlsMediaSource.Factory(mDataSourceFactory).createMediaSource(contentUri);
             default:
             case C.TYPE_OTHER:
-                return new ExtractorMediaSource.Factory(mediaDataSourceFactory)
-                        .createMediaSource(contentUri);
+                return new ExtractorMediaSource.Factory(mDataSourceFactory).createMediaSource(contentUri);
         }
     }
 
     /**
      * Returns a new DataSource factory.
      *
-     * @param useBandwidthMeter Whether to set {@link #BANDWIDTH_METER} as a listener to the new
-     *                          DataSource factory.
      * @return A new DataSource factory.
      */
-    private DataSource.Factory getDataSourceFactory(boolean useBandwidthMeter) {
-        return new DefaultDataSourceFactory(mAppContext, useBandwidthMeter ? null : BANDWIDTH_METER,
-                getHttpDataSourceFactory(useBandwidthMeter));
+    private DataSource.Factory getDataSourceFactory() {
+        return new DefaultDataSourceFactory(mAppContext, getHttpDataSourceFactory());
     }
 
     /**
      * Returns a new HttpDataSource factory.
      *
-     * @param useBandwidthMeter Whether to set {@link #BANDWIDTH_METER} as a listener to the new
-     *                          DataSource factory.
      * @return A new HttpDataSource factory.
      */
-    private DataSource.Factory getHttpDataSourceFactory(boolean useBandwidthMeter) {
-        DefaultHttpDataSourceFactory dataSourceFactory = new DefaultHttpDataSourceFactory(
-                Util.getUserAgent(mAppContext, mAppContext.getApplicationInfo().name),
-                useBandwidthMeter ? null : BANDWIDTH_METER,
+    private DataSource.Factory getHttpDataSourceFactory() {
+        mHttpDataSourceFactory = new DefaultHttpDataSourceFactory(
+                mUserAgent,
+                null,
                 DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
                 DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,
+                //http->https重定向支持
                 true);
-        if (mHeaders != null && mHeaders.size() > 0) {
-            for (Map.Entry<String, String> header : mHeaders.entrySet()) {
-                dataSourceFactory.getDefaultRequestProperties().set(header.getKey(), header.getValue());
-            }
-        }
-        return dataSourceFactory;
+        return mHttpDataSourceFactory;
     }
 
     @Override
@@ -222,12 +210,10 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
         }
 
         mSurface = null;
-        mDataSource = null;
-        mHeaders = null;
         mIsPreparing = false;
         mIsBuffering = false;
-        lastReportedPlaybackState = Player.STATE_IDLE;
-        lastReportedPlayWhenReady = false;
+        mLastReportedPlaybackState = Player.STATE_IDLE;
+        mLastReportedPlayWhenReady = false;
         mSpeedPlaybackParameters = null;
     }
 
@@ -305,7 +291,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-        if (lastReportedPlayWhenReady != playWhenReady || lastReportedPlaybackState != playbackState) {
+        if (mLastReportedPlayWhenReady != playWhenReady || mLastReportedPlaybackState != playbackState) {
             switch (playbackState) {
                 case Player.STATE_READY:
                     if (mIsPreparing) {
@@ -336,8 +322,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
                     break;
             }
         }
-        lastReportedPlayWhenReady = playWhenReady;
-        lastReportedPlaybackState = playbackState;
+        mLastReportedPlayWhenReady = playWhenReady;
+        mLastReportedPlaybackState = playbackState;
     }
 
     @Override

@@ -266,6 +266,7 @@ public class StandardVideoController extends GestureVideoController implements V
                 mBottomProgress.setVisibility(GONE);
                 mBottomProgress.setProgress(0);
                 mBottomProgress.setSecondaryProgress(0);
+                mLoadingProgress.setVisibility(GONE);
                 mIsLocked = false;
                 mMediaPlayer.setLock(false);
                 break;

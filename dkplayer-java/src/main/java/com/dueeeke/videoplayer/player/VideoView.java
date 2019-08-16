@@ -125,6 +125,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
     protected boolean mEnableMediaCodec;//启用MediaCodec解码
 
     protected boolean mEnableParallelPlay;//支持多开
+    private List<String> mUrls;
 
     public VideoView(@NonNull Context context) {
         this(context, null);
@@ -273,11 +274,15 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
     /**
      * 开始准备播放（直接播放）
      */
-    protected void startPrepare(boolean needReset) {
-        if (TextUtils.isEmpty(mCurrentUrl) && mAssetFileDescriptor == null) return;
-        if (needReset) mMediaPlayer.reset();
+    protected void startPrepare(boolean reset) {
+        if (TextUtils.isEmpty(mCurrentUrl)
+                && mAssetFileDescriptor == null
+                && (mUrls == null || mUrls.size() == 0)) return;
+        if (reset) mMediaPlayer.reset();
         if (mAssetFileDescriptor != null) {
             mMediaPlayer.setDataSource(mAssetFileDescriptor);
+        } else if (mUrls != null && mUrls.size() > 0) {
+            mMediaPlayer.setDataSources(mUrls);
         } else {
             mMediaPlayer.setDataSource(mCurrentUrl, mHeaders);
         }
@@ -586,6 +591,13 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
     public void setUrl(String url, Map<String, String> headers) {
         mCurrentUrl = url;
         mHeaders = headers;
+    }
+
+    /**
+     * 多个视频无缝衔接播放
+     */
+    public void setUrls(List<String> urls) {
+        mUrls = urls;
     }
 
     /**
