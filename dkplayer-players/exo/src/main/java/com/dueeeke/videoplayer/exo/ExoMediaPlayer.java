@@ -78,7 +78,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
     }
 
     @Override
-    public void setDataSources(List<String> paths) {
+    public void setDataSource(List<String> paths) {
         mMediaSource = new ConcatenatingMediaSource();
         for (String path : paths) {
             ((ConcatenatingMediaSource) mMediaSource).addMediaSource(getMediaSource(path));

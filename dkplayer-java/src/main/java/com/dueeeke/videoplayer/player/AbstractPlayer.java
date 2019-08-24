@@ -58,7 +58,7 @@ public abstract class AbstractPlayer {
     public abstract void setDataSource(AssetFileDescriptor fd);
 
 
-    public abstract void setDataSources(List<String> paths);
+    public abstract void setDataSource(List<String> paths);
 
     /**
      * 播放

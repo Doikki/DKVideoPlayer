@@ -19,7 +19,6 @@ import android.view.Gravity;
 import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.dueeeke.videoplayer.R;
@@ -55,9 +54,11 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
      */
     protected FrameLayout mPlayerContainer;
     protected boolean mIsFullScreen;//是否处于全屏状态
-    //通过添加和移除这个view来实现隐藏和显示系统navigation bar，可以避免出现一些奇奇怪怪的问题
-    protected View mHideNavBarView;
+    //通过添加和移除这个view来实现隐藏和显示系统UI，可以避免出现一些奇奇怪怪的问题
+    @Nullable
+    protected View mHideSysUIView;
     protected static final int FULLSCREEN_FLAGS = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+            | View.SYSTEM_UI_FLAG_FULLSCREEN
             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
 
     public static final int SCREEN_SCALE_DEFAULT = 0;
@@ -176,9 +177,6 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
         this.addView(mPlayerContainer, params);
-
-        mHideNavBarView = new View(getContext());
-        mHideNavBarView.setSystemUiVisibility(FULLSCREEN_FLAGS);
     }
 
     /**
@@ -207,17 +205,21 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
 
         if (checkNetwork()) return;
 
+        //监听音频焦点改变
         if (mEnableAudioFocus) {
             mAudioManager = (AudioManager) getContext().getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
             mAudioFocusHelper = new AudioFocusHelper();
         }
 
+        //读取播放进度
         if (mProgressManager != null) {
             mCurrentPosition = mProgressManager.getSavedProgress(mUrl);
         }
 
-        if (mAutoRotate)
+        //监听设备方向改变
+        if (mAutoRotate) {
             mOrientationEventListener.enable();
+        }
 
         initPlayer();
         startPrepare(false);
@@ -300,7 +302,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
             mMediaPlayer.setDataSource(mAssetFileDescriptor);
             return true;
         } else if (mUrls != null && mUrls.size() > 0) {
-            mMediaPlayer.setDataSources(mUrls);
+            mMediaPlayer.setDataSource(mUrls);
             return true;
         } else if (!TextUtils.isEmpty(mUrl)) {
             mMediaPlayer.setDataSource(mUrl, mHeaders);
@@ -742,22 +744,22 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
     public void startFullScreen() {
         if (mIsFullScreen) return;
         if (mVideoController == null) return;
+        //注意：此处是获取到的activity是和VideoController相关联的，换句话说，一定要确保VideoController是通过activity context创建的
         Activity activity = PlayerUtils.scanForActivity(mVideoController.getContext());
         if (activity == null) return;
-        //隐藏ActionBar
-        PlayerUtils.hideActionBar(activity);
-        //隐藏NavigationBar
-        this.addView(mHideNavBarView);
-        activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        //隐藏NavigationBar和StatusBar
+        if (mHideSysUIView == null) {
+            mHideSysUIView = new View(getContext());
+            mHideSysUIView.setSystemUiVisibility(FULLSCREEN_FLAGS);
+        }
+        this.addView(mHideSysUIView);
         //从当前FrameLayout中移除播放器视图
         this.removeView(mPlayerContainer);
-        ViewGroup contentView = activity.findViewById(android.R.id.content);
-        LayoutParams params = new LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT);
-        //将播放器视图添加到ContentView（就是setContentView的ContentView）中即实现了全屏
-        contentView.addView(mPlayerContainer, params);
+        //将播放器视图添加到DecorView中即实现了全屏
+        ViewGroup decorView = (ViewGroup) activity.getWindow().getDecorView();
+        decorView.addView(mPlayerContainer);
+
+        //在全屏时强制监听设备方向
         mOrientationEventListener.enable();
         mIsFullScreen = true;
         setPlayerState(PLAYER_FULL_SCREEN);
@@ -770,22 +772,17 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
     public void stopFullScreen() {
         if (!mIsFullScreen) return;
         if (mVideoController == null) return;
+        //注意：此处是获取到的activity是和VideoController相关联的，换句话说，一定要确保VideoController是通过activity context创建的
         Activity activity = PlayerUtils.scanForActivity(mVideoController.getContext());
         if (activity == null) return;
         if (!mAutoRotate) mOrientationEventListener.disable();
-        //显示ActionBar
-        PlayerUtils.showActionBar(activity);
-        //显示NavigationBar
-        this.removeView(mHideNavBarView);
-        activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        ViewGroup contentView = activity.findViewById(android.R.id.content);
-        //把播放器视图从ContentView（就是setContentView的ContentView）中移除
-        contentView.removeView(mPlayerContainer);
-        LayoutParams params = new LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT);
-        //将播放器视图添加到当前FrameLayout中即退出了全屏
-        this.addView(mPlayerContainer, params);
+        //显示NavigationBar和StatusBar
+        this.removeView(mHideSysUIView);
+        //把播放器视图从DecorView中移除并添加到当前FrameLayout中即退出了全屏
+        ViewGroup decorView = (ViewGroup) activity.getWindow().getDecorView();
+        decorView.removeView(mPlayerContainer);
+        this.addView(mPlayerContainer);
+
         mIsFullScreen = false;
         setPlayerState(PLAYER_NORMAL);
     }
@@ -808,7 +805,6 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
         if (activity == null) return;
         mOrientationEventListener.disable();
         this.removeView(mPlayerContainer);
-        ViewGroup contentView = activity.findViewById(android.R.id.content);
         int width = mTinyScreenSize[0];
         if (width <= 0) {
             width = PlayerUtils.getScreenWidth(activity, false) / 2;
@@ -821,7 +817,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
 
         LayoutParams params = new LayoutParams(width, height);
         params.gravity = Gravity.BOTTOM | Gravity.END;
-        contentView.addView(mPlayerContainer, params);
+        activity.addContentView(mPlayerContainer, params);
         mIsTinyScreen = true;
         setPlayerState(PLAYER_TINY_SCREEN);
     }
@@ -851,7 +847,6 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
         return mIsTinyScreen;
     }
 
-
     @Override
     public void onVideoSizeChanged(int videoWidth, int videoHeight) {
         mVideoSize[0] = videoWidth;
@@ -868,7 +863,9 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus) {
             //重新获得焦点时保持全屏状态
-            mHideNavBarView.setSystemUiVisibility(FULLSCREEN_FLAGS);
+            if (mHideSysUIView != null) {
+                mHideSysUIView.setSystemUiVisibility(FULLSCREEN_FLAGS);
+            }
         }
 
         if (isInPlaybackState() && (mAutoRotate || mIsFullScreen)) {
@@ -964,7 +961,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
     /**
      * 加速度传感器监听
      */
-    protected OrientationEventListener mOrientationEventListener = new OrientationEventListener(getContext()) { // 加速度传感器监听，用于自动旋转屏幕
+    protected OrientationEventListener mOrientationEventListener = new OrientationEventListener(getContext().getApplicationContext()) { // 加速度传感器监听，用于自动旋转屏幕
         private long mLastTime;
 
         @Override

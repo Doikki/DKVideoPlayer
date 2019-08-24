@@ -82,7 +82,7 @@ public class IjkPlayer extends AbstractPlayer {
     }
 
     @Override
-    public void setDataSources(List<String> paths) {
+    public void setDataSource(List<String> paths) {
 
     }
 

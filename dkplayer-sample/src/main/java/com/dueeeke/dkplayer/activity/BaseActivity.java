@@ -6,7 +6,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -34,8 +36,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onPostCreate(savedInstanceState);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         params.gravity = Gravity.CENTER_HORIZONTAL;
-        addContentView(mDebugInfo, params);
-
+        mDebugInfo.setLayoutParams(params);
+        addContentView(mDebugInfo, mDebugInfo.getLayoutParams());
         mHelper = new DebugTextViewHelper(getVideoView(), mDebugInfo);
         mHelper.start();
     }
@@ -43,7 +45,21 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        mDebugInfo.bringToFront();
+        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            removeViewFromParent(mDebugInfo);
+            addContentView(mDebugInfo, mDebugInfo.getLayoutParams());
+        } else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            removeViewFromParent(mDebugInfo);
+            ViewGroup decorView = (ViewGroup) getWindow().getDecorView();
+            decorView.addView(mDebugInfo);
+        }
+    }
+
+    private void removeViewFromParent(View view) {
+        ViewParent parent = view.getParent();
+        if (parent instanceof ViewGroup) {
+            ((ViewGroup) parent).removeView(view);
+        }
     }
 
     protected abstract VideoView getVideoView();

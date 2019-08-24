@@ -1,6 +1,5 @@
 package com.dueeeke.videoplayer.util;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -9,9 +8,6 @@ import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.ContextThemeWrapper;
 import android.telephony.TelephonyManager;
 import android.util.TypedValue;
 import android.view.Display;
@@ -97,53 +93,10 @@ public class PlayerUtils {
     }
 
     /**
-     * 隐藏ActionBar
-     */
-    @SuppressLint("RestrictedApi")
-    public static void hideActionBar(Context context) {
-        AppCompatActivity appCompatActivity = getAppCompatActivity(context);
-        if (appCompatActivity != null) {
-            ActionBar ab = appCompatActivity.getSupportActionBar();
-            if (ab != null && ab.isShowing()) {
-                ab.setShowHideAnimationEnabled(false);
-                ab.hide();
-            }
-        }
-    }
-
-    /**
-     * 显示ActionBar
-     */
-    @SuppressLint("RestrictedApi")
-    public static void showActionBar(final Context context) {
-        AppCompatActivity appCompatActivity = getAppCompatActivity(context);
-        if (appCompatActivity != null) {
-            ActionBar ab = appCompatActivity.getSupportActionBar();
-            if (ab != null && !ab.isShowing()) {
-                ab.setShowHideAnimationEnabled(false);
-                ab.show();
-            }
-        }
-    }
-
-    /**
      * 获取Activity
      */
     public static Activity scanForActivity(Context context) {
         return context == null ? null : (context instanceof Activity ? (Activity) context : (context instanceof ContextWrapper ? scanForActivity(((ContextWrapper) context).getBaseContext()) : null));
-    }
-
-    /**
-     * Get AppCompatActivity from context
-     */
-    public static AppCompatActivity getAppCompatActivity(Context context) {
-        if (context == null) return null;
-        if (context instanceof AppCompatActivity) {
-            return (AppCompatActivity) context;
-        } else if (context instanceof ContextThemeWrapper) {
-            return getAppCompatActivity(((ContextThemeWrapper) context).getBaseContext());
-        }
-        return null;
     }
 
     /**
