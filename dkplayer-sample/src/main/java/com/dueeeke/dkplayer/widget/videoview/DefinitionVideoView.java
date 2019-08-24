@@ -40,7 +40,7 @@ public class DefinitionVideoView extends VideoView implements DefinitionMediaPla
     public void switchDefinition(String definition) {
         String url = mDefinitionMap.get(definition);
         if (definition.equals(mCurrentDefinition)) return;
-        mCurrentUrl = url;
+        mUrl = url;
         addDisplay();
         getCurrentPosition();
         startPrepare(true);
@@ -49,7 +49,7 @@ public class DefinitionVideoView extends VideoView implements DefinitionMediaPla
 
     public void setDefinitionVideos(LinkedHashMap<String, String> videos) {
         this.mDefinitionMap = videos;
-        this.mCurrentUrl = getValueFromLinkedMap(videos, 0);
+        this.mUrl = getValueFromLinkedMap(videos, 0);
     }
 
     public static String getValueFromLinkedMap(LinkedHashMap<String, String> map, int index) {

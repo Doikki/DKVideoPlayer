@@ -85,7 +85,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
         }
     }
 
-    private MediaSource getMediaSource(String uri) {
+    protected MediaSource getMediaSource(String uri) {
         Uri contentUri = Uri.parse(uri);
         if ("rtmp".equals(contentUri.getScheme())) {
             return new ExtractorMediaSource.Factory(new RtmpDataSourceFactory(null))

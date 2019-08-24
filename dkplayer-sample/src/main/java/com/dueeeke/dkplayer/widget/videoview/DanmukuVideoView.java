@@ -75,6 +75,7 @@ public class DanmukuVideoView extends VideoView {
     protected void startPrepare(boolean reset) {
         super.startPrepare(reset);
         if (mDanmakuView != null) {
+            if (reset) mDanmakuView.restart();
             mDanmakuView.prepare(mParser, mContext);
         }
     }

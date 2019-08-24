@@ -3,7 +3,6 @@ package com.dueeeke.dkplayer.widget.videoview;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 
 import com.danikula.videocache.CacheListener;
@@ -31,29 +30,20 @@ public class CacheVideoView extends VideoView {
         super(context, attrs, defStyleAttr);
     }
 
-
     @Override
-    protected void startPrepare(boolean reset) {
-        if (TextUtils.isEmpty(mCurrentUrl) && mAssetFileDescriptor == null) return;
-        if (reset) mMediaPlayer.reset();
-        if (mAssetFileDescriptor != null) {
-            mMediaPlayer.setDataSource(mAssetFileDescriptor);
-        } else if (mIsCacheEnabled && !mCurrentUrl.startsWith("file://")) { //本地文件不能缓存
+    protected boolean prepareDataSource() {
+        if (mIsCacheEnabled && !isLocalDataSource()) { //本地数据源不能缓存
             mCacheServer = getCacheServer();
-            String proxyPath = mCacheServer.getProxyUrl(mCurrentUrl);
-            mCacheServer.registerCacheListener(cacheListener, mCurrentUrl);
-            if (mCacheServer.isCached(mCurrentUrl)) {
+            String proxyPath = mCacheServer.getProxyUrl(mUrl);
+            mCacheServer.registerCacheListener(cacheListener, mUrl);
+            if (mCacheServer.isCached(mUrl)) {
                 mBufferedPercentage = 100;
             }
             mMediaPlayer.setDataSource(proxyPath, mHeaders);
-        } else {
-            mMediaPlayer.setDataSource(mCurrentUrl, mHeaders);
+            return true;
         }
-        mMediaPlayer.prepareAsync();
-        setPlayState(STATE_PREPARING);
-        setPlayerState(isFullScreen() ? PLAYER_FULL_SCREEN : PLAYER_NORMAL);
+        return super.prepareDataSource();
     }
-
 
     public HttpProxyCacheServer getCacheServer() {
         return VideoCacheManager.getProxy(getContext().getApplicationContext());

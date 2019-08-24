@@ -93,31 +93,34 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
 
-        //切换播放核心，不推荐这么做，我这么写只是为了方便测试
-        VideoViewConfig config = VideoViewManager.getConfig();
-        try {
-            Field mPlayerFactoryField = config.getClass().getDeclaredField("mPlayerFactory");
-            mPlayerFactoryField.setAccessible(true);
-            PlayerFactory playerFactory = null;
-            String msg = getString(R.string.str_current_player);
-            switch (itemId) {
-                case R.id.ijk:
-                    playerFactory = IjkPlayerFactory.create(this);
-                    mCurrentPlayer.setText(msg + "IjkPlayer");
-                    break;
-                case R.id.exo:
-                    playerFactory = ExoMediaPlayerFactory.create(this);
-                    mCurrentPlayer.setText(msg + "ExoPlayer");
-                    break;
-                case R.id.media:
-                    playerFactory = AndroidMediaPlayerFactory.create(this);
-                    mCurrentPlayer.setText(msg + "MediaPlayer");
-                    break;
+        if (itemId == R.id.ijk || itemId == R.id.exo || itemId == R.id.media) {
+            //切换播放核心，不推荐这么做，我这么写只是为了方便测试
+            VideoViewConfig config = VideoViewManager.getConfig();
+            try {
+                Field mPlayerFactoryField = config.getClass().getDeclaredField("mPlayerFactory");
+                mPlayerFactoryField.setAccessible(true);
+                PlayerFactory playerFactory = null;
+                String msg = getString(R.string.str_current_player);
+                switch (itemId) {
+                    case R.id.ijk:
+                        playerFactory = IjkPlayerFactory.create(this);
+                        mCurrentPlayer.setText(msg + "IjkPlayer");
+                        break;
+                    case R.id.exo:
+                        playerFactory = ExoMediaPlayerFactory.create(this);
+                        mCurrentPlayer.setText(msg + "ExoPlayer");
+                        break;
+                    case R.id.media:
+                        playerFactory = AndroidMediaPlayerFactory.create(this);
+                        mCurrentPlayer.setText(msg + "MediaPlayer");
+                        break;
+                }
+                mPlayerFactoryField.set(config, playerFactory);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            mPlayerFactoryField.set(config, playerFactory);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+
         return super.onOptionsItemSelected(item);
     }
 

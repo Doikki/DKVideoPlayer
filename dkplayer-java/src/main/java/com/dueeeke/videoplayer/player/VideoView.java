@@ -76,9 +76,12 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
 
     protected boolean mIsMute;//是否静音
 
-    protected String mCurrentUrl;//当前播放视频的地址
-    protected Map<String, String> mHeaders;//当前视频地址的请求头
+    //--------- data sources ---------//
+    protected String mUrl;//当前播放视频的地址
+    protected List<String> mUrls;//concat地址
     protected AssetFileDescriptor mAssetFileDescriptor;//assets文件
+    protected Map<String, String> mHeaders;//当前视频地址的请求头
+
     protected long mCurrentPosition;//当前正在播放视频的位置
 
     //播放器的各种状态
@@ -125,7 +128,6 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
     protected boolean mEnableMediaCodec;//启用MediaCodec解码
 
     protected boolean mEnableParallelPlay;//支持多开
-    private List<String> mUrls;
 
     public VideoView(@NonNull Context context) {
         this(context, null);
@@ -211,7 +213,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
         }
 
         if (mProgressManager != null) {
-            mCurrentPosition = mProgressManager.getSavedProgress(mCurrentUrl);
+            mCurrentPosition = mProgressManager.getSavedProgress(mUrl);
         }
 
         if (mAutoRotate)
@@ -222,22 +224,28 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
     }
 
     protected boolean checkNetwork() {
-        //播放本地文件、Asset、raw时不检测网络
-        if (mAssetFileDescriptor != null) {
-            return false;
-        } else if (!TextUtils.isEmpty(mCurrentUrl)) {
-            Uri uri = Uri.parse(mCurrentUrl);
-            if (ContentResolver.SCHEME_ANDROID_RESOURCE.equals(uri.getScheme())
-                    || ContentResolver.SCHEME_FILE.equals(uri.getScheme())) {
-                return false;
-            }
-        }
+        //播放本地数据源时不检测网络
+        if (isLocalDataSource()) return false;
 
         if (mVideoController != null
                 && PlayerUtils.getNetworkType(getContext()) == PlayerUtils.NETWORK_MOBILE
                 && !VideoViewManager.instance().playOnMobileNetwork()) {
             mVideoController.showStatusView();
             return true;
+        }
+        return false;
+    }
+
+    /**
+     * 判断是否为本地数据源，包括 本地文件、Asset、raw
+     */
+    protected boolean isLocalDataSource() {
+        if (mAssetFileDescriptor != null) {
+            return true;
+        } else if (!TextUtils.isEmpty(mUrl)) {
+            Uri uri = Uri.parse(mUrl);
+            return ContentResolver.SCHEME_ANDROID_RESOURCE.equals(uri.getScheme())
+                    || ContentResolver.SCHEME_FILE.equals(uri.getScheme());
         }
         return false;
     }
@@ -275,20 +283,30 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
      * 开始准备播放（直接播放）
      */
     protected void startPrepare(boolean reset) {
-        if (TextUtils.isEmpty(mCurrentUrl)
-                && mAssetFileDescriptor == null
-                && (mUrls == null || mUrls.size() == 0)) return;
         if (reset) mMediaPlayer.reset();
+        if (prepareDataSource()) {
+            mMediaPlayer.prepareAsync();
+            setPlayState(STATE_PREPARING);
+            setPlayerState(isFullScreen() ? PLAYER_FULL_SCREEN : isTinyScreen() ? PLAYER_TINY_SCREEN : PLAYER_NORMAL);
+        }
+    }
+
+    /**
+     * 设置播放数据
+     * @return 播放数据是否设置成功
+     */
+    protected boolean prepareDataSource() {
         if (mAssetFileDescriptor != null) {
             mMediaPlayer.setDataSource(mAssetFileDescriptor);
+            return true;
         } else if (mUrls != null && mUrls.size() > 0) {
             mMediaPlayer.setDataSources(mUrls);
-        } else {
-            mMediaPlayer.setDataSource(mCurrentUrl, mHeaders);
+            return true;
+        } else if (!TextUtils.isEmpty(mUrl)) {
+            mMediaPlayer.setDataSource(mUrl, mHeaders);
+            return true;
         }
-        mMediaPlayer.prepareAsync();
-        setPlayState(STATE_PREPARING);
-        setPlayerState(isFullScreen() ? PLAYER_FULL_SCREEN : isTinyScreen() ? PLAYER_TINY_SCREEN : PLAYER_NORMAL);
+        return false;
     }
 
     /**
@@ -379,7 +397,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
     protected void saveProgress() {
         L.d("saveProgress: " + mCurrentPosition);
         if (mCurrentPosition != 0 && mProgressManager != null)
-            mProgressManager.saveProgress(mCurrentUrl, mCurrentPosition);
+            mProgressManager.saveProgress(mUrl, mCurrentPosition);
     }
 
     /**
@@ -507,7 +525,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
         mCurrentPosition = 0;
         if (mProgressManager != null) {
             //播放完成，清除进度
-            mProgressManager.saveProgress(mCurrentUrl, 0);
+            mProgressManager.saveProgress(mUrl, 0);
         }
     }
 
@@ -589,7 +607,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
      * @param headers 请求头
      */
     public void setUrl(String url, Map<String, String> headers) {
-        mCurrentUrl = url;
+        mUrl = url;
         mHeaders = headers;
     }
 

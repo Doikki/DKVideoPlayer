@@ -51,6 +51,8 @@ public class DanmakuActivity extends AppCompatActivity {
             public void onPlayStateChanged(int playState) {
                 if (playState == VideoView.STATE_PREPARED) {
                     simulateDanmu();
+                } else if (playState == VideoView.STATE_PLAYBACK_COMPLETED) {
+                    mHandler.removeCallbacksAndMessages(null);
                 }
             }
         });
@@ -73,6 +75,7 @@ public class DanmakuActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        danmukuVideoView.resume();
     }
 
     @Override
