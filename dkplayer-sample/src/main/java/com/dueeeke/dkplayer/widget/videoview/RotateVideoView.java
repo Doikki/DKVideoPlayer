@@ -23,13 +23,13 @@ public class RotateVideoView extends VideoView {
     @Override
     public void startFullScreen() {
         super.startFullScreen();
-        mOrientationEventListener.disable();
+        mOrientationHelper.disable();
     }
 
 
     @Override
     public void stopFullScreen() {
         super.stopFullScreen();
-        mOrientationEventListener.disable();
+        mOrientationHelper.disable();
     }
 }
