@@ -145,27 +145,27 @@ public class PlayerActivity extends BaseActivity {
     }
 
     public void screenScaleDefault(View view) {
-        mVideoView.setScreenScale(VideoView.SCREEN_SCALE_DEFAULT);
+        mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_DEFAULT);
     }
 
     public void screenScale169(View view) {
-        mVideoView.setScreenScale(VideoView.SCREEN_SCALE_16_9);
+        mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_16_9);
     }
 
     public void screenScale43(View view) {
-        mVideoView.setScreenScale(VideoView.SCREEN_SCALE_4_3);
+        mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_4_3);
     }
 
     public void screenScaleOriginal(View view) {
-        mVideoView.setScreenScale(VideoView.SCREEN_SCALE_ORIGINAL);
+        mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_ORIGINAL);
     }
 
     public void screenScaleMatch(View view) {
-        mVideoView.setScreenScale(VideoView.SCREEN_SCALE_MATCH_PARENT);
+        mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_MATCH_PARENT);
     }
 
     public void screenScaleCenterCrop(View view) {
-        mVideoView.setScreenScale(VideoView.SCREEN_SCALE_CENTER_CROP);
+        mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_CENTER_CROP);
     }
 
     int i = 0;

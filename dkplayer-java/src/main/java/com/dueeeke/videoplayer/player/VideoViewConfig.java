@@ -17,7 +17,7 @@ public class VideoViewConfig {
 
     public final boolean mUsingSurfaceView;
 
-    public final boolean mAutoRotate;
+    public final boolean mEnableOrientation;
 
     public final boolean mEnableAudioFocus;
 
@@ -33,7 +33,7 @@ public class VideoViewConfig {
 
     private VideoViewConfig(Builder builder) {
         mIsEnableLog = builder.mIsEnableLog;
-        mAutoRotate = builder.mAutoRotate;
+        mEnableOrientation = builder.mEnableOrientation;
         mUsingSurfaceView = builder.mUsingSurfaceView;
         mPlayOnMobileNetwork = builder.mPlayOnMobileNetwork;
         mEnableMediaCodec = builder.mEnableMediaCodec;
@@ -50,7 +50,7 @@ public class VideoViewConfig {
         private boolean mIsEnableLog;
         private boolean mPlayOnMobileNetwork;
         private boolean mUsingSurfaceView;
-        private boolean mAutoRotate;
+        private boolean mEnableOrientation;
         private boolean mEnableMediaCodec;
         private boolean mEnableAudioFocus = true;
         private boolean mEnableParallelPlay;
@@ -59,10 +59,10 @@ public class VideoViewConfig {
         private int mScreenScaleType;
 
         /**
-         * 是否通过重力感应切换全屏/半屏播放器， 默认不开启
+         * 是否监听设备方向来切换全屏/半屏， 默认不开启
          */
-        public Builder setAutoRotate(boolean autoRotate) {
-            mAutoRotate = autoRotate;
+        public Builder setEnableOrientation(boolean enableOrientation) {
+            mEnableOrientation = enableOrientation;
             return this;
         }
 
@@ -133,7 +133,7 @@ public class VideoViewConfig {
         /**
          * 设置视频比例
          */
-        public Builder setScreenScale(int screenScaleType) {
+        public Builder setScreenScaleType(int screenScaleType) {
             mScreenScaleType = screenScaleType;
             return this;
         }

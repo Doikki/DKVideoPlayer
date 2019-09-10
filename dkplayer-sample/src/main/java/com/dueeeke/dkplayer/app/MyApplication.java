@@ -31,12 +31,12 @@ public class MyApplication extends Application {
                 .setLogEnabled(BuildConfig.DEBUG)
 //                .setPlayerFactory(IjkPlayerFactory.create(this))
                 .setPlayerFactory(ExoMediaPlayerFactory.create(this))
-//                .setAutoRotate(true)
+//                .setEnableOrientation(true)
 //                .setEnableMediaCodec(true)
 //                .setUsingSurfaceView(true)
 //                .setEnableParallelPlay(true)
 //                .setEnableAudioFocus(false)
-//                .setScreenScale(VideoView.SCREEN_SCALE_MATCH_PARENT)
+//                .setScreenScaleType(VideoView.SCREEN_SCALE_MATCH_PARENT)
                 .build());
 
         if (BuildConfig.DEBUG) {

@@ -67,8 +67,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
     public static final int SCREEN_SCALE_MATCH_PARENT = 3;
     public static final int SCREEN_SCALE_ORIGINAL = 4;
     public static final int SCREEN_SCALE_CENTER_CROP = 5;
-
-    protected int mCurrentScreenScale;
+    protected int mCurrentScreenScaleType;
 
     protected int[] mVideoSize = {0, 0};
 
@@ -118,7 +117,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
     @Nullable
     protected ProgressManager mProgressManager;
 
-    protected boolean mAutoRotate;
+    protected boolean mEnableOrientation;//监听设备Orientation改变
 
     protected boolean mUsingSurfaceView;//启用SurfaceView
 
@@ -143,7 +142,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
 
         //读取全局配置
         VideoViewConfig config = VideoViewManager.getConfig();
-        mAutoRotate = config.mAutoRotate;
+        mEnableOrientation = config.mEnableOrientation;
         mUsingSurfaceView = config.mUsingSurfaceView;
         mEnableMediaCodec = config.mEnableMediaCodec;
         mEnableAudioFocus = config.mEnableAudioFocus;
@@ -151,17 +150,17 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
         mProgressManager = config.mProgressManager;
         //默认使用系统的MediaPlayer进行解码
         mPlayerFactory = config.mPlayerFactory == null ? AndroidMediaPlayerFactory.create(context) : config.mPlayerFactory;
-        mCurrentScreenScale = config.mScreenScaleType;
+        mCurrentScreenScaleType = config.mScreenScaleType;
 
         //读取xml中的配置，并综合全局配置
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.VideoView);
-        mAutoRotate = a.getBoolean(R.styleable.VideoView_autoRotate, mAutoRotate);
+        mEnableOrientation = a.getBoolean(R.styleable.VideoView_autoRotate, mEnableOrientation);
         mUsingSurfaceView = a.getBoolean(R.styleable.VideoView_usingSurfaceView, mUsingSurfaceView);
         mEnableAudioFocus = a.getBoolean(R.styleable.VideoView_enableAudioFocus, mEnableAudioFocus);
         mEnableMediaCodec = a.getBoolean(R.styleable.VideoView_enableMediaCodec, mEnableMediaCodec);
         mEnableParallelPlay = a.getBoolean(R.styleable.VideoView_enableParallelPlay, mEnableParallelPlay);
         mIsLooping = a.getBoolean(R.styleable.VideoView_looping, false);
-        mCurrentScreenScale = a.getInt(R.styleable.VideoView_screenScaleType, mCurrentScreenScale);
+        mCurrentScreenScaleType = a.getInt(R.styleable.VideoView_screenScaleType, mCurrentScreenScaleType);
         a.recycle();
 
         initView();
@@ -219,7 +218,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
         }
 
         //监听设备方向改变
-        if (mAutoRotate) {
+        if (mEnableOrientation) {
             mOrientationHelper.enable();
         }
 
@@ -669,7 +668,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
      * 是否自动旋转， 默认不自动旋转
      */
     public void setAutoRotate(boolean autoRotate) {
-        mAutoRotate = autoRotate;
+        mEnableOrientation = autoRotate;
     }
 
     /**
@@ -782,7 +781,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
         if (decorView == null)
             return;
 
-        if (!mAutoRotate) mOrientationHelper.disable();
+        if (!mEnableOrientation) mOrientationHelper.disable();
 
         //显示NavigationBar和StatusBar
         this.removeView(mHideNavBarView);
@@ -874,7 +873,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
         this.addView(mPlayerContainer, params);
-        if (mAutoRotate) mOrientationHelper.enable();
+        if (mEnableOrientation) mOrientationHelper.enable();
 
         mIsTinyScreen = false;
         setPlayerState(PLAYER_NORMAL);
@@ -890,7 +889,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
         mVideoSize[1] = videoHeight;
 
         if (mRenderView != null) {
-            mRenderView.setScaleType(mCurrentScreenScale);
+            mRenderView.setScaleType(mCurrentScreenScaleType);
             mRenderView.setVideoSize(videoWidth, videoHeight);
         }
     }
@@ -905,7 +904,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
             }
         }
 
-        if (isInPlaybackState() && (mAutoRotate || mIsFullScreen)) {
+        if (isInPlaybackState() && (mEnableOrientation || mIsFullScreen)) {
             if (hasFocus) {
                 postDelayed(new Runnable() {
                     @Override
@@ -938,10 +937,10 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
      * 设置视频比例
      */
     @Override
-    public void setScreenScale(int screenScale) {
-        mCurrentScreenScale = screenScale;
+    public void setScreenScaleType(int screenScaleType) {
+        mCurrentScreenScaleType = screenScaleType;
         if (mRenderView != null) {
-            mRenderView.setScaleType(screenScale);
+            mRenderView.setScaleType(screenScaleType);
         }
     }
 
@@ -1102,7 +1101,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
      * 竖屏
      */
     protected void onOrientationPortrait(Activity activity) {
-        if (mIsLockFullScreen || !mAutoRotate || mCurrentOrientation == PORTRAIT)
+        if (mIsLockFullScreen || !mEnableOrientation || mCurrentOrientation == PORTRAIT)
             return;
         if ((mCurrentOrientation == LANDSCAPE || mCurrentOrientation == REVERSE_LANDSCAPE) && !isFullScreen()) {
             mCurrentOrientation = PORTRAIT;

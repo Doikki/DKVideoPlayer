@@ -99,7 +99,7 @@ public class TikTokActivity extends AppCompatActivity {
         }
         frameLayout.addView(mVideoView);
         mVideoView.setUrl(mVideoList.get(position).getUrl());
-        mVideoView.setScreenScale(VideoView.SCREEN_SCALE_CENTER_CROP);
+        mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_CENTER_CROP);
         mVideoView.start();
     }
 

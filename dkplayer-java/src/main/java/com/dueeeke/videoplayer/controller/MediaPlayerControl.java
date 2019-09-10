@@ -30,7 +30,7 @@ public interface MediaPlayerControl {
 
     void setLock(boolean isLocked);
 
-    void setScreenScale(int screenScale);
+    void setScreenScaleType(int screenScaleType);
 
     void setSpeed(float speed);
 

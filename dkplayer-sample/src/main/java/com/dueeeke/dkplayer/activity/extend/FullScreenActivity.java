@@ -34,7 +34,7 @@ public class FullScreenActivity extends AppCompatActivity{
         FullScreenController controller = new FullScreenController(this);
         controller.setTitle("这是一个标题");
         mVideoView.setVideoController(controller);
-        mVideoView.setScreenScale(VideoView.SCREEN_SCALE_16_9);
+        mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_16_9);
         mVideoView.start();
 
     }
