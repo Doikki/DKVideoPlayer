@@ -25,6 +25,7 @@ public class AndroidMediaPlayer extends AbstractPlayer {
     @Override
     public void initPlayer() {
         mMediaPlayer = new MediaPlayer();
+        setOptions();
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mMediaPlayer.setOnErrorListener(onErrorListener);
         mMediaPlayer.setOnCompletionListener(onCompletionListener);

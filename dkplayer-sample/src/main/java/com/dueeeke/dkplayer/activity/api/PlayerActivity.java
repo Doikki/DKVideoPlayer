@@ -12,9 +12,17 @@ import com.dueeeke.dkplayer.activity.BaseActivity;
 import com.dueeeke.dkplayer.util.IntentKeys;
 import com.dueeeke.dkplayer.util.ProgressManagerImpl;
 import com.dueeeke.videocontroller.StandardVideoController;
+import com.dueeeke.videoplayer.exo.ExoMediaPlayer;
 import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
+import com.dueeeke.videoplayer.player.AbstractPlayer;
+import com.dueeeke.videoplayer.player.PlayerFactory;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.L;
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.google.android.exoplayer2.LoadControl;
+import com.google.android.exoplayer2.RenderersFactory;
+import com.google.android.exoplayer2.trackselection.TrackSelector;
 
 /**
  * 播放器演示
@@ -60,6 +68,20 @@ public class PlayerActivity extends BaseActivity {
 //            mVideoView.setPlayerFactory(ExoMediaPlayerFactory.create(this));
             //使用MediaPlayer解码
 //            mVideoView.setPlayerFactory(AndroidMediaPlayerFactory.create(this));
+
+//            mVideoView.setPlayerFactory(new PlayerFactory() {
+//                @Override
+//                public AbstractPlayer createPlayer() {
+//                    return new ExoMediaPlayer(PlayerActivity.this) {
+//                        @Override
+//                        protected LoadControl getLoadControl() {
+//                            return new DefaultLoadControl.Builder()
+//                                    .setBufferDurationsMs(1000, 1000,1000, 1000)
+//                                    .createDefaultLoadControl();
+//                        }
+//                    };
+//                }
+//            });
 
             mVideoView.start();
         }

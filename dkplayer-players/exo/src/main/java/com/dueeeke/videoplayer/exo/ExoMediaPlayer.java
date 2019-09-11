@@ -8,11 +8,16 @@ import android.view.SurfaceHolder;
 
 import com.dueeeke.videoplayer.player.AbstractPlayer;
 import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.ext.rtmp.RtmpDataSourceFactory;
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
@@ -20,6 +25,8 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
@@ -56,9 +63,28 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
 
     @Override
     public void initPlayer() {
-        mInternalPlayer = ExoPlayerFactory.newSimpleInstance(mAppContext);
+        mInternalPlayer = ExoPlayerFactory.newSimpleInstance(mAppContext, getRenderersFactory(), getTrackSelector(), getLoadControl());
+        setOptions();
         mInternalPlayer.addListener(this);
         mInternalPlayer.addVideoListener(this);
+    }
+
+    protected TrackSelector getTrackSelector() {
+        return new DefaultTrackSelector();
+    }
+
+    /**
+     * 渲染器
+     */
+    protected RenderersFactory getRenderersFactory() {
+        return new DefaultRenderersFactory(mAppContext);
+    }
+
+    /**
+     * 缓冲控制，比如缓冲时间
+     */
+    protected LoadControl getLoadControl() {
+        return new DefaultLoadControl();
     }
 
     @Override
@@ -266,12 +292,11 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
 
     @Override
     public void setEnableMediaCodec(boolean isEnable) {
-        // no support
+        // exo player is based on MediaCodec, no need to enable
     }
 
     @Override
     public void setOptions() {
-        // no support
     }
 
     @Override
