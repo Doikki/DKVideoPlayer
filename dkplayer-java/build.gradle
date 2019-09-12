@@ -13,7 +13,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    compileOnly 'com.android.support:appcompat-v7:' + project.ext.supportLibraryVersion
+    compileOnly project.ext.annotation
 }
 
 ext {

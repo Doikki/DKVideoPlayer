@@ -2,14 +2,15 @@ package com.dueeeke.videoplayer.controller;
 
 import android.content.Context;
 import android.media.AudioManager;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.dueeeke.videoplayer.R;
 import com.dueeeke.videoplayer.util.PlayerUtils;

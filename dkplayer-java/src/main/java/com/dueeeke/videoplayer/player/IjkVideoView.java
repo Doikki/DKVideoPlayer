@@ -1,9 +1,10 @@
 package com.dueeeke.videoplayer.player;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * 由于IjkPlayer已经不再更新，后续不再基于IjkPlayer进行开发，而是将本框架打造成一个通用的播放器框架

@@ -17,11 +17,10 @@ import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.ext.rtmp.RtmpDataSourceFactory;
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
@@ -114,10 +113,10 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
     protected MediaSource getMediaSource(String uri) {
         Uri contentUri = Uri.parse(uri);
         if ("rtmp".equals(contentUri.getScheme())) {
-            return new ExtractorMediaSource.Factory(new RtmpDataSourceFactory(null))
+            return new ProgressiveMediaSource.Factory(new RtmpDataSourceFactory(null))
                     .createMediaSource(contentUri);
         }
-        int contentType = Util.inferContentType(uri);
+        int contentType = inferContentType(uri);
         switch (contentType) {
             case C.TYPE_DASH:
                 return new DashMediaSource.Factory(mDataSourceFactory).createMediaSource(contentUri);
@@ -127,7 +126,20 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
                 return new HlsMediaSource.Factory(mDataSourceFactory).createMediaSource(contentUri);
             default:
             case C.TYPE_OTHER:
-                return new ExtractorMediaSource.Factory(mDataSourceFactory).createMediaSource(contentUri);
+                return new ProgressiveMediaSource.Factory(mDataSourceFactory).createMediaSource(contentUri);
+        }
+    }
+
+    private int inferContentType(String fileName) {
+        fileName = Util.toLowerInvariant(fileName);
+        if (fileName.contains(".mpd")) {
+            return C.TYPE_DASH;
+        } else if (fileName.contains(".m3u8")) {
+            return C.TYPE_HLS;
+        } else if (fileName.matches(".*\\.ism(l)?(/manifest(\\(.+\\))?)?")) {
+            return C.TYPE_SS;
+        } else {
+            return C.TYPE_OTHER;
         }
     }
 
@@ -365,6 +377,13 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
             if (unappliedRotationDegrees > 0) {
                 mPlayerEventListener.onInfo(MEDIA_INFO_VIDEO_ROTATION_CHANGED, unappliedRotationDegrees);
             }
+        }
+    }
+
+    @Override
+    public void onPositionDiscontinuity(int reason) {
+        if (reason == Player.DISCONTINUITY_REASON_PERIOD_TRANSITION) {
+
         }
     }
 }

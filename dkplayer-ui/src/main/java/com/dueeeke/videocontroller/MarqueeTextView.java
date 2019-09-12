@@ -1,12 +1,13 @@
 package com.dueeeke.videocontroller;
 
 import android.content.Context;
-import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
+import android.widget.TextView;
+
 /**
  * 实现跑马灯效果的TextView
  */
-public class MarqueeTextView extends AppCompatTextView {
+public class MarqueeTextView extends TextView {
     private boolean mNeedFocus;
     public MarqueeTextView(Context context) {
         super(context);

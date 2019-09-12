@@ -1,6 +1,7 @@
 package com.dueeeke.videoplayer.player;
 
-import android.support.annotation.Nullable;
+
+import androidx.annotation.Nullable;
 
 /**
  * 播放器全局配置
