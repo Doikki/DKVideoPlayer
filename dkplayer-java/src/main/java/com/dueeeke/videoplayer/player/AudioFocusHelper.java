@@ -16,9 +16,9 @@ final class AudioFocusHelper implements AudioManager.OnAudioFocusChangeListener 
 
         private AudioManager mAudioManager;
 
-        private boolean startRequested = false;
-        private boolean pausedForLoss = false;
-        private int currentFocus = 0;
+        private boolean mStartRequested = false;
+        private boolean mPausedForLoss = false;
+        private int mCurrentFocus = 0;
 
         AudioFocusHelper(@NonNull VideoView videoView) {
             mWeakVideoView = new WeakReference<>(videoView);
@@ -27,33 +27,37 @@ final class AudioFocusHelper implements AudioManager.OnAudioFocusChangeListener 
 
         @Override
         public void onAudioFocusChange(int focusChange) {
-            if (currentFocus == focusChange) {
+            if (mCurrentFocus == focusChange) {
                 return;
             }
 
             VideoView videoView = mWeakVideoView.get();
 
-            currentFocus = focusChange;
+            if (videoView == null) {
+                return;
+            }
+
+            mCurrentFocus = focusChange;
             switch (focusChange) {
                 case AudioManager.AUDIOFOCUS_GAIN://获得焦点
                 case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT://暂时获得焦点
-                    if (startRequested || pausedForLoss) {
+                    if (mStartRequested || mPausedForLoss) {
                         videoView.start();
-                        startRequested = false;
-                        pausedForLoss = false;
+                        mStartRequested = false;
+                        mPausedForLoss = false;
                     }
-                    if (mWeakVideoView != null && !videoView.isMute())//恢复音量
+                    if (!videoView.isMute())//恢复音量
                         videoView.setVolume(1.0f, 1.0f);
                     break;
                 case AudioManager.AUDIOFOCUS_LOSS://焦点丢失
                 case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT://焦点暂时丢失
                     if (videoView.isPlaying()) {
-                        pausedForLoss = true;
+                        mPausedForLoss = true;
                         videoView.pause();
                     }
                     break;
                 case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK://此时需降低音量
-                    if (mWeakVideoView != null && videoView.isPlaying() && !videoView.isMute()) {
+                    if (videoView.isPlaying() && !videoView.isMute()) {
                         videoView.setVolume(0.1f, 0.1f);
                     }
                     break;
@@ -64,7 +68,7 @@ final class AudioFocusHelper implements AudioManager.OnAudioFocusChangeListener 
          * Requests to obtain the audio focus
          */
         void requestFocus() {
-            if (currentFocus == AudioManager.AUDIOFOCUS_GAIN) {
+            if (mCurrentFocus == AudioManager.AUDIOFOCUS_GAIN) {
                 return;
             }
 
@@ -74,11 +78,11 @@ final class AudioFocusHelper implements AudioManager.OnAudioFocusChangeListener 
 
             int status = mAudioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
             if (AudioManager.AUDIOFOCUS_REQUEST_GRANTED == status) {
-                currentFocus = AudioManager.AUDIOFOCUS_GAIN;
+                mCurrentFocus = AudioManager.AUDIOFOCUS_GAIN;
                 return;
             }
 
-            startRequested = true;
+            mStartRequested = true;
         }
 
         /**
@@ -90,7 +94,7 @@ final class AudioFocusHelper implements AudioManager.OnAudioFocusChangeListener 
                 return;
             }
 
-            startRequested = false;
+            mStartRequested = false;
             mAudioManager.abandonAudioFocus(this);
         }
     }

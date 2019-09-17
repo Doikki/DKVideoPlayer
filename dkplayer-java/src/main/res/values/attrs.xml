@@ -2,7 +2,7 @@
 <resources>
     <declare-styleable name="VideoView">
         <attr name="looping" format="boolean"/>
-        <attr name="autoRotate" format="boolean"/>
+        <attr name="enableOrientation" format="boolean"/>
         <attr name="enableAudioFocus" format="boolean"/>
         <attr name="enableMediaCodec" format="boolean"/>
         <attr name="usingSurfaceView" format="boolean"/>

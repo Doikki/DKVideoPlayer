@@ -155,7 +155,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
 
         //读取xml中的配置，并综合全局配置
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.VideoView);
-        mEnableOrientation = a.getBoolean(R.styleable.VideoView_autoRotate, mEnableOrientation);
+        mEnableOrientation = a.getBoolean(R.styleable.VideoView_enableOrientation, mEnableOrientation);
         mUsingSurfaceView = a.getBoolean(R.styleable.VideoView_usingSurfaceView, mUsingSurfaceView);
         mEnableAudioFocus = a.getBoolean(R.styleable.VideoView_enableAudioFocus, mEnableAudioFocus);
         mEnableMediaCodec = a.getBoolean(R.styleable.VideoView_enableMediaCodec, mEnableMediaCodec);
@@ -183,7 +183,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
     }
 
     /**
-     * 开始播放
+     * 开始播放，注意：调用此方法后必须调用{@link #release()}释放播放器，否则会导致内存泄漏
      */
     @Override
     public void start() {
@@ -668,8 +668,8 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
     /**
      * 是否自动旋转， 默认不自动旋转
      */
-    public void setAutoRotate(boolean autoRotate) {
-        mEnableOrientation = autoRotate;
+    public void setEnableOrientation(boolean enableOrientation) {
+        mEnableOrientation = enableOrientation;
     }
 
     /**
