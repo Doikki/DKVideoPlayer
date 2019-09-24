@@ -3,7 +3,7 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.dueeeke.videoplayer.player.VideoView
+    <com.dueeeke.dkplayer.widget.videoview.ExoCacheVideoView
         android:id="@+id/vv"
         android:layout_width="match_parent"
         android:layout_height="300dp"/>

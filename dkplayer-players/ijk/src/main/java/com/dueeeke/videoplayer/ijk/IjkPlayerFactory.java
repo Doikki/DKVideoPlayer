@@ -2,10 +2,9 @@ package com.dueeeke.videoplayer.ijk;
 
 import android.content.Context;
 
-import com.dueeeke.videoplayer.player.AbstractPlayer;
 import com.dueeeke.videoplayer.player.PlayerFactory;
 
-public class IjkPlayerFactory extends PlayerFactory {
+public class IjkPlayerFactory extends PlayerFactory<IjkPlayer> {
 
     private Context mContext;
 
@@ -18,7 +17,7 @@ public class IjkPlayerFactory extends PlayerFactory {
     }
 
     @Override
-    public AbstractPlayer createPlayer() {
+    public IjkPlayer createPlayer() {
         return new IjkPlayer(mContext);
     }
 }

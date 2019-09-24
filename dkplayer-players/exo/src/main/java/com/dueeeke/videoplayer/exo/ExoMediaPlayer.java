@@ -18,7 +18,6 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ext.rtmp.RtmpDataSourceFactory;
-import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
@@ -33,7 +32,6 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoListener;
 
-import java.util.List;
 import java.util.Map;
 
 
@@ -102,13 +100,13 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
         //no support
     }
 
-    @Override
-    public void setDataSource(List<String> paths) {
-        mMediaSource = new ConcatenatingMediaSource();
-        for (String path : paths) {
-            ((ConcatenatingMediaSource) mMediaSource).addMediaSource(getMediaSource(path));
-        }
-    }
+//    @Override
+//    public void setDataSource(List<String> paths) {
+//        mMediaSource = new ConcatenatingMediaSource();
+//        for (String path : paths) {
+//            ((ConcatenatingMediaSource) mMediaSource).addMediaSource(getMediaSource(path));
+//        }
+//    }
 
     protected MediaSource getMediaSource(String uri) {
         Uri contentUri = Uri.parse(uri);

@@ -6,7 +6,7 @@ import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.activity.BaseActivity;
 import com.dueeeke.dkplayer.interf.ControllerListener;
 import com.dueeeke.dkplayer.widget.controller.AdController;
-import com.dueeeke.dkplayer.widget.videoview.CacheVideoView;
+import com.dueeeke.dkplayer.widget.videoview.ProxyCacheVideoView;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.VideoView;
@@ -16,7 +16,7 @@ import com.dueeeke.videoplayer.player.VideoView;
  * Created by Devlin_n on 2017/4/7.
  */
 
-public class ADActivity extends BaseActivity<CacheVideoView> {
+public class ADActivity extends BaseActivity<ProxyCacheVideoView> {
 
     private static final String URL_VOD = "http://vfx.mtime.cn/Video/2019/03/12/mp4/190312143927981075.mp4";
 //    private static final String URL_VOD = "http://baobab.wdjcdn.com/14564977406580.mp4";

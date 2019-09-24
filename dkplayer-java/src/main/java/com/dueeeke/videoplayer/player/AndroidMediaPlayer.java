@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
-import java.util.List;
 import java.util.Map;
 
 public class AndroidMediaPlayer extends AbstractPlayer {
@@ -51,11 +50,6 @@ public class AndroidMediaPlayer extends AbstractPlayer {
         } catch (Exception e) {
             mPlayerEventListener.onError();
         }
-    }
-
-    @Override
-    public void setDataSource(List<String> paths) {
-
     }
 
     @Override

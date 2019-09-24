@@ -42,11 +42,11 @@ import java.util.Map;
  * Created by Devlin_n on 2017/4/7.
  */
 
-public class VideoView extends FrameLayout implements MediaPlayerControl, PlayerEventListener,
+public class VideoView<P extends AbstractPlayer> extends FrameLayout implements MediaPlayerControl, PlayerEventListener,
         OrientationHelper.OnOrientationChangeListener {
 
-    protected AbstractPlayer mMediaPlayer;//播放器
-    protected PlayerFactory mPlayerFactory;//工厂类，用于实例化播放核心
+    protected P mMediaPlayer;//播放器
+    protected PlayerFactory<P> mPlayerFactory;//工厂类，用于实例化播放核心
     @Nullable
     protected BaseVideoController mVideoController;//控制器
 
@@ -79,7 +79,6 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
 
     //--------- data sources ---------//
     protected String mUrl;//当前播放视频的地址
-    protected List<String> mUrls;//concat地址
     protected AssetFileDescriptor mAssetFileDescriptor;//assets文件
     protected Map<String, String> mHeaders;//当前视频地址的请求头
 
@@ -303,10 +302,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
         if (mAssetFileDescriptor != null) {
             mMediaPlayer.setDataSource(mAssetFileDescriptor);
             return true;
-        } else if (mUrls != null && mUrls.size() > 0) {
-            mMediaPlayer.setDataSource(mUrls);
-            return true;
-        } else if (!TextUtils.isEmpty(mUrl)) {
+        } if (!TextUtils.isEmpty(mUrl)) {
             mMediaPlayer.setDataSource(mUrl, mHeaders);
             return true;
         }
@@ -616,13 +612,6 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
     }
 
     /**
-     * 多个视频无缝衔接播放
-     */
-    public void setUrls(List<String> urls) {
-        mUrls = urls;
-    }
-
-    /**
      * 用于播放assets里面的视频文件
      */
     public void setAssetFileDescriptor(AssetFileDescriptor fd) {
@@ -699,14 +688,14 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
      * @deprecated 使用 {@link #setPlayerFactory(PlayerFactory)} ()} 代替
      */
     @Deprecated
-    public void setCustomMediaPlayer(@NonNull AbstractPlayer abstractPlayer) {
+    public void setCustomMediaPlayer(@NonNull P abstractPlayer) {
         mMediaPlayer = abstractPlayer;
     }
 
     /**
      * 自定义播放核心，继承{@link PlayerFactory}实现自己的播放核心
      */
-    public void setPlayerFactory(PlayerFactory playerFactory) {
+    public void setPlayerFactory(PlayerFactory<P> playerFactory) {
         if (playerFactory == null) {
             throw new IllegalArgumentException("PlayerFactory can not be null!");
         }

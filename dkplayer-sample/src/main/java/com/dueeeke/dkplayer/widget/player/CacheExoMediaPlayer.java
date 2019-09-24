@@ -25,15 +25,17 @@ public class CacheExoMediaPlayer extends ExoMediaPlayer {
         super(context);
     }
 
-    @Override
-    public void setDataSource(String path, Map<String, String> headers) {
-        if (mCache == null) {
-            mCache = new SimpleCache(
-                    new File(mAppContext.getExternalCacheDir(), "exo-video-cache"),//缓存目录
-                    new LeastRecentlyUsedCacheEvictor(512 * 1024 * 1024),//缓存大小
-                    new ExoDatabaseProvider(mAppContext));
+    public void setDataSource(String path, Map<String, String> headers, boolean isCache) {
+        if (isCache) {
+            if (mCache == null) {
+                mCache = new SimpleCache(
+                        new File(mAppContext.getExternalCacheDir(), "exo-video-cache"),//缓存目录
+                        new LeastRecentlyUsedCacheEvictor(512 * 1024 * 1024),//缓存大小
+                        new ExoDatabaseProvider(mAppContext));
+            }
+            mDataSourceFactory = getCacheDataSourceFactory();
         }
-        mDataSourceFactory = getCacheDataSourceFactory();
+
         super.setDataSource(path, headers);
     }
 
@@ -46,5 +48,9 @@ public class CacheExoMediaPlayer extends ExoMediaPlayer {
 
     public Cache getCache() {
         return mCache;
+    }
+
+    public void setCache(Cache cache) {
+        mCache = cache;
     }
 }

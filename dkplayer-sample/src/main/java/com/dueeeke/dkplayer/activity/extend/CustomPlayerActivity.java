@@ -2,11 +2,10 @@ package com.dueeeke.dkplayer.activity.extend;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.activity.BaseActivity;
-import com.dueeeke.dkplayer.widget.player.CacheExoMediaPlayer;
+import com.dueeeke.dkplayer.widget.videoview.ExoCacheVideoView;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.exo.ExoMediaPlayer;
 import com.dueeeke.videoplayer.player.AbstractPlayer;
-import com.dueeeke.videoplayer.player.PlayerFactory;
 
 /**
  * 自定义MediaPlayer，有多种情形：
@@ -14,7 +13,7 @@ import com.dueeeke.videoplayer.player.PlayerFactory;
  * 对其扩展边播边存的功能。
  * 第二：通过继承{@link AbstractPlayer}扩展一些其他的播放器。
  */
-public class CustomPlayerActivity extends BaseActivity {
+public class CustomPlayerActivity extends BaseActivity<ExoCacheVideoView> {
 
     @Override
     protected int getLayoutResId() {
@@ -25,14 +24,6 @@ public class CustomPlayerActivity extends BaseActivity {
     protected void initView() {
         super.initView();
         mVideoView = findViewById(R.id.vv);
-
-        mVideoView.setPlayerFactory(new PlayerFactory() {
-            @Override
-            public AbstractPlayer createPlayer() {
-                return new CacheExoMediaPlayer(CustomPlayerActivity.this);
-            }
-        });
-
         mVideoView.setUrl("http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8");
         mVideoView.setVideoController(new StandardVideoController(this));
         mVideoView.start();

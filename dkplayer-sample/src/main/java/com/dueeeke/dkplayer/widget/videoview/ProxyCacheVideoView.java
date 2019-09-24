@@ -9,54 +9,43 @@ import com.danikula.videocache.CacheListener;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.dueeeke.dkplayer.util.Utils;
 import com.dueeeke.dkplayer.util.VideoCacheManager;
-import com.dueeeke.dkplayer.widget.player.CacheExoMediaPlayer;
 import com.dueeeke.videoplayer.exo.ExoMediaPlayerFactory;
 import com.dueeeke.videoplayer.player.AbstractPlayer;
-import com.dueeeke.videoplayer.player.PlayerFactory;
 import com.dueeeke.videoplayer.player.VideoView;
 
 import java.io.File;
 
-public class CacheVideoView extends VideoView {
+/**
+ * VideoCache库实现的边播边存功能，不支持m3u8
+ */
+public class ProxyCacheVideoView extends VideoView<AbstractPlayer> {
 
     protected HttpProxyCacheServer mCacheServer;
     protected int mBufferedPercentage;
     protected boolean mIsCacheEnabled = true; //默认打开缓存
 
-    public CacheVideoView(@NonNull Context context) {
+    public ProxyCacheVideoView(@NonNull Context context) {
         this(context, null);
     }
 
-    public CacheVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public ProxyCacheVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public CacheVideoView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public ProxyCacheVideoView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        if (Utils.getCurrentPlayerFactory() instanceof ExoMediaPlayerFactory) {
-            setPlayerFactory(new PlayerFactory() {
-                @Override
-                public AbstractPlayer createPlayer() {
-                    return new CacheExoMediaPlayer(getContext());
-                }
-            });
-        }
     }
 
     @Override
     protected boolean prepareDataSource() {
         if (mIsCacheEnabled && !isLocalDataSource()) { //本地数据源不能缓存
-            if (Utils.getCurrentPlayerFactory() instanceof ExoMediaPlayerFactory) {
-                mMediaPlayer.setDataSource(mUrl, mHeaders);
-            } else {
-                mCacheServer = getCacheServer();
-                String proxyPath = mCacheServer.getProxyUrl(mUrl);
-                mCacheServer.registerCacheListener(cacheListener, mUrl);
-                if (mCacheServer.isCached(mUrl)) {
-                    mBufferedPercentage = 100;
-                }
-                mMediaPlayer.setDataSource(proxyPath, mHeaders);
+            mCacheServer = getCacheServer();
+            String proxyPath = mCacheServer.getProxyUrl(mUrl);
+            mCacheServer.registerCacheListener(cacheListener, mUrl);
+            if (mCacheServer.isCached(mUrl)) {
+                mBufferedPercentage = 100;
             }
+            mMediaPlayer.setDataSource(proxyPath, mHeaders);
             return true;
         }
         return super.prepareDataSource();
