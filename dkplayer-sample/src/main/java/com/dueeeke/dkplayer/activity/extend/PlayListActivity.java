@@ -1,14 +1,11 @@
 package com.dueeeke.dkplayer.activity.extend;
 
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.dueeeke.dkplayer.R;
+import com.dueeeke.dkplayer.activity.BaseActivity;
 import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.videocontroller.StandardVideoController;
@@ -23,23 +20,30 @@ import java.util.List;
  * Created by Devlin_n on 2017/4/7.
  */
 
-public class PlayListActivity extends AppCompatActivity {
+public class PlayListActivity extends BaseActivity {
 
     private VideoView mVideoView;
 
     private List<VideoBean> data = DataUtil.getVideoList();
 
     private StandardVideoController mStandardVideoController;
+
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected View getContentView() {
         mVideoView = new VideoView(this);
-        setContentView(mVideoView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, PlayerUtils.dp2px(this, 240)));
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(R.string.str_play_list);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+        mVideoView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, PlayerUtils.dp2px(this, 240)));
+        setContentView(mVideoView);
+        return mVideoView;
+    }
+
+    @Override
+    protected int getTitleResId() {
+        return R.string.str_play_list;
+    }
+
+    @Override
+    protected void initView() {
+        super.initView();
         mStandardVideoController = new StandardVideoController(this);
 
         //加载第一条数据
@@ -76,39 +80,5 @@ public class PlayListActivity extends AppCompatActivity {
         });
 
         mVideoView.start();
-
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mVideoView.pause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mVideoView.release();
-    }
-
-
-    @Override
-    public void onBackPressed() {
-        if (!mVideoView.onBackPressed()) {
-            super.onBackPressed();
-        }
     }
 }

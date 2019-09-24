@@ -13,7 +13,7 @@ import com.dueeeke.videoplayer.player.VideoViewManager;
 /**
  * 多开
  */
-public class ParallelPlayActivity extends AppCompatActivity{
+public class ParallelPlayActivity extends AppCompatActivity {
 
     private static final String VOD_URL = "http://vfx.mtime.cn/Video/2019/03/12/mp4/190312143927981075.mp4";
 

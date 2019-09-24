@@ -1,13 +1,9 @@
 package com.dueeeke.dkplayer.activity.extend;
 
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.dueeeke.dkplayer.R;
+import com.dueeeke.dkplayer.activity.BaseActivity;
 import com.dueeeke.dkplayer.interf.ControllerListener;
 import com.dueeeke.dkplayer.widget.controller.AdController;
 import com.dueeeke.dkplayer.widget.videoview.CacheVideoView;
@@ -20,24 +16,28 @@ import com.dueeeke.videoplayer.player.VideoView;
  * Created by Devlin_n on 2017/4/7.
  */
 
-public class ADActivity extends AppCompatActivity {
+public class ADActivity extends BaseActivity<CacheVideoView> {
 
-    private CacheVideoView mVideoView;
     private static final String URL_VOD = "http://vfx.mtime.cn/Video/2019/03/12/mp4/190312143927981075.mp4";
 //    private static final String URL_VOD = "http://baobab.wdjcdn.com/14564977406580.mp4";
     //    private static final String URL_VOD = "http://uploads.cutv.com:8088/video/data/201703/10/encode_file/515b6a95601ba6b39620358f2677a17358c2472411d53.mp4";
     private static final String URL_AD = "https://gslb.miaopai.com/stream/IR3oMYDhrON5huCmf7sHCfnU5YKEkgO2.mp4";
 
     private StandardVideoController mStandardVideoController;
+
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_ad);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(R.string.str_ad);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+    protected int getLayoutResId() {
+        return R.layout.activity_ad;
+    }
+
+    @Override
+    protected int getTitleResId() {
+        return R.string.str_ad;
+    }
+
+    @Override
+    protected void initView() {
+        super.initView();
         mVideoView = findViewById(R.id.player);
 
         AdController adController = new AdController(this);
@@ -91,38 +91,5 @@ public class ADActivity extends AppCompatActivity {
         mVideoView.setVideoController(mStandardVideoController);
         //开始播放
         mVideoView.start();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mVideoView.pause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mVideoView.release();
-    }
-
-
-    @Override
-    public void onBackPressed() {
-        if (!mVideoView.onBackPressed()) {
-            super.onBackPressed();
-        }
     }
 }

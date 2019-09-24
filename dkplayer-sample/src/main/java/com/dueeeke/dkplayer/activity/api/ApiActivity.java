@@ -1,14 +1,10 @@
 package com.dueeeke.dkplayer.activity.api;
 
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
 import android.view.View;
 
 import com.dueeeke.dkplayer.R;
+import com.dueeeke.dkplayer.activity.BaseActivity;
 import com.dueeeke.dkplayer.util.IntentKeys;
 
 /**
@@ -16,7 +12,7 @@ import com.dueeeke.dkplayer.util.IntentKeys;
  * Created by xinyu on 2018/1/3.
  */
 
-public class ApiActivity extends AppCompatActivity {
+public class ApiActivity extends BaseActivity {
 
 //    private static final String VOD_URL = "http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv";
     private static final String VOD_URL = "http://vfx.mtime.cn/Video/2019/03/12/mp4/190312143927981075.mp4";
@@ -36,22 +32,13 @@ public class ApiActivity extends AppCompatActivity {
 //    private static final String LIVE_URL = "ijklivehook:rtmp://live.hkstv.hk.lxdns.com/live/hks";
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_api);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(R.string.str_api);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+    protected int getLayoutResId() {
+        return R.layout.activity_api;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-        }
-        return super.onOptionsItemSelected(item);
+    protected int getTitleResId() {
+        return R.string.str_api;
     }
 
     public void skipToVodPlayer(View view) {
@@ -74,7 +61,7 @@ public class ApiActivity extends AppCompatActivity {
     }
 
     public void skipToCustomPlayer(View view) {
-        startActivity(new Intent(this, CustomMediaPlayerActivity.class));
+        startActivity(new Intent(this, ConcatPlayActivity.class));
     }
 
     public void skipToDefinitionPlayer(View view) {

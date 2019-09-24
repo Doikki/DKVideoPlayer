@@ -1,13 +1,9 @@
 package com.dueeeke.dkplayer.activity.api;
 
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
 import android.view.View;
 
 import com.dueeeke.dkplayer.R;
+import com.dueeeke.dkplayer.activity.BaseActivity;
 import com.dueeeke.dkplayer.util.Utils;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.exo.ExoMediaPlayerFactory;
@@ -15,7 +11,6 @@ import com.dueeeke.videoplayer.ijk.IjkPlayer;
 import com.dueeeke.videoplayer.ijk.IjkPlayerFactory;
 import com.dueeeke.videoplayer.player.AbstractPlayer;
 import com.dueeeke.videoplayer.player.PlayerFactory;
-import com.dueeeke.videoplayer.player.VideoView;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -29,19 +24,21 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
  * rtsp/concat,rtsp只有ijkplayer支持
  */
 
-public class CustomMediaPlayerActivity extends AppCompatActivity {
-
-    private VideoView mVideoView;
+public class ConcatPlayActivity extends BaseActivity {
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_custom_media_player);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(R.string.str_rtsp_concat);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+    protected int getLayoutResId() {
+        return R.layout.activity_concat_play;
+    }
+
+    @Override
+    protected int getTitleResId() {
+        return R.string.str_rtsp_concat;
+    }
+
+    @Override
+    protected void initView() {
+        super.initView();
         mVideoView = findViewById(R.id.player);
         StandardVideoController controller = new StandardVideoController(this);
         mVideoView.setVideoController(controller);
@@ -51,7 +48,7 @@ public class CustomMediaPlayerActivity extends AppCompatActivity {
 
         @Override
         public AbstractPlayer createPlayer() {
-            return new IjkPlayer(CustomMediaPlayerActivity.this) {
+            return new IjkPlayer(ConcatPlayActivity.this) {
                 @Override
                 public void setOptions() {
                     super.setOptions();
@@ -120,40 +117,6 @@ public class CustomMediaPlayerActivity extends AppCompatActivity {
         }
 
         mVideoView.start();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mVideoView.pause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mVideoView.resume();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mVideoView.release();
-    }
-
-
-    @Override
-    public void onBackPressed() {
-        if (!mVideoView.onBackPressed()) {
-            super.onBackPressed();
-        }
     }
 
     class ConcatMedia {

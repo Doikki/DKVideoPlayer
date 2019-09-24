@@ -1,56 +1,35 @@
 package com.dueeeke.dkplayer.activity.extend;
 
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-
 import com.dueeeke.dkplayer.R;
+import com.dueeeke.dkplayer.activity.BaseActivity;
 import com.dueeeke.dkplayer.widget.videoview.CacheVideoView;
 import com.dueeeke.videocontroller.StandardVideoController;
 
-public class CacheActivity extends AppCompatActivity {
+public class CacheActivity extends BaseActivity<CacheVideoView> {
 
-    private CacheVideoView mCacheVideoView;
-
-    private static final String URL = "http://vfx.mtime.cn/Video/2019/03/12/mp4/190312143927981075.mp4";
+    private static final String URL = "http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8";
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cache);
-        mCacheVideoView = findViewById(R.id.player);
-        mCacheVideoView.setUrl(URL);
-        mCacheVideoView.setVideoController(new StandardVideoController(this));
-        mCacheVideoView.start();
+    protected int getLayoutResId() {
+        return R.layout.activity_cache;
+    }
+
+    @Override
+    protected int getTitleResId() {
+        return R.string.str_cache;
+    }
+
+    @Override
+    protected void initView() {
+        super.initView();
+        mVideoView = findViewById(R.id.player);
+        mVideoView.setUrl(URL);
+        mVideoView.setVideoController(new StandardVideoController(this));
+        mVideoView.start();
 
         //删除url对应默认缓存文件
 //        VideoCacheManager.clearDefaultCache(this, URL);
         //清除缓存文件中的所有缓存
 //        VideoCacheManager.clearAllCache(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mCacheVideoView.pause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mCacheVideoView.resume();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mCacheVideoView.release();
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (!mCacheVideoView.onBackPressed()) {
-            super.onBackPressed();
-        }
     }
 }

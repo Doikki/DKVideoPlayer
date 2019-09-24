@@ -7,7 +7,12 @@ import android.util.AttributeSet;
 
 import com.danikula.videocache.CacheListener;
 import com.danikula.videocache.HttpProxyCacheServer;
+import com.dueeeke.dkplayer.util.Utils;
 import com.dueeeke.dkplayer.util.VideoCacheManager;
+import com.dueeeke.dkplayer.widget.player.CacheExoMediaPlayer;
+import com.dueeeke.videoplayer.exo.ExoMediaPlayerFactory;
+import com.dueeeke.videoplayer.player.AbstractPlayer;
+import com.dueeeke.videoplayer.player.PlayerFactory;
 import com.dueeeke.videoplayer.player.VideoView;
 
 import java.io.File;
@@ -19,27 +24,39 @@ public class CacheVideoView extends VideoView {
     protected boolean mIsCacheEnabled = true; //默认打开缓存
 
     public CacheVideoView(@NonNull Context context) {
-        super(context);
+        this(context, null);
     }
 
     public CacheVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
     }
 
     public CacheVideoView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        if (Utils.getCurrentPlayerFactory() instanceof ExoMediaPlayerFactory) {
+            setPlayerFactory(new PlayerFactory() {
+                @Override
+                public AbstractPlayer createPlayer() {
+                    return new CacheExoMediaPlayer(getContext());
+                }
+            });
+        }
     }
 
     @Override
     protected boolean prepareDataSource() {
         if (mIsCacheEnabled && !isLocalDataSource()) { //本地数据源不能缓存
-            mCacheServer = getCacheServer();
-            String proxyPath = mCacheServer.getProxyUrl(mUrl);
-            mCacheServer.registerCacheListener(cacheListener, mUrl);
-            if (mCacheServer.isCached(mUrl)) {
-                mBufferedPercentage = 100;
+            if (Utils.getCurrentPlayerFactory() instanceof ExoMediaPlayerFactory) {
+                mMediaPlayer.setDataSource(mUrl, mHeaders);
+            } else {
+                mCacheServer = getCacheServer();
+                String proxyPath = mCacheServer.getProxyUrl(mUrl);
+                mCacheServer.registerCacheListener(cacheListener, mUrl);
+                if (mCacheServer.isCached(mUrl)) {
+                    mBufferedPercentage = 100;
+                }
+                mMediaPlayer.setDataSource(proxyPath, mHeaders);
             }
-            mMediaPlayer.setDataSource(proxyPath, mHeaders);
             return true;
         }
         return super.prepareDataSource();
@@ -61,7 +78,11 @@ public class CacheVideoView extends VideoView {
      */
     @Override
     public int getBufferedPercentage() {
-        return mIsCacheEnabled ? mBufferedPercentage : super.getBufferedPercentage();
+        if (Utils.getCurrentPlayerFactory() instanceof ExoMediaPlayerFactory) {
+            return super.getBufferedPercentage();
+        } else {
+            return mIsCacheEnabled ? mBufferedPercentage : super.getBufferedPercentage();
+        }
     }
 
     @Override

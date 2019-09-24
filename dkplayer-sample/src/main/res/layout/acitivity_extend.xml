@@ -52,4 +52,10 @@
         android:onClick="pad"
         android:text="pad"/>
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="customPlayer"
+        android:text="自定义MediaPlayer"/>
+
 </LinearLayout>

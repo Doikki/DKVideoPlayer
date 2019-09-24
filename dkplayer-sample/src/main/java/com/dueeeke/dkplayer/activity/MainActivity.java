@@ -2,8 +2,6 @@ package com.dueeeke.dkplayer.activity;
 
 import android.Manifest;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,7 +30,7 @@ import com.yanzhenjie.permission.AndPermission;
 
 import java.lang.reflect.Field;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private EditText editText;
     private boolean isLive;
@@ -40,10 +38,18 @@ public class MainActivity extends AppCompatActivity {
     private TextView mCurrentPlayer;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    protected int getLayoutResId() {
+        return R.layout.activity_main;
+    }
 
+    @Override
+    protected boolean enableBack() {
+        return false;
+    }
+
+    @Override
+    protected void initView() {
+        super.initView();
         editText = findViewById(R.id.et);
         mCurrentPlayer = findViewById(R.id.curr_player);
 

@@ -1,14 +1,10 @@
 package com.dueeeke.dkplayer.activity.api;
 
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
-import android.view.MenuItem;
 import android.view.View;
 
 import com.dueeeke.dkplayer.R;
-import com.dueeeke.dkplayer.activity.BaseActivity;
+import com.dueeeke.dkplayer.activity.DebugActivity;
 import com.dueeeke.dkplayer.util.IntentKeys;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
@@ -20,19 +16,16 @@ import com.dueeeke.videoplayer.util.L;
  * Created by Devlin_n on 2017/4/7.
  */
 
-public class PlayerActivity extends BaseActivity {
-
-    private VideoView mVideoView;
+public class PlayerActivity extends DebugActivity {
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_player);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle("Player");
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+    protected int getLayoutResId() {
+        return R.layout.activity_player;
+    }
+
+    @Override
+    protected void initView() {
+        super.initView();
         mVideoView = findViewById(R.id.player);
 
         Intent intent = getIntent();
@@ -82,11 +75,6 @@ public class PlayerActivity extends BaseActivity {
         }
     }
 
-    @Override
-    protected VideoView getVideoView() {
-        return mVideoView;
-    }
-
     private OnVideoViewStateChangeListener mOnVideoViewStateChangeListener = new OnVideoViewStateChangeListener() {
         @Override
         public void onPlayerStateChanged(int playerState) {
@@ -126,40 +114,6 @@ public class PlayerActivity extends BaseActivity {
             }
         }
     };
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mVideoView.pause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mVideoView.resume();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mVideoView.release();
-    }
-
-
-    @Override
-    public void onBackPressed() {
-        if (!mVideoView.onBackPressed()) {
-            super.onBackPressed();
-        }
-    }
 
     public void screenScaleDefault(View view) {
         mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_DEFAULT);
