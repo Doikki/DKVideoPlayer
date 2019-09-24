@@ -28,10 +28,10 @@ import java.util.Locale;
  * Created by Devlin_n on 2017/4/12.
  */
 
-public abstract class BaseVideoController extends FrameLayout {
+public abstract class BaseVideoController<T extends MediaPlayerControl> extends FrameLayout {
 
     protected View mControllerView;//控制器视图
-    protected MediaPlayerControl mMediaPlayer;//播放器
+    protected T mMediaPlayer;//播放器
     protected boolean mShowing;//控制器是否处于显示状态
     protected boolean mIsLocked;
     protected int mDefaultTimeout = 4000;
@@ -215,7 +215,7 @@ public abstract class BaseVideoController extends FrameLayout {
         return false;
     }
 
-    public void setMediaPlayer(MediaPlayerControl mediaPlayer) {
+    public void setMediaPlayer(T mediaPlayer) {
         this.mMediaPlayer = mediaPlayer;
     }
 }

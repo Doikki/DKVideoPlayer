@@ -21,12 +21,21 @@ import com.dueeeke.videoplayer.widget.CenterView;
  * Created by xinyu on 2018/1/6.
  */
 
-public abstract class GestureVideoController extends BaseVideoController{
+public abstract class GestureVideoController<T extends MediaPlayerControl> extends BaseVideoController<T> implements
+        GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener, View.OnTouchListener {
 
     protected GestureDetector mGestureDetector;
-    protected boolean mIsGestureEnabled;
     protected CenterView mCenterView;
     protected AudioManager mAudioManager;
+    protected boolean mIsGestureEnabled;
+    protected int mStreamVolume;
+    protected float mBrightness;
+    protected int mPosition;
+    protected boolean mNeedSeek;
+    protected boolean mFirstTouch;
+    protected boolean mChangePosition;
+    protected boolean mChangeBrightness;
+    protected boolean mChangeVolume;
 
     public GestureVideoController(@NonNull Context context) {
         super(context);
@@ -47,83 +56,94 @@ public abstract class GestureVideoController extends BaseVideoController{
         mCenterView.setVisibility(GONE);
         addView(mCenterView);
         mAudioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
-        mGestureDetector = new GestureDetector(getContext(), new MyGestureListener());
-        this.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return mGestureDetector.onTouchEvent(event);
-            }
-        });
+        mGestureDetector = new GestureDetector(getContext(), this);
+        setOnTouchListener(this);
     }
 
-    protected int mStreamVolume;
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        return mGestureDetector.onTouchEvent(event);
+    }
 
-    protected float mBrightness;
+    @Override
+    public boolean onDown(MotionEvent e) {
+        if (!mIsGestureEnabled || PlayerUtils.isEdge(getContext(), e)) return false;
+        mStreamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        mBrightness = PlayerUtils.scanForActivity(getContext()).getWindow().getAttributes().screenBrightness;
+        mFirstTouch = true;
+        mChangePosition = false;
+        mChangeBrightness = false;
+        mChangeVolume = false;
+        return true;
+    }
 
-    protected int mPosition;
-
-    protected boolean mNeedSeek;
-
-    protected class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
-
-        private boolean mFirstTouch;
-        private boolean mChangePosition;
-        private boolean mChangeBrightness;
-        private boolean mChangeVolume;
-
-        @Override
-        public boolean onDown(MotionEvent e) {
-            if (!mIsGestureEnabled || PlayerUtils.isEdge(getContext(), e)) return super.onDown(e);
-            mStreamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-            mBrightness = PlayerUtils.scanForActivity(getContext()).getWindow().getAttributes().screenBrightness;
-            mFirstTouch = true;
-            mChangePosition = false;
-            mChangeBrightness = false;
-            mChangeVolume = false;
-            return true;
+    @Override
+    public boolean onSingleTapConfirmed(MotionEvent e) {
+        if (mShowing) {
+            hide();
+        } else {
+            show();
         }
+        return true;
+    }
 
-        @Override
-        public boolean onSingleTapConfirmed(MotionEvent e) {
-            if (mShowing) {
-                hide();
-            } else {
-                show();
-            }
-            return true;
-        }
-
-        @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            if (!mIsGestureEnabled || PlayerUtils.isEdge(getContext(), e1)) return super.onScroll(e1, e2, distanceX, distanceY);
-            float deltaX = e1.getX() - e2.getX();
-            float deltaY = e1.getY() - e2.getY();
-            if (mFirstTouch) {
-                mChangePosition = Math.abs(distanceX) >= Math.abs(distanceY);
-                if (!mChangePosition) {
-                    if (e2.getX() > PlayerUtils.getScreenWidth(getContext(), true) / 2) {
-                        mChangeVolume = true;
-                    } else {
-                        mChangeBrightness = true;
-                    }
+    @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        if (!mIsGestureEnabled || PlayerUtils.isEdge(getContext(), e1))
+            return false;
+        float deltaX = e1.getX() - e2.getX();
+        float deltaY = e1.getY() - e2.getY();
+        if (mFirstTouch) {
+            mChangePosition = Math.abs(distanceX) >= Math.abs(distanceY);
+            if (!mChangePosition) {
+                if (e2.getX() > PlayerUtils.getScreenWidth(getContext(), true) / 2) {
+                    mChangeVolume = true;
+                } else {
+                    mChangeBrightness = true;
                 }
-                mFirstTouch = false;
             }
-            if (mChangePosition) {
-                slideToChangePosition(deltaX);
-            } else if (mChangeBrightness) {
-                slideToChangeBrightness(deltaY);
-            } else if (mChangeVolume) {
-                slideToChangeVolume(deltaY);
-            }
-            return true;
+            mFirstTouch = false;
         }
+        if (mChangePosition) {
+            slideToChangePosition(deltaX);
+        } else if (mChangeBrightness) {
+            slideToChangeBrightness(deltaY);
+        } else if (mChangeVolume) {
+            slideToChangeVolume(deltaY);
+        }
+        return true;
+    }
 
-        @Override
-        public boolean onDoubleTap(MotionEvent e) {
-            if (!mIsLocked) doPauseResume();
-            return true;
-        }
+    @Override
+    public boolean onDoubleTap(MotionEvent e) {
+        if (!mIsLocked) doPauseResume();
+        return true;
+    }
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        return false;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent e) {
+
+    }
+
+    @Override
+    public void onShowPress(MotionEvent e) {
+
+    }
+
+    @Override
+    public boolean onDoubleTapEvent(MotionEvent e) {
+        return false;
+    }
+
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent e) {
+        return false;
     }
 
     @Override

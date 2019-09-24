@@ -34,7 +34,7 @@ import java.util.Map;
  * Created by Devlin_n on 2018/4/16.
  */
 
-public class DefinitionController extends StandardVideoController {
+public class DefinitionController extends StandardVideoController<DefinitionMediaPlayerControl> {
     protected TextView multiRate;
     //    private PopupMenu mPopupMenu;
     private PopupWindow mPopupWindow;
@@ -109,7 +109,7 @@ public class DefinitionController extends StandardVideoController {
     protected int setProgress() {
         if (multiRate != null && TextUtils.isEmpty(multiRate.getText())) {
             L.d("multiRate");
-            LinkedHashMap<String, String> multiRateData = ((DefinitionMediaPlayerControl) mMediaPlayer).getDefinitionData();
+            LinkedHashMap<String, String> multiRateData = mMediaPlayer.getDefinitionData();
             if (multiRateData == null) return super.setProgress();
             mRateStr = new ArrayList<>();
             int index = 0;
@@ -140,7 +140,7 @@ public class DefinitionController extends StandardVideoController {
             ((TextView) mPopLayout.getChildAt(currentIndex)).setTextColor(Color.BLACK);
             ((TextView) mPopLayout.getChildAt(index)).setTextColor(ContextCompat.getColor(getContext(), R.color.theme_color));
             multiRate.setText(mRateStr.get(index));
-            ((DefinitionMediaPlayerControl) mMediaPlayer).switchDefinition(mRateStr.get(index));
+            mMediaPlayer.switchDefinition(mRateStr.get(index));
             mPopupWindow.dismiss();
             hide();
             currentIndex = index;

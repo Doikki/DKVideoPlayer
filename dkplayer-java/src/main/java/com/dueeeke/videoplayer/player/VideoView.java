@@ -920,7 +920,7 @@ public class VideoView extends FrameLayout implements MediaPlayerControl, Player
     }
 
     /**
-     * 设置控制器
+     * 设置控制器，传null表示移除控制器
      */
     public void setVideoController(@Nullable BaseVideoController mediaController) {
         mPlayerContainer.removeView(mVideoController);

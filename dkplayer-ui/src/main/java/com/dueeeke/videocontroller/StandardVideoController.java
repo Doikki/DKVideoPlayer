@@ -23,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.dueeeke.videoplayer.controller.GestureVideoController;
+import com.dueeeke.videoplayer.controller.MediaPlayerControl;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.L;
 import com.dueeeke.videoplayer.util.PlayerUtils;
@@ -32,7 +33,8 @@ import com.dueeeke.videoplayer.util.PlayerUtils;
  * Created by Devlin_n on 2017/4/7.
  */
 
-public class StandardVideoController extends GestureVideoController implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+public class StandardVideoController<T extends MediaPlayerControl> extends GestureVideoController<T>
+        implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
     protected TextView mTotalTime, mCurrTime;
     protected ImageView mFullScreenButton;
     protected LinearLayout mBottomContainer, mTopContainer;

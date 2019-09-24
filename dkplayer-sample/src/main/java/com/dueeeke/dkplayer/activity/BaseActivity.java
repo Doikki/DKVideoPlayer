@@ -11,6 +11,10 @@ import android.view.View;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videoplayer.player.VideoView;
 
+/**
+ * 页面以及播放器共有逻辑封装
+ * @param <T>
+ */
 @SuppressLint("Registered")
 public class BaseActivity<T extends VideoView> extends AppCompatActivity {
 
