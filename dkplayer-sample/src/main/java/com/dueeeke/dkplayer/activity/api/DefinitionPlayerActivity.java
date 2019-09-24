@@ -5,7 +5,6 @@ import com.dueeeke.dkplayer.activity.BaseActivity;
 import com.dueeeke.dkplayer.widget.controller.DefinitionController;
 import com.dueeeke.dkplayer.widget.videoview.DefinitionVideoView;
 import com.dueeeke.videoplayer.ijk.IjkPlayer;
-import com.dueeeke.videoplayer.player.AbstractPlayer;
 import com.dueeeke.videoplayer.player.PlayerFactory;
 
 import java.util.LinkedHashMap;
@@ -17,7 +16,7 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
  * Created by Devlin_n on 2017/4/7.
  */
 
-public class DefinitionPlayerActivity extends BaseActivity<DefinitionVideoView> {
+public class DefinitionPlayerActivity extends BaseActivity<DefinitionVideoView<IjkPlayer>> {
 
     @Override
     protected int getLayoutResId() {
@@ -38,15 +37,15 @@ public class DefinitionPlayerActivity extends BaseActivity<DefinitionVideoView> 
         controller.setTitle("韩雪：积极的悲观主义者");
 //        mVideoView.setCustomMediaPlayer(new IjkPlayer(this) {
 //            @Override
-//            public void setOptions() {
+//            public void setInitOptions() {
 //                //精准seek
 //                mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "enable-accurate-seek", 1);
 //            }
 //        });
 
-        mVideoView.setPlayerFactory(new PlayerFactory() {
+        mVideoView.setPlayerFactory(new PlayerFactory<IjkPlayer>() {
             @Override
-            public AbstractPlayer createPlayer() {
+            public IjkPlayer createPlayer() {
                 return new IjkPlayer(DefinitionPlayerActivity.this) {
                     @Override
                     public void setOptions() {

@@ -22,8 +22,6 @@ import java.util.List;
 
 public class PlayListActivity extends BaseActivity {
 
-    private VideoView mVideoView;
-
     private List<VideoBean> data = DataUtil.getVideoList();
 
     private StandardVideoController mStandardVideoController;

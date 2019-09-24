@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 
 import com.dueeeke.dkplayer.interf.DefinitionMediaPlayerControl;
+import com.dueeeke.videoplayer.player.AbstractPlayer;
 import com.dueeeke.videoplayer.player.VideoView;
 
 import java.util.LinkedHashMap;
@@ -15,7 +16,7 @@ import java.util.LinkedHashMap;
  * Created by xinyu on 2018/4/16.
  */
 
-public class DefinitionVideoView extends VideoView implements DefinitionMediaPlayerControl {
+public class DefinitionVideoView<P extends AbstractPlayer> extends VideoView<P> implements DefinitionMediaPlayerControl {
     private LinkedHashMap<String, String> mDefinitionMap;
     private String mCurrentDefinition;
 

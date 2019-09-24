@@ -259,10 +259,24 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
     protected void initPlayer() {
         mMediaPlayer = mPlayerFactory.createPlayer();
         mMediaPlayer.setPlayerEventListener(this);
+        setInitOptions();
         mMediaPlayer.initPlayer();
+        setOptions();
+        addDisplay();
+    }
+
+    /**
+     * 初始化之前的配置项
+     */
+    protected void setInitOptions() {
+    }
+
+    /**
+     * 初始化之后的配置项
+     */
+    protected void setOptions() {
         mMediaPlayer.setEnableMediaCodec(mEnableMediaCodec);
         mMediaPlayer.setLooping(mIsLooping);
-        addDisplay();
     }
 
     protected void addDisplay() {

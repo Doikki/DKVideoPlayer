@@ -2,12 +2,10 @@ package com.dueeeke.videoplayer.exo;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
-import android.net.Uri;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
 import com.dueeeke.videoplayer.player.AbstractPlayer;
-import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -17,19 +15,9 @@ import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.ext.rtmp.RtmpDataSourceFactory;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.ProgressiveMediaSource;
-import com.google.android.exoplayer2.source.dash.DashMediaSource;
-import com.google.android.exoplayer2.source.hls.HlsMediaSource;
-import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoListener;
 
 import java.util.Map;
@@ -42,128 +30,76 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
     protected MediaSource mMediaSource;
     protected Surface mSurface;
     protected PlaybackParameters mSpeedPlaybackParameters;
-    protected DataSource.Factory mDataSourceFactory;
-    protected String mUserAgent;
-    protected DefaultHttpDataSourceFactory mHttpDataSourceFactory;
+
+    protected ExoMediaSourceHelper mMediaSourceHelper;
 
     protected int mLastReportedPlaybackState;
     protected boolean mLastReportedPlayWhenReady;
     protected boolean mIsPreparing;
     protected boolean mIsBuffering;
 
+    protected LoadControl mLoadControl;
+
+    protected RenderersFactory mRenderersFactory;
+
+    protected TrackSelector mTrackSelector;
+
     public ExoMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
         mLastReportedPlaybackState = Player.STATE_IDLE;
-        mUserAgent = Util.getUserAgent(mAppContext, mAppContext.getApplicationInfo().name);
-        mDataSourceFactory = getDataSourceFactory();
+        mMediaSourceHelper = new ExoMediaSourceHelper(context);
     }
 
     @Override
     public void initPlayer() {
-        mInternalPlayer = ExoPlayerFactory.newSimpleInstance(mAppContext, getRenderersFactory(), getTrackSelector(), getLoadControl());
+        mLoadControl = mLoadControl == null ? getLoadControl() : mLoadControl;
+        mRenderersFactory = mRenderersFactory == null ? getRenderersFactory() : mRenderersFactory;
+        mTrackSelector = mTrackSelector == null ? getTrackSelector() : mTrackSelector;
+        mInternalPlayer = ExoPlayerFactory.newSimpleInstance(mAppContext, mRenderersFactory, mTrackSelector, mLoadControl);
         setOptions();
         mInternalPlayer.addListener(this);
         mInternalPlayer.addVideoListener(this);
     }
 
-    protected TrackSelector getTrackSelector() {
+    private TrackSelector getTrackSelector() {
         return new DefaultTrackSelector();
     }
 
     /**
      * 渲染器
      */
-    protected RenderersFactory getRenderersFactory() {
+    private RenderersFactory getRenderersFactory() {
         return new DefaultRenderersFactory(mAppContext);
     }
 
     /**
      * 缓冲控制，比如缓冲时间
      */
-    protected LoadControl getLoadControl() {
+    private LoadControl getLoadControl() {
         return new DefaultLoadControl();
+    }
+
+    public void setTrackSelector(TrackSelector trackSelector) {
+        mTrackSelector = trackSelector;
+    }
+
+    public void setRenderersFactory(RenderersFactory renderersFactory) {
+        mRenderersFactory = renderersFactory;
+    }
+
+    public void setLoadControl(LoadControl loadControl) {
+        mLoadControl = loadControl;
     }
 
     @Override
     public void setDataSource(String path, Map<String, String> headers) {
-        mMediaSource = getMediaSource(path);
-
-        if (headers != null && headers.size() > 0) {
-            for (Map.Entry<String, String> header : headers.entrySet()) {
-                mHttpDataSourceFactory.getDefaultRequestProperties().set(header.getKey(), header.getValue());
-            }
-        }
+        mMediaSource = mMediaSourceHelper.getMediaSource(path);
+        mMediaSourceHelper.setHeaders(headers);
     }
 
     @Override
     public void setDataSource(AssetFileDescriptor fd) {
         //no support
-    }
-
-//    @Override
-//    public void setDataSource(List<String> paths) {
-//        mMediaSource = new ConcatenatingMediaSource();
-//        for (String path : paths) {
-//            ((ConcatenatingMediaSource) mMediaSource).addMediaSource(getMediaSource(path));
-//        }
-//    }
-
-    protected MediaSource getMediaSource(String uri) {
-        Uri contentUri = Uri.parse(uri);
-        if ("rtmp".equals(contentUri.getScheme())) {
-            return new ProgressiveMediaSource.Factory(new RtmpDataSourceFactory(null))
-                    .createMediaSource(contentUri);
-        }
-        int contentType = inferContentType(uri);
-        switch (contentType) {
-            case C.TYPE_DASH:
-                return new DashMediaSource.Factory(mDataSourceFactory).createMediaSource(contentUri);
-            case C.TYPE_SS:
-                return new SsMediaSource.Factory(mDataSourceFactory).createMediaSource(contentUri);
-            case C.TYPE_HLS:
-                return new HlsMediaSource.Factory(mDataSourceFactory).createMediaSource(contentUri);
-            default:
-            case C.TYPE_OTHER:
-                return new ProgressiveMediaSource.Factory(mDataSourceFactory).createMediaSource(contentUri);
-        }
-    }
-
-    private int inferContentType(String fileName) {
-        fileName = Util.toLowerInvariant(fileName);
-        if (fileName.contains(".mpd")) {
-            return C.TYPE_DASH;
-        } else if (fileName.contains(".m3u8")) {
-            return C.TYPE_HLS;
-        } else if (fileName.matches(".*\\.ism(l)?(/manifest(\\(.+\\))?)?")) {
-            return C.TYPE_SS;
-        } else {
-            return C.TYPE_OTHER;
-        }
-    }
-
-    /**
-     * Returns a new DataSource factory.
-     *
-     * @return A new DataSource factory.
-     */
-    private DataSource.Factory getDataSourceFactory() {
-        return new DefaultDataSourceFactory(mAppContext, getHttpDataSourceFactory());
-    }
-
-    /**
-     * Returns a new HttpDataSource factory.
-     *
-     * @return A new HttpDataSource factory.
-     */
-    private DataSource.Factory getHttpDataSourceFactory() {
-        mHttpDataSourceFactory = new DefaultHttpDataSourceFactory(
-                mUserAgent,
-                null,
-                DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
-                DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,
-                //http->https重定向支持
-                true);
-        return mHttpDataSourceFactory;
     }
 
     @Override

@@ -7,8 +7,6 @@ import com.dueeeke.dkplayer.widget.videoview.RotateVideoView;
 
 public class RotateInFullscreenActivity extends BaseActivity<RotateVideoView> {
 
-    private RotateInFullscreenController mController;
-
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_rotate_in_fullscreen;
@@ -23,8 +21,8 @@ public class RotateInFullscreenActivity extends BaseActivity<RotateVideoView> {
     protected void initView() {
         super.initView();
         mVideoView = findViewById(R.id.player);
-        mController = new RotateInFullscreenController(this);
-        mVideoView.setVideoController(mController);
+        RotateInFullscreenController controller = new RotateInFullscreenController(this);
+        mVideoView.setVideoController(controller);
 //        mVideoView.setPlayerConfig(new VideoViewConfig.Builder().enableMediaCodec().build());
 //        String path = Environment.getExternalStorageDirectory().getAbsolutePath();
 //        String url = "file://"  + path + File.separator + "test.mp4";

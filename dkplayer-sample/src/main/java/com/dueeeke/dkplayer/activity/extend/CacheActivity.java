@@ -7,7 +7,7 @@ import com.dueeeke.videocontroller.StandardVideoController;
 
 public class CacheActivity extends BaseActivity<ProxyCacheVideoView> {
 
-    private static final String URL = "http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8";
+    private static final String URL = "https://vfx.mtime.cn/Video/2019/02/04/mp4/190204084208765161.mp4";
 
     @Override
     protected int getLayoutResId() {

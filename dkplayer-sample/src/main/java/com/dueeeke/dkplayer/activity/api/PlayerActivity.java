@@ -64,8 +64,8 @@ public class PlayerActivity extends DebugActivity {
 //                        }
 //
 //                        @Override
-//                        public void setOptions() {
-//                            super.setOptions();
+//                        public void setInitOptions() {
+//                            super.setInitOptions();
 //                        }
 //                    };
 //                }

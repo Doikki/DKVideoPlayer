@@ -1,11 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.extend.CustomPlayerActivity">
 
-    <com.dueeeke.dkplayer.widget.videoview.ExoCacheVideoView
+    <com.dueeeke.dkplayer.widget.videoview.ExoVideoView
         android:id="@+id/vv"
         android:layout_width="match_parent"
-        android:layout_height="300dp"/>
+        android:layout_height="260dp"/>
+
+
+    <Button
+        android:id="@+id/cache"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onButtonClick"
+        android:text="exo 边播边存"/>
+
+    <Button
+        android:id="@+id/concat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onButtonClick"
+        android:text="exo concat"/>
 
 </LinearLayout>
