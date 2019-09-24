@@ -59,4 +59,12 @@ public class CustomExoMediaPlayer extends ExoMediaPlayer {
     public void setDataSource(MediaSource dataSource) {
         mMediaSource = dataSource;
     }
+
+    @Override
+    public void release() {
+        super.release();
+        if (mCache != null) {
+            mCache.release();
+        }
+    }
 }
