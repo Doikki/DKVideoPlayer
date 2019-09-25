@@ -46,7 +46,7 @@ public class ConcatPlayActivity extends BaseActivity<VideoView<IjkPlayer>> {
 
         @Override
         public IjkPlayer createPlayer() {
-            return new IjkPlayer(ConcatPlayActivity.this) {
+            return new IjkPlayer() {
                 @Override
                 public void setOptions() {
                     super.setOptions();

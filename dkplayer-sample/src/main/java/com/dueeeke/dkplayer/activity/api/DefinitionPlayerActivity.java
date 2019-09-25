@@ -46,7 +46,7 @@ public class DefinitionPlayerActivity extends BaseActivity<DefinitionVideoView<I
         mVideoView.setPlayerFactory(new PlayerFactory<IjkPlayer>() {
             @Override
             public IjkPlayer createPlayer() {
-                return new IjkPlayer(DefinitionPlayerActivity.this) {
+                return new IjkPlayer() {
                     @Override
                     public void setOptions() {
                         //精准seek

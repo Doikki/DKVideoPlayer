@@ -1,21 +1,13 @@
 package com.dueeeke.videoplayer.player;
 
-import android.content.Context;
-
 public class AndroidMediaPlayerFactory extends PlayerFactory<AndroidMediaPlayer> {
 
-    private Context mContext;
-
-    public AndroidMediaPlayerFactory(Context context) {
-        mContext = context.getApplicationContext();
-    }
-
-    public static AndroidMediaPlayerFactory create(Context context) {
-        return new AndroidMediaPlayerFactory(context);
+    public static AndroidMediaPlayerFactory create() {
+        return new AndroidMediaPlayerFactory();
     }
 
     @Override
     public AndroidMediaPlayer createPlayer() {
-        return new AndroidMediaPlayer(mContext);
+        return new AndroidMediaPlayer();
     }
 }

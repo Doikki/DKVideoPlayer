@@ -1,7 +1,7 @@
 package com.dueeeke.videoplayer.ijk;
 
+import android.app.Application;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.net.Uri;
@@ -11,6 +11,7 @@ import android.view.SurfaceHolder;
 
 import com.dueeeke.videoplayer.player.AbstractPlayer;
 import com.dueeeke.videoplayer.player.VideoViewManager;
+import com.dueeeke.videoplayer.util.PlayerUtils;
 
 import java.util.Map;
 
@@ -22,12 +23,7 @@ public class IjkPlayer extends AbstractPlayer {
     protected IjkMediaPlayer mMediaPlayer;
     private boolean mIsLooping;
     private boolean mIsEnableMediaCodec;
-    protected Context mAppContext;
     private int mBufferedPercent;
-
-    public IjkPlayer(Context context) {
-        mAppContext = context.getApplicationContext();
-    }
 
     @Override
     public void initPlayer() {
@@ -58,14 +54,16 @@ public class IjkPlayer extends AbstractPlayer {
     @Override
     public void setDataSource(String path, Map<String, String> headers) {
         try {
-            Uri uri = Uri.parse(path);
-            if (ContentResolver.SCHEME_ANDROID_RESOURCE.equals(uri.getScheme())) {
-                RawDataSourceProvider rawDataSourceProvider = RawDataSourceProvider.create(mAppContext, uri);
-                mMediaPlayer.setDataSource(rawDataSourceProvider);
-            } else {
-                mMediaPlayer.setDataSource(mAppContext, uri, headers);
+            Application application = PlayerUtils.getApplication();
+            if (application != null) {
+                Uri uri = Uri.parse(path);
+                if (ContentResolver.SCHEME_ANDROID_RESOURCE.equals(uri.getScheme())) {
+                    RawDataSourceProvider rawDataSourceProvider = RawDataSourceProvider.create(application, uri);
+                    mMediaPlayer.setDataSource(rawDataSourceProvider);
+                } else {
+                    mMediaPlayer.setDataSource(application, uri, headers);
+                }
             }
-
         } catch (Exception e) {
             mPlayerEventListener.onError();
         }

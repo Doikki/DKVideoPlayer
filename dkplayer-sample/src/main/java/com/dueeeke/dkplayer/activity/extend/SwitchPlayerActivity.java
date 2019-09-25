@@ -54,13 +54,13 @@ public class SwitchPlayerActivity extends BaseActivity implements View.OnClickLi
         PlayerFactory factory = null;
         switch (id) {
             case R.id.btn_ijk:
-                factory = IjkPlayerFactory.create(this);
+                factory = IjkPlayerFactory.create();
                 break;
             case R.id.btn_media:
-                factory = AndroidMediaPlayerFactory.create(this);
+                factory = AndroidMediaPlayerFactory.create();
                 break;
             case R.id.btn_exo:
-                factory = ExoMediaPlayerFactory.create(this);
+                factory = ExoMediaPlayerFactory.create();
                 break;
         }
 

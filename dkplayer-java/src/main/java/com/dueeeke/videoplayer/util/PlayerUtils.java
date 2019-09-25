@@ -1,6 +1,7 @@
 package com.dueeeke.videoplayer.util;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.res.Resources;
@@ -192,5 +193,18 @@ public class PlayerUtils {
         }
         // 未知网络
         return NETWORK_UNKNOWN;
+    }
+
+    /**
+     * 通过反射获取Application
+     */
+    public static Application getApplication() {
+        try {
+            return (Application) Class.forName("android.app.ActivityThread")
+                    .getMethod("currentApplication").invoke(null, (Object[]) null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

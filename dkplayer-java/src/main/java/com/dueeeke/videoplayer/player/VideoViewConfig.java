@@ -41,8 +41,13 @@ public class VideoViewConfig {
         mEnableAudioFocus = builder.mEnableAudioFocus;
         mProgressManager = builder.mProgressManager;
         mEnableParallelPlay = builder.mEnableParallelPlay;
-        mPlayerFactory = builder.mPlayerFactory;
         mScreenScaleType = builder.mScreenScaleType;
+        if (builder.mPlayerFactory == null) {
+            //默认为AndroidMediaPlayer
+            mPlayerFactory = AndroidMediaPlayerFactory.create();
+        } else {
+            mPlayerFactory = builder.mPlayerFactory;
+        }
     }
 
 

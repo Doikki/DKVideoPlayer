@@ -37,7 +37,7 @@ public class ExoVideoView extends VideoView<CustomExoMediaPlayer> {
         setPlayerFactory(new PlayerFactory<CustomExoMediaPlayer>() {
             @Override
             public CustomExoMediaPlayer createPlayer() {
-                return new CustomExoMediaPlayer(context);
+                return new CustomExoMediaPlayer();
             }
         });
     }

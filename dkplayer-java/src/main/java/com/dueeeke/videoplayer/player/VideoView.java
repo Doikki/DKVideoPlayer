@@ -149,7 +149,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
         mEnableParallelPlay = config.mEnableParallelPlay;
         mProgressManager = config.mProgressManager;
         //默认使用系统的MediaPlayer进行解码
-        mPlayerFactory = config.mPlayerFactory == null ? AndroidMediaPlayerFactory.create(context) : config.mPlayerFactory;
+        mPlayerFactory = config.mPlayerFactory;
         mCurrentScreenScaleType = config.mScreenScaleType;
 
         //读取xml中的配置，并综合全局配置

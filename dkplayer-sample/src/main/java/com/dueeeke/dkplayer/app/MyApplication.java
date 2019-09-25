@@ -29,8 +29,8 @@ public class MyApplication extends Application {
         //播放器配置，注意：此为全局配置，按需开启
         VideoViewManager.setConfig(VideoViewConfig.newBuilder()
                 .setLogEnabled(BuildConfig.DEBUG)
-//                .setPlayerFactory(IjkPlayerFactory.create(this))
-                .setPlayerFactory(ExoMediaPlayerFactory.create(this))
+//                .setPlayerFactory(IjkPlayerFactory.create())
+                .setPlayerFactory(ExoMediaPlayerFactory.create())
 //                .setEnableOrientation(true)
 //                .setEnableMediaCodec(true)
 //                .setUsingSurfaceView(true)

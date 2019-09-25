@@ -109,15 +109,15 @@ public class MainActivity extends BaseActivity {
                 String msg = getString(R.string.str_current_player);
                 switch (itemId) {
                     case R.id.ijk:
-                        playerFactory = IjkPlayerFactory.create(this);
+                        playerFactory = IjkPlayerFactory.create();
                         mCurrentPlayer.setText(msg + "IjkPlayer");
                         break;
                     case R.id.exo:
-                        playerFactory = ExoMediaPlayerFactory.create(this);
+                        playerFactory = ExoMediaPlayerFactory.create();
                         mCurrentPlayer.setText(msg + "ExoPlayer");
                         break;
                     case R.id.media:
-                        playerFactory = AndroidMediaPlayerFactory.create(this);
+                        playerFactory = AndroidMediaPlayerFactory.create();
                         mCurrentPlayer.setText(msg + "MediaPlayer");
                         break;
                 }

@@ -6,6 +6,7 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 
 import com.dueeeke.videoplayer.player.AbstractPlayer;
+import com.dueeeke.videoplayer.util.PlayerUtils;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -44,10 +45,10 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
 
     protected TrackSelector mTrackSelector;
 
-    public ExoMediaPlayer(Context context) {
-        mAppContext = context.getApplicationContext();
+    public ExoMediaPlayer() {
+        mAppContext = PlayerUtils.getApplication();
         mLastReportedPlaybackState = Player.STATE_IDLE;
-        mMediaSourceHelper = new ExoMediaSourceHelper(context);
+        mMediaSourceHelper = new ExoMediaSourceHelper(mAppContext);
     }
 
     @Override
