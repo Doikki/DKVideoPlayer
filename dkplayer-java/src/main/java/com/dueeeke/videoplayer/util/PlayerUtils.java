@@ -201,7 +201,7 @@ public class PlayerUtils {
     public static Application getApplication() {
         try {
             return (Application) Class.forName("android.app.ActivityThread")
-                    .getMethod("currentApplication").invoke(null, (Object[]) null);
+                    .getMethod("currentApplication").invoke(null);
         } catch (Exception e) {
             e.printStackTrace();
         }

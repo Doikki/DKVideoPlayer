@@ -20,34 +20,49 @@ import java.util.Map;
 public class CustomExoMediaPlayer extends ExoMediaPlayer {
 
     private Cache mCache;
+    private File mCacheDir;
+    private long mMaxCacheSize;
 
     public void setDataSource(String path, Map<String, String> headers, boolean isCache) {
         if (isCache) {
-            if (mCache == null) {
-                mCache = new SimpleCache(
-                        new File(mAppContext.getExternalCacheDir(), "exo-video-cache"),//缓存目录
-                        new LeastRecentlyUsedCacheEvictor(512 * 1024 * 1024),//缓存大小
-                        new ExoDatabaseProvider(mAppContext));
-            }
             mMediaSourceHelper.setDataSourceFactory(getCacheDataSourceFactory());
         }
-
         super.setDataSource(path, headers);
     }
 
     private DataSource.Factory getCacheDataSourceFactory() {
+        if (mCache == null) {
+            mCache = getCache();
+        }
         return new CacheDataSourceFactory(
                 mCache,
                 mMediaSourceHelper.getDataSourceFactory(),
                 CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR);
     }
 
-    public Cache getCache() {
-        return mCache;
+    private Cache getCache() {
+        if (mCacheDir == null) {
+            mCacheDir = new File(mAppContext.getExternalCacheDir(), "exo-video-cache");
+        }
+        if (mMaxCacheSize <= 0) {
+            mMaxCacheSize = 512 * 1024 * 1024;//512M
+        }
+        return new SimpleCache(
+                mCacheDir,//缓存目录
+                new LeastRecentlyUsedCacheEvictor(mMaxCacheSize),//缓存大小，使用LRU算法实现
+                new ExoDatabaseProvider(mAppContext));
     }
 
-    public void setCache(Cache cache) {
-        mCache = cache;
+    public boolean setCacheDir(File dir) {
+        if (!SimpleCache.isCacheFolderLocked(dir)) {
+            mCacheDir = dir;
+            return true;
+        }
+        return false;
+    }
+
+    public void setMaxCacheSize(long bytes) {
+        mMaxCacheSize = bytes;
     }
 
     public void setDataSource(MediaSource dataSource) {

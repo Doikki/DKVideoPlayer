@@ -30,6 +30,9 @@ public class CustomPlayerActivity extends BaseActivity<ExoVideoView> {
         super.initView();
         mVideoView = findViewById(R.id.vv);
         mVideoView.setVideoController(new StandardVideoController(this));
+//        mVideoView.setLoadControl(new DefaultLoadControl.Builder()
+//                .setBufferDurationsMs(100000,100000, 100, 100)
+//                .createDefaultLoadControl());
     }
 
     public void onButtonClick(View view) {

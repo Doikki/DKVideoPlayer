@@ -47,37 +47,22 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
 
     public ExoMediaPlayer() {
         mAppContext = PlayerUtils.getApplication();
+        if (mAppContext == null) {
+            throw new NullPointerException();
+        }
         mLastReportedPlaybackState = Player.STATE_IDLE;
         mMediaSourceHelper = new ExoMediaSourceHelper(mAppContext);
     }
 
     @Override
     public void initPlayer() {
-        mLoadControl = mLoadControl == null ? getLoadControl() : mLoadControl;
-        mRenderersFactory = mRenderersFactory == null ? getRenderersFactory() : mRenderersFactory;
-        mTrackSelector = mTrackSelector == null ? getTrackSelector() : mTrackSelector;
+        mLoadControl = mLoadControl == null ? new DefaultLoadControl() : mLoadControl;
+        mRenderersFactory = mRenderersFactory == null ? new DefaultRenderersFactory(mAppContext) : mRenderersFactory;
+        mTrackSelector = mTrackSelector == null ? new DefaultTrackSelector() : mTrackSelector;
         mInternalPlayer = ExoPlayerFactory.newSimpleInstance(mAppContext, mRenderersFactory, mTrackSelector, mLoadControl);
         setOptions();
         mInternalPlayer.addListener(this);
         mInternalPlayer.addVideoListener(this);
-    }
-
-    private TrackSelector getTrackSelector() {
-        return new DefaultTrackSelector();
-    }
-
-    /**
-     * 渲染器
-     */
-    private RenderersFactory getRenderersFactory() {
-        return new DefaultRenderersFactory(mAppContext);
-    }
-
-    /**
-     * 缓冲控制，比如缓冲时间
-     */
-    private LoadControl getLoadControl() {
-        return new DefaultLoadControl();
     }
 
     public void setTrackSelector(TrackSelector trackSelector) {

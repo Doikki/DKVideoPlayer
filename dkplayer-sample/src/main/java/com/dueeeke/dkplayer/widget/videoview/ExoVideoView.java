@@ -6,22 +6,25 @@ import android.util.AttributeSet;
 import com.dueeeke.dkplayer.widget.player.CustomExoMediaPlayer;
 import com.dueeeke.videoplayer.player.PlayerFactory;
 import com.dueeeke.videoplayer.player.VideoView;
+import com.dueeeke.videoplayer.util.L;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.upstream.cache.Cache;
+
+import java.io.File;
 
 public class ExoVideoView extends VideoView<CustomExoMediaPlayer> {
 
     private MediaSource mMediaSource;
 
     private boolean mIsCacheEnabled;
+    private File mCacheDir;
+    private long mMaxCacheSize;
+
     private LoadControl mLoadControl;
     private RenderersFactory mRenderersFactory;
     private TrackSelector mTrackSelector;
-
-    private Cache mCache;
 
     public ExoVideoView(Context context) {
         this(context, null);
@@ -48,7 +51,13 @@ public class ExoVideoView extends VideoView<CustomExoMediaPlayer> {
         mMediaPlayer.setLoadControl(mLoadControl);
         mMediaPlayer.setRenderersFactory(mRenderersFactory);
         mMediaPlayer.setTrackSelector(mTrackSelector);
-        mMediaPlayer.setCache(mCache);
+        if (mIsCacheEnabled) {
+            boolean isSuccess = mMediaPlayer.setCacheDir(mCacheDir);
+            if (!isSuccess) {
+                L.e("Current dir is locked.");
+            }
+            mMediaPlayer.setMaxCacheSize(mMaxCacheSize);
+        }
     }
 
     @Override
@@ -71,17 +80,18 @@ public class ExoVideoView extends VideoView<CustomExoMediaPlayer> {
     }
 
     /**
-     * 缓存控制
-     */
-    public void setCache(Cache cache) {
-        mCache = cache;
-    }
-
-    /**
-     * 是否打开缓存，默认打开
+     * 是否打开缓存
      */
     public void setCacheEnabled(boolean isEnabled) {
         mIsCacheEnabled = isEnabled;
+    }
+
+    public void setCacheDir(File cacheDir) {
+        mCacheDir = cacheDir;
+    }
+
+    public void setMaxCacheSize(long maxCacheSize) {
+        mMaxCacheSize = maxCacheSize;
     }
 
     public void setLoadControl(LoadControl loadControl) {

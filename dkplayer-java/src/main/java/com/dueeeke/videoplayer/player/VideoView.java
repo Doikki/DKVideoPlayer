@@ -223,6 +223,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
         }
 
         initPlayer();
+        addDisplay();
         startPrepare(false);
     }
 
@@ -262,7 +263,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
         setInitOptions();
         mMediaPlayer.initPlayer();
         setOptions();
-        addDisplay();
     }
 
     /**
@@ -279,6 +279,9 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
         mMediaPlayer.setLooping(mIsLooping);
     }
 
+    /**
+     * 初始化视频渲染View
+     */
     protected void addDisplay() {
         if (mRenderView != null) {
             mPlayerContainer.removeView(mRenderView.getView());
@@ -697,16 +700,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
     }
 
     /**
-     * 自定义播放核心，继承{@link AbstractPlayer}实现自己的播放核心
-     *
-     * @deprecated 使用 {@link #setPlayerFactory(PlayerFactory)} ()} 代替
-     */
-    @Deprecated
-    public void setCustomMediaPlayer(@NonNull P abstractPlayer) {
-        mMediaPlayer = abstractPlayer;
-    }
-
-    /**
      * 自定义播放核心，继承{@link PlayerFactory}实现自己的播放核心
      */
     public void setPlayerFactory(PlayerFactory<P> playerFactory) {
@@ -714,25 +707,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
             throw new IllegalArgumentException("PlayerFactory can not be null!");
         }
         mPlayerFactory = playerFactory;
-    }
-
-    /**
-     * 设置调用{@link #start()}后在移动环境下是否继续播放，默认不继续播放
-     *
-     * @deprecated 使用 {@link VideoViewConfig}代替
-     */
-    @Deprecated
-    public void setPlayOnMobileNetwork(boolean playOnMobileNetwork) {
-    }
-
-    /**
-     * 添加到{@link VideoViewManager},如需集成到RecyclerView或ListView请开启此选项
-     * 用于实现同一列表同时只播放一个视频
-     *
-     * @deprecated 默认会添加到VideoViewManager，不再需要调用此方法
-     */
-    @Deprecated
-    public void addToVideoViewManager() {
     }
 
     /**

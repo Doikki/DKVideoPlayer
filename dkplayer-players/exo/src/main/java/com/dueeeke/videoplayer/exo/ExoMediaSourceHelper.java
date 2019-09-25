@@ -14,6 +14,7 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
 
 import java.util.Map;
@@ -23,7 +24,7 @@ public final class ExoMediaSourceHelper {
     private final String mUserAgent;
     private DataSource.Factory mDataSourceFactory;
     private Context mAppContext;
-    private DefaultHttpDataSourceFactory mHttpDataSourceFactory;
+    private HttpDataSource.Factory mHttpDataSourceFactory;
 
     public ExoMediaSourceHelper(Context context) {
         mAppContext = context.getApplicationContext();
@@ -103,5 +104,9 @@ public final class ExoMediaSourceHelper {
 
     public void setDataSourceFactory(DataSource.Factory factory) {
         mDataSourceFactory = factory;
+    }
+
+    public void setHttpDataSourceFactory(HttpDataSource.Factory factory) {
+        mHttpDataSourceFactory = factory;
     }
 }
