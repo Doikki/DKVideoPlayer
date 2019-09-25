@@ -53,12 +53,11 @@ public class CustomExoMediaPlayer extends ExoMediaPlayer {
                 new ExoDatabaseProvider(mAppContext));
     }
 
-    public boolean setCacheDir(File dir) {
+    public void setCacheDir(File dir) {
+        if (dir == null) return;
         if (!SimpleCache.isCacheFolderLocked(dir)) {
             mCacheDir = dir;
-            return true;
         }
-        return false;
     }
 
     public void setMaxCacheSize(long bytes) {

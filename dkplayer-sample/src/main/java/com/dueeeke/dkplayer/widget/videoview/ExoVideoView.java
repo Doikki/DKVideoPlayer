@@ -6,7 +6,6 @@ import android.util.AttributeSet;
 import com.dueeeke.dkplayer.widget.player.CustomExoMediaPlayer;
 import com.dueeeke.videoplayer.player.PlayerFactory;
 import com.dueeeke.videoplayer.player.VideoView;
-import com.dueeeke.videoplayer.util.L;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -52,10 +51,7 @@ public class ExoVideoView extends VideoView<CustomExoMediaPlayer> {
         mMediaPlayer.setRenderersFactory(mRenderersFactory);
         mMediaPlayer.setTrackSelector(mTrackSelector);
         if (mIsCacheEnabled) {
-            boolean isSuccess = mMediaPlayer.setCacheDir(mCacheDir);
-            if (!isSuccess) {
-                L.e("Current dir is locked.");
-            }
+            mMediaPlayer.setCacheDir(mCacheDir);
             mMediaPlayer.setMaxCacheSize(mMaxCacheSize);
         }
     }

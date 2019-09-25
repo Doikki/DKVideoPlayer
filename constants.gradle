@@ -1,6 +1,6 @@
 project.ext {
-    releaseVersion = '3.1.0_beta'
-    releaseVersionCode = 35
+    releaseVersion = '3.1.0'
+    releaseVersionCode = 36
 
     minSdkVersion = 16
     targetSdkVersion = 28
