@@ -1,4 +1,4 @@
-package com.dueeeke.videoplayer.widget;
+package com.dueeeke.videoplayer.render;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

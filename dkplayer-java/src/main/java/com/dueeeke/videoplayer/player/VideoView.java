@@ -28,9 +28,9 @@ import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.listener.PlayerEventListener;
 import com.dueeeke.videoplayer.util.L;
 import com.dueeeke.videoplayer.util.PlayerUtils;
-import com.dueeeke.videoplayer.widget.IRenderView;
-import com.dueeeke.videoplayer.widget.SurfaceRenderView;
-import com.dueeeke.videoplayer.widget.TextureRenderView;
+import com.dueeeke.videoplayer.render.IRenderView;
+import com.dueeeke.videoplayer.render.SurfaceRenderView;
+import com.dueeeke.videoplayer.render.TextureRenderView;
 
 import java.io.IOException;
 import java.util.ArrayList;

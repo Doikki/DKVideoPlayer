@@ -44,7 +44,6 @@ public class StatusView extends LinearLayout {
         if (tvMessage != null) tvMessage.setText(msg);
     }
 
-    @Deprecated
     public void setButtonTextAndAction(String text, OnClickListener listener) {
         if (btnAction != null) {
             btnAction.setText(text);

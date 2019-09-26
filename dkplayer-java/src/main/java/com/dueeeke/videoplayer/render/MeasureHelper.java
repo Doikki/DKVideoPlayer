@@ -1,4 +1,4 @@
-package com.dueeeke.videoplayer.widget;
+package com.dueeeke.videoplayer.render;
 
 import android.view.View;
 
