@@ -1,4 +1,4 @@
-package com.dueeeke.videoplayer.widget;
+package com.dueeeke.videocontroller;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -10,8 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-
-import com.dueeeke.videoplayer.R;
 
 /**
  * 错误提示，网络提示
@@ -46,6 +44,7 @@ public class StatusView extends LinearLayout {
         if (tvMessage != null) tvMessage.setText(msg);
     }
 
+    @Deprecated
     public void setButtonTextAndAction(String text, OnClickListener listener) {
         if (btnAction != null) {
             btnAction.setText(text);

@@ -1,4 +1,4 @@
-package com.dueeeke.videoplayer.widget;
+package com.dueeeke.videocontroller;
 
 import android.content.Context;
 import android.view.Gravity;
@@ -11,13 +11,10 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.dueeeke.videoplayer.R;
-
 /**
  * 显示亮度，音量，进度
  * Created by Devlin_n on 2017/4/17.
  */
-
 public class CenterView extends LinearLayout {
 
     private ImageView ivIcon;

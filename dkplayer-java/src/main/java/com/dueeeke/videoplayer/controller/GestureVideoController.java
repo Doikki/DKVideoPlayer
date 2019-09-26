@@ -12,9 +12,7 @@ import android.view.WindowManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.dueeeke.videoplayer.R;
 import com.dueeeke.videoplayer.util.PlayerUtils;
-import com.dueeeke.videoplayer.widget.CenterView;
 
 /**
  * 包含手势操作的VideoController
@@ -25,7 +23,6 @@ public abstract class GestureVideoController<T extends MediaPlayerControl> exten
         GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener, View.OnTouchListener {
 
     protected GestureDetector mGestureDetector;
-    protected CenterView mCenterView;
     protected AudioManager mAudioManager;
     protected boolean mIsGestureEnabled;
     protected int mStreamVolume;
@@ -36,6 +33,8 @@ public abstract class GestureVideoController<T extends MediaPlayerControl> exten
     protected boolean mChangePosition;
     protected boolean mChangeBrightness;
     protected boolean mChangeVolume;
+
+    protected GestureListener mGestureListener;
 
     public GestureVideoController(@NonNull Context context) {
         super(context);
@@ -52,9 +51,6 @@ public abstract class GestureVideoController<T extends MediaPlayerControl> exten
     @Override
     protected void initView() {
         super.initView();
-        mCenterView = new CenterView(getContext());
-        mCenterView.setVisibility(GONE);
-        addView(mCenterView);
         mAudioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
         mGestureDetector = new GestureDetector(getContext(), this);
         setOnTouchListener(this);
@@ -101,6 +97,9 @@ public abstract class GestureVideoController<T extends MediaPlayerControl> exten
                 } else {
                     mChangeBrightness = true;
                 }
+            }
+            if (mGestureListener != null) {
+                mGestureListener.onStartSlide();
             }
             mFirstTouch = false;
         }
@@ -150,8 +149,8 @@ public abstract class GestureVideoController<T extends MediaPlayerControl> exten
     public boolean onTouchEvent(MotionEvent event) {
         boolean detectedUp = event.getAction() == MotionEvent.ACTION_UP;
         if (!mGestureDetector.onTouchEvent(event) && detectedUp) {
-            if (mCenterView.getVisibility() == VISIBLE) {
-                mCenterView.setVisibility(GONE);
+            if (mGestureListener != null) {
+                mGestureListener.onStopSlide();
             }
             if (mNeedSeek) {
                 mMediaPlayer.seekTo(mPosition);
@@ -162,33 +161,23 @@ public abstract class GestureVideoController<T extends MediaPlayerControl> exten
     }
 
     protected void slideToChangePosition(float deltaX) {
-        mCenterView.setVisibility(VISIBLE);
-        hide();
-        mCenterView.setProVisibility(View.GONE);
         deltaX = -deltaX;
         int width = getMeasuredWidth();
         int duration = (int) mMediaPlayer.getDuration();
         int currentPosition = (int) mMediaPlayer.getCurrentPosition();
         int position = (int) (deltaX / width * 120000 + currentPosition);
-        if (position > currentPosition) {
-            mCenterView.setIcon(R.drawable.dkplayer_ic_action_fast_forward);
-        } else {
-            mCenterView.setIcon(R.drawable.dkplayer_ic_action_fast_rewind);
-        }
         if (position > duration) position = duration;
         if (position < 0) position = 0;
+        if (mGestureListener != null) {
+            mGestureListener.onPositionChange(position, currentPosition, duration);
+        }
         mPosition = position;
-        mCenterView.setTextView(stringForTime(position) + "/" + stringForTime(duration));
         mNeedSeek = true;
     }
 
     protected void slideToChangeBrightness(float deltaY) {
-        mCenterView.setVisibility(VISIBLE);
-        hide();
-        mCenterView.setProVisibility(View.VISIBLE);
         Window window = PlayerUtils.scanForActivity(getContext()).getWindow();
         WindowManager.LayoutParams attributes = window.getAttributes();
-        mCenterView.setIcon(R.drawable.dkplayer_ic_action_brightness);
         int height = getMeasuredHeight();
         if (mBrightness == -1.0f) mBrightness = 0.5f;
         float brightness = deltaY * 2 / height * 1.0f + mBrightness;
@@ -197,30 +186,61 @@ public abstract class GestureVideoController<T extends MediaPlayerControl> exten
         }
         if (brightness > 1.0f) brightness = 1.0f;
         int percent = (int) (brightness * 100);
-        mCenterView.setTextView(percent + "%");
-        mCenterView.setProPercent(percent);
         attributes.screenBrightness = brightness;
         window.setAttributes(attributes);
+        if (mGestureListener != null) {
+            mGestureListener.onBrightnessChange(percent);
+        }
     }
 
     protected void slideToChangeVolume(float deltaY) {
-        mCenterView.setVisibility(VISIBLE);
-        hide();
-        mCenterView.setProVisibility(View.VISIBLE);
         int streamMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         int height = getMeasuredHeight();
         float deltaV = deltaY * 2 / height * streamMaxVolume;
         float index = mStreamVolume + deltaV;
         if (index > streamMaxVolume) index = streamMaxVolume;
-        if (index < 0) {
-            mCenterView.setIcon(R.drawable.dkplayer_ic_action_volume_off);
-            index = 0;
-        } else {
-            mCenterView.setIcon(R.drawable.dkplayer_ic_action_volume_up);
-        }
+        if (index < 0) index = 0;
         int percent = (int) (index / streamMaxVolume * 100);
-        mCenterView.setTextView(percent + "%");
-        mCenterView.setProPercent(percent);
         mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (int) index, 0);
+        if (mGestureListener != null) {
+            mGestureListener.onVolumeChange(percent);
+        }
+    }
+
+
+    public interface GestureListener {
+        /**
+         * 开始滑动
+         */
+        void onStartSlide();
+
+        /**
+         * 结束滑动
+         */
+        void onStopSlide();
+
+        /**
+         * 滑动调整进度
+         * @param slidePosition 滑动进度
+         * @param currentPosition 当前播放进度
+         * @param duration 视频总长度
+         */
+        void onPositionChange(int slidePosition, int currentPosition, int duration);
+
+        /**
+         * 滑动调整亮度
+         * @param percent 亮度百分比
+         */
+        void onBrightnessChange(int percent);
+
+        /**
+         * 滑动调整音量
+         * @param percent 音量百分比
+         */
+        void onVolumeChange(int percent);
+    }
+
+    public void setGestureListener(GestureListener gestureListener) {
+        mGestureListener = gestureListener;
     }
 }

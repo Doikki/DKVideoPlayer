@@ -25,6 +25,7 @@ import androidx.annotation.Nullable;
 import com.dueeeke.videoplayer.controller.GestureVideoController;
 import com.dueeeke.videoplayer.controller.MediaPlayerControl;
 import com.dueeeke.videoplayer.player.VideoView;
+import com.dueeeke.videoplayer.player.VideoViewManager;
 import com.dueeeke.videoplayer.util.L;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 
@@ -34,7 +35,7 @@ import com.dueeeke.videoplayer.util.PlayerUtils;
  */
 
 public class StandardVideoController<T extends MediaPlayerControl> extends GestureVideoController<T>
-        implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+        implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, GestureVideoController.GestureListener {
     protected TextView mTotalTime, mCurrTime;
     protected ImageView mFullScreenButton;
     protected LinearLayout mBottomContainer, mTopContainer;
@@ -58,6 +59,9 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
     private Animation mHideAnim = AnimationUtils.loadAnimation(getContext(), R.anim.dkplayer_anim_alpha_out);
     private BatteryReceiver mBatteryReceiver;
     protected ImageView mRefreshButton;
+
+    protected StatusView mStatusView;
+    protected CenterView mCenterView;
 
 
     public StandardVideoController(@NonNull Context context) {
@@ -111,6 +115,14 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
         mBatteryReceiver = new BatteryReceiver(mBatteryLevel);
         mRefreshButton = mControllerView.findViewById(R.id.iv_refresh);
         mRefreshButton.setOnClickListener(this);
+
+        setGestureListener(this);
+
+        mStatusView = new StatusView(getContext());
+
+        mCenterView = new CenterView(getContext());
+        mCenterView.setVisibility(GONE);
+        addView(mCenterView);
     }
 
     @Override
@@ -148,6 +160,7 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
 
     @Override
     public void setPlayerState(int playerState) {
+        super.setPlayerState(playerState);
         switch (playerState) {
             case VideoView.PLAYER_NORMAL:
                 L.e("PLAYER_NORMAL");
@@ -237,12 +250,14 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
                 break;
             case VideoView.STATE_ERROR:
                 L.e("STATE_ERROR");
+                removeCallbacks(mFadeOut);
+                removeCallbacks(mShowProgress);
+                showErrorView();
                 mStartPlayButton.setVisibility(GONE);
                 mLoadingProgress.setVisibility(GONE);
                 mThumb.setVisibility(GONE);
                 mBottomProgress.setVisibility(GONE);
                 mTopContainer.setVisibility(GONE);
-                removeCallbacks(mShowProgress);
                 break;
             case VideoView.STATE_BUFFERING:
                 L.e("STATE_BUFFERING");
@@ -274,6 +289,49 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
                 mMediaPlayer.setLock(false);
                 break;
         }
+    }
+
+    /**
+     * 显示播放错误界面
+     */
+    protected void showErrorView() {
+        mStatusView.setMessage(getResources().getString(R.string.dkplayer_error_message));
+        mStatusView.setButtonTextAndAction(getResources().getString(R.string.dkplayer_retry), new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideErrorView();
+                mMediaPlayer.replay(false);
+            }
+        });
+        this.addView(mStatusView, 0);
+    }
+
+    protected void hideErrorView() {
+        this.removeView(mStatusView);
+    }
+
+    /**
+     * 显示移动网络播放警告
+     */
+    @Override
+    public void showNetWarning() {
+        this.removeView(mStatusView);
+        mStatusView.setMessage(getResources().getString(R.string.dkplayer_wifi_tip));
+        mStatusView.setButtonTextAndAction(getResources().getString(R.string.dkplayer_continue_play), new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideNetWarning();
+                VideoViewManager.instance().setPlayOnMobileNetwork(true);
+                mMediaPlayer.start();
+            }
+        });
+        this.addView(mStatusView);
+    }
+
+    @Override
+    public void hideNetWarning() {
+        super.hideNetWarning();
+        this.removeView(mStatusView);
     }
 
     protected void doLockUnlock() {
@@ -467,5 +525,49 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
             return true;
         }
         return super.onBackPressed();
+    }
+
+    @Override
+    public void onPositionChange(int slidePosition, int currentPosition, int duration) {
+        mCenterView.setProVisibility(View.GONE);
+        if (slidePosition > currentPosition) {
+            mCenterView.setIcon(R.drawable.dkplayer_ic_action_fast_forward);
+        } else {
+            mCenterView.setIcon(R.drawable.dkplayer_ic_action_fast_rewind);
+        }
+        mCenterView.setTextView(stringForTime(slidePosition) + "/" + stringForTime(duration));
+    }
+
+    @Override
+    public void onBrightnessChange(int percent) {
+        mCenterView.setProVisibility(View.VISIBLE);
+        mCenterView.setIcon(R.drawable.dkplayer_ic_action_brightness);
+        mCenterView.setTextView(percent + "%");
+        mCenterView.setProPercent(percent);
+    }
+
+    @Override
+    public void onVolumeChange(int percent) {
+        mCenterView.setProVisibility(View.VISIBLE);
+        if (percent <= 0) {
+            mCenterView.setIcon(R.drawable.dkplayer_ic_action_volume_off);
+        } else {
+            mCenterView.setIcon(R.drawable.dkplayer_ic_action_volume_up);
+        }
+        mCenterView.setTextView(percent + "%");
+        mCenterView.setProPercent(percent);
+    }
+
+    @Override
+    public void onStartSlide() {
+        hide();
+        mCenterView.setVisibility(VISIBLE);
+    }
+
+    @Override
+    public void onStopSlide() {
+        if (mCenterView.getVisibility() == VISIBLE) {
+            mCenterView.setVisibility(GONE);
+        }
     }
 }

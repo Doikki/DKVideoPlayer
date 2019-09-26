@@ -234,7 +234,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
         if (mVideoController != null
                 && PlayerUtils.getNetworkType(getContext()) == PlayerUtils.NETWORK_MOBILE
                 && !VideoViewManager.instance().playOnMobileNetwork()) {
-            mVideoController.showStatusView();
+            mVideoController.showNetWarning();
             return true;
         }
         return false;
@@ -378,7 +378,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
     public void release() {
         VideoViewManager.instance().removeVideoView(this);
         if (mVideoController != null) {
-            mVideoController.hideStatusView();
+            mVideoController.hideNetWarning();
         }
         if (!isInIdleState()) {
             saveProgress();

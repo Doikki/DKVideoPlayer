@@ -9,14 +9,12 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import androidx.annotation.AttrRes;
+import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.dueeeke.videoplayer.R;
 import com.dueeeke.videoplayer.player.VideoView;
-import com.dueeeke.videoplayer.player.VideoViewManager;
 import com.dueeeke.videoplayer.util.PlayerUtils;
-import com.dueeeke.videoplayer.widget.StatusView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -38,8 +36,7 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
     private StringBuilder mFormatBuilder;
     private Formatter mFormatter;
     protected int mCurrentPlayState;
-    protected StatusView mStatusView;
-
+    protected int mCurrentPlayerState;
 
     public BaseVideoController(@NonNull Context context) {
         this(context, null);
@@ -59,7 +56,6 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
         mControllerView = LayoutInflater.from(getContext()).inflate(getLayoutId(), this);
         mFormatBuilder = new StringBuilder();
         mFormatter = new Formatter(mFormatBuilder, Locale.getDefault());
-        mStatusView = new StatusView(getContext());
         setClickable(true);
         setFocusable(true);
     }
@@ -68,6 +64,13 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
      * 设置控制器布局文件，子类必须实现
      */
     protected abstract int getLayoutId();
+
+    /**
+     * 重要：此方法用于将{@link VideoView} 和控制器绑定
+     */
+    public void setMediaPlayer(T mediaPlayer) {
+        this.mMediaPlayer = mediaPlayer;
+    }
 
     /**
      * 显示
@@ -81,43 +84,41 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
     public void hide() {
     }
 
+    /**
+     * {@link VideoView}调用此方法向控制器设置播放状态，
+     * 开发者可重写此方法并在其中更新控制器在不同播放状态下的ui
+     */
+    @CallSuper
     public void setPlayState(int playState) {
         mCurrentPlayState = playState;
-        hideStatusView();
-        if (playState == VideoView.STATE_ERROR) {
-            mStatusView.setMessage(getResources().getString(R.string.dkplayer_error_message));
-            mStatusView.setButtonTextAndAction(getResources().getString(R.string.dkplayer_retry), new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    hideStatusView();
-                    mMediaPlayer.replay(false);
-                }
-            });
-            this.addView(mStatusView, 0);
-        }
     }
 
-    public void showStatusView() {
-        this.removeView(mStatusView);
-        mStatusView.setMessage(getResources().getString(R.string.dkplayer_wifi_tip));
-        mStatusView.setButtonTextAndAction(getResources().getString(R.string.dkplayer_continue_play), new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideStatusView();
-                VideoViewManager.instance().setPlayOnMobileNetwork(true);
-                mMediaPlayer.start();
-            }
-        });
-        this.addView(mStatusView);
-    }
-
-    public void hideStatusView() {
-        this.removeView(mStatusView);
-    }
-
+    /**
+     * {@link VideoView}调用此方法向控制器设置播放器状态，
+     * 开发者可重写此方法并在其中更新控制器在不同播放器状态下的ui
+     */
+    @CallSuper
     public void setPlayerState(int playerState) {
+        mCurrentPlayerState = playerState;
     }
 
+    /**
+     * 显示移动网络播放提示
+     */
+    public void showNetWarning() {
+
+    }
+
+    /**
+     * 隐藏移动网络播放提示
+     */
+    public void hideNetWarning() {
+
+    }
+
+    /**
+     * 播放和暂停
+     */
     protected void doPauseResume() {
         if (mCurrentPlayState == VideoView.STATE_BUFFERING) return;
         if (mMediaPlayer.isPlaying()) {
@@ -141,7 +142,6 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
             mMediaPlayer.startFullScreen();
         }
     }
-
 
     protected Runnable mShowProgress = new Runnable() {
         @Override
@@ -213,9 +213,5 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
      */
     public boolean onBackPressed() {
         return false;
-    }
-
-    public void setMediaPlayer(T mediaPlayer) {
-        this.mMediaPlayer = mediaPlayer;
     }
 }
