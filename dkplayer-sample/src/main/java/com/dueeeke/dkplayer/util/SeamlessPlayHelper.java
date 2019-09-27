@@ -35,6 +35,11 @@ public class SeamlessPlayHelper {
     }
 
 
+    public void release() {
+        mVideoView = null;
+        instance = null;
+    }
+
 
 
 }

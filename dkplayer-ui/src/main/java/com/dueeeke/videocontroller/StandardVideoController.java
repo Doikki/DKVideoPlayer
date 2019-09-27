@@ -25,7 +25,6 @@ import androidx.annotation.Nullable;
 import com.dueeeke.videoplayer.controller.GestureVideoController;
 import com.dueeeke.videoplayer.controller.MediaPlayerControl;
 import com.dueeeke.videoplayer.player.VideoView;
-import com.dueeeke.videoplayer.player.VideoViewManager;
 import com.dueeeke.videoplayer.util.L;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 
@@ -126,6 +125,12 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
     }
 
     @Override
+    public void setMediaPlayer(T mediaPlayer) {
+        super.setMediaPlayer(mediaPlayer);
+        mStatusView.attachMediaPlayer(mMediaPlayer);
+    }
+
+    @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         getContext().unregisterReceiver(mBatteryReceiver);
@@ -217,6 +222,7 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
                 mCompleteContainer.setVisibility(GONE);
                 mBottomProgress.setVisibility(GONE);
                 mLoadingProgress.setVisibility(GONE);
+                mStatusView.dismiss();
                 mStartPlayButton.setVisibility(VISIBLE);
                 mThumb.setVisibility(VISIBLE);
                 break;
@@ -239,6 +245,7 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
                 L.e("STATE_PREPARING");
                 mCompleteContainer.setVisibility(GONE);
                 mStartPlayButton.setVisibility(GONE);
+                mStatusView.dismiss();
                 mLoadingProgress.setVisibility(VISIBLE);
 //                mThumb.setVisibility(VISIBLE);
                 break;
@@ -252,7 +259,7 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
                 L.e("STATE_ERROR");
                 removeCallbacks(mFadeOut);
                 hide();
-                showErrorView();
+                mStatusView.showErrorView(this);
                 removeCallbacks(mShowProgress);
                 mStartPlayButton.setVisibility(GONE);
                 mLoadingProgress.setVisibility(GONE);
@@ -293,46 +300,16 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
     }
 
     /**
-     * 显示播放错误界面
-     */
-    protected void showErrorView() {
-        mStatusView.setMessage(getResources().getString(R.string.dkplayer_error_message));
-        mStatusView.setButtonTextAndAction(getResources().getString(R.string.dkplayer_retry), new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideErrorView();
-                mMediaPlayer.replay(false);
-            }
-        });
-        this.addView(mStatusView, 0);
-    }
-
-    protected void hideErrorView() {
-        this.removeView(mStatusView);
-    }
-
-    /**
      * 显示移动网络播放警告
      */
     @Override
     public void showNetWarning() {
-        this.removeView(mStatusView);
-        mStatusView.setMessage(getResources().getString(R.string.dkplayer_wifi_tip));
-        mStatusView.setButtonTextAndAction(getResources().getString(R.string.dkplayer_continue_play), new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideNetWarning();
-                VideoViewManager.instance().setPlayOnMobileNetwork(true);
-                mMediaPlayer.start();
-            }
-        });
-        this.addView(mStatusView);
+        mStatusView.showNetWarning(this);
     }
 
     @Override
     public void hideNetWarning() {
-        super.hideNetWarning();
-        this.removeView(mStatusView);
+        mStatusView.dismiss();
     }
 
     protected void doLockUnlock() {

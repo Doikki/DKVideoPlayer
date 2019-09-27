@@ -68,6 +68,7 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
     /**
      * 重要：此方法用于将{@link VideoView} 和控制器绑定
      */
+    @CallSuper
     public void setMediaPlayer(T mediaPlayer) {
         this.mMediaPlayer = mediaPlayer;
     }

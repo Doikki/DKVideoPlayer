@@ -11,7 +11,9 @@ import android.widget.ProgressBar;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.util.PIPManager;
+import com.dueeeke.videocontroller.StatusView;
 import com.dueeeke.videoplayer.controller.GestureVideoController;
+import com.dueeeke.videoplayer.controller.MediaPlayerControl;
 import com.dueeeke.videoplayer.player.VideoView;
 
 /**
@@ -19,11 +21,13 @@ import com.dueeeke.videoplayer.player.VideoView;
  * Created by Devlin_n on 2017/6/1.
  */
 
-public class FloatController extends GestureVideoController implements View.OnClickListener {
+public class FloatController extends GestureVideoController<MediaPlayerControl> implements View.OnClickListener {
 
 
     private ProgressBar proLoading;
     private ImageView playButton;
+
+    private StatusView mStatusView;
 
 
     public FloatController(@NonNull Context context) {
@@ -48,6 +52,14 @@ public class FloatController extends GestureVideoController implements View.OnCl
         proLoading = mControllerView.findViewById(R.id.loading);
         playButton = mControllerView.findViewById(R.id.start_play);
         playButton.setOnClickListener(this);
+
+        mStatusView = new StatusView(getContext());
+    }
+
+    @Override
+    public void setMediaPlayer(MediaPlayerControl mediaPlayer) {
+        super.setMediaPlayer(mediaPlayer);
+        mStatusView.attachMediaPlayer(mMediaPlayer);
     }
 
     @Override
@@ -75,6 +87,7 @@ public class FloatController extends GestureVideoController implements View.OnCl
                 playButton.setSelected(false);
                 playButton.setVisibility(VISIBLE);
                 proLoading.setVisibility(GONE);
+                mStatusView.dismiss();
                 break;
             case VideoView.STATE_PLAYING:
                 playButton.setSelected(true);
@@ -90,6 +103,7 @@ public class FloatController extends GestureVideoController implements View.OnCl
                 break;
             case VideoView.STATE_PREPARING:
                 playButton.setVisibility(GONE);
+                mStatusView.dismiss();
                 proLoading.setVisibility(VISIBLE);
                 break;
             case VideoView.STATE_PREPARED:
@@ -97,6 +111,7 @@ public class FloatController extends GestureVideoController implements View.OnCl
                 proLoading.setVisibility(GONE);
                 break;
             case VideoView.STATE_ERROR:
+                mStatusView.showErrorView(this, 0);
                 proLoading.setVisibility(GONE);
                 playButton.setVisibility(GONE);
                 break;
@@ -116,6 +131,19 @@ public class FloatController extends GestureVideoController implements View.OnCl
         }
     }
 
+
+    /**
+     * 显示移动网络播放警告
+     */
+    @Override
+    public void showNetWarning() {
+        mStatusView.showNetWarning(this, 0);
+    }
+
+    @Override
+    public void hideNetWarning() {
+        mStatusView.dismiss();
+    }
 
     @Override
     public void show() {

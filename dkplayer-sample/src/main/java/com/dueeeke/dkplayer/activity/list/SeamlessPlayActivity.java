@@ -237,6 +237,7 @@ public class SeamlessPlayActivity extends AppCompatActivity {
         removePlayerFormParent();
         mVideoView.setVideoController(null);
         mVideoView.release();
+        SeamlessPlayHelper.getInstance().release();
 
     }
 

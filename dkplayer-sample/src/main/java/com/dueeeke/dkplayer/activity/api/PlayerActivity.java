@@ -47,29 +47,11 @@ public class PlayerActivity extends DebugActivity {
             mVideoView.addOnVideoViewStateChangeListener(mOnVideoViewStateChangeListener);
 
             //使用IjkPlayer解码
-//            mVideoView.setPlayerFactory(IjkPlayerFactory.create(this));
+//            mVideoView.setPlayerFactory(IjkPlayerFactory.create());
             //使用ExoPlayer解码
-//            mVideoView.setPlayerFactory(ExoMediaPlayerFactory.create(this));
+//            mVideoView.setPlayerFactory(ExoMediaPlayerFactory.create());
             //使用MediaPlayer解码
-//            mVideoView.setPlayerFactory(AndroidMediaPlayerFactory.create(this));
-
-//            mVideoView.setPlayerFactory(new PlayerFactory() {
-//                @Override
-//                public AbstractPlayer createPlayer() {
-//                    return new ExoMediaPlayer(PlayerActivity.this) {
-//
-//                        @Override
-//                        protected LoadControl getLoadControl() {
-//                            return super.getLoadControl();
-//                        }
-//
-//                        @Override
-//                        public void setInitOptions() {
-//                            super.setInitOptions();
-//                        }
-//                    };
-//                }
-//            });
+//            mVideoView.setPlayerFactory(AndroidMediaPlayerFactory.create());
 
             mVideoView.start();
         }
