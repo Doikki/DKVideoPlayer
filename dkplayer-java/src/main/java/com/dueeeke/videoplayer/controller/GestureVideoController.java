@@ -1,5 +1,6 @@
 package com.dueeeke.videoplayer.controller;
 
+import android.app.Activity;
 import android.content.Context;
 import android.media.AudioManager;
 import android.util.AttributeSet;
@@ -65,7 +66,12 @@ public abstract class GestureVideoController<T extends MediaPlayerControl> exten
     public boolean onDown(MotionEvent e) {
         if (!mIsGestureEnabled || PlayerUtils.isEdge(getContext(), e)) return false;
         mStreamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-        mBrightness = PlayerUtils.scanForActivity(getContext()).getWindow().getAttributes().screenBrightness;
+        Activity activity = PlayerUtils.scanForActivity(getContext());
+        if (activity == null) {
+            mBrightness = 0;
+        } else {
+            mBrightness = activity.getWindow().getAttributes().screenBrightness;
+        }
         mFirstTouch = true;
         mChangePosition = false;
         mChangeBrightness = false;
@@ -92,7 +98,9 @@ public abstract class GestureVideoController<T extends MediaPlayerControl> exten
         if (mFirstTouch) {
             mChangePosition = Math.abs(distanceX) >= Math.abs(distanceY);
             if (!mChangePosition) {
-                if (e2.getX() > PlayerUtils.getScreenWidth(getContext(), true) / 2) {
+                //半屏宽度
+                int halfScreen = PlayerUtils.getScreenWidth(getContext(), true) / 2;
+                if (e2.getX() > halfScreen) {
                     mChangeVolume = true;
                 } else {
                     mChangeBrightness = true;
@@ -176,7 +184,9 @@ public abstract class GestureVideoController<T extends MediaPlayerControl> exten
     }
 
     protected void slideToChangeBrightness(float deltaY) {
-        Window window = PlayerUtils.scanForActivity(getContext()).getWindow();
+        Activity activity = PlayerUtils.scanForActivity(getContext());
+        if (activity == null) return;
+        Window window = activity.getWindow();
         WindowManager.LayoutParams attributes = window.getAttributes();
         int height = getMeasuredHeight();
         if (mBrightness == -1.0f) mBrightness = 0.5f;

@@ -35,7 +35,7 @@ public class ExoVideoView extends VideoView<CustomExoMediaPlayer> {
 
     public ExoVideoView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        //必须设置，否者报错
+        //由于传递了泛型，必须将CustomExoMediaPlayer设置进来，否者报错
         setPlayerFactory(new PlayerFactory<CustomExoMediaPlayer>() {
             @Override
             public CustomExoMediaPlayer createPlayer() {

@@ -251,8 +251,9 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
             case VideoView.STATE_ERROR:
                 L.e("STATE_ERROR");
                 removeCallbacks(mFadeOut);
-                removeCallbacks(mShowProgress);
+                hide();
                 showErrorView();
+                removeCallbacks(mShowProgress);
                 mStartPlayButton.setVisibility(GONE);
                 mLoadingProgress.setVisibility(GONE);
                 mThumb.setVisibility(GONE);

@@ -13,7 +13,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    compileOnly project(':dkplayer-java')
+    implementation project(':dkplayer-java')
     api "com.google.android.exoplayer:exoplayer-core:$project.exoPlayerVersion"
     api "com.google.android.exoplayer:exoplayer-dash:$project.exoPlayerVersion"
     api "com.google.android.exoplayer:exoplayer-hls:$project.exoPlayerVersion"
