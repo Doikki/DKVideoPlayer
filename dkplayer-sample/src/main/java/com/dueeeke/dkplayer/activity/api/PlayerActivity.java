@@ -31,6 +31,8 @@ public class PlayerActivity extends DebugActivity {
         Intent intent = getIntent();
         if (intent != null) {
             StandardVideoController controller = new StandardVideoController(this);
+            //根据屏幕方向自动进入/退出全屏
+            controller.setEnableOrientation(true);
             boolean isLive = intent.getBooleanExtra("isLive", false);
             if (isLive) {
                 controller.setLive();

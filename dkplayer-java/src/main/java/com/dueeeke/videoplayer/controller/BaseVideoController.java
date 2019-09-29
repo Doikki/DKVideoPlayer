@@ -44,7 +44,7 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
     protected static final int REVERSE_LANDSCAPE = 3;
     protected int mCurrentOrientation = -1;
 
-    private boolean mEnableOrientation = true;
+    private boolean mEnableOrientation;
 
     public BaseVideoController(@NonNull Context context) {
         this(context, null);
@@ -242,7 +242,6 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
     @Override
     public void onWindowFocusChanged(boolean hasWindowFocus) {
         super.onWindowFocusChanged(hasWindowFocus);
-        //TODO
         if (mMediaPlayer.isPlaying() && (mEnableOrientation || mMediaPlayer.isFullScreen())) {
             if (hasWindowFocus) {
                 postDelayed(new Runnable() {
@@ -269,6 +268,10 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
      */
     public void setEnableOrientation(boolean enableOrientation) {
         mEnableOrientation = enableOrientation;
+    }
+
+    public int getCurrentOrientation() {
+        return mCurrentOrientation;
     }
 
     @Override
@@ -332,7 +335,6 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
         if (!mMediaPlayer.isFullScreen()) {
             mMediaPlayer.startFullScreen();
         }
-
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
     }
 }

@@ -1,5 +1,6 @@
 package com.dueeeke.videoplayer.util;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
@@ -198,6 +199,7 @@ public class PlayerUtils {
     /**
      * 通过反射获取Application
      */
+    @SuppressLint("PrivateApi")
     public static Application getApplication() {
         try {
             return (Application) Class.forName("android.app.ActivityThread")

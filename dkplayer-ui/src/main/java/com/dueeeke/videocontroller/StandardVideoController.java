@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,9 +63,12 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
     protected StatusView mStatusView;
     protected CenterView mCenterView;
 
-    private View mCutoutPlaceHolder;
+    /**
+     * 是否需要适配刘海屏
+     */
+    private boolean mNeedAdaptCutout;
 
-    private LinearLayout mRootView;
+    private int mPadding;
 
 
     public StandardVideoController(@NonNull Context context) {
@@ -131,41 +135,93 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
         mHideAnim.setDuration(300);
         mShowAnim = new AlphaAnimation(0f, 1f);
         mShowAnim.setDuration(300);
-
-        mRootView = findViewById(R.id.root);
-        mCutoutPlaceHolder = new View(getContext());
     }
 
     @Override
     public void setMediaPlayer(T mediaPlayer) {
         super.setMediaPlayer(mediaPlayer);
         mStatusView.attachMediaPlayer(mMediaPlayer);
+
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mNeedAdaptCutout = CutoutUtil.allowDisplayToCutout(getContext());
+                if (mNeedAdaptCutout) {
+                    mPadding = (int) PlayerUtils.getStatusBarHeight(getContext());
+                }
+            }
+        }, 1000);
     }
 
     @Override
-    protected void onOrientationLandscape(Activity activity) {
-        super.onOrientationLandscape(activity);
-        int statusBarHeight = (int) PlayerUtils.getStatusBarHeight(getContext());
-        mCutoutPlaceHolder.setLayoutParams(new ViewGroup.LayoutParams(statusBarHeight, ViewGroup.LayoutParams.MATCH_PARENT));
-        mRootView.removeView(mCutoutPlaceHolder);
+    protected void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        adjustView(newConfig);
     }
 
     @Override
     protected void onOrientationReverseLandscape(Activity activity) {
         super.onOrientationReverseLandscape(activity);
-        int statusBarHeight = (int) PlayerUtils.getStatusBarHeight(getContext());
-        mCutoutPlaceHolder.setLayoutParams(new ViewGroup.LayoutParams(statusBarHeight, ViewGroup.LayoutParams.MATCH_PARENT));
-        mRootView.removeView(mCutoutPlaceHolder);
-        mRootView.addView(mCutoutPlaceHolder, 0);
+        adjustView(activity);
     }
 
     @Override
-    protected void onOrientationPortrait(Activity activity) {
-        super.onOrientationPortrait(activity);
-        int statusBarHeight = (int) PlayerUtils.getStatusBarHeight(getContext());
-        mCutoutPlaceHolder.setLayoutParams(new ViewGroup.LayoutParams(statusBarHeight, ViewGroup.LayoutParams.MATCH_PARENT));
-        mRootView.removeView(mCutoutPlaceHolder);
-        mRootView.addView(mCutoutPlaceHolder, 0);
+    protected void onOrientationLandscape(Activity activity) {
+        super.onOrientationLandscape(activity);
+        adjustView(activity);
+    }
+
+    private void adjustView(Configuration newConfig) {
+        if (mNeedAdaptCutout) {
+            if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                adjustPortrait();
+            } else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                adjustLandscape();
+            }
+        }
+    }
+
+    private void adjustView(Activity activity) {
+        if (mNeedAdaptCutout) {
+            if (activity.getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+                adjustLandscape();
+            } else if (activity.getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
+                adjustReserveLandscape();
+            }
+        }
+    }
+
+    protected void adjustPortrait() {
+        mTopContainer.setPadding(0, 0, 0, 0);
+        mBottomContainer.setPadding(0, 0 ,0 ,0);
+        mBottomProgress.setPadding(0, 0 ,0 ,0);
+        FrameLayout.LayoutParams lblp = (LayoutParams) mLockButton.getLayoutParams();
+        int dp24 = PlayerUtils.dp2px(getContext(), 24);
+        lblp.setMargins(dp24, 0, dp24, 0);
+        FrameLayout.LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
+        sflp.setMargins(0, 0 , 0, 0);
+    }
+
+    protected void adjustLandscape() {
+        mTopContainer.setPadding(mPadding, 0, 0, 0);
+        mBottomContainer.setPadding(mPadding, 0 ,0 ,0);
+        mBottomProgress.setPadding(mPadding, 0 ,0 ,0);
+        FrameLayout.LayoutParams layoutParams = (LayoutParams) mLockButton.getLayoutParams();
+        int dp24 = PlayerUtils.dp2px(getContext(), 24);
+        layoutParams.setMargins(dp24 + mPadding, 0, dp24 + mPadding, 0);
+        FrameLayout.LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
+        sflp.setMargins(mPadding, 0 , 0, 0);
+    }
+
+    protected void adjustReserveLandscape() {
+        mTopContainer.setPadding(0, 0, mPadding, 0);
+        mBottomContainer.setPadding(0, 0 ,mPadding ,0);
+        mBottomProgress.setPadding(0, 0 ,mPadding ,0);
+        FrameLayout.LayoutParams layoutParams = (LayoutParams) mLockButton.getLayoutParams();
+        int dp24 = PlayerUtils.dp2px(getContext(), 24);
+        layoutParams.setMargins(dp24, 0, dp24, 0);
+        FrameLayout.LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
+        sflp.setMargins(0, 0 , 0, 0);
     }
 
     @Override
@@ -208,7 +264,9 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
             case VideoView.PLAYER_NORMAL:
                 L.e("PLAYER_NORMAL");
                 if (mIsLocked) return;
-                CutoutUtil.setStatusBarTransparent(getContext(), false);
+                if (mNeedAdaptCutout) {
+                    CutoutUtil.adaptCutoutAboveAndroidP(getContext(), false);
+                }
                 setLayoutParams(new FrameLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT));
@@ -226,7 +284,9 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
             case VideoView.PLAYER_FULL_SCREEN:
                 L.e("PLAYER_FULL_SCREEN");
                 if (mIsLocked) return;
-                CutoutUtil.setStatusBarTransparent(getContext(), true);
+                if (mNeedAdaptCutout) {
+                    CutoutUtil.adaptCutoutAboveAndroidP(getContext(), true);
+                }
 
                 mIsGestureEnabled = true;
                 mFullScreenButton.setSelected(true);
@@ -256,7 +316,6 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
                 hide();
                 mIsLocked = false;
                 mLockButton.setSelected(false);
-                mMediaPlayer.setLock(false);
                 mBottomProgress.setProgress(0);
                 mBottomProgress.setSecondaryProgress(0);
                 mVideoProgress.setProgress(0);
@@ -337,7 +396,6 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
                 mBottomProgress.setSecondaryProgress(0);
                 mLoadingProgress.setVisibility(GONE);
                 mIsLocked = false;
-                mMediaPlayer.setLock(false);
                 break;
         }
     }
@@ -370,7 +428,6 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
             mLockButton.setSelected(true);
             Toast.makeText(getContext(), R.string.dkplayer_locked, Toast.LENGTH_SHORT).show();
         }
-        mMediaPlayer.setLock(mIsLocked);
     }
 
     /**

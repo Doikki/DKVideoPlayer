@@ -70,6 +70,7 @@ public class VideoListViewAdapter extends BaseAdapter {
             int widthPixels = itemView.getContext().getResources().getDisplayMetrics().widthPixels;
             mVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels * 9 / 16 + 1));
             controller = new StandardVideoController(itemView.getContext());
+            controller.setEnableOrientation(true);
         }
     }
 }

@@ -102,8 +102,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
     @Nullable
     protected AudioFocusHelper mAudioFocusHelper;
 
-    protected boolean mIsLockFullScreen;//是否锁定屏幕
-
     protected List<OnVideoViewStateChangeListener> mOnVideoViewStateChangeListeners;
 
     @Nullable
@@ -379,7 +377,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
                 mPlayerContainer.removeView(mRenderView.getView());
                 mRenderView.release();
             }
-            mIsLockFullScreen = false;
             mCurrentPosition = 0;
             setPlayState(STATE_IDLE);
         }
@@ -491,14 +488,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
     @Override
     public boolean isMute() {
         return mIsMute;
-    }
-
-    /**
-     * 设置controller是否处于锁定状态
-     */
-    @Override
-    public void setLock(boolean isLocked) {
-        this.mIsLockFullScreen = isLocked;
     }
 
     /**

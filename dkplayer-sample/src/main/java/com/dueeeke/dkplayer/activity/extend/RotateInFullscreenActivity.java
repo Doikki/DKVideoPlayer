@@ -3,9 +3,8 @@ package com.dueeeke.dkplayer.activity.extend;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.activity.BaseActivity;
 import com.dueeeke.dkplayer.widget.controller.RotateInFullscreenController;
-import com.dueeeke.dkplayer.widget.videoview.RotateVideoView;
 
-public class RotateInFullscreenActivity extends BaseActivity<RotateVideoView> {
+public class RotateInFullscreenActivity extends BaseActivity {
 
     @Override
     protected int getLayoutResId() {
