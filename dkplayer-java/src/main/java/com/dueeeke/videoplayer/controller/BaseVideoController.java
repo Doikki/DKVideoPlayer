@@ -26,7 +26,7 @@ import java.util.Locale;
  * Created by Devlin_n on 2017/4/12.
  */
 
-public abstract class BaseVideoController<T extends MediaPlayerControl> extends FrameLayout {
+public abstract class BaseVideoController<T extends MediaPlayerControl> extends FrameLayout implements OrientationHelper.OnOrientationChangeListener {
 
     protected View mControllerView;//控制器视图
     protected T mMediaPlayer;//播放器
@@ -37,6 +37,14 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
     private Formatter mFormatter;
     protected int mCurrentPlayState;
     protected int mCurrentPlayerState;
+
+    protected OrientationHelper mOrientationHelper;
+    protected static final int PORTRAIT = 1;
+    protected static final int LANDSCAPE = 2;
+    protected static final int REVERSE_LANDSCAPE = 3;
+    protected int mCurrentOrientation = -1;
+
+    private boolean mEnableOrientation = true;
 
     public BaseVideoController(@NonNull Context context) {
         this(context, null);
@@ -58,6 +66,7 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
         mFormatter = new Formatter(mFormatBuilder, Locale.getDefault());
         setClickable(true);
         setFocusable(true);
+        mOrientationHelper = new OrientationHelper(getContext().getApplicationContext());
     }
 
     /**
@@ -71,6 +80,8 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
     @CallSuper
     public void setMediaPlayer(T mediaPlayer) {
         this.mMediaPlayer = mediaPlayer;
+        //开始监听
+        mOrientationHelper.setOnOrientationChangeListener(this);
     }
 
     /**
@@ -92,6 +103,9 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
     @CallSuper
     public void setPlayState(int playState) {
         mCurrentPlayState = playState;
+        if (playState == VideoView.STATE_IDLE) {
+            mOrientationHelper.disable();
+        }
     }
 
     /**
@@ -101,6 +115,22 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
     @CallSuper
     public void setPlayerState(int playerState) {
         mCurrentPlayerState = playerState;
+        switch (playerState) {
+            case VideoView.PLAYER_NORMAL:
+                if (mEnableOrientation) {
+                    mOrientationHelper.enable();
+                } else {
+                    mOrientationHelper.disable();
+                }
+                break;
+            case VideoView.PLAYER_FULL_SCREEN:
+                //在全屏时强制监听设备方向
+                mOrientationHelper.enable();
+                break;
+            case VideoView.PLAYER_TINY_SCREEN:
+                mOrientationHelper.disable();
+                break;
+        }
     }
 
     /**
@@ -209,10 +239,100 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
         }
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasWindowFocus) {
+        super.onWindowFocusChanged(hasWindowFocus);
+        //TODO
+        if (mMediaPlayer.isPlaying() && (mEnableOrientation || mMediaPlayer.isFullScreen())) {
+            if (hasWindowFocus) {
+                postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mOrientationHelper.enable();
+                    }
+                }, 800);
+            } else {
+                mOrientationHelper.disable();
+            }
+        }
+    }
+
     /**
      * 改变返回键逻辑，用于activity
      */
     public boolean onBackPressed() {
         return false;
+    }
+
+    /**
+     * 是否自动旋转， 默认不自动旋转
+     */
+    public void setEnableOrientation(boolean enableOrientation) {
+        mEnableOrientation = enableOrientation;
+    }
+
+    @Override
+    public void onOrientationChanged(int orientation) {
+        Activity activity = PlayerUtils.scanForActivity(getContext());
+        if (activity == null) return;
+        if (orientation >= 340) { //屏幕顶部朝上
+            onOrientationPortrait(activity);
+        } else if (orientation >= 260 && orientation <= 280) { //屏幕左边朝上
+            onOrientationLandscape(activity);
+        } else if (orientation >= 70 && orientation <= 90) { //屏幕右边朝上
+            onOrientationReverseLandscape(activity);
+        }
+    }
+
+    /**
+     * 竖屏
+     */
+    protected void onOrientationPortrait(Activity activity) {
+        if (mIsLocked || !mEnableOrientation || mCurrentOrientation == PORTRAIT)
+            return;
+        if ((mCurrentOrientation == LANDSCAPE || mCurrentOrientation == REVERSE_LANDSCAPE) && !mMediaPlayer.isFullScreen()) {
+            mCurrentOrientation = PORTRAIT;
+            return;
+        }
+        mCurrentOrientation = PORTRAIT;
+        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        mMediaPlayer.stopFullScreen();
+    }
+
+    /**
+     * 横屏
+     */
+    protected void onOrientationLandscape(Activity activity) {
+        if (mCurrentOrientation == LANDSCAPE) return;
+        if (mCurrentOrientation == PORTRAIT
+                && activity.getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
+                && mMediaPlayer.isFullScreen()) {
+            mCurrentOrientation = LANDSCAPE;
+            return;
+        }
+        mCurrentOrientation = LANDSCAPE;
+        if (!mMediaPlayer.isFullScreen()) {
+            mMediaPlayer.startFullScreen();
+        }
+        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+    }
+
+    /**
+     * 反向横屏
+     */
+    protected void onOrientationReverseLandscape(Activity activity) {
+        if (mCurrentOrientation == REVERSE_LANDSCAPE) return;
+        if (mCurrentOrientation == PORTRAIT
+                && activity.getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                && mMediaPlayer.isFullScreen()) {
+            mCurrentOrientation = REVERSE_LANDSCAPE;
+            return;
+        }
+        mCurrentOrientation = REVERSE_LANDSCAPE;
+        if (!mMediaPlayer.isFullScreen()) {
+            mMediaPlayer.startFullScreen();
+        }
+
+        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
     }
 }

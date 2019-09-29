@@ -19,17 +19,4 @@ public class RotateVideoView extends VideoView {
     public RotateVideoView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
-
-    @Override
-    public void startFullScreen() {
-        super.startFullScreen();
-        mOrientationHelper.disable();
-    }
-
-
-    @Override
-    public void stopFullScreen() {
-        super.stopFullScreen();
-        mOrientationHelper.disable();
-    }
 }

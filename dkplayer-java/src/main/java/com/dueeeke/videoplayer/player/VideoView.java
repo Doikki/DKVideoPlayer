@@ -3,7 +3,6 @@ package com.dueeeke.videoplayer.player;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -26,11 +25,11 @@ import com.dueeeke.videoplayer.controller.BaseVideoController;
 import com.dueeeke.videoplayer.controller.MediaPlayerControl;
 import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.listener.PlayerEventListener;
-import com.dueeeke.videoplayer.util.L;
-import com.dueeeke.videoplayer.util.PlayerUtils;
 import com.dueeeke.videoplayer.render.IRenderView;
 import com.dueeeke.videoplayer.render.SurfaceRenderView;
 import com.dueeeke.videoplayer.render.TextureRenderView;
+import com.dueeeke.videoplayer.util.L;
+import com.dueeeke.videoplayer.util.PlayerUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,8 +41,7 @@ import java.util.Map;
  * Created by Devlin_n on 2017/4/7.
  */
 
-public class VideoView<P extends AbstractPlayer> extends FrameLayout implements MediaPlayerControl, PlayerEventListener,
-        OrientationHelper.OnOrientationChangeListener {
+public class VideoView<P extends AbstractPlayer> extends FrameLayout implements MediaPlayerControl, PlayerEventListener {
 
     protected P mMediaPlayer;//播放器
     protected PlayerFactory<P> mPlayerFactory;//工厂类，用于实例化播放核心
@@ -104,20 +102,12 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
     @Nullable
     protected AudioFocusHelper mAudioFocusHelper;
 
-    protected OrientationHelper mOrientationHelper;
-    protected static final int PORTRAIT = 1;
-    protected static final int LANDSCAPE = 2;
-    protected static final int REVERSE_LANDSCAPE = 3;
-    protected int mCurrentOrientation = -1;
-
     protected boolean mIsLockFullScreen;//是否锁定屏幕
 
     protected List<OnVideoViewStateChangeListener> mOnVideoViewStateChangeListeners;
 
     @Nullable
     protected ProgressManager mProgressManager;
-
-    protected boolean mEnableOrientation;//监听设备Orientation改变
 
     protected boolean mUsingSurfaceView;//启用SurfaceView
 
@@ -142,7 +132,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
 
         //读取全局配置
         VideoViewConfig config = VideoViewManager.getConfig();
-        mEnableOrientation = config.mEnableOrientation;
         mUsingSurfaceView = config.mUsingSurfaceView;
         mEnableMediaCodec = config.mEnableMediaCodec;
         mEnableAudioFocus = config.mEnableAudioFocus;
@@ -154,7 +143,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
 
         //读取xml中的配置，并综合全局配置
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.VideoView);
-        mEnableOrientation = a.getBoolean(R.styleable.VideoView_enableOrientation, mEnableOrientation);
         mUsingSurfaceView = a.getBoolean(R.styleable.VideoView_usingSurfaceView, mUsingSurfaceView);
         mEnableAudioFocus = a.getBoolean(R.styleable.VideoView_enableAudioFocus, mEnableAudioFocus);
         mEnableMediaCodec = a.getBoolean(R.styleable.VideoView_enableMediaCodec, mEnableMediaCodec);
@@ -176,9 +164,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
         this.addView(mPlayerContainer, params);
-
-        mOrientationHelper = new OrientationHelper(getContext().getApplicationContext());
-        mOrientationHelper.setOnOrientationChangeListener(this);
     }
 
     /**
@@ -215,11 +200,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
         //读取播放进度
         if (mProgressManager != null) {
             mCurrentPosition = mProgressManager.getSavedProgress(mUrl);
-        }
-
-        //监听设备方向改变
-        if (mEnableOrientation) {
-            mOrientationHelper.enable();
         }
 
         initPlayer();
@@ -395,13 +375,10 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
             if (mAudioFocusHelper != null) {
                 mAudioFocusHelper.abandonFocus();
             }
-            mOrientationHelper.disable();
-
             if (mRenderView != null) {
                 mPlayerContainer.removeView(mRenderView.getView());
                 mRenderView.release();
             }
-
             mIsLockFullScreen = false;
             mCurrentPosition = 0;
             setPlayState(STATE_IDLE);
@@ -672,13 +649,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
     }
 
     /**
-     * 是否自动旋转， 默认不自动旋转
-     */
-    public void setEnableOrientation(boolean enableOrientation) {
-        mEnableOrientation = enableOrientation;
-    }
-
-    /**
      * 是否启用SurfaceView，默认不启用
      */
     public void setUsingSurfaceView(boolean usingSurfaceView) {
@@ -741,8 +711,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
         //将播放器视图添加到DecorView中即实现了全屏
         decorView.addView(mPlayerContainer);
 
-        //在全屏时强制监听设备方向
-        mOrientationHelper.enable();
         mIsFullScreen = true;
         setPlayerState(PLAYER_FULL_SCREEN);
     }
@@ -758,8 +726,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
         ViewGroup decorView = getDecorView();
         if (decorView == null)
             return;
-
-        if (!mEnableOrientation) mOrientationHelper.disable();
 
         //显示NavigationBar和StatusBar
         this.removeView(mHideNavBarView);
@@ -819,7 +785,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
         if (mIsTinyScreen) return;
         ViewGroup contentView = getContentView();
         if (contentView == null) return;
-        mOrientationHelper.disable();
         this.removeView(mPlayerContainer);
         int width = mTinyScreenSize[0];
         if (width <= 0) {
@@ -851,7 +816,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
         this.addView(mPlayerContainer, params);
-        if (mEnableOrientation) mOrientationHelper.enable();
 
         mIsTinyScreen = false;
         setPlayerState(PLAYER_NORMAL);
@@ -879,19 +843,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
             //重新获得焦点时保持全屏状态
             if (mHideNavBarView != null) {
                 mHideNavBarView.setSystemUiVisibility(FULLSCREEN_FLAGS);
-            }
-        }
-
-        if (isInPlaybackState() && (mEnableOrientation || mIsFullScreen)) {
-            if (hasFocus) {
-                postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mOrientationHelper.enable();
-                    }
-                }, 800);
-            } else {
-                mOrientationHelper.disable();
             }
         }
     }
@@ -1059,71 +1010,5 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
         //activity切到后台后可能被系统回收，故在此处进行进度保存
         saveProgress();
         return super.onSaveInstanceState();
-    }
-
-    @Override
-    public void onOrientationChanged(int orientation) {
-        if (mVideoController == null) return;
-        Activity activity = PlayerUtils.scanForActivity(mVideoController.getContext());
-        if (activity == null) return;
-        if (orientation >= 340) { //屏幕顶部朝上
-            onOrientationPortrait(activity);
-        } else if (orientation >= 260 && orientation <= 280) { //屏幕左边朝上
-            onOrientationLandscape(activity);
-        } else if (orientation >= 70 && orientation <= 90) { //屏幕右边朝上
-            onOrientationReverseLandscape(activity);
-        }
-    }
-
-    /**
-     * 竖屏
-     */
-    protected void onOrientationPortrait(Activity activity) {
-        if (mIsLockFullScreen || !mEnableOrientation || mCurrentOrientation == PORTRAIT)
-            return;
-        if ((mCurrentOrientation == LANDSCAPE || mCurrentOrientation == REVERSE_LANDSCAPE) && !isFullScreen()) {
-            mCurrentOrientation = PORTRAIT;
-            return;
-        }
-        mCurrentOrientation = PORTRAIT;
-        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        stopFullScreen();
-    }
-
-    /**
-     * 横屏
-     */
-    protected void onOrientationLandscape(Activity activity) {
-        if (mCurrentOrientation == LANDSCAPE) return;
-        if (mCurrentOrientation == PORTRAIT
-                && activity.getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
-                && isFullScreen()) {
-            mCurrentOrientation = LANDSCAPE;
-            return;
-        }
-        mCurrentOrientation = LANDSCAPE;
-        if (!isFullScreen()) {
-            startFullScreen();
-        }
-        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-    }
-
-    /**
-     * 反向横屏
-     */
-    protected void onOrientationReverseLandscape(Activity activity) {
-        if (mCurrentOrientation == REVERSE_LANDSCAPE) return;
-        if (mCurrentOrientation == PORTRAIT
-                && activity.getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-                && isFullScreen()) {
-            mCurrentOrientation = REVERSE_LANDSCAPE;
-            return;
-        }
-        mCurrentOrientation = REVERSE_LANDSCAPE;
-        if (!isFullScreen()) {
-            startFullScreen();
-        }
-
-        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
     }
 }

@@ -1,11 +1,11 @@
 package com.dueeeke.videocontroller;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -33,6 +33,7 @@ public class CenterView extends LinearLayout {
         ivIcon = view.findViewById(R.id.iv_icon);
         tvPercent = view.findViewById(R.id.tv_percent);
         proPercent = view.findViewById(R.id.pro_percent);
+        setAlpha(0f);
     }
 
     public void setIcon(int icon) {
@@ -52,11 +53,23 @@ public class CenterView extends LinearLayout {
     }
 
     @Override
-    public void setVisibility(int visibility) {
-        super.setVisibility(visibility);
+    public void setVisibility(final int visibility) {
         if (visibility != VISIBLE) {
-            Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.dkplayer_anim_center_view);
-            this.startAnimation(animation);
+            this.animate()
+                    .alpha(0f)
+                    .setDuration(300)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                            CenterView.super.setVisibility(visibility);
+                        }
+                    })
+                    .start();
+            return;
+        } else {
+            setAlpha(1f);
         }
+        super.setVisibility(visibility);
     }
 }

@@ -46,11 +46,6 @@ public class FullScreenVideoView extends VideoView {
     }
 
     @Override
-    protected void onOrientationPortrait(Activity activity) {
-
-    }
-
-    @Override
     public boolean onBackPressed() {
         return false;
     }

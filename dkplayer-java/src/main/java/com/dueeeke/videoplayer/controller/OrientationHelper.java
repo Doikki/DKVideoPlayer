@@ -1,4 +1,4 @@
-package com.dueeeke.videoplayer.player;
+package com.dueeeke.videoplayer.controller;
 
 import android.content.Context;
 import android.view.OrientationEventListener;
@@ -6,7 +6,7 @@ import android.view.OrientationEventListener;
 /**
  * 设备方向监听
  */
-public final class OrientationHelper extends OrientationEventListener {
+public class OrientationHelper extends OrientationEventListener {
 
     private long mLastTime;
 
@@ -27,7 +27,7 @@ public final class OrientationHelper extends OrientationEventListener {
     }
 
 
-    interface OnOrientationChangeListener {
+    public interface OnOrientationChangeListener {
         void onOrientationChanged(int orientation);
     }
 

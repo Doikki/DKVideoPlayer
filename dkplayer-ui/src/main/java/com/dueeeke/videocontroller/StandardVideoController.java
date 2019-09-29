@@ -8,8 +8,8 @@ import android.content.pm.ActivityInfo;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -54,13 +54,17 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
     private ImageView mStopFullscreen;
     private TextView mSysTime;//系统当前时间
     private ImageView mBatteryLevel;//电量
-    private Animation mShowAnim = AnimationUtils.loadAnimation(getContext(), R.anim.dkplayer_anim_alpha_in);
-    private Animation mHideAnim = AnimationUtils.loadAnimation(getContext(), R.anim.dkplayer_anim_alpha_out);
+    private Animation mShowAnim;
+    private Animation mHideAnim;
     private BatteryReceiver mBatteryReceiver;
     protected ImageView mRefreshButton;
 
     protected StatusView mStatusView;
     protected CenterView mCenterView;
+
+    private View mCutoutPlaceHolder;
+
+    private LinearLayout mRootView;
 
 
     public StandardVideoController(@NonNull Context context) {
@@ -122,12 +126,46 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
         mCenterView = new CenterView(getContext());
         mCenterView.setVisibility(GONE);
         addView(mCenterView);
+
+        mHideAnim = new AlphaAnimation(1f, 0f);
+        mHideAnim.setDuration(300);
+        mShowAnim = new AlphaAnimation(0f, 1f);
+        mShowAnim.setDuration(300);
+
+        mRootView = findViewById(R.id.root);
+        mCutoutPlaceHolder = new View(getContext());
     }
 
     @Override
     public void setMediaPlayer(T mediaPlayer) {
         super.setMediaPlayer(mediaPlayer);
         mStatusView.attachMediaPlayer(mMediaPlayer);
+    }
+
+    @Override
+    protected void onOrientationLandscape(Activity activity) {
+        super.onOrientationLandscape(activity);
+        int statusBarHeight = (int) PlayerUtils.getStatusBarHeight(getContext());
+        mCutoutPlaceHolder.setLayoutParams(new ViewGroup.LayoutParams(statusBarHeight, ViewGroup.LayoutParams.MATCH_PARENT));
+        mRootView.removeView(mCutoutPlaceHolder);
+    }
+
+    @Override
+    protected void onOrientationReverseLandscape(Activity activity) {
+        super.onOrientationReverseLandscape(activity);
+        int statusBarHeight = (int) PlayerUtils.getStatusBarHeight(getContext());
+        mCutoutPlaceHolder.setLayoutParams(new ViewGroup.LayoutParams(statusBarHeight, ViewGroup.LayoutParams.MATCH_PARENT));
+        mRootView.removeView(mCutoutPlaceHolder);
+        mRootView.addView(mCutoutPlaceHolder, 0);
+    }
+
+    @Override
+    protected void onOrientationPortrait(Activity activity) {
+        super.onOrientationPortrait(activity);
+        int statusBarHeight = (int) PlayerUtils.getStatusBarHeight(getContext());
+        mCutoutPlaceHolder.setLayoutParams(new ViewGroup.LayoutParams(statusBarHeight, ViewGroup.LayoutParams.MATCH_PARENT));
+        mRootView.removeView(mCutoutPlaceHolder);
+        mRootView.addView(mCutoutPlaceHolder, 0);
     }
 
     @Override
@@ -170,6 +208,7 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
             case VideoView.PLAYER_NORMAL:
                 L.e("PLAYER_NORMAL");
                 if (mIsLocked) return;
+                CutoutUtil.setStatusBarTransparent(getContext(), false);
                 setLayoutParams(new FrameLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT));
@@ -187,6 +226,8 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
             case VideoView.PLAYER_FULL_SCREEN:
                 L.e("PLAYER_FULL_SCREEN");
                 if (mIsLocked) return;
+                CutoutUtil.setStatusBarTransparent(getContext(), true);
+
                 mIsGestureEnabled = true;
                 mFullScreenButton.setSelected(true);
                 mBackButton.setVisibility(VISIBLE);
@@ -209,6 +250,7 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
     public void setPlayState(int playState) {
         super.setPlayState(playState);
         switch (playState) {
+            //调用release方法会回到此状态
             case VideoView.STATE_IDLE:
                 L.e("STATE_IDLE");
                 hide();
@@ -228,6 +270,7 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
                 break;
             case VideoView.STATE_PLAYING:
                 L.e("STATE_PLAYING");
+                //开始刷新进度
                 post(mShowProgress);
                 mPlayButton.setSelected(true);
                 mLoadingProgress.setVisibility(GONE);
@@ -376,6 +419,7 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
         if (mShowing) {
             if (mMediaPlayer.isFullScreen()) {
                 mLockButton.setVisibility(GONE);
+                mLockButton.setAnimation(mHideAnim);
                 if (!mIsLocked) {
                     hideAllViews();
                 }
@@ -403,7 +447,10 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
             mSysTime.setText(getCurrentSystemTime());
         if (!mShowing) {
             if (mMediaPlayer.isFullScreen()) {
-                mLockButton.setVisibility(VISIBLE);
+                if (mLockButton.getVisibility() != VISIBLE) {
+                    mLockButton.setVisibility(VISIBLE);
+                    mLockButton.setAnimation(mShowAnim);
+                }
                 if (!mIsLocked) {
                     showAllViews();
                 }
