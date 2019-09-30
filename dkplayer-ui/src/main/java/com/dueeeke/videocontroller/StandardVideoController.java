@@ -141,16 +141,6 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
     public void setMediaPlayer(T mediaPlayer) {
         super.setMediaPlayer(mediaPlayer);
         mStatusView.attachMediaPlayer(mMediaPlayer);
-
-        postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mNeedAdaptCutout = CutoutUtil.allowDisplayToCutout(getContext());
-                if (mNeedAdaptCutout) {
-                    mPadding = (int) PlayerUtils.getStatusBarHeight(getContext());
-                }
-            }
-        }, 1000);
     }
 
     @Override
@@ -234,6 +224,11 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         getContext().registerReceiver(mBatteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+
+        mNeedAdaptCutout = CutoutUtil.allowDisplayToCutout(getContext());
+        if (mNeedAdaptCutout) {
+            mPadding = (int) PlayerUtils.getStatusBarHeight(getContext());
+        }
     }
 
     @Override
@@ -287,7 +282,6 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
                 if (mNeedAdaptCutout) {
                     CutoutUtil.adaptCutoutAboveAndroidP(getContext(), true);
                 }
-
                 mIsGestureEnabled = true;
                 mFullScreenButton.setSelected(true);
                 mBackButton.setVisibility(VISIBLE);

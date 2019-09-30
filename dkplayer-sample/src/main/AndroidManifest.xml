@@ -17,6 +17,19 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning"
         android:usesCleartextTraffic="true">
+
+        <!--允许绘制到oppo、vivo刘海屏机型的刘海区域 -->
+        <meta-data
+            android:name="android.max_aspect"
+            android:value="2.8" />
+        <!-- 允许绘制到华为刘海屏机型的刘海区域 -->
+        <meta-data
+            android:name="android.notch_support"
+            android:value="true" />
+        <!-- 允许绘制到小米刘海屏机型的刘海区域 -->
+        <meta-data
+            android:name="notch.config"
+            android:value="landscape" />
         <activity
             android:name=".activity.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -39,20 +52,7 @@
         <activity
             android:name=".activity.api.PlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait" >
-            <!--允许绘制到oppo、vivo刘海屏机型的刘海区域 -->
-            <meta-data
-                android:name="android.max_aspect"
-                android:value="2.8" />
-            <!-- 允许绘制到华为刘海屏机型的刘海区域 -->
-            <meta-data
-                android:name="android.notch_support"
-                android:value="true" />
-            <!-- 允许绘制到小米刘海屏机型的刘海区域 -->
-            <meta-data
-                android:name="notch.config"
-                android:value="portrait" />
-        </activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.extend.DanmakuActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"

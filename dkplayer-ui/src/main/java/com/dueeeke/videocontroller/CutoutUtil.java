@@ -6,6 +6,8 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.os.Build;
 import android.view.DisplayCutout;
+import android.view.Window;
+import android.view.WindowInsets;
 import android.view.WindowManager;
 
 import com.dueeeke.videoplayer.util.PlayerUtils;
@@ -35,16 +37,11 @@ public class CutoutUtil {
      * 是否为允许全屏界面显示内容到刘海区域的刘海屏机型（与AndroidManifest中配置对应）
      */
     public static boolean allowDisplayToCutout(Context context) {
-        //如果系统版本小于8.0不用适配刘海，因为刘海屏是在8.0之后出现的
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            return false;
-        } else {
             return hasCutoutAboveAndroidP(context)
                     || hasCutoutHuawei(context)
                     || hasCutoutOPPO(context)
                     || hasCutoutVIVO(context)
                     || hasCutoutXIAOMI(context);
-        }
     }
 
     /**
@@ -57,7 +54,12 @@ public class CutoutUtil {
             if (activity == null) {
                 return false;
             }
-            DisplayCutout displayCutout = activity.getWindow().getDecorView().getRootWindowInsets().getDisplayCutout();
+            Window window = activity.getWindow();
+            WindowInsets windowInsets = window.getDecorView().getRootWindowInsets();
+            if (windowInsets == null) {
+                return false;
+            }
+            DisplayCutout displayCutout = windowInsets.getDisplayCutout();
             if (displayCutout == null) {
                 return false;
             }
@@ -164,7 +166,6 @@ public class CutoutUtil {
             }
             activity.getWindow().setAttributes(lp);
         }
-
     }
 
 }

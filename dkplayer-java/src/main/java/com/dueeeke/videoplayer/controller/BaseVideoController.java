@@ -26,7 +26,8 @@ import java.util.Locale;
  * Created by Devlin_n on 2017/4/12.
  */
 
-public abstract class BaseVideoController<T extends MediaPlayerControl> extends FrameLayout implements OrientationHelper.OnOrientationChangeListener {
+public abstract class BaseVideoController<T extends MediaPlayerControl> extends FrameLayout
+        implements OrientationHelper.OnOrientationChangeListener {
 
     protected View mControllerView;//控制器视图
     protected T mMediaPlayer;//播放器

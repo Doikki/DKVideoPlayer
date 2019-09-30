@@ -11,7 +11,9 @@ import android.widget.TextView;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.interf.ControllerListener;
+import com.dueeeke.videocontroller.StatusView;
 import com.dueeeke.videoplayer.controller.BaseVideoController;
+import com.dueeeke.videoplayer.controller.MediaPlayerControl;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 
@@ -20,10 +22,12 @@ import com.dueeeke.videoplayer.util.PlayerUtils;
  * Created by Devlin_n on 2017/4/12.
  */
 
-public class AdController extends BaseVideoController implements View.OnClickListener {
+public class AdController extends BaseVideoController<MediaPlayerControl> implements View.OnClickListener {
     protected TextView adTime, adDetail;
     protected ImageView back, volume, fullScreen, playButton;
     protected ControllerListener listener;
+
+    private StatusView mStatusView;
 
     public AdController(@NonNull Context context) {
         super(context);
@@ -61,6 +65,15 @@ public class AdController extends BaseVideoController implements View.OnClickLis
                 if (listener != null) listener.onAdClick();
             }
         });
+
+        mStatusView = new StatusView(getContext());
+
+    }
+
+    @Override
+    public void setMediaPlayer(MediaPlayerControl mediaPlayer) {
+        super.setMediaPlayer(mediaPlayer);
+        mStatusView.attachMediaPlayer(mediaPlayer);
     }
 
     @Override
@@ -110,7 +123,23 @@ public class AdController extends BaseVideoController implements View.OnClickLis
                 back.setVisibility(VISIBLE);
                 fullScreen.setSelected(true);
                 break;
+            case VideoView.STATE_ERROR:
+                mStatusView.showErrorView(this);
+                break;
         }
+    }
+
+    /**
+     * 显示移动网络播放警告
+     */
+    @Override
+    public void showNetWarning() {
+        mStatusView.showNetWarning(this);
+    }
+
+    @Override
+    public void hideNetWarning() {
+        mStatusView.dismiss();
     }
 
     @Override
