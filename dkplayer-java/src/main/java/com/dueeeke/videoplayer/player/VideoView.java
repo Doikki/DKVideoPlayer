@@ -227,7 +227,8 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
         } else if (!TextUtils.isEmpty(mUrl)) {
             Uri uri = Uri.parse(mUrl);
             return ContentResolver.SCHEME_ANDROID_RESOURCE.equals(uri.getScheme())
-                    || ContentResolver.SCHEME_FILE.equals(uri.getScheme());
+                    || ContentResolver.SCHEME_FILE.equals(uri.getScheme())
+                    || "rawresource".equals(uri.getScheme());
         }
         return false;
     }

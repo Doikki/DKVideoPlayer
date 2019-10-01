@@ -68,6 +68,7 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
      */
     protected boolean mNeedAdaptCutout;
     protected int mPadding;
+    private int mCurrentOrientation = -1;
 
 
     public StandardVideoController(@NonNull Context context) {
@@ -185,6 +186,10 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
                 return;
             }
             int o = activity.getRequestedOrientation();
+            if (o == mCurrentOrientation) {
+                return;
+            }
+            L.d("adjustView");
             if (o == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
                 adjustPortrait();
             } else if (o == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
@@ -192,6 +197,7 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
             } else if (o == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
                 adjustReserveLandscape();
             }
+            mCurrentOrientation = o;
         }
     }
 
