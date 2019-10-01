@@ -15,7 +15,7 @@ import com.dueeeke.videoplayer.player.VideoViewManager;
  */
 public class ParallelPlayActivity extends AppCompatActivity {
 
-    private static final String VOD_URL = "http://vfx.mtime.cn/Video/2019/03/12/mp4/190312143927981075.mp4";
+    private static final String VOD_URL = "http://vfx.mtime.cn/Video/2019/03/18/mp4/190318231014076505.mp4";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

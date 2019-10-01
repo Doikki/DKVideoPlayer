@@ -33,7 +33,7 @@ public class ScreenShotPlayerActivity extends BaseActivity {
         mVideoView = findViewById(R.id.player);
         mScreenShot = findViewById(R.id.iv_screen_shot);
         StandardVideoController controller = new StandardVideoController(this);
-        mVideoView.setUrl("http://vfx.mtime.cn/Video/2019/03/12/mp4/190312143927981075.mp4");
+        mVideoView.setUrl("http://vfx.mtime.cn/Video/2019/03/18/mp4/190318231014076505.mp4");
         mVideoView.setVideoController(controller);
         mVideoView.start();
     }

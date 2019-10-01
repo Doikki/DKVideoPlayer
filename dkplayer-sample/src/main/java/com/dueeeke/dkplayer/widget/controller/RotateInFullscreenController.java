@@ -1,5 +1,6 @@
 package com.dueeeke.dkplayer.widget.controller;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.support.annotation.NonNull;
@@ -16,18 +17,20 @@ import com.dueeeke.videoplayer.util.PlayerUtils;
 
 public class RotateInFullscreenController extends StandardVideoController {
 
-    private boolean isLandscape;
+    @Nullable
+    private Activity mActivity;
 
     public RotateInFullscreenController(@NonNull Context context) {
-        super(context);
+        this(context, null);
     }
 
     public RotateInFullscreenController(@NonNull Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
     }
 
     public RotateInFullscreenController(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        mActivity = PlayerUtils.scanForActivity(context);
     }
 
     @Override
@@ -46,14 +49,14 @@ public class RotateInFullscreenController extends StandardVideoController {
 
     @Override
     protected void doStartStopFullScreen() {
-        if (isLandscape) {
-            PlayerUtils.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            isLandscape = false;
+        if (mActivity == null) return;
+        int o = mActivity.getRequestedOrientation();
+        if (o == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+            mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         } else {
-            PlayerUtils.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            isLandscape = true;
+            mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
-        mFullScreenButton.setSelected(isLandscape);
+        mFullScreenButton.setSelected(o == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     }
 
     @Override
@@ -63,6 +66,10 @@ public class RotateInFullscreenController extends StandardVideoController {
             case VideoView.PLAYER_FULL_SCREEN:
                 mFullScreenButton.setSelected(false);
                 getThumb().setVisibility(GONE);
+                mOrientationHelper.disable();
+                break;
+            case VideoView.PLAYER_NORMAL:
+                mOrientationHelper.disable();
                 break;
         }
     }
@@ -78,9 +85,7 @@ public class RotateInFullscreenController extends StandardVideoController {
         } else if (i == R.id.iv_play) {
             doPauseResume();
         } else if (i == R.id.back) {
-            if (isLandscape)
-                PlayerUtils.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            mMediaPlayer.stopFullScreen();
+            stopFullScreenFromUser();
         } else if (i == R.id.thumb) {
             mMediaPlayer.start();
             mMediaPlayer.startFullScreen();
@@ -98,9 +103,7 @@ public class RotateInFullscreenController extends StandardVideoController {
             return true;
         }
         if (mMediaPlayer.isFullScreen()) {
-            if (isLandscape)
-                PlayerUtils.scanForActivity(getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            mMediaPlayer.stopFullScreen();
+            stopFullScreenFromUser();
             return true;
         }
         return super.onBackPressed();

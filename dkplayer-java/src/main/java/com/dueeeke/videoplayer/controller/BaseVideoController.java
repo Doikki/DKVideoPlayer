@@ -40,12 +40,8 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
     protected int mCurrentPlayerState;
 
     protected OrientationHelper mOrientationHelper;
-    protected static final int PORTRAIT = 1;
-    protected static final int LANDSCAPE = 2;
-    protected static final int REVERSE_LANDSCAPE = 3;
-    protected int mCurrentOrientation = -1;
-
     private boolean mEnableOrientation;
+    protected boolean mFromUser;//是否为用户点击
 
     public BaseVideoController(@NonNull Context context) {
         this(context, null);
@@ -164,17 +160,38 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
      * 横竖屏切换
      */
     protected void doStartStopFullScreen() {
-        Activity activity = PlayerUtils.scanForActivity(getContext());
-        if (activity == null) return;
         if (mMediaPlayer.isFullScreen()) {
-            mMediaPlayer.stopFullScreen();
-            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            stopFullScreenFromUser();
         } else {
-            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            mMediaPlayer.startFullScreen();
+            startFullScreenFromUser();
         }
     }
 
+    /**
+     * 子类中请使用此方法来进入全屏
+     */
+    protected void startFullScreenFromUser() {
+        Activity activity = PlayerUtils.scanForActivity(getContext());
+        if (activity == null) return;
+        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        mMediaPlayer.startFullScreen();
+        mFromUser = true;
+    }
+
+    /**
+     * 子类中请使用此方法来退出全屏
+     */
+    protected void stopFullScreenFromUser() {
+        Activity activity = PlayerUtils.scanForActivity(getContext());
+        if (activity == null) return;
+        mMediaPlayer.stopFullScreen();
+        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        mFromUser = true;
+    }
+
+    /**
+     * 刷新进度Runnable
+     */
     protected Runnable mShowProgress = new Runnable() {
         @Override
         public void run() {
@@ -185,6 +202,9 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
         }
     };
 
+    /**
+     * 隐藏播放视图Runnable
+     */
     protected final Runnable mFadeOut = new Runnable() {
         @Override
         public void run() {
@@ -192,6 +212,9 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
         }
     };
 
+    /**
+     * 重写此方法实现刷新进度功能
+     */
     protected int setProgress() {
         return 0;
     }
@@ -205,6 +228,9 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
         return simpleDateFormat.format(date);
     }
 
+    /**
+     * 格式化时间
+     */
     protected String stringForTime(int timeMs) {
         int totalSeconds = timeMs / 1000;
 
@@ -271,10 +297,6 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
         mEnableOrientation = enableOrientation;
     }
 
-    public int getCurrentOrientation() {
-        return mCurrentOrientation;
-    }
-
     @Override
     public void onOrientationChanged(int orientation) {
         Activity activity = PlayerUtils.scanForActivity(getContext());
@@ -292,29 +314,37 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
      * 竖屏
      */
     protected void onOrientationPortrait(Activity activity) {
-        if (mIsLocked || !mEnableOrientation || mCurrentOrientation == PORTRAIT)
-            return;
-        if ((mCurrentOrientation == LANDSCAPE || mCurrentOrientation == REVERSE_LANDSCAPE) && !mMediaPlayer.isFullScreen()) {
-            mCurrentOrientation = PORTRAIT;
+        //屏幕锁定的情况
+        if (mIsLocked) return;
+        //没有开启设备方向监听的情况
+        if (!mEnableOrientation) return;
+
+        int o = activity.getRequestedOrientation();
+        if (o == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+            mFromUser = false;
             return;
         }
-        mCurrentOrientation = PORTRAIT;
-        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        //手动操作的情况
+        if (o == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE && mFromUser) {
+            return;
+        }
         mMediaPlayer.stopFullScreen();
+        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
     /**
      * 横屏
      */
     protected void onOrientationLandscape(Activity activity) {
-        if (mCurrentOrientation == LANDSCAPE) return;
-        if (mCurrentOrientation == PORTRAIT
-                && activity.getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
-                && mMediaPlayer.isFullScreen()) {
-            mCurrentOrientation = LANDSCAPE;
+        int o = activity.getRequestedOrientation();
+        if (o == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+            mFromUser = false;
             return;
         }
-        mCurrentOrientation = LANDSCAPE;
+        //手动操作的情况
+        if (o == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT && mFromUser) {
+            return;
+        }
         if (!mMediaPlayer.isFullScreen()) {
             mMediaPlayer.startFullScreen();
         }
@@ -325,14 +355,15 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
      * 反向横屏
      */
     protected void onOrientationReverseLandscape(Activity activity) {
-        if (mCurrentOrientation == REVERSE_LANDSCAPE) return;
-        if (mCurrentOrientation == PORTRAIT
-                && activity.getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-                && mMediaPlayer.isFullScreen()) {
-            mCurrentOrientation = REVERSE_LANDSCAPE;
+        int o = activity.getRequestedOrientation();
+        if (o == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
+            mFromUser = false;
             return;
         }
-        mCurrentOrientation = REVERSE_LANDSCAPE;
+        //手动操作的情况
+        if (o == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT && mFromUser) {
+            return;
+        }
         if (!mMediaPlayer.isFullScreen()) {
             mMediaPlayer.startFullScreen();
         }

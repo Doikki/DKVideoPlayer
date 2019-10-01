@@ -690,9 +690,9 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
         //隐藏NavigationBar和StatusBar
         if (mHideNavBarView == null) {
             mHideNavBarView = new View(getContext());
-            mHideNavBarView.setSystemUiVisibility(FULLSCREEN_FLAGS);
         }
-        this.addView(mHideNavBarView);
+        mHideNavBarView.setSystemUiVisibility(FULLSCREEN_FLAGS);
+        mPlayerContainer.addView(mHideNavBarView);
         getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         //从当前FrameLayout中移除播放器视图
@@ -717,7 +717,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
             return;
 
         //显示NavigationBar和StatusBar
-        this.removeView(mHideNavBarView);
+        mPlayerContainer.removeView(mHideNavBarView);
         getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         //把播放器视图从DecorView中移除并添加到当前FrameLayout中即退出了全屏

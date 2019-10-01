@@ -96,7 +96,7 @@ public class TinyScreenListActivity extends AppCompatActivity implements FloatRe
                 FrameLayout thumb = view.findViewById(R.id.layout_thumb);
                 if (player == null || thumb == null) return;
                 int position = (int) player.getTag(R.id.key_position);
-                if (position == mCurrentPlayingPosition) {
+                if (position == mCurrentPlayingPosition && !mVideoView.isFullScreen()) {
                     if (mThumb != null) mThumb.setVisibility(View.VISIBLE);
                     mVideoView.startTinyScreen();
                     mFloatController.setPlayState(mVideoView.getCurrentPlayState());

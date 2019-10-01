@@ -37,17 +37,6 @@ public class CutoutUtil {
      * 是否为允许全屏界面显示内容到刘海区域的刘海屏机型（与AndroidManifest中配置对应）
      */
     public static boolean allowDisplayToCutout(Context context) {
-            return hasCutoutAboveAndroidP(context)
-                    || hasCutoutHuawei(context)
-                    || hasCutoutOPPO(context)
-                    || hasCutoutVIVO(context)
-                    || hasCutoutXIAOMI(context);
-    }
-
-    /**
-     * Android P以上系统检测是否有刘海
-     */
-    private static boolean hasCutoutAboveAndroidP(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             // 9.0系统全屏界面默认会保留黑边，不允许显示内容到刘海区域
             Activity activity = PlayerUtils.scanForActivity(context);
@@ -65,8 +54,12 @@ public class CutoutUtil {
             }
             List<Rect> boundingRects = displayCutout.getBoundingRects();
             return boundingRects.size() > 0;
+        } else {
+            return hasCutoutHuawei(context)
+                    || hasCutoutOPPO(context)
+                    || hasCutoutVIVO(context)
+                    || hasCutoutXIAOMI(context);
         }
-        return false;
     }
 
     /**

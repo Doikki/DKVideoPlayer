@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 
+import com.dueeeke.videocontroller.CutoutUtil;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 
@@ -18,15 +19,17 @@ import com.dueeeke.videoplayer.util.PlayerUtils;
 public class FullScreenVideoView extends VideoView {
 
     public FullScreenVideoView(@NonNull Context context) {
-        super(context);
+        this(context, null);
     }
 
     public FullScreenVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
     }
 
     public FullScreenVideoView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        //适配刘海
+        CutoutUtil.adaptCutoutAboveAndroidP(context, true);
     }
 
     /**
@@ -35,7 +38,7 @@ public class FullScreenVideoView extends VideoView {
     public void startFullScreenDirectly() {
         Activity activity = PlayerUtils.scanForActivity(getContext());
         if (activity == null) return;
-        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
         startFullScreen();
     }
 

@@ -66,9 +66,8 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
     /**
      * 是否需要适配刘海屏
      */
-    private boolean mNeedAdaptCutout;
-
-    private int mPadding;
+    protected boolean mNeedAdaptCutout;
+    protected int mPadding;
 
 
     public StandardVideoController(@NonNull Context context) {
@@ -144,77 +143,6 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
     }
 
     @Override
-    protected void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        adjustView(newConfig);
-    }
-
-    @Override
-    protected void onOrientationReverseLandscape(Activity activity) {
-        super.onOrientationReverseLandscape(activity);
-        adjustView(activity);
-    }
-
-    @Override
-    protected void onOrientationLandscape(Activity activity) {
-        super.onOrientationLandscape(activity);
-        adjustView(activity);
-    }
-
-    private void adjustView(Configuration newConfig) {
-        if (mNeedAdaptCutout) {
-            if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-                adjustPortrait();
-            } else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                adjustLandscape();
-            }
-        }
-    }
-
-    private void adjustView(Activity activity) {
-        if (mNeedAdaptCutout) {
-            if (activity.getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-                adjustLandscape();
-            } else if (activity.getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
-                adjustReserveLandscape();
-            }
-        }
-    }
-
-    protected void adjustPortrait() {
-        mTopContainer.setPadding(0, 0, 0, 0);
-        mBottomContainer.setPadding(0, 0 ,0 ,0);
-        mBottomProgress.setPadding(0, 0 ,0 ,0);
-        FrameLayout.LayoutParams lblp = (LayoutParams) mLockButton.getLayoutParams();
-        int dp24 = PlayerUtils.dp2px(getContext(), 24);
-        lblp.setMargins(dp24, 0, dp24, 0);
-        FrameLayout.LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
-        sflp.setMargins(0, 0 , 0, 0);
-    }
-
-    protected void adjustLandscape() {
-        mTopContainer.setPadding(mPadding, 0, 0, 0);
-        mBottomContainer.setPadding(mPadding, 0 ,0 ,0);
-        mBottomProgress.setPadding(mPadding, 0 ,0 ,0);
-        FrameLayout.LayoutParams layoutParams = (LayoutParams) mLockButton.getLayoutParams();
-        int dp24 = PlayerUtils.dp2px(getContext(), 24);
-        layoutParams.setMargins(dp24 + mPadding, 0, dp24 + mPadding, 0);
-        FrameLayout.LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
-        sflp.setMargins(mPadding, 0 , 0, 0);
-    }
-
-    protected void adjustReserveLandscape() {
-        mTopContainer.setPadding(0, 0, mPadding, 0);
-        mBottomContainer.setPadding(0, 0 ,mPadding ,0);
-        mBottomProgress.setPadding(0, 0 ,mPadding ,0);
-        FrameLayout.LayoutParams layoutParams = (LayoutParams) mLockButton.getLayoutParams();
-        int dp24 = PlayerUtils.dp2px(getContext(), 24);
-        layoutParams.setMargins(dp24, 0, dp24, 0);
-        FrameLayout.LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
-        sflp.setMargins(0, 0 , 0, 0);
-    }
-
-    @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         getContext().unregisterReceiver(mBatteryReceiver);
@@ -224,11 +152,80 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         getContext().registerReceiver(mBatteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        checkCutout();
+    }
 
+    /**
+     * 检查是否需要适配刘海
+     */
+    private void checkCutout() {
         mNeedAdaptCutout = CutoutUtil.allowDisplayToCutout(getContext());
         if (mNeedAdaptCutout) {
             mPadding = (int) PlayerUtils.getStatusBarHeight(getContext());
         }
+        L.d("needAdaptCutout: " + mNeedAdaptCutout + " padding: " + mPadding);
+    }
+
+    @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        adjustView();
+    }
+
+    @Override
+    public void onOrientationChanged(int orientation) {
+        super.onOrientationChanged(orientation);
+        adjustView();
+    }
+
+    private void adjustView() {
+        if (mNeedAdaptCutout) {
+            Activity activity = PlayerUtils.scanForActivity(getContext());
+            if (activity == null) {
+                return;
+            }
+            int o = activity.getRequestedOrientation();
+            if (o == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+                adjustPortrait();
+            } else if (o == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+                adjustLandscape();
+            } else if (o == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
+                adjustReserveLandscape();
+            }
+        }
+    }
+
+    protected void adjustPortrait() {
+        mTopContainer.setPadding(0, 0, 0, 0);
+        mBottomContainer.setPadding(0, 0, 0, 0);
+        mBottomProgress.setPadding(0, 0, 0, 0);
+        FrameLayout.LayoutParams lblp = (LayoutParams) mLockButton.getLayoutParams();
+        int dp24 = PlayerUtils.dp2px(getContext(), 24);
+        lblp.setMargins(dp24, 0, dp24, 0);
+        FrameLayout.LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
+        sflp.setMargins(0, 0, 0, 0);
+    }
+
+    protected void adjustLandscape() {
+        mTopContainer.setPadding(mPadding, 0, 0, 0);
+        mBottomContainer.setPadding(mPadding, 0, 0, 0);
+        mBottomProgress.setPadding(mPadding, 0, 0, 0);
+        FrameLayout.LayoutParams layoutParams = (LayoutParams) mLockButton.getLayoutParams();
+        int dp24 = PlayerUtils.dp2px(getContext(), 24);
+        layoutParams.setMargins(dp24 + mPadding, 0, dp24 + mPadding, 0);
+        FrameLayout.LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
+        sflp.setMargins(mPadding, 0, 0, 0);
+    }
+
+    protected void adjustReserveLandscape() {
+        mTopContainer.setPadding(0, 0, mPadding, 0);
+        mBottomContainer.setPadding(0, 0, mPadding, 0);
+        mBottomProgress.setPadding(0, 0, mPadding, 0);
+        FrameLayout.LayoutParams layoutParams = (LayoutParams) mLockButton.getLayoutParams();
+        int dp24 = PlayerUtils.dp2px(getContext(), 24);
+        layoutParams.setMargins(dp24, 0, dp24, 0);
+        FrameLayout.LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
+        sflp.setMargins(0, 0, 0, 0);
     }
 
     @Override
@@ -596,8 +593,7 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
         if (activity == null) return super.onBackPressed();
 
         if (mMediaPlayer.isFullScreen()) {
-            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            mMediaPlayer.stopFullScreen();
+            stopFullScreenFromUser();
             return true;
         }
         return super.onBackPressed();

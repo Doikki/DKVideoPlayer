@@ -41,7 +41,19 @@ public class FullScreenController extends StandardVideoController {
         super.setPlayerState(playerState);
         if (playerState == VideoView.PLAYER_FULL_SCREEN) {
             mFullScreenButton.setVisibility(GONE);
-            mBottomContainer.setPadding(0, 0, PlayerUtils.dp2px(getContext(), 10), 0);
         }
+    }
+
+
+    @Override
+    protected void adjustReserveLandscape() {
+        super.adjustReserveLandscape();
+        mBottomContainer.setPadding(0, 0, (int) (mPadding + getResources().getDimension(R.dimen.dkplayer_default_spacing)), 0);
+    }
+
+    @Override
+    protected void adjustLandscape() {
+        super.adjustLandscape();
+        mBottomContainer.setPadding(mPadding, 0, (int) getResources().getDimension(R.dimen.dkplayer_default_spacing), 0);
     }
 }
