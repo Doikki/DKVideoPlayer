@@ -14,6 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.dueeeke.videoplayer.player.VideoView;
+import com.dueeeke.videoplayer.player.VideoViewConfig;
+import com.dueeeke.videoplayer.player.VideoViewManager;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 
 import java.text.SimpleDateFormat;
@@ -64,6 +66,7 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
         setClickable(true);
         setFocusable(true);
         mOrientationHelper = new OrientationHelper(getContext().getApplicationContext());
+        mEnableOrientation = VideoViewManager.getConfig().mEnableOrientation;
     }
 
     /**

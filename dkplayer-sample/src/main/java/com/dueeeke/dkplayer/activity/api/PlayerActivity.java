@@ -1,7 +1,9 @@
 package com.dueeeke.dkplayer.activity.api;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.activity.DebugActivity;
@@ -46,7 +48,7 @@ public class PlayerActivity extends DebugActivity {
             //保存播放进度
 //            mVideoView.setProgressManager(new ProgressManagerImpl());
             //播放状态监听
-            mVideoView.addOnVideoViewStateChangeListener(mOnVideoViewStateChangeListener);
+//            mVideoView.addOnVideoViewStateChangeListener(mOnVideoViewStateChangeListener);
 
             //使用IjkPlayer解码
 //            mVideoView.setPlayerFactory(IjkPlayerFactory.create());
@@ -99,53 +101,56 @@ public class PlayerActivity extends DebugActivity {
         }
     };
 
-    public void screenScaleDefault(View view) {
-        mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_DEFAULT);
-    }
+    private int i = 0;
 
-    public void screenScale169(View view) {
-        mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_16_9);
-    }
+    public void onButtonClick(View view) {
+        int id = view.getId();
+        switch (id) {
+            case R.id.scale_default:
+                mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_DEFAULT);
+                break;
+            case R.id.scale_169:
+                mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_16_9);
+                break;
+            case R.id.scale_43:
+                mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_4_3);
+                break;
+            case R.id.scale_original:
+                mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_ORIGINAL);
+                break;
+            case R.id.scale_match_parent:
+                mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_MATCH_PARENT);
+                break;
+            case R.id.scale_center_crop:
+                mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_CENTER_CROP);
+                break;
 
-    public void screenScale43(View view) {
-        mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_4_3);
-    }
+            case R.id.speed_0_5:
+                mVideoView.setSpeed(0.5f);
+                break;
+            case R.id.speed_0_75:
+                mVideoView.setSpeed(0.75f);
+                break;
+            case R.id.speed_1_0:
+                mVideoView.setSpeed(1.0f);
+                break;
+            case R.id.speed_1_5:
+                mVideoView.setSpeed(1.5f);
+                break;
+            case R.id.speed_2_0:
+                mVideoView.setSpeed(2.0f);
+                break;
 
-    public void screenScaleOriginal(View view) {
-        mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_ORIGINAL);
-    }
+            case R.id.screen_shot:
+                ImageView imageView = findViewById(R.id.iv_screen_shot);
+                Bitmap bitmap = mVideoView.doScreenShot();
+                imageView.setImageBitmap(bitmap);
+                break;
 
-    public void screenScaleMatch(View view) {
-        mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_MATCH_PARENT);
-    }
-
-    public void screenScaleCenterCrop(View view) {
-        mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_CENTER_CROP);
-    }
-
-    int i = 0;
-    public void setMirrorRotate(View view) {
-        mVideoView.setMirrorRotation(i % 2 == 0);
-        i++;
-    }
-
-    public void setSpeed0_75(View view) {
-        mVideoView.setSpeed(0.75f);
-    }
-
-    public void setSpeed0_5(View view) {
-        mVideoView.setSpeed(0.5f);
-    }
-
-    public void setSpeed1_0(View view) {
-        mVideoView.setSpeed(1.0f);
-    }
-
-    public void setSpeed1_5(View view) {
-        mVideoView.setSpeed(1.5f);
-    }
-
-    public void setSpeed2_0(View view) {
-        mVideoView.setSpeed(2.0f);
+            case R.id.mirror_rotate:
+                mVideoView.setMirrorRotation(i % 2 == 0);
+                i++;
+                break;
+        }
     }
 }

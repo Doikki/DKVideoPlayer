@@ -125,10 +125,6 @@
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.api.ScreenShotPlayerActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".activity.extend.SwitchPlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
             android:screenOrientation="portrait" />

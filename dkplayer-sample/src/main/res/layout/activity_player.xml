@@ -24,21 +24,24 @@
                 android:layout_height="wrap_content">
 
                 <Button
+                    android:id="@+id/scale_default"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:onClick="screenScaleDefault"
+                    android:onClick="onButtonClick"
                     android:text="默认" />
 
                 <Button
+                    android:id="@+id/scale_169"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:onClick="screenScale169"
+                    android:onClick="onButtonClick"
                     android:text="16:9" />
 
                 <Button
+                    android:id="@+id/scale_43"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:onClick="screenScale43"
+                    android:onClick="onButtonClick"
                     android:text="4:3" />
             </LinearLayout>
 
@@ -47,21 +50,24 @@
                 android:layout_height="wrap_content">
 
                 <Button
+                    android:id="@+id/scale_original"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:onClick="screenScaleOriginal"
+                    android:onClick="onButtonClick"
                     android:text="原始大小" />
 
                 <Button
+                    android:id="@+id/scale_match_parent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:onClick="screenScaleMatch"
+                    android:onClick="onButtonClick"
                     android:text="填充" />
 
                 <Button
+                    android:id="@+id/scale_center_crop"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:onClick="screenScaleCenterCrop"
+                    android:onClick="onButtonClick"
                     android:text="居中裁剪" />
             </LinearLayout>
 
@@ -76,47 +82,68 @@
                 android:orientation="horizontal">
 
                 <Button
+                    android:id="@+id/speed_0_5"
                     android:layout_width="60dp"
                     android:layout_height="wrap_content"
-                    android:onClick="setSpeed0_5"
+                    android:onClick="onButtonClick"
                     android:padding="0dp"
                     android:text="0.5" />
 
                 <Button
+                    android:id="@+id/speed_0_75"
                     android:layout_width="60dp"
                     android:layout_height="wrap_content"
-                    android:onClick="setSpeed0_75"
+                    android:onClick="onButtonClick"
                     android:padding="0dp"
                     android:text="0.75" />
 
                 <Button
+                    android:id="@+id/speed_1_0"
                     android:layout_width="60dp"
                     android:layout_height="wrap_content"
-                    android:onClick="setSpeed1_0"
+                    android:onClick="onButtonClick"
                     android:padding="0dp"
                     android:text="1.0" />
 
                 <Button
+                    android:id="@+id/speed_1_5"
                     android:layout_width="60dp"
                     android:layout_height="wrap_content"
-                    android:onClick="setSpeed1_5"
+                    android:onClick="onButtonClick"
                     android:padding="0dp"
                     android:text="1.5" />
 
                 <Button
+                    android:id="@+id/speed_2_0"
                     android:layout_width="60dp"
                     android:layout_height="wrap_content"
-                    android:onClick="setSpeed2_0"
+                    android:onClick="onButtonClick"
                     android:padding="0dp"
                     android:text="2.0" />
             </LinearLayout>
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="setMirrorRotate"
-                android:text="镜像旋转" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <Button
+                    android:id="@+id/mirror_rotate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="onButtonClick"
+                    android:text="镜像旋转" />
 
+                <Button
+                    android:id="@+id/screen_shot"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="onButtonClick"
+                    android:text="@string/str_screen_shot"/>
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/iv_screen_shot"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"/>
 
         </LinearLayout>
 

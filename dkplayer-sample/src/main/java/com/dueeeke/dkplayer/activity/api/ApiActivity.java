@@ -60,16 +60,12 @@ public class ApiActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    public void skipToCustomPlayer(View view) {
+    public void skipToConcatPlay(View view) {
         startActivity(new Intent(this, ConcatPlayActivity.class));
     }
 
     public void skipToDefinitionPlayer(View view) {
         startActivity(new Intent(this, DefinitionPlayerActivity.class));
-    }
-
-    public void skipToScreenShotPlayer(View view) {
-        startActivity(new Intent(this, ScreenShotPlayerActivity.class));
     }
 
     public void skipToRawOrAssets(View view) {
