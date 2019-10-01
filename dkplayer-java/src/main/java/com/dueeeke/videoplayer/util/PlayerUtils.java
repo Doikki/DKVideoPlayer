@@ -171,12 +171,13 @@ public class PlayerUtils {
         } else if (networkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
             // 移动数据连接,不能与连接共存,如果wifi打开，则自动关闭
             switch (networkInfo.getSubtype()) {
+                    // 2G
                 case TelephonyManager.NETWORK_TYPE_GPRS:
                 case TelephonyManager.NETWORK_TYPE_EDGE:
                 case TelephonyManager.NETWORK_TYPE_CDMA:
                 case TelephonyManager.NETWORK_TYPE_1xRTT:
                 case TelephonyManager.NETWORK_TYPE_IDEN:
-                    // 2G网络
+                    // 3G
                 case TelephonyManager.NETWORK_TYPE_UMTS:
                 case TelephonyManager.NETWORK_TYPE_EVDO_0:
                 case TelephonyManager.NETWORK_TYPE_EVDO_A:
@@ -186,9 +187,10 @@ public class PlayerUtils {
                 case TelephonyManager.NETWORK_TYPE_EVDO_B:
                 case TelephonyManager.NETWORK_TYPE_EHRPD:
                 case TelephonyManager.NETWORK_TYPE_HSPAP:
-                    // 3G网络
+                    // 4G
                 case TelephonyManager.NETWORK_TYPE_LTE:
-                    // 4G网络
+                    // 5G
+                case TelephonyManager.NETWORK_TYPE_NR:
                     return NETWORK_MOBILE;
             }
         }
