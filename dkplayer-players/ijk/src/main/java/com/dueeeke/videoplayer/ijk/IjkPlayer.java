@@ -46,9 +46,10 @@ public class IjkPlayer extends AbstractPlayer {
         });
     }
 
+
     @Override
     public void setOptions() {
-
+        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "start-on-prepared", 0);
     }
 
     @Override

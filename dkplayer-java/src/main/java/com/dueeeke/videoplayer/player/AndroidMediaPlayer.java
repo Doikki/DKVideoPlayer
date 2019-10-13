@@ -216,7 +216,6 @@ public class AndroidMediaPlayer extends AbstractPlayer {
         @Override
         public void onPrepared(MediaPlayer mp) {
             mPlayerEventListener.onPrepared();
-            mMediaPlayer.start();
         }
     };
 

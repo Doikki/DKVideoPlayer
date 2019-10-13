@@ -120,7 +120,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
         }
         mIsPreparing = true;
         mInternalPlayer.prepare(mMediaSource);
-        mInternalPlayer.setPlayWhenReady(true);
+        mInternalPlayer.setPlayWhenReady(false);
     }
 
     @Override

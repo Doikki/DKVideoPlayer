@@ -59,16 +59,20 @@ public class TikTokController extends BaseVideoController<MediaPlayerControl> {
 
         switch (playState) {
             case VideoView.STATE_IDLE:
-                L.e("STATE_IDLE");
+                L.e("STATE_IDLE " + hashCode());
                 thumb.setVisibility(VISIBLE);
                 mStatusView.dismiss();
                 break;
             case VideoView.STATE_PLAYING:
-                L.e("STATE_PLAYING");
+                L.e("STATE_PLAYING " + hashCode());
+                thumb.setVisibility(GONE);
+                break;
+            case VideoView.STATE_PAUSED:
+                L.e("STATE_PAUSED " + hashCode());
                 thumb.setVisibility(GONE);
                 break;
             case VideoView.STATE_PREPARED:
-                L.e("STATE_PREPARED");
+                L.e("STATE_PREPARED " + hashCode());
                 break;
             case VideoView.STATE_ERROR:
                 mStatusView.showErrorView(this);

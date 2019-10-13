@@ -25,13 +25,13 @@ import com.dueeeke.videoplayer.player.VideoView;
 import java.util.List;
 
 /**
- * 模仿抖音短视频
- * Created by xinyu on 2018/1/6.
+ * 模仿抖音短视频, 使用RecyclerView实现
+ * Created by dueeeke on 2018/1/6.
+ * @deprecated 推荐 {@link TikTok2Activity}
  */
-
+@Deprecated
 public class TikTokActivity extends AppCompatActivity {
 
-    private static final String TAG = "TikTokActivity";
     private VideoView mVideoView;
     private TikTokController mTikTokController;
     private int mCurrentPosition;
@@ -43,7 +43,7 @@ public class TikTokActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle(R.string.str_tiktok);
+            actionBar.setTitle(R.string.str_tiktok_1);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 

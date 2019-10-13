@@ -117,6 +117,8 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
 
     protected boolean mEnableParallelPlay;//支持多开
 
+    private boolean mPlayOnPrepared = true;//是否在准备完成之后自动开始播放
+
     public VideoView(@NonNull Context context) {
         this(context, null);
     }
@@ -310,7 +312,9 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
      */
     protected void startInPlaybackState() {
         mMediaPlayer.start();
-        setPlayState(STATE_PLAYING);
+        if (mCurrentPlayState != STATE_PREPARED) {
+            setPlayState(STATE_PLAYING);
+        }
     }
 
     /**
@@ -539,6 +543,9 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
     @Override
     public void onPrepared() {
         setPlayState(STATE_PREPARED);
+        if (mPlayOnPrepared) {
+            mMediaPlayer.start();
+        }
         if (mCurrentPosition > 0) {
             seekTo(mCurrentPosition);
         }
@@ -674,6 +681,13 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
      */
     public void setEnableParallelPlay(boolean enableParallelPlay) {
         mEnableParallelPlay = enableParallelPlay;
+    }
+
+    /**
+     * 设置是否在准备完成之后自动开始播放
+     */
+    public void setPlayOnPrepared(boolean playOnPrepared) {
+        mPlayOnPrepared = playOnPrepared;
     }
 
     /**
@@ -1000,5 +1014,12 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
         //activity切到后台后可能被系统回收，故在此处进行进度保存
         saveProgress();
         return super.onSaveInstanceState();
+    }
+
+    /**
+     * 获取内部的MediaPlayer
+     */
+    public P getMediaPlayer() {
+        return mMediaPlayer;
     }
 }
