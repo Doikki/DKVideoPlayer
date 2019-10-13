@@ -82,10 +82,10 @@ public class TikTok2Activity extends AppCompatActivity {
                 super.onPageScrollStateChanged(state);
                 if (mCurrentPosition == mPlayingPosition) return;
 
-                View itemView = mTiktok2Adapter.getCurrentItemView();
-                VideoView videoView = itemView.findViewById(R.id.video_view);
-                videoView.release();
-                videoView.clearOnVideoViewStateChangeListeners();
+                if (mCurrentPlayVideoView != null) {
+                    mCurrentPlayVideoView.release();
+                    mCurrentPlayVideoView.clearOnVideoViewStateChangeListeners();
+                }
 
                 if (state == VerticalViewPager.SCROLL_STATE_IDLE) {
                     mViewPager.post(new Runnable() {
