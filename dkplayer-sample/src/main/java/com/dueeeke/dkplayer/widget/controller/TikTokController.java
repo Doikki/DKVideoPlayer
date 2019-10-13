@@ -80,17 +80,10 @@ public class TikTokController extends BaseVideoController<MediaPlayerControl> {
         }
     }
 
-    /**
-     * 显示移动网络播放警告
-     */
     @Override
-    public void showNetWarning() {
-        mStatusView.showNetWarning(this);
-    }
-
-    @Override
-    public void hideNetWarning() {
-        mStatusView.dismiss();
+    public boolean showNetWarning() {
+        //不显示移动网络播放警告
+        return false;
     }
 
     public ImageView getThumb() {

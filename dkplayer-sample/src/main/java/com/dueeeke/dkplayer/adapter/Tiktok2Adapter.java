@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.dkplayer.widget.controller.TikTokController;
+import com.dueeeke.dkplayer.widget.videoview.ExoVideoView;
 import com.dueeeke.videoplayer.player.VideoView;
 
 import java.util.ArrayList;
@@ -68,6 +69,9 @@ public class Tiktok2Adapter extends PagerAdapter {
             viewHolder.mVideoView.setEnableParallelPlay(true);
             viewHolder.mVideoView.setPlayOnPrepared(false);
             viewHolder.mVideoView.setEnableAudioFocus(false);
+            viewHolder.mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_CENTER_CROP);
+            //缓存功能，使用ExoPlayer实现
+            viewHolder.mVideoView.setCacheEnabled(true);
             viewHolder.mTikTokController = new TikTokController(context);
             viewHolder.mVideoView.setVideoController(viewHolder.mTikTokController);
             view.setTag(viewHolder);
@@ -119,7 +123,7 @@ public class Tiktok2Adapter extends PagerAdapter {
      */
     private class ViewHolder {
         public TikTokController mTikTokController;
-        public VideoView mVideoView;
+        public ExoVideoView mVideoView;
 
     }
 }

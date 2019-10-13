@@ -28,8 +28,8 @@ public class CacheActivity extends BaseActivity<ProxyCacheVideoView> {
         mVideoView.start();
 
         //删除url对应默认缓存文件
-//        VideoCacheManager.clearDefaultCache(this, URL);
+//        ProxyVideoCacheManager.clearDefaultCache(this, URL);
         //清除缓存文件中的所有缓存
-//        VideoCacheManager.clearAllCache(this);
+//        ProxyVideoCacheManager.clearAllCache(this);
     }
 }

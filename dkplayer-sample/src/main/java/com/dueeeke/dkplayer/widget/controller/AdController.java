@@ -133,8 +133,9 @@ public class AdController extends BaseVideoController<MediaPlayerControl> implem
      * 显示移动网络播放警告
      */
     @Override
-    public void showNetWarning() {
+    public boolean showNetWarning() {
         mStatusView.showNetWarning(this);
+        return super.showNetWarning();
     }
 
     @Override

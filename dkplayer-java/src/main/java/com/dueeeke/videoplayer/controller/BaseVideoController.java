@@ -134,9 +134,12 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
 
     /**
      * 显示移动网络播放提示
+     * @return 返回显示移动网络播放提示的条件，false:不显示, true显示
+     *          此处默认根据手机网络类型来决定是否显示，开发者可以重写相关逻辑
      */
-    public void showNetWarning() {
-
+    public boolean showNetWarning() {
+        return PlayerUtils.getNetworkType(getContext()) == PlayerUtils.NETWORK_MOBILE
+                && !VideoViewManager.instance().playOnMobileNetwork();
     }
 
     /**

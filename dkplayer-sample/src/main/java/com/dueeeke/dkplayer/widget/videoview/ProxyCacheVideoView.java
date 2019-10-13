@@ -7,8 +7,8 @@ import android.util.AttributeSet;
 
 import com.danikula.videocache.CacheListener;
 import com.danikula.videocache.HttpProxyCacheServer;
+import com.dueeeke.dkplayer.util.ProxyVideoCacheManager;
 import com.dueeeke.dkplayer.util.Utils;
-import com.dueeeke.dkplayer.util.VideoCacheManager;
 import com.dueeeke.videoplayer.exo.ExoMediaPlayerFactory;
 import com.dueeeke.videoplayer.player.AbstractPlayer;
 import com.dueeeke.videoplayer.player.VideoView;
@@ -52,7 +52,7 @@ public class ProxyCacheVideoView extends VideoView<AbstractPlayer> {
     }
 
     public HttpProxyCacheServer getCacheServer() {
-        return VideoCacheManager.getProxy(getContext().getApplicationContext());
+        return ProxyVideoCacheManager.getProxy(getContext().getApplicationContext());
     }
 
     /**

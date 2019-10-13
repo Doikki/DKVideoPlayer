@@ -11,15 +11,11 @@ import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 
-import java.io.File;
-
 public class ExoVideoView extends VideoView<CustomExoMediaPlayer> {
 
     private MediaSource mMediaSource;
 
     private boolean mIsCacheEnabled;
-    private File mCacheDir;
-    private long mMaxCacheSize;
 
     private LoadControl mLoadControl;
     private RenderersFactory mRenderersFactory;
@@ -50,10 +46,6 @@ public class ExoVideoView extends VideoView<CustomExoMediaPlayer> {
         mMediaPlayer.setLoadControl(mLoadControl);
         mMediaPlayer.setRenderersFactory(mRenderersFactory);
         mMediaPlayer.setTrackSelector(mTrackSelector);
-        if (mIsCacheEnabled) {
-            mMediaPlayer.setCacheDir(mCacheDir);
-            mMediaPlayer.setMaxCacheSize(mMaxCacheSize);
-        }
     }
 
     @Override
@@ -80,14 +72,6 @@ public class ExoVideoView extends VideoView<CustomExoMediaPlayer> {
      */
     public void setCacheEnabled(boolean isEnabled) {
         mIsCacheEnabled = isEnabled;
-    }
-
-    public void setCacheDir(File cacheDir) {
-        mCacheDir = cacheDir;
-    }
-
-    public void setMaxCacheSize(long maxCacheSize) {
-        mMaxCacheSize = maxCacheSize;
     }
 
     public void setLoadControl(LoadControl loadControl) {

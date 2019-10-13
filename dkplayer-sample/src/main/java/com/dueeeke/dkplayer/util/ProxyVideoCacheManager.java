@@ -7,11 +7,11 @@ import com.danikula.videocache.file.Md5FileNameGenerator;
 
 import java.io.File;
 
-public class VideoCacheManager {
+public class ProxyVideoCacheManager {
 
     private static HttpProxyCacheServer sharedProxy;
 
-    private VideoCacheManager() {
+    private ProxyVideoCacheManager() {
     }
 
     public static HttpProxyCacheServer getProxy(Context context) {

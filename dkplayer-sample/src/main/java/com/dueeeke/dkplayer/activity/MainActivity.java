@@ -18,8 +18,8 @@ import com.dueeeke.dkplayer.activity.extend.ExtendActivity;
 import com.dueeeke.dkplayer.activity.list.ListActivity;
 import com.dueeeke.dkplayer.activity.pip.PIPDemoActivity;
 import com.dueeeke.dkplayer.util.PIPManager;
+import com.dueeeke.dkplayer.util.ProxyVideoCacheManager;
 import com.dueeeke.dkplayer.util.Utils;
-import com.dueeeke.dkplayer.util.VideoCacheManager;
 import com.dueeeke.videoplayer.exo.ExoMediaPlayerFactory;
 import com.dueeeke.videoplayer.ijk.IjkPlayerFactory;
 import com.dueeeke.videoplayer.player.AndroidMediaPlayerFactory;
@@ -93,7 +93,7 @@ public class MainActivity extends BaseActivity {
                 PIPManager.getInstance().reset();
                 break;
             case R.id.clear_cache:
-                if (VideoCacheManager.clearAllCache(this)) {
+                if (ProxyVideoCacheManager.clearAllCache(this)) {
                     Toast.makeText(this, "清除缓存成功", Toast.LENGTH_SHORT).show();
                 }
                 break;

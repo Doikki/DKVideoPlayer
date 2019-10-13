@@ -190,7 +190,8 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
         }
         VideoViewManager.instance().addVideoView(this);
 
-        if (checkNetwork()) return;
+        //如果要显示移动网络提示则不继续播放
+        if (showNetWarning()) return;
 
         //监听音频焦点改变
         if (mEnableAudioFocus) {
@@ -207,17 +208,13 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
         startPrepare(false);
     }
 
-    protected boolean checkNetwork() {
+    /**
+     * 是否显示移动网络提示，可在Controller中配置
+     */
+    protected boolean showNetWarning() {
         //播放本地数据源时不检测网络
         if (isLocalDataSource()) return false;
-
-        if (mVideoController != null
-                && PlayerUtils.getNetworkType(getContext()) == PlayerUtils.NETWORK_MOBILE
-                && !VideoViewManager.instance().playOnMobileNetwork()) {
-            mVideoController.showNetWarning();
-            return true;
-        }
-        return false;
+        return mVideoController != null && mVideoController.showNetWarning();
     }
 
     /**

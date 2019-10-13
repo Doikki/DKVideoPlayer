@@ -401,8 +401,10 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
      * 显示移动网络播放警告
      */
     @Override
-    public void showNetWarning() {
+    public boolean showNetWarning() {
         mStatusView.showNetWarning(this);
+        //使用默认显示逻辑
+        return super.showNetWarning();
     }
 
     @Override

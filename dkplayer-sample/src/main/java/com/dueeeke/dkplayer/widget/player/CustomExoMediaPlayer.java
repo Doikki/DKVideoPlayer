@@ -1,17 +1,14 @@
 package com.dueeeke.dkplayer.widget.player;
 
 
+import com.dueeeke.dkplayer.util.ExoVideoCacheManager;
 import com.dueeeke.videoplayer.exo.ExoMediaPlayer;
-import com.google.android.exoplayer2.database.ExoDatabaseProvider;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.cache.Cache;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
-import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
-import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 
-import java.io.File;
 import java.util.Map;
 
 /**
@@ -20,8 +17,6 @@ import java.util.Map;
 public class CustomExoMediaPlayer extends ExoMediaPlayer {
 
     private Cache mCache;
-    private File mCacheDir;
-    private long mMaxCacheSize;
 
     public void setDataSource(String path, Map<String, String> headers, boolean isCache) {
         if (isCache) {
@@ -32,7 +27,7 @@ public class CustomExoMediaPlayer extends ExoMediaPlayer {
 
     private DataSource.Factory getCacheDataSourceFactory() {
         if (mCache == null) {
-            mCache = getCache();
+            mCache = ExoVideoCacheManager.getCache(mAppContext);
         }
         return new CacheDataSourceFactory(
                 mCache,
@@ -40,39 +35,7 @@ public class CustomExoMediaPlayer extends ExoMediaPlayer {
                 CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR);
     }
 
-    private Cache getCache() {
-        if (mCacheDir == null) {
-            mCacheDir = new File(mAppContext.getExternalCacheDir(), "exo-video-cache");
-        }
-        if (mMaxCacheSize <= 0) {
-            mMaxCacheSize = 512 * 1024 * 1024;//512M
-        }
-        return new SimpleCache(
-                mCacheDir,//缓存目录
-                new LeastRecentlyUsedCacheEvictor(mMaxCacheSize),//缓存大小，使用LRU算法实现
-                new ExoDatabaseProvider(mAppContext));
-    }
-
-    public void setCacheDir(File dir) {
-        if (dir == null) return;
-        if (!SimpleCache.isCacheFolderLocked(dir)) {
-            mCacheDir = dir;
-        }
-    }
-
-    public void setMaxCacheSize(long bytes) {
-        mMaxCacheSize = bytes;
-    }
-
     public void setDataSource(MediaSource dataSource) {
         mMediaSource = dataSource;
-    }
-
-    @Override
-    public void release() {
-        super.release();
-        if (mCache != null) {
-            mCache.release();
-        }
     }
 }

@@ -16,6 +16,7 @@ import com.dueeeke.dkplayer.adapter.Tiktok2Adapter;
 import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.dkplayer.widget.VerticalViewPager;
+import com.dueeeke.dkplayer.widget.videoview.ExoVideoView;
 import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.player.VideoViewManager;
@@ -39,7 +40,7 @@ public class TikTok2Activity extends AppCompatActivity {
     /**
      * 当前正在播放的VideoView
      */
-    private VideoView mCurrentPlayVideoView;
+    private ExoVideoView mCurrentPlayVideoView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -113,7 +114,7 @@ public class TikTok2Activity extends AppCompatActivity {
 
         View itemView = mTiktok2Adapter.getCurrentItemView();
 
-        VideoView videoView = itemView.findViewById(R.id.video_view);
+        ExoVideoView videoView = itemView.findViewById(R.id.video_view);
         //划到此item的时候预加载（prepare）可能没完成。故需要设置此监听，等预加载完成之后直接开始播放
         videoView.setOnVideoViewStateChangeListener(new OnVideoViewStateChangeListener() {
             @Override
