@@ -3,17 +3,14 @@ package com.dueeeke.dkplayer.activity.list;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
 
 import com.dueeeke.dkplayer.R;
+import com.dueeeke.dkplayer.activity.BaseActivity;
 import com.dueeeke.dkplayer.adapter.SeamlessRecyclerViewAdapter;
 import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.dkplayer.util.DataUtil;
@@ -29,7 +26,7 @@ import java.util.List;
  * 无缝播放, 模仿哔哩哔哩
  */
 
-public class SeamlessPlayActivity extends AppCompatActivity {
+public class SeamlessPlayActivity extends BaseActivity {
 
     private VideoView mVideoView;
     private List<VideoBean> mVideoList;
@@ -37,28 +34,18 @@ public class SeamlessPlayActivity extends AppCompatActivity {
     private SeamlessController mSeamlessController;
     private int mCurrentPlayPosition = -1;
 
-
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recycler_view);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle("无缝播放");
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-        initView();
+    protected int getLayoutResId() {
+        return R.layout.activity_recycler_view;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-        }
-        return super.onOptionsItemSelected(item);
+    protected int getTitleResId() {
+        return R.string.str_seamless_play;
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
 
         mVideoView = SeamlessPlayHelper.getInstance().getVideoView();
         mSeamlessController = new SeamlessController(this);

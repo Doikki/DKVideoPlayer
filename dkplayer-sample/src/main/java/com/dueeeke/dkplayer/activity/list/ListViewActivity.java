@@ -1,10 +1,5 @@
 package com.dueeeke.dkplayer.activity.list;
 
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ListView;
@@ -13,24 +8,28 @@ import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.adapter.VideoListViewAdapter;
 import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.videoplayer.player.VideoView;
-import com.dueeeke.videoplayer.player.VideoViewManager;
 
 /**
  * ListView
  * Created by Devlin_n on 2017/6/14.
  */
 
-public class ListViewActivity extends AppCompatActivity {
+public class ListViewActivity extends BaseListActivity {
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list_view);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(R.string.str_list_view);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+    protected int getLayoutResId() {
+        return R.layout.activity_list_view;
+    }
+
+    @Override
+    protected int getTitleResId() {
+        return R.string.str_list_view;
+    }
+
+    @Override
+    protected void initView() {
+        super.initView();
+
         ListView listView = findViewById(R.id.lv);
         listView.setAdapter(new VideoListViewAdapter(DataUtil.getVideoList()));
 
@@ -65,9 +64,9 @@ public class ListViewActivity extends AppCompatActivity {
                     //这种情况一般出现在ListView上滑的时候，故此时我们可以把firstView上的播放器停止
                     if (lastFirstVisibleItem < firstVisibleItem) {
                         gcView(firstView);
-                    //通过firstVisibleItem + visibleItemCount - 1我们可以得到当前屏幕上最后一个item的position
-                    //如果屏幕中最后一个可见的item的position已经大于当前屏幕上最后一个item的position，表示item已经完全滑出屏幕了
-                    //这种情况一般出现在ListView下滑的时候，故此时我们可以把lastView上的播放器停止
+                        //通过firstVisibleItem + visibleItemCount - 1我们可以得到当前屏幕上最后一个item的position
+                        //如果屏幕中最后一个可见的item的position已经大于当前屏幕上最后一个item的position，表示item已经完全滑出屏幕了
+                        //这种情况一般出现在ListView下滑的时候，故此时我们可以把lastView上的播放器停止
                     } else if (lastVisibleItem > firstVisibleItem + visibleItemCount - 1) {
                         gcView(lastView);
                     }
@@ -87,26 +86,6 @@ public class ListViewActivity extends AppCompatActivity {
                 }
             }
         });
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        VideoViewManager.instance().release();
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (!VideoViewManager.instance().onBackPressed()) {
-            super.onBackPressed();
-        }
     }
 }

@@ -99,7 +99,7 @@ public class RotateInFullscreenController extends StandardVideoController {
     public boolean onBackPressed() {
         if (mIsLocked) {
             show();
-            Toast.makeText(getContext(), R.string.lock_tip, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.dkplayer_lock_tip, Toast.LENGTH_SHORT).show();
             return true;
         }
         if (mMediaPlayer.isFullScreen()) {

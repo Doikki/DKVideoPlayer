@@ -137,7 +137,10 @@ public class FloatController extends GestureVideoController<MediaPlayerControl> 
      */
     @Override
     public boolean showNetWarning() {
-        mStatusView.showNetWarning(this, 0);
+        //现在是按父类的逻辑显示移动网络播放警告
+        if (super.showNetWarning()) {
+            mStatusView.showNetWarning(this, 0);
+        }
         return super.showNetWarning();
     }
 

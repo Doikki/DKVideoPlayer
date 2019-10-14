@@ -24,7 +24,7 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
 
 //    private ProgressManagerImpl mProgressManager;
 
-//    private PlayerFactory mPlayerFactory = ExoMediaPlayerFactory.create(MyApplication.getInstance());
+//    private PlayerFactory mPlayerFactory = IjkPlayerFactory.create();
 
     public VideoRecyclerViewAdapter(List<VideoBean> videos) {
         this.videos.addAll(videos);
@@ -42,23 +42,25 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
     public void onBindViewHolder(@NonNull VideoHolder holder, int position) {
 
         VideoBean videoBean = videos.get(position);
-        ImageView thumb = holder.controller.getThumb();
+
+        ImageView thumb = holder.mController.getThumb();
         Glide.with(thumb.getContext())
                 .load(videoBean.getThumb())
                 .crossFade()
                 .placeholder(android.R.color.white)
                 .into(thumb);
-        holder.mVideoView.setUrl(videoBean.getUrl());
-        holder.controller.setTitle(videoBean.getTitle());
-        holder.mVideoView.setVideoController(holder.controller);
-        holder.title.setText(videoBean.getTitle());
+        holder.mController.setEnableOrientation(true);
+        holder.mController.setTitle(videoBean.getTitle());
 
-        //保存播放进度
+        holder.mVideoView.setUrl(videoBean.getUrl());
+        holder.mVideoView.setVideoController(holder.mController);
+//        //保存播放进度
 //        if (mProgressManager == null)
 //            mProgressManager = new ProgressManagerImpl();
 //        holder.mVideoView.setProgressManager(mProgressManager);
-//        holder.mVideoView.setCustomMediaPlayer(new ExoMediaPlayer(holder.itemView.getContext()));
 //        holder.mVideoView.setPlayerFactory(mPlayerFactory);
+
+        holder.mTitle.setText(videoBean.getTitle());
     }
 
     @Override
@@ -76,17 +78,16 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
     public class VideoHolder extends RecyclerView.ViewHolder {
 
         private VideoView mVideoView;
-        private StandardVideoController controller;
-        private TextView title;
+        private StandardVideoController mController;
+        private TextView mTitle;
 
         VideoHolder(View itemView) {
             super(itemView);
             mVideoView = itemView.findViewById(R.id.video_player);
             int widthPixels = itemView.getContext().getResources().getDisplayMetrics().widthPixels;
             mVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels * 9 / 16 + 1));
-            controller = new StandardVideoController(itemView.getContext());
-            controller.setEnableOrientation(true);
-            title = itemView.findViewById(R.id.tv_title);
+            mController = new StandardVideoController(itemView.getContext());
+            mTitle = itemView.findViewById(R.id.tv_title);
         }
     }
 }

@@ -37,4 +37,5 @@
     <string name="str_play_list">PLAY LIST</string>
     <string name="str_switch_player_btn">SWITCH_PLAYER</string>
     <string name="str_current_player">Current player is </string>
+    <string name="str_seamless_play">SEAMLESS PLAY</string>
 </resources>

@@ -1,20 +1,14 @@
 package com.dueeeke.dkplayer.activity.list;
 
 import android.graphics.Rect;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.MenuItem;
 import android.view.View;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.adapter.RotateRecyclerViewAdapter;
 import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.videoplayer.player.VideoView;
-import com.dueeeke.videoplayer.player.VideoViewManager;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
@@ -22,29 +16,19 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
  * Created by Devlin_n on 2017/5/31.
  */
 
-public class RotateRecyclerViewActivity extends AppCompatActivity {
+public class RotateRecyclerViewActivity extends BaseListActivity {
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recycler_view);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(R.string.str_rotate_in_fullscreen);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-        initView();
+    protected int getLayoutResId() {
+        return R.layout.activity_recycler_view;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-        }
-        return super.onOptionsItemSelected(item);
+    protected int getTitleResId() {
+        return R.string.str_rotate_in_fullscreen;
     }
 
-    private void initView() {
+    protected void initView() {
         RecyclerView recyclerView = findViewById(R.id.rv);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -115,18 +99,5 @@ public class RotateRecyclerViewActivity extends AppCompatActivity {
             videoView.start();
         });
 
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        VideoViewManager.instance().release();
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (!VideoViewManager.instance().onBackPressed()){
-            super.onBackPressed();
-        }
     }
 }

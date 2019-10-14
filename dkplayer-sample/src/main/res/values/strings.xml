@@ -1,14 +1,5 @@
 <resources>
     <string name="app_name">DK播放器</string>
-    <string name="float_window_warning">当前无权限使用悬浮窗，请授权！</string>
-    <string name="error_message">出了点小问题，稍后重试</string>
-    <string name="retry">重    试</string>
-    <string name="continue_play">继续播放</string>
-    <string name="wifi_tip">您正在使用移动网络，继续播放将消耗流量</string>
-    <string name="lock_tip">请先解锁屏幕！</string>
-    <string name="unlocked">已解锁</string>
-    <string name="locked">已锁定</string>
-    <string name="replay">重新播放</string>
     <string name="str_api">API演示</string>
     <string name="str_list">列表播放</string>
     <string name="str_extend">扩展功能</string>
@@ -45,4 +36,5 @@
     <string name="str_play_list">连续播放一个列表</string>
     <string name="str_switch_player_btn">切换播放核心</string>
     <string name="str_current_player">当前播放核心是：</string>
+    <string name="str_seamless_play">无缝播放</string>
 </resources>
