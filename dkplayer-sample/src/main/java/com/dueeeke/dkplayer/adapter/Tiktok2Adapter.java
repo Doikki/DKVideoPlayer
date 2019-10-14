@@ -61,20 +61,8 @@ public class Tiktok2Adapter extends PagerAdapter {
 
         ViewHolder viewHolder;
         if (view == null) {
-            viewHolder = new ViewHolder();
             view = LayoutInflater.from(context).inflate(R.layout.item_tik_tok_2, container, false);
-            viewHolder.mVideoView = view.findViewById(R.id.video_view);
-            viewHolder.mVideoView.setLooping(true);
-            //以下设置都必须设置
-            viewHolder.mVideoView.setEnableParallelPlay(true);
-            viewHolder.mVideoView.setPlayOnPrepared(false);
-            viewHolder.mVideoView.setEnableAudioFocus(false);
-            viewHolder.mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_CENTER_CROP);
-            //缓存功能，使用ExoPlayer实现
-//            viewHolder.mVideoView.setCacheEnabled(true);
-            viewHolder.mTikTokController = new TikTokController(context);
-            viewHolder.mVideoView.setVideoController(viewHolder.mTikTokController);
-            view.setTag(viewHolder);
+            viewHolder = new ViewHolder(view);
         } else {
             viewHolder = (ViewHolder) view.getTag();
         }
@@ -121,9 +109,25 @@ public class Tiktok2Adapter extends PagerAdapter {
     /**
      * 借鉴ListView item复用方法
      */
-    private class ViewHolder {
+    private static class ViewHolder {
+
         public TikTokController mTikTokController;
+        //使用ExoPlayer的缓存功能 优化体验
         public ExoVideoView mVideoView;
 
+        ViewHolder(View itemView) {
+            mVideoView = itemView.findViewById(R.id.video_view);
+            mVideoView.setLooping(true);
+            //以下设置都必须设置
+            mVideoView.setEnableParallelPlay(true);
+            mVideoView.setPlayOnPrepared(false);
+            mVideoView.setEnableAudioFocus(false);
+            mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_CENTER_CROP);
+            //缓存功能，使用ExoPlayer实现
+            mVideoView.setCacheEnabled(true);
+            mTikTokController = new TikTokController(itemView.getContext());
+            mVideoView.setVideoController(mTikTokController);
+            itemView.setTag(this);
+        }
     }
 }
