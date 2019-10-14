@@ -17,7 +17,7 @@ import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.dkplayer.widget.VerticalViewPager;
 import com.dueeeke.dkplayer.widget.videoview.ExoVideoView;
-import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
+import com.dueeeke.videoplayer.listener.SimpleOnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.player.VideoViewManager;
 
@@ -40,7 +40,7 @@ public class TikTok2Activity extends AppCompatActivity {
     /**
      * 当前正在播放的VideoView
      */
-    private ExoVideoView mCurrentPlayVideoView;
+    private ExoVideoView mCurrentVideoView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,9 +83,9 @@ public class TikTok2Activity extends AppCompatActivity {
                 super.onPageScrollStateChanged(state);
                 if (mCurrentPosition == mPlayingPosition) return;
 
-                if (mCurrentPlayVideoView != null) {
-                    mCurrentPlayVideoView.release();
-                    mCurrentPlayVideoView.clearOnVideoViewStateChangeListeners();
+                if (mCurrentVideoView != null) {
+                    mCurrentVideoView.release();
+                    mCurrentVideoView.clearOnVideoViewStateChangeListeners();
                 }
 
                 if (state == VerticalViewPager.SCROLL_STATE_IDLE) {
@@ -116,16 +116,11 @@ public class TikTok2Activity extends AppCompatActivity {
 
         ExoVideoView videoView = itemView.findViewById(R.id.video_view);
         //划到此item的时候预加载（prepare）可能没完成。故需要设置此监听，等预加载完成之后直接开始播放
-        videoView.setOnVideoViewStateChangeListener(new OnVideoViewStateChangeListener() {
-            @Override
-            public void onPlayerStateChanged(int playerState) {
-
-            }
-
+        videoView.setOnVideoViewStateChangeListener(new SimpleOnVideoViewStateChangeListener() {
             @Override
             public void onPlayStateChanged(int playState) {
                 if (playState == VideoView.STATE_PREPARED) {
-                    videoView.getMediaPlayer().start();
+                    videoView.start();
                 }
             }
         });
@@ -133,7 +128,7 @@ public class TikTok2Activity extends AppCompatActivity {
         videoView.start();
 
         mPlayingPosition = mCurrentPosition;
-        mCurrentPlayVideoView = videoView;
+        mCurrentVideoView = videoView;
     }
 
     /**
@@ -159,16 +154,16 @@ public class TikTok2Activity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         //一定要这样写
-        if (mCurrentPlayVideoView != null)
-            mCurrentPlayVideoView.pause();
+        if (mCurrentVideoView != null)
+            mCurrentVideoView.pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         //一定要这样写
-        if (mCurrentPlayVideoView != null)
-            mCurrentPlayVideoView.resume();
+        if (mCurrentVideoView != null)
+            mCurrentVideoView.resume();
     }
 
     @Override

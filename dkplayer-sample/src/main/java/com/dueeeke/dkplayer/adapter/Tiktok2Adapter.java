@@ -71,7 +71,7 @@ public class Tiktok2Adapter extends PagerAdapter {
             viewHolder.mVideoView.setEnableAudioFocus(false);
             viewHolder.mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_CENTER_CROP);
             //缓存功能，使用ExoPlayer实现
-            viewHolder.mVideoView.setCacheEnabled(true);
+//            viewHolder.mVideoView.setCacheEnabled(true);
             viewHolder.mTikTokController = new TikTokController(context);
             viewHolder.mVideoView.setVideoController(viewHolder.mTikTokController);
             view.setTag(viewHolder);

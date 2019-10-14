@@ -173,6 +173,8 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
     public void start() {
         if (isInIdleState()) {
             startPlay();
+        } else if (isInPreparedState()) {
+            mMediaPlayer.start();
         } else if (isInPlaybackState()) {
             startInPlaybackState();
         }
@@ -309,9 +311,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
      */
     protected void startInPlaybackState() {
         mMediaPlayer.start();
-        if (mCurrentPlayState != STATE_PREPARED) {
-            setPlayState(STATE_PLAYING);
-        }
+        setPlayState(STATE_PLAYING);
     }
 
     /**
@@ -407,6 +407,11 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
     protected boolean isInIdleState() {
         return mMediaPlayer == null
                 || mCurrentPlayState == STATE_IDLE;
+    }
+
+    protected boolean isInPreparedState() {
+        return mMediaPlayer == null
+                || mCurrentPlayState == STATE_PREPARED;
     }
 
     /**
@@ -1011,12 +1016,5 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
         //activity切到后台后可能被系统回收，故在此处进行进度保存
         saveProgress();
         return super.onSaveInstanceState();
-    }
-
-    /**
-     * 获取内部的MediaPlayer
-     */
-    public P getMediaPlayer() {
-        return mMediaPlayer;
     }
 }
