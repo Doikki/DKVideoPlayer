@@ -1,4 +1,4 @@
-# DKPlayer
+# DKVideoPlayer
 A video player for Android.
 
 [![JCenter](https://api.bintray.com/packages/dueeeke/maven/dkplayer-java/images/download.svg)](https://bintray.com/dueeeke/maven/dkplayer-java/_latestVersion)
