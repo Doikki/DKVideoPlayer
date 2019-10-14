@@ -78,6 +78,7 @@ dependencies {
     implementation 'com.github.ctiao:DanmakuFlameMaster:0.9.25'
     implementation 'com.github.ctiao:ndkbitmap-armv7a:0.9.21'
     implementation "com.android.support:design:$project.supportLibraryVersion"
+    implementation 'com.google.code.gson:gson:2.8.6'
 
     //缓存
     implementation 'com.danikula:videocache:2.7.1'

@@ -13,7 +13,7 @@ import android.view.WindowInsets;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.adapter.Tiktok2Adapter;
-import com.dueeeke.dkplayer.bean.VideoBean;
+import com.dueeeke.dkplayer.bean.TiktokBean;
 import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.dkplayer.widget.VerticalViewPager;
 import com.dueeeke.videoplayer.listener.SimpleOnVideoViewStateChangeListener;
@@ -32,7 +32,7 @@ public class TikTok2Activity extends AppCompatActivity {
     private static final String TAG = "TikTok2Activity";
     private int mCurrentPosition;
     private int mPlayingPosition;
-    private List<VideoBean> mVideoList;
+    private List<TiktokBean> mVideoList;
     private Tiktok2Adapter mTiktok2Adapter;
     private VerticalViewPager mViewPager;
 
@@ -54,7 +54,7 @@ public class TikTok2Activity extends AppCompatActivity {
 
         setStatusBarTransparent();
 
-        mVideoList = DataUtil.getTikTokVideoList();
+        mVideoList = DataUtil.getTiktokDataFromAssets(this);
         initViewPager();
 
     }
@@ -75,18 +75,16 @@ public class TikTok2Activity extends AppCompatActivity {
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
                 mCurrentPosition = position;
+                if (mCurrentVideoView != null) {
+                    mCurrentVideoView.release();
+                    mCurrentVideoView.clearOnVideoViewStateChangeListeners();
+                }
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
                 super.onPageScrollStateChanged(state);
                 if (mCurrentPosition == mPlayingPosition) return;
-
-                if (mCurrentVideoView != null) {
-                    mCurrentVideoView.release();
-                    mCurrentVideoView.clearOnVideoViewStateChangeListeners();
-                }
-
                 if (state == VerticalViewPager.SCROLL_STATE_IDLE) {
                     mViewPager.post(new Runnable() {
                         @Override
@@ -114,7 +112,7 @@ public class TikTok2Activity extends AppCompatActivity {
         View itemView = mTiktok2Adapter.getCurrentItemView();
 
         VideoView videoView = itemView.findViewById(R.id.video_view);
-        //划到此item的时候预加载（prepare）可能没完成。故需要设置此监听，等预加载完成之后直接开始播放
+
         videoView.setOnVideoViewStateChangeListener(new SimpleOnVideoViewStateChangeListener() {
             @Override
             public void onPlayStateChanged(int playState) {
@@ -173,7 +171,7 @@ public class TikTok2Activity extends AppCompatActivity {
     }
 
     public void addData(View view) {
-        mVideoList.addAll(DataUtil.getTikTokVideoList());
+        mVideoList.addAll(DataUtil.getTiktokDataFromAssets(this));
         mTiktok2Adapter.notifyDataSetChanged();
     }
 }

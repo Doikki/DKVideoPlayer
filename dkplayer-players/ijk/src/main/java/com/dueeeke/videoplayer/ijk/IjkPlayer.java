@@ -29,7 +29,7 @@ public class IjkPlayer extends AbstractPlayer {
     public void initPlayer() {
         mMediaPlayer = new IjkMediaPlayer();
         //native日志
-        IjkMediaPlayer.native_setLogLevel(VideoViewManager.getConfig().mIsEnableLog ? IjkMediaPlayer.IJK_LOG_DEBUG : IjkMediaPlayer.IJK_LOG_SILENT);
+        IjkMediaPlayer.native_setLogLevel(VideoViewManager.getConfig().mIsEnableLog ? IjkMediaPlayer.IJK_LOG_INFO : IjkMediaPlayer.IJK_LOG_SILENT);
         setOptions();
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mMediaPlayer.setOnErrorListener(onErrorListener);

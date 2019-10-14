@@ -10,7 +10,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
-import com.dueeeke.dkplayer.bean.VideoBean;
+import com.dueeeke.dkplayer.bean.TiktokBean;
 import com.dueeeke.dkplayer.widget.controller.TikTokController;
 import com.dueeeke.dkplayer.widget.videoview.ExoVideoView;
 import com.dueeeke.videoplayer.player.VideoView;
@@ -28,14 +28,14 @@ public class Tiktok2Adapter extends PagerAdapter {
     /**
      * 数据源
      */
-    private List<VideoBean> mVideoBeans;
+    private List<TiktokBean> mVideoBeans;
 
     /**
      * 当前可见的itemView
      */
     private View mCurrentItemView;
 
-    public Tiktok2Adapter(List<VideoBean> videoBeans) {
+    public Tiktok2Adapter(List<TiktokBean> videoBeans) {
         this.mVideoBeans = videoBeans;
     }
 
@@ -67,11 +67,11 @@ public class Tiktok2Adapter extends PagerAdapter {
             viewHolder = (ViewHolder) view.getTag();
         }
 
-        VideoBean item = mVideoBeans.get(position);
-        viewHolder.mVideoView.setUrl(item.getUrl());
+        TiktokBean item = mVideoBeans.get(position);
+        viewHolder.mVideoView.setUrl(item.videoPlayUrl);
         ImageView thumb = viewHolder.mTikTokController.getThumb();
         Glide.with(context)
-                .load(item.getThumb())
+                .load(item.coverImgUrl)
                 .placeholder(android.R.color.white)
                 .into(thumb);
         //直接开始播放，此时视频会开始加载（prepare），由于setPlayOnPrepared(false)，视频在准备完成之后不会自己开始播放，这样就实现了预加载。
@@ -123,7 +123,7 @@ public class Tiktok2Adapter extends PagerAdapter {
             mVideoView.setPlayOnPrepared(false);
             mVideoView.setEnableAudioFocus(false);
             mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_CENTER_CROP);
-            //缓存功能，使用ExoPlayer实现
+            //开启缓存
             mVideoView.setCacheEnabled(true);
             mTikTokController = new TikTokController(itemView.getContext());
             mVideoView.setVideoController(mTikTokController);

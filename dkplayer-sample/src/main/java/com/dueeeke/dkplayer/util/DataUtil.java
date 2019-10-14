@@ -1,7 +1,13 @@
 package com.dueeeke.dkplayer.util;
 
+import android.content.Context;
+
+import com.dueeeke.dkplayer.bean.TiktokBean;
 import com.dueeeke.dkplayer.bean.VideoBean;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -167,4 +173,21 @@ public class DataUtil {
                 "https://aweme.snssdk.com/aweme/v1/play/?video_id=3fdb4876a7f34bad8fa957db4b5ed159&line=0&ratio=720p&media_type=4&vr_type=0"));
         return videoList;
     }
+
+
+    public static List<TiktokBean> getTiktokDataFromAssets(Context context) {
+        try {
+            InputStream is = context.getAssets().open("tiktok_data");
+            int length = is.available();
+            byte[] buffer = new byte[length];
+            is.read(buffer);
+            is.close();
+            String result = new String(buffer, Charset.forName("UTF-8"));
+            return TiktokBean.arrayTiktokBeanFromData(result);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
 }

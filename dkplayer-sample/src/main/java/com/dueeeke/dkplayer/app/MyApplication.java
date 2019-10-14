@@ -4,7 +4,7 @@ import android.app.Application;
 import android.os.StrictMode;
 
 import com.dueeeke.videoplayer.BuildConfig;
-import com.dueeeke.videoplayer.exo.ExoMediaPlayerFactory;
+import com.dueeeke.videoplayer.ijk.IjkPlayerFactory;
 import com.dueeeke.videoplayer.player.VideoViewConfig;
 import com.dueeeke.videoplayer.player.VideoViewManager;
 
@@ -28,8 +28,8 @@ public class MyApplication extends Application {
         //播放器配置，注意：此为全局配置，按需开启
         VideoViewManager.setConfig(VideoViewConfig.newBuilder()
                 .setLogEnabled(BuildConfig.DEBUG)
-//                .setPlayerFactory(IjkPlayerFactory.create())
-                .setPlayerFactory(ExoMediaPlayerFactory.create())
+                .setPlayerFactory(IjkPlayerFactory.create())
+//                .setPlayerFactory(ExoMediaPlayerFactory.create())
 //                .setEnableOrientation(true)
 //                .setEnableMediaCodec(true)
 //                .setUsingSurfaceView(true)
