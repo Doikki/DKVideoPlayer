@@ -80,6 +80,8 @@ dependencies {
     implementation "com.android.support:design:$project.supportLibraryVersion"
     implementation 'com.google.code.gson:gson:2.8.6'
 
+    implementation 'cn.youngkaaa:yviewpager:0.4'
+
     //缓存
     implementation 'com.danikula:videocache:2.7.1'
 

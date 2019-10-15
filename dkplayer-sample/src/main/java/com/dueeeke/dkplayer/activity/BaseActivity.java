@@ -1,12 +1,16 @@
 package com.dueeeke.dkplayer.activity;
 
 import android.annotation.SuppressLint;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowInsets;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videoplayer.player.VideoView;
@@ -60,6 +64,25 @@ public class BaseActivity<T extends VideoView> extends AppCompatActivity {
 
     protected void initView() {
 
+    }
+
+    /**
+     * 把状态栏设成透明
+     */
+    protected void setStatusBarTransparent() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            View decorView = getWindow().getDecorView();
+            decorView.setOnApplyWindowInsetsListener((v, insets) -> {
+                WindowInsets defaultInsets = v.onApplyWindowInsets(insets);
+                return defaultInsets.replaceSystemWindowInsets(
+                        defaultInsets.getSystemWindowInsetLeft(),
+                        0,
+                        defaultInsets.getSystemWindowInsetRight(),
+                        defaultInsets.getSystemWindowInsetBottom());
+            });
+            ViewCompat.requestApplyInsets(decorView);
+            getWindow().setStatusBarColor(ContextCompat.getColor(this, android.R.color.transparent));
+        }
     }
 
     @Override

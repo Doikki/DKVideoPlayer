@@ -3,6 +3,7 @@ package com.dueeeke.dkplayer.util;
 import android.content.Context;
 
 import com.danikula.videocache.HttpProxyCacheServer;
+import com.dueeeke.videoplayer.util.L;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -63,6 +64,7 @@ public class PreloadManager {
         String proxyUrl = getProxyUrl(rawUrl);
         //如果没有缓存过，加入线程池进行预加载操作
         if (!mHttpProxyCacheServer.isCached(rawUrl)) {
+            L.d("preload: " + rawUrl);
             mExecutorService.submit(new Runnable() {
                 @Override
                 public void run() {

@@ -86,9 +86,6 @@ public class Tiktok2Adapter extends PagerAdapter {
         View itemView = (View) object;
         container.removeView(itemView);
 
-        //加入缓存池时先把视频release掉
-        ViewHolder viewHolder = (ViewHolder) itemView.getTag();
-        viewHolder.mVideoView.release();
         TiktokBean item = mVideoBeans.get(position);
         //取消预加载
         PreloadManager.getInstance(container.getContext()).cancelPreloadByUrl(item.videoDownloadUrl);
@@ -118,9 +115,8 @@ public class Tiktok2Adapter extends PagerAdapter {
         ViewHolder(View itemView) {
             mVideoView = itemView.findViewById(R.id.video_view);
             mVideoView.setLooping(true);
-            //以下设置都必须设置
-            mVideoView.setEnableParallelPlay(true);
-            mVideoView.setEnableAudioFocus(false);
+//            mVideoView.setEnableParallelPlay(true);
+//            mVideoView.setEnableAudioFocus(false);
             mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_CENTER_CROP);
             mTikTokController = new TikTokController(itemView.getContext());
             mVideoView.setVideoController(mTikTokController);

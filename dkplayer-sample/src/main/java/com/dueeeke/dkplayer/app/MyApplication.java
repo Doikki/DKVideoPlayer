@@ -1,7 +1,6 @@
 package com.dueeeke.dkplayer.app;
 
 import android.app.Application;
-import android.os.StrictMode;
 
 import com.dueeeke.videoplayer.BuildConfig;
 import com.dueeeke.videoplayer.exo.ExoMediaPlayerFactory;
@@ -38,11 +37,10 @@ public class MyApplication extends Application {
 //                .setScreenScaleType(VideoView.SCREEN_SCALE_MATCH_PARENT)
                 .build());
 
-        if (BuildConfig.DEBUG) {
-            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().build());
-            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().penaltyLog().build());
-
-        }
+//        if (BuildConfig.DEBUG) {
+//            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().build());
+//            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().penaltyLog().build());
+//        }
     }
 
     public static MyApplication getInstance() {

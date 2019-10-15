@@ -1,33 +1,28 @@
 package com.dueeeke.dkplayer.activity.list.tiktok;
 
-import android.os.Build;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.WindowInsets;
 
 import com.dueeeke.dkplayer.R;
+import com.dueeeke.dkplayer.activity.BaseActivity;
 import com.dueeeke.dkplayer.adapter.Tiktok2Adapter;
 import com.dueeeke.dkplayer.bean.TiktokBean;
 import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.dkplayer.util.PreloadManager;
+import com.dueeeke.dkplayer.util.ProxyVideoCacheManager;
 import com.dueeeke.dkplayer.widget.VerticalViewPager;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.player.VideoViewManager;
 
 import java.util.List;
 
+
 /**
  * 模仿抖音短视频，使用VerticalViewPager实现，实现了预加载功能，推荐
  * Created by dueeeke on 2019/10/13.
  */
 
-public class TikTok2Activity extends AppCompatActivity {
+public class TikTok2Activity extends BaseActivity {
 
     private static final String TAG = "TikTok2Activity";
     private int mCurrentPosition;
@@ -42,35 +37,30 @@ public class TikTok2Activity extends AppCompatActivity {
     private VideoView mCurrentVideoView;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(R.string.str_tiktok_2);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-
-        setContentView(R.layout.activity_tiktok2);
-
-        setStatusBarTransparent();
-
-        mVideoList = DataUtil.getTiktokDataFromAssets(this);
-        initViewPager();
-
+    protected int getLayoutResId() {
+        return R.layout.activity_tiktok2;
     }
 
+    @Override
+    protected int getTitleResId() {
+        return R.string.str_tiktok_2;
+    }
+
+    @Override
+    protected void initView() {
+        super.initView();
+        setStatusBarTransparent();
+        mVideoList = DataUtil.getTiktokDataFromAssets(this);
+        initViewPager();
+    }
 
     private void initViewPager() {
         mViewPager = findViewById(R.id.vvp);
         mViewPager.setOffscreenPageLimit(4);
         mTiktok2Adapter = new Tiktok2Adapter(mVideoList);
         mViewPager.setAdapter(mTiktok2Adapter);
+        mViewPager.setOverScrollMode(View.OVER_SCROLL_NEVER);
         mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                super.onPageScrolled(position, positionOffset, positionOffsetPixels);
-            }
 
             @Override
             public void onPageSelected(int position) {
@@ -118,47 +108,26 @@ public class TikTok2Activity extends AppCompatActivity {
         mCurrentVideoView = videoView;
     }
 
-    /**
-     * 把状态栏设成透明
-     */
-    private void setStatusBarTransparent() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            View decorView = TikTok2Activity.this.getWindow().getDecorView();
-            decorView.setOnApplyWindowInsetsListener((v, insets) -> {
-                WindowInsets defaultInsets = v.onApplyWindowInsets(insets);
-                return defaultInsets.replaceSystemWindowInsets(
-                        defaultInsets.getSystemWindowInsetLeft(),
-                        0,
-                        defaultInsets.getSystemWindowInsetRight(),
-                        defaultInsets.getSystemWindowInsetBottom());
-            });
-            ViewCompat.requestApplyInsets(decorView);
-            getWindow().setStatusBarColor(ContextCompat.getColor(this, android.R.color.transparent));
-        }
-    }
-
     @Override
     protected void onPause() {
         super.onPause();
-        //一定要这样写
-        if (mCurrentVideoView != null)
-            mCurrentVideoView.pause();
+        VideoViewManager.instance().pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        //一定要这样写
-        if (mCurrentVideoView != null)
-            mCurrentVideoView.resume();
+        VideoViewManager.instance().resume();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //一定要这样写
         VideoViewManager.instance().release();
         PreloadManager.getInstance(this).cancelAll();
+
+        //清除缓存，实际使用可以不需要清除，这里为了方便测试
+        ProxyVideoCacheManager.clearAllCache(this);
     }
 
     public void addData(View view) {

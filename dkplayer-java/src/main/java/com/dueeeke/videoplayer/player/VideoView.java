@@ -54,7 +54,9 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
      */
     protected FrameLayout mPlayerContainer;
     protected boolean mIsFullScreen;//是否处于全屏状态
-    //通过添加和移除这个view来实现隐藏和显示navigation bar，可以避免出现一些奇奇怪怪的问题
+    /**
+     * 通过添加和移除这个view来实现隐藏和显示navigation bar，可以避免出现一些奇奇怪怪的问题
+     */
     @Nullable
     protected View mHideNavBarView;
     protected static final int FULLSCREEN_FLAGS = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
@@ -99,25 +101,44 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
     public static final int PLAYER_TINY_SCREEN = 12;   // 小屏播放器
     protected int mCurrentPlayerState = PLAYER_NORMAL;
 
+    /**
+     * 监听系统中其他播放的音频焦点改变，当然也包括自己的App内
+     */
+    protected boolean mEnableAudioFocus;
     @Nullable
     protected AudioFocusHelper mAudioFocusHelper;
 
+    /**
+     * OnVideoViewStateChangeListener集合，保存了所有开发者设置的监听器
+     */
     protected List<OnVideoViewStateChangeListener> mOnVideoViewStateChangeListeners;
 
+    /**
+     * 进度管理器，设置之后播放器会记录播放进度，以便下次播放恢复进度
+     */
     @Nullable
     protected ProgressManager mProgressManager;
 
-    protected boolean mUsingSurfaceView;//启用SurfaceView
+    /**
+     * 使用SurfaceView渲染视频，默认是TextureView
+     */
+    protected boolean mUsingSurfaceView;
 
-    protected boolean mIsLooping;//循环洗脑播放
+    /**
+     * 循环播放
+     */
+    protected boolean mIsLooping;
 
-    protected boolean mEnableAudioFocus;//监听音频焦点变化
+    /**
+     * 启用MediaCodec解码,就是所谓的硬解码，此设置仅适用于ijkplayer
+     */
+    protected boolean mEnableMediaCodec;
 
-    protected boolean mEnableMediaCodec;//启用MediaCodec解码
-
-    protected boolean mEnableParallelPlay;//支持多开
-
-    private boolean mPlayOnPrepared = true;//是否在准备完成之后自动开始播放
+    /**
+     * 支持多开，注意这里的多开不仅仅是指同一个页面需要同时存在多个播放器，也适用于Activity和Activity之间以及Activity
+     * 和Fragment之间，甚至是Fragment和Fragment之间的场景。
+     */
+    protected boolean mEnableParallelPlay;
 
     public VideoView(@NonNull Context context) {
         this(context, null);
@@ -171,16 +192,19 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
      */
     @Override
     public void start() {
+        boolean isStarted = false;
         if (isInIdleState()) {
             startPlay();
-        } else if (isInPreparedState()) {
-            mMediaPlayer.start();
+            isStarted = true;
         } else if (isInPlaybackState()) {
             startInPlaybackState();
+            isStarted = true;
         }
-        setKeepScreenOn(true);
-        if (mAudioFocusHelper != null)
-            mAudioFocusHelper.requestFocus();
+        if (isStarted) {
+            setKeepScreenOn(true);
+            if (mAudioFocusHelper != null)
+                mAudioFocusHelper.requestFocus();
+        }
     }
 
     /**
@@ -388,9 +412,10 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
      * 保存播放进度
      */
     protected void saveProgress() {
-        L.d("saveProgress: " + mCurrentPosition);
-        if (mCurrentPosition != 0 && mProgressManager != null)
+        if (mCurrentPosition != 0 && mProgressManager != null) {
+            L.d("saveProgress: " + mCurrentPosition);
             mProgressManager.saveProgress(mUrl, mCurrentPosition);
+        }
     }
 
     /**
@@ -404,14 +429,12 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
                 && mCurrentPlayState != STATE_PLAYBACK_COMPLETED;
     }
 
+    /**
+     * 是否处于未播放转态，此时{@link #mMediaPlayer}为null
+     */
     protected boolean isInIdleState() {
         return mMediaPlayer == null
                 || mCurrentPlayState == STATE_IDLE;
-    }
-
-    protected boolean isInPreparedState() {
-        return mMediaPlayer == null
-                || mCurrentPlayState == STATE_PREPARED;
     }
 
     /**
@@ -545,9 +568,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
     @Override
     public void onPrepared() {
         setPlayState(STATE_PREPARED);
-        if (mPlayOnPrepared) {
-            mMediaPlayer.start();
-        }
+        mMediaPlayer.start();
         if (mCurrentPosition > 0) {
             seekTo(mCurrentPosition);
         }
@@ -686,13 +707,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
     }
 
     /**
-     * 设置是否在准备完成之后自动开始播放
-     */
-    public void setPlayOnPrepared(boolean playOnPrepared) {
-        mPlayOnPrepared = playOnPrepared;
-    }
-
-    /**
      * 进入全屏
      */
     @Override
@@ -771,7 +785,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
         if (activity == null) {
             if (mVideoController == null) return null;
             activity = PlayerUtils.scanForActivity(mVideoController.getContext());
-            if (activity == null) return null;
         }
         return activity;
     }
