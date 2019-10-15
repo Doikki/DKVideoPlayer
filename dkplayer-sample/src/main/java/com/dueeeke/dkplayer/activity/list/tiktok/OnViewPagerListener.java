@@ -7,6 +7,7 @@ package com.dueeeke.dkplayer.activity.list.tiktok;
  * 用于ViewPagerLayoutManager的监听
  */
 
+@Deprecated
 public interface OnViewPagerListener {
 
     /*初始化完成*/

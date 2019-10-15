@@ -5,9 +5,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.dueeeke.dkplayer.R;
-import com.dueeeke.videocontroller.StatusView;
 import com.dueeeke.videoplayer.controller.BaseVideoController;
 import com.dueeeke.videoplayer.controller.MediaPlayerControl;
 import com.dueeeke.videoplayer.player.VideoView;
@@ -21,7 +21,7 @@ import com.dueeeke.videoplayer.util.L;
 public class TikTokController extends BaseVideoController<MediaPlayerControl> {
 
     private ImageView thumb;
-    protected StatusView mStatusView;
+
     public TikTokController(@NonNull Context context) {
         super(context);
     }
@@ -43,14 +43,6 @@ public class TikTokController extends BaseVideoController<MediaPlayerControl> {
     protected void initView() {
         super.initView();
         thumb = mControllerView.findViewById(R.id.iv_thumb);
-
-        mStatusView = new StatusView(getContext());
-    }
-
-    @Override
-    public void setMediaPlayer(MediaPlayerControl mediaPlayer) {
-        super.setMediaPlayer(mediaPlayer);
-        mStatusView.attachMediaPlayer(mMediaPlayer);
     }
 
     @Override
@@ -61,7 +53,6 @@ public class TikTokController extends BaseVideoController<MediaPlayerControl> {
             case VideoView.STATE_IDLE:
                 L.e("STATE_IDLE " + hashCode());
                 thumb.setVisibility(VISIBLE);
-                mStatusView.dismiss();
                 break;
             case VideoView.STATE_PLAYING:
                 L.e("STATE_PLAYING " + hashCode());
@@ -75,7 +66,8 @@ public class TikTokController extends BaseVideoController<MediaPlayerControl> {
                 L.e("STATE_PREPARED " + hashCode());
                 break;
             case VideoView.STATE_ERROR:
-                mStatusView.showErrorView(this);
+                L.e("STATE_ERROR " + hashCode());
+                Toast.makeText(getContext(), R.string.dkplayer_error_message, Toast.LENGTH_SHORT).show();
                 break;
         }
     }

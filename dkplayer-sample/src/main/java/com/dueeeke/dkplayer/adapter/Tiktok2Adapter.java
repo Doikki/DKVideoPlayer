@@ -11,8 +11,8 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.bean.TiktokBean;
+import com.dueeeke.dkplayer.util.PreloadManager;
 import com.dueeeke.dkplayer.widget.controller.TikTokController;
-import com.dueeeke.dkplayer.widget.videoview.ExoVideoView;
 import com.dueeeke.videoplayer.player.VideoView;
 
 import java.util.ArrayList;
@@ -68,15 +68,15 @@ public class Tiktok2Adapter extends PagerAdapter {
         }
 
         TiktokBean item = mVideoBeans.get(position);
-        viewHolder.mVideoView.setUrl(item.videoPlayUrl);
+        String proxyUrl = PreloadManager.getInstance(context).getProxyUrl(item.videoDownloadUrl);
+        viewHolder.mVideoView.setUrl(proxyUrl);
+        //开始预加载
+        PreloadManager.getInstance(context).startPreload(item.videoDownloadUrl);
         ImageView thumb = viewHolder.mTikTokController.getThumb();
         Glide.with(context)
                 .load(item.coverImgUrl)
                 .placeholder(android.R.color.white)
                 .into(thumb);
-        //直接开始播放，此时视频会开始加载（prepare），由于setPlayOnPrepared(false)，视频在准备完成之后不会自己开始播放，这样就实现了预加载。
-        viewHolder.mVideoView.start();
-
         container.addView(view);
         return view;
     }
@@ -89,8 +89,9 @@ public class Tiktok2Adapter extends PagerAdapter {
         //加入缓存池时先把视频release掉
         ViewHolder viewHolder = (ViewHolder) itemView.getTag();
         viewHolder.mVideoView.release();
-        //移除监听
-        viewHolder.mVideoView.clearOnVideoViewStateChangeListeners();
+        TiktokBean item = mVideoBeans.get(position);
+        //取消预加载
+        PreloadManager.getInstance(container.getContext()).cancelPreloadByUrl(item.videoDownloadUrl);
         //保存起来用来复用
         mViewPool.add(itemView);
     }
@@ -112,19 +113,15 @@ public class Tiktok2Adapter extends PagerAdapter {
     private static class ViewHolder {
 
         public TikTokController mTikTokController;
-        //使用ExoPlayer的缓存功能 优化体验
-        public ExoVideoView mVideoView;
+        public VideoView mVideoView;
 
         ViewHolder(View itemView) {
             mVideoView = itemView.findViewById(R.id.video_view);
             mVideoView.setLooping(true);
             //以下设置都必须设置
             mVideoView.setEnableParallelPlay(true);
-            mVideoView.setPlayOnPrepared(false);
             mVideoView.setEnableAudioFocus(false);
             mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_CENTER_CROP);
-            //开启缓存
-            mVideoView.setCacheEnabled(true);
             mTikTokController = new TikTokController(itemView.getContext());
             mVideoView.setVideoController(mTikTokController);
             itemView.setTag(this);

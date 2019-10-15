@@ -38,6 +38,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
     protected boolean mLastReportedPlayWhenReady;
     protected boolean mIsPreparing;
     protected boolean mIsBuffering;
+    protected boolean mIsRenderStart;
 
     protected LoadControl mLoadControl;
 
@@ -251,10 +252,11 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
         if (mLastReportedPlayWhenReady != playWhenReady || mLastReportedPlaybackState != playbackState) {
             switch (playbackState) {
                 case Player.STATE_READY:
-                    if (playWhenReady && !mIsBuffering) {
+                    if (playWhenReady && !mIsBuffering && !mIsRenderStart) {
                         if (mPlayerEventListener != null) {
                             mPlayerEventListener.onInfo(MEDIA_INFO_VIDEO_RENDERING_START, 0);
                         }
+                        mIsRenderStart = true;
                     }
                     if (mIsPreparing) {
                         if (mPlayerEventListener != null) {

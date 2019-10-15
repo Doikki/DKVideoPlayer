@@ -15,8 +15,8 @@ import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.adapter.Tiktok2Adapter;
 import com.dueeeke.dkplayer.bean.TiktokBean;
 import com.dueeeke.dkplayer.util.DataUtil;
+import com.dueeeke.dkplayer.util.PreloadManager;
 import com.dueeeke.dkplayer.widget.VerticalViewPager;
-import com.dueeeke.videoplayer.listener.SimpleOnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.player.VideoViewManager;
 
@@ -62,6 +62,7 @@ public class TikTok2Activity extends AppCompatActivity {
 
     private void initViewPager() {
         mViewPager = findViewById(R.id.vvp);
+        mViewPager.setOffscreenPageLimit(4);
         mTiktok2Adapter = new Tiktok2Adapter(mVideoList);
         mViewPager.setAdapter(mTiktok2Adapter);
         mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
@@ -77,7 +78,6 @@ public class TikTok2Activity extends AppCompatActivity {
                 mCurrentPosition = position;
                 if (mCurrentVideoView != null) {
                     mCurrentVideoView.release();
-                    mCurrentVideoView.clearOnVideoViewStateChangeListeners();
                 }
             }
 
@@ -108,22 +108,12 @@ public class TikTok2Activity extends AppCompatActivity {
     }
 
     private void startPlay() {
-
         View itemView = mTiktok2Adapter.getCurrentItemView();
-
         VideoView videoView = itemView.findViewById(R.id.video_view);
-
-        videoView.setOnVideoViewStateChangeListener(new SimpleOnVideoViewStateChangeListener() {
-            @Override
-            public void onPlayStateChanged(int playState) {
-                if (playState == VideoView.STATE_PREPARED) {
-                    videoView.start();
-                }
-            }
-        });
-
+        TiktokBean tiktokBean = mVideoList.get(mCurrentPosition);
+        //先取消预加载
+        PreloadManager.getInstance(this).cancelPreloadByUrl(tiktokBean.videoDownloadUrl);
         videoView.start();
-
         mPlayingPosition = mCurrentPosition;
         mCurrentVideoView = videoView;
     }
@@ -168,6 +158,7 @@ public class TikTok2Activity extends AppCompatActivity {
         super.onDestroy();
         //一定要这样写
         VideoViewManager.instance().release();
+        PreloadManager.getInstance(this).cancelAll();
     }
 
     public void addData(View view) {

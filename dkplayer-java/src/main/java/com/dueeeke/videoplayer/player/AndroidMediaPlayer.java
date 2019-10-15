@@ -112,6 +112,12 @@ public class AndroidMediaPlayer extends AbstractPlayer {
 
     @Override
     public void release() {
+        mMediaPlayer.setOnErrorListener(null);
+        mMediaPlayer.setOnCompletionListener(null);
+        mMediaPlayer.setOnInfoListener(null);
+        mMediaPlayer.setOnBufferingUpdateListener(null);
+        mMediaPlayer.setOnPreparedListener(null);
+        mMediaPlayer.setOnVideoSizeChangedListener(null);
         new Thread() {
             @Override
             public void run() {

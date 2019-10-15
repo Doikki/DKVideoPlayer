@@ -13,6 +13,7 @@ import com.dueeeke.dkplayer.bean.VideoBean;
 
 import java.util.List;
 
+@Deprecated
 public class TikTokAdapter extends RecyclerView.Adapter<TikTokAdapter.VideoHolder> {
 
     private List<VideoBean> videos;

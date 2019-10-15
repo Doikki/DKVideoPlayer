@@ -7,6 +7,7 @@ import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+@Deprecated
 public class ViewPagerLayoutManager extends LinearLayoutManager implements RecyclerView.OnChildAttachStateChangeListener {
 
     private PagerSnapHelper mPagerSnapHelper;
