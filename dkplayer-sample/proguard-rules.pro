@@ -38,3 +38,5 @@
 -keep class android.support.** { *; }
 
 -keep class com.bumptech.glide.** { *; }
+
+-keep class com.dueeeke.dkplayer.bean.** { *; }
