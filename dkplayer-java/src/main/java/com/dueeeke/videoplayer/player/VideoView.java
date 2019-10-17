@@ -230,7 +230,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
         }
 
         initPlayer();
-        addDisplay();
         startPrepare(false);
     }
 
@@ -447,7 +446,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
         if (resetPosition) {
             mCurrentPosition = 0;
         }
-        addDisplay();
         startPrepare(true);
     }
 
@@ -568,7 +566,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
     @Override
     public void onPrepared() {
         setPlayState(STATE_PREPARED);
-        mMediaPlayer.start();
+        addDisplay();
         if (mCurrentPosition > 0) {
             seekTo(mCurrentPosition);
         }
@@ -587,7 +585,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
     public int getCurrentPlayState() {
         return mCurrentPlayState;
     }
-
 
     /**
      * 获取缓冲速度

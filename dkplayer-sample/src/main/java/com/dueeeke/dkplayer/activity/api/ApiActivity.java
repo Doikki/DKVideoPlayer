@@ -27,7 +27,8 @@ public class ApiActivity extends BaseActivity {
 //    private static final String LIVE_URL = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
 //    private static final String LIVE_URL = "http://ivi.bupt.edu.cn/hls/sztv.m3u8";
 //    private static final String LIVE_URL = "http://220.161.87.62:8800/hls/0/index.m3u8";
-    private static final String LIVE_URL = "http://ivi.bupt.edu.cn/hls/cctv6.m3u8";
+//    private static final String LIVE_URL = "http://ivi.bupt.edu.cn/hls/cctv6.m3u8";
+    private static final String LIVE_URL = "rtmp://media3.sinovision.net:1935/live/livestream";
     //断线自动重连,需加上ijklivehook:
 //    private static final String LIVE_URL = "ijklivehook:rtmp://live.hkstv.hk.lxdns.com/live/hks";
 

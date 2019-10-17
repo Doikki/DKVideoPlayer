@@ -42,7 +42,6 @@ public class DefinitionVideoView<P extends AbstractPlayer> extends VideoView<P> 
         String url = mDefinitionMap.get(definition);
         if (definition.equals(mCurrentDefinition)) return;
         mUrl = url;
-        addDisplay();
         getCurrentPosition();
         startPrepare(true);
         mCurrentDefinition = definition;

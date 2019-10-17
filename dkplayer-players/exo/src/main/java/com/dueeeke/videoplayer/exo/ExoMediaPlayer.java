@@ -118,6 +118,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
 
     @Override
     public void prepareAsync() {
+        if (mInternalPlayer == null)
+            return;
         if (mMediaSource == null) return;
         if (mSpeedPlaybackParameters != null) {
             mInternalPlayer.setPlaybackParameters(mSpeedPlaybackParameters);
@@ -127,7 +129,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
         }
         mIsPreparing = true;
         mInternalPlayer.prepare(mMediaSource);
-        mInternalPlayer.setPlayWhenReady(false);
     }
 
     @Override
@@ -238,6 +239,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
 
     @Override
     public void setOptions() {
+        //准备好就开始播放
+        mInternalPlayer.setPlayWhenReady(true);
     }
 
     @Override
