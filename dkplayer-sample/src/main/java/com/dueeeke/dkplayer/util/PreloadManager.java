@@ -3,17 +3,10 @@ package com.dueeeke.dkplayer.util;
 import android.content.Context;
 
 import com.danikula.videocache.HttpProxyCacheServer;
-import com.dueeeke.videoplayer.util.L;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -29,9 +22,11 @@ public class PreloadManager {
     /**
      * 保存正在预加载的HttpURLConnection，用来取消请求
      */
-    private  HashMap<String, HttpURLConnection> mConnections = new HashMap<>();
+    private HashMap<String, PreloadTask> mPreloadTasks = new HashMap<>();
 
-    private  HttpProxyCacheServer mHttpProxyCacheServer;
+    private boolean mIsStartPreload = true;
+
+    private HttpProxyCacheServer mHttpProxyCacheServer;
 
     private PreloadManager(Context context) {
         mHttpProxyCacheServer = ProxyVideoCacheManager.getProxy(context);
@@ -49,87 +44,110 @@ public class PreloadManager {
     }
 
     /**
-     * 获取HttpProxyCacheServer的代理地址
-     */
-    public String getProxyUrl(String rawUrl) {
-        return mHttpProxyCacheServer.getProxyUrl(rawUrl);
-    }
-
-
-    /**
      * 开始预加载
+     *
      * @param rawUrl 原始视频地址
      */
-    public void startPreload(String rawUrl) {
-        String proxyUrl = getProxyUrl(rawUrl);
-        //如果没有缓存过，加入线程池进行预加载操作
-        if (!mHttpProxyCacheServer.isCached(rawUrl)) {
-            L.d("preload: " + rawUrl);
-            mExecutorService.submit(new Runnable() {
-                @Override
-                public void run() {
-                    start(proxyUrl, rawUrl);
-                }
-            });
+    public void startPreload(String rawUrl, int position) {
+        PreloadTask task = new PreloadTask();
+        task.mRawUrl = rawUrl;
+        task.mPosition = position;
+        task.mCacheServer = mHttpProxyCacheServer;
+        mPreloadTasks.put(rawUrl, task);
+
+        if (mIsStartPreload)  {
+            //开始预加载
+            for (Map.Entry<String, PreloadTask> next : mPreloadTasks.entrySet()) {
+                PreloadTask preloadTask = next.getValue();
+                preloadTask.executeOn(mExecutorService);
+            }
         }
     }
 
     /**
-     * 真正开始预加载
-     * @param proxyUrl 代理地址
-     * @param rawUrl 原始地址
+     * 暂停预加载
      */
-    private void start(String proxyUrl, String rawUrl) {
-        HttpURLConnection urlConnection = null;
-        try {
-            URL url = new URL(proxyUrl);
-            urlConnection = (HttpURLConnection) url.openConnection();
-            mConnections.put(rawUrl, urlConnection);
-            InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-            int length;
-            int read = -1;
-            byte[] bytes = new byte[1024];
-            while ((length = in.read(bytes)) != -1) {
-                read += length;
-                if (read >= 500 * 1024) {//预加载500KB
-                    //预加载完成，取消请求，并且将其移除
-                    urlConnection.disconnect();
-                    mConnections.remove(rawUrl);
-                    break;
-                }
-            }
+    public void pausePreload(int position) {
+        mIsStartPreload = false;
+        cancelPreloadByPosition(position);
+    }
 
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (urlConnection != null) {
-                urlConnection.disconnect();
+    /**
+     * 恢复预加载
+     */
+    public void resumePreload(int position) {
+        mIsStartPreload = true;
+        startPreloadByPosition(position);
+    }
+
+    /**
+     * 取消掉在position之上的PreloadTask，并且从{@link #mPreloadTasks}移除
+     * @param position 当前滑到的位置
+     */
+    private void cancelPreloadByPosition(int position) {
+        Iterator<Map.Entry<String, PreloadTask>> iterator = mPreloadTasks.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, PreloadTask> next = iterator.next();
+            PreloadTask task = next.getValue();
+            if (task.mPosition < position) {
+                task.cancel();
+                iterator.remove();
             }
         }
+    }
 
+    /**
+     * 开始在position之下的PreloadTask
+     * @param position 当前滑到的位置
+     */
+    private void startPreloadByPosition(int position) {
+        for (Map.Entry<String, PreloadTask> next : mPreloadTasks.entrySet()) {
+            PreloadTask task = next.getValue();
+            if (task.mPosition > position) {
+                task.executeOn(mExecutorService);
+            }
+        }
     }
 
     /**
      * 通过原始地址取消预加载
      * @param rawUrl 原始地址
      */
-    public void cancelPreloadByUrl(String rawUrl) {
-        HttpURLConnection connection = mConnections.get(rawUrl);
-        if (connection != null) {
-            connection.disconnect();
+    public String cancelPreloadByUrl(String rawUrl) {
+        Iterator<Map.Entry<String, PreloadTask>> iterator = mPreloadTasks.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, PreloadTask> next = iterator.next();
+            if (next.getKey().equals(rawUrl)) {
+                PreloadTask task = next.getValue();
+                iterator.remove();
+                return task.cancel();
+            }
         }
+        return null;
     }
 
     /**
      * 取消所有的预加载
      */
     public void cancelAll() {
-        Set<Map.Entry<String, HttpURLConnection>> entries = mConnections.entrySet();
-        for (Map.Entry<String, HttpURLConnection> entry: entries){
-            String key = entry.getKey();
-            cancelPreloadByUrl(key);
+        Iterator<Map.Entry<String, PreloadTask>> iterator = mPreloadTasks.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, PreloadTask> next = iterator.next();
+            PreloadTask task = next.getValue();
+            task.cancel();
+            iterator.remove();
+        }
+    }
+
+    /**
+     * 获取代理地址，获取不到就返回原始地址
+     */
+    public String getPlayUrl(String rawUrl) {
+        String proxyUrl = cancelPreloadByUrl(rawUrl);
+        if (proxyUrl != null) {
+            return proxyUrl;
+        } else {
+            return rawUrl;
         }
     }
 }

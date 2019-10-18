@@ -1,6 +1,7 @@
 package com.dueeeke.dkplayer.activity.list.tiktok;
 
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
 
 import com.dueeeke.dkplayer.R;
@@ -31,6 +32,8 @@ public class TikTok2Activity extends BaseActivity {
     private Tiktok2Adapter mTiktok2Adapter;
     private VerticalViewPager mViewPager;
 
+    private PreloadManager mPreloadManager;
+
     /**
      * 当前正在播放的VideoView
      */
@@ -52,6 +55,7 @@ public class TikTok2Activity extends BaseActivity {
         setStatusBarTransparent();
         mVideoList = DataUtil.getTiktokDataFromAssets(this);
         initViewPager();
+        mPreloadManager = PreloadManager.getInstance(this);
     }
 
     private void initViewPager() {
@@ -61,6 +65,13 @@ public class TikTok2Activity extends BaseActivity {
         mViewPager.setAdapter(mTiktok2Adapter);
         mViewPager.setOverScrollMode(View.OVER_SCROLL_NEVER);
         mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels);
+                Log.d(TAG, "onPageScrolled: " + position);
+                mCurrentPosition = position;
+            }
 
             @Override
             public void onPageSelected(int position) {
@@ -82,6 +93,9 @@ public class TikTok2Activity extends BaseActivity {
                             startPlay();
                         }
                     });
+                    mPreloadManager.resumePreload(mCurrentPosition);
+                } else {
+                    mPreloadManager.pausePreload(mCurrentPosition);
                 }
             }
         });
@@ -101,8 +115,7 @@ public class TikTok2Activity extends BaseActivity {
         View itemView = mTiktok2Adapter.getCurrentItemView();
         VideoView videoView = itemView.findViewById(R.id.video_view);
         TiktokBean tiktokBean = mVideoList.get(mCurrentPosition);
-        //先取消预加载
-        PreloadManager.getInstance(this).cancelPreloadByUrl(tiktokBean.videoDownloadUrl);
+        videoView.setUrl(mPreloadManager.getPlayUrl(tiktokBean.videoDownloadUrl));
         videoView.start();
         mPlayingPosition = mCurrentPosition;
         mCurrentVideoView = videoView;
@@ -124,7 +137,7 @@ public class TikTok2Activity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         VideoViewManager.instance().release();
-        PreloadManager.getInstance(this).cancelAll();
+        mPreloadManager.cancelAll();
 
         //清除缓存，实际使用可以不需要清除，这里为了方便测试
         ProxyVideoCacheManager.clearAllCache(this);
