@@ -20,7 +20,7 @@ public class PreloadManager {
     private ExecutorService mExecutorService = Executors.newFixedThreadPool(4);
 
     /**
-     * 保存正在预加载的HttpURLConnection，用来取消请求
+     * 保存正在预加载的{@link PreloadTask}
      */
     private HashMap<String, PreloadTask> mPreloadTasks = new HashMap<>();
 
@@ -113,7 +113,7 @@ public class PreloadManager {
      * 通过原始地址取消预加载
      * @param rawUrl 原始地址
      */
-    public String cancelPreloadByUrl(String rawUrl) {
+    private String cancelPreloadByUrl(String rawUrl) {
         Iterator<Map.Entry<String, PreloadTask>> iterator = mPreloadTasks.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<String, PreloadTask> next = iterator.next();
@@ -144,8 +144,8 @@ public class PreloadManager {
      */
     public String getPlayUrl(String rawUrl) {
         String proxyUrl = cancelPreloadByUrl(rawUrl);
-        if (proxyUrl != null) {
-            return proxyUrl;
+        if (proxyUrl == null) {
+            return mHttpProxyCacheServer.getProxyUrl(rawUrl);
         } else {
             return rawUrl;
         }
