@@ -75,6 +75,7 @@ public class Tiktok2Adapter extends PagerAdapter {
                 .load(item.coverImgUrl)
                 .placeholder(android.R.color.white)
                 .into(thumb);
+        viewHolder.mPosition = position;
         container.addView(view);
         return view;
     }
@@ -83,6 +84,9 @@ public class Tiktok2Adapter extends PagerAdapter {
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         View itemView = (View) object;
         container.removeView(itemView);
+        TiktokBean item = mVideoBeans.get(position);
+        //取消预加载
+        PreloadManager.getInstance(container.getContext()).cancelPreloadByUrl(item.videoDownloadUrl, true);
         //保存起来用来复用
         mViewPool.add(itemView);
     }
@@ -105,6 +109,7 @@ public class Tiktok2Adapter extends PagerAdapter {
 
         public TikTokController mTikTokController;
         public VideoView mVideoView;
+        public int mPosition;
 
         ViewHolder(View itemView) {
             mVideoView = itemView.findViewById(R.id.video_view);

@@ -41,16 +41,32 @@ public class ProxyVideoCacheManager {
      * @return 返回缓存是否删除成功
      */
     public static boolean clearDefaultCache(Context context, String url) {
-        Md5FileNameGenerator md5FileNameGenerator = new Md5FileNameGenerator();
-        String name = md5FileNameGenerator.generate(url);
-        String pathTmp = StorageUtil.getIndividualCacheDirectory
-                (context.getApplicationContext()).getAbsolutePath()
-                + File.separator + name + ".download";
-        String path = StorageUtil.getIndividualCacheDirectory
-                (context.getApplicationContext()).getAbsolutePath()
-                + File.separator + name;
+        String pathTmp = getTempCacheFilePath(context, url);
+        String path = getTempCacheFilePath(context, url);
         return StorageUtil.deleteFile(pathTmp) &&
                 StorageUtil.deleteFile(path);
 
+    }
+
+    /**
+     * 获取缓存文件路径
+     */
+    public static String getCacheFilePath(Context context, String url) {
+        Md5FileNameGenerator md5FileNameGenerator = new Md5FileNameGenerator();
+        String name = md5FileNameGenerator.generate(url);
+        return StorageUtil.getIndividualCacheDirectory
+                (context.getApplicationContext()).getAbsolutePath()
+                + File.separator + name;
+    }
+
+    /**
+     * 获取缓存临时文件路径
+     */
+    public static String getTempCacheFilePath(Context context, String url) {
+        Md5FileNameGenerator md5FileNameGenerator = new Md5FileNameGenerator();
+        String name = md5FileNameGenerator.generate(url);
+        return StorageUtil.getIndividualCacheDirectory
+                (context.getApplicationContext()).getAbsolutePath()
+                + File.separator + name + ".download";
     }
 }

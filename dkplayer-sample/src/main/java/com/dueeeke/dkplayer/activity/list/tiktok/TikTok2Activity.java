@@ -1,7 +1,6 @@
 package com.dueeeke.dkplayer.activity.list.tiktok;
 
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.View;
 
 import com.dueeeke.dkplayer.R;
@@ -14,6 +13,7 @@ import com.dueeeke.dkplayer.util.ProxyVideoCacheManager;
 import com.dueeeke.dkplayer.widget.VerticalViewPager;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.player.VideoViewManager;
+import com.dueeeke.videoplayer.util.L;
 
 import java.util.List;
 
@@ -25,7 +25,6 @@ import java.util.List;
 
 public class TikTok2Activity extends BaseActivity {
 
-    private static final String TAG = "TikTok2Activity";
     private int mCurrentPosition;
     private int mPlayingPosition;
     private List<TiktokBean> mVideoList;
@@ -33,6 +32,11 @@ public class TikTok2Activity extends BaseActivity {
     private VerticalViewPager mViewPager;
 
     private PreloadManager mPreloadManager;
+
+    /**
+     * VerticalViewPager是否反向滑动
+     */
+    private boolean mIsReverseScroll;
 
     /**
      * 当前正在播放的VideoView
@@ -69,8 +73,11 @@ public class TikTok2Activity extends BaseActivity {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 super.onPageScrolled(position, positionOffset, positionOffsetPixels);
-                Log.d(TAG, "onPageScrolled: " + position);
-                mCurrentPosition = position;
+                if (position > mPlayingPosition) {
+                    mIsReverseScroll = false;
+                } else if (position < mPlayingPosition) {
+                    mIsReverseScroll = true;
+                }
             }
 
             @Override
@@ -93,9 +100,9 @@ public class TikTok2Activity extends BaseActivity {
                             startPlay();
                         }
                     });
-                    mPreloadManager.resumePreload(mCurrentPosition);
+                    mPreloadManager.resumePreload(mCurrentPosition, mIsReverseScroll);
                 } else {
-                    mPreloadManager.pausePreload(mCurrentPosition);
+                    mPreloadManager.pausePreload(mCurrentPosition, mIsReverseScroll);
                 }
             }
         });
@@ -115,7 +122,9 @@ public class TikTok2Activity extends BaseActivity {
         View itemView = mTiktok2Adapter.getCurrentItemView();
         VideoView videoView = itemView.findViewById(R.id.video_view);
         TiktokBean tiktokBean = mVideoList.get(mCurrentPosition);
-        videoView.setUrl(mPreloadManager.getPlayUrl(tiktokBean.videoDownloadUrl));
+        String playUrl = mPreloadManager.getPlayUrl(tiktokBean.videoDownloadUrl);
+        L.i("startPlay: " + "position: " + mCurrentPosition + "  url: " + playUrl);
+        videoView.setUrl(playUrl);
         videoView.start();
         mPlayingPosition = mCurrentPosition;
         mCurrentVideoView = videoView;
