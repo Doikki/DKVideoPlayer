@@ -2,11 +2,12 @@ package com.dueeeke.dkplayer.activity.extend;
 
 import android.widget.Toast;
 
+import com.danikula.videocache.HttpProxyCacheServer;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.activity.BaseActivity;
 import com.dueeeke.dkplayer.interf.ControllerListener;
+import com.dueeeke.dkplayer.util.cache.ProxyVideoCacheManager;
 import com.dueeeke.dkplayer.widget.controller.AdController;
-import com.dueeeke.dkplayer.widget.videoview.ProxyCacheVideoView;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.VideoView;
@@ -16,7 +17,7 @@ import com.dueeeke.videoplayer.player.VideoView;
  * Created by Devlin_n on 2017/4/7.
  */
 
-public class ADActivity extends BaseActivity<ProxyCacheVideoView> {
+public class ADActivity extends BaseActivity<VideoView> {
 
     private static final String URL_VOD = "http://vfx.mtime.cn/Video/2019/03/12/mp4/190312143927981075.mp4";
 //    private static final String URL_VOD = "http://baobab.wdjcdn.com/14564977406580.mp4";
@@ -53,8 +54,9 @@ public class ADActivity extends BaseActivity<ProxyCacheVideoView> {
             }
         });
 
-        mVideoView.setUrl(URL_AD);
-        mVideoView.setCacheEnabled(true);
+        HttpProxyCacheServer cacheServer = ProxyVideoCacheManager.getProxy(this);
+        String proxyUrl = cacheServer.getProxyUrl(URL_AD);
+        mVideoView.setUrl(proxyUrl);
         mVideoView.setVideoController(adController);
 
         //监听播放结束
@@ -82,7 +84,6 @@ public class ADActivity extends BaseActivity<ProxyCacheVideoView> {
         mVideoView.release();
         //重新设置数据
         mVideoView.setUrl(URL_VOD);
-        mVideoView.setCacheEnabled(false);
         if (mStandardVideoController == null) {
             mStandardVideoController = new StandardVideoController(ADActivity.this);
         }

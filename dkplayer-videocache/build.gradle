@@ -11,12 +11,6 @@ android {
     }
 }
 
-dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    compileOnly project.ext.annotation
-    implementation 'org.slf4j:slf4j-android:1.7.21'
-}
-
 ext {
     releaseArtifact = 'dkplayer-videocache'
 }

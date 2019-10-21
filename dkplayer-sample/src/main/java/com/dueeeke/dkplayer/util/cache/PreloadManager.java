@@ -1,10 +1,11 @@
-package com.dueeeke.dkplayer.util;
+package com.dueeeke.dkplayer.util.cache;
 
 import android.content.Context;
 
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.dueeeke.videoplayer.util.L;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -12,12 +13,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * 抖音预加载工具，实现AndroidVideoCache实现
+ * 抖音预加载工具，使用AndroidVideoCache实现
  */
 public class PreloadManager {
 
     private static PreloadManager sPreloadManager;
 
+    /**
+     * 单线程池，按照添加顺序依次执行{@link PreloadTask}
+     */
     private ExecutorService mExecutorService = Executors.newSingleThreadExecutor();
 
     /**
@@ -25,9 +29,17 @@ public class PreloadManager {
      */
     private LinkedHashMap<String, PreloadTask> mPreloadTasks = new LinkedHashMap<>();
 
+    /**
+     * 标识是否需要预加载
+     */
     private boolean mIsStartPreload = true;
 
     private HttpProxyCacheServer mHttpProxyCacheServer;
+
+    /**
+     * 预加载的大小，每个视频预加载512KB，这个参数可根据实际情况调整
+     */
+    public static final int PRELOAD_LENGTH = 512 * 1024;
 
     private PreloadManager(Context context) {
         mHttpProxyCacheServer = ProxyVideoCacheManager.getProxy(context);
@@ -50,17 +62,42 @@ public class PreloadManager {
      * @param rawUrl 原始视频地址
      */
     public void addPreloadTask(String rawUrl, int position) {
+        if (isPreloaded(rawUrl)) return;
         PreloadTask task = new PreloadTask();
         task.mRawUrl = rawUrl;
         task.mPosition = position;
         task.mCacheServer = mHttpProxyCacheServer;
-        L.i("startPreload: " + position);
+        L.i("addPreloadTask: " + position);
         mPreloadTasks.put(rawUrl, task);
 
         if (mIsStartPreload) {
             //开始预加载
             task.executeOn(mExecutorService);
         }
+    }
+
+    /**
+     * 判断该播放地址是否已经预加载
+     */
+    private boolean isPreloaded(String rawUrl) {
+        //先判断是否有缓存文件，如果已经存在缓存文件，并且其大小大于1KB，则表示已经预加载完成了
+        File cacheFile = mHttpProxyCacheServer.getCacheFile(rawUrl);
+        if (cacheFile.exists()) {
+            if (cacheFile.length() >= 1024) {
+                return true;
+            } else {
+                //这种情况一般是缓存出错，把缓存删掉，重新缓存
+                cacheFile.delete();
+                return false;
+            }
+        }
+        //再判断是否有临时缓存文件，如果已经存在临时缓存文件，并且临时缓存文件超过了预加载大小，则表示已经预加载完成了
+        File tempCacheFile = mHttpProxyCacheServer.getTempCacheFile(rawUrl);
+        if (tempCacheFile.exists()) {
+            return tempCacheFile.length() >= PRELOAD_LENGTH;
+        }
+
+        return false;
     }
 
     /**
@@ -101,11 +138,15 @@ public class PreloadManager {
             PreloadTask task = next.getValue();
             if (isReverseScroll) {
                 if (task.mPosition < position) {
-                    task.executeOn(mExecutorService);
+                    if (!isPreloaded(task.mRawUrl)) {
+                        task.executeOn(mExecutorService);
+                    }
                 }
             } else {
                 if (task.mPosition > position) {
-                    task.executeOn(mExecutorService);
+                    if (!isPreloaded(task.mRawUrl)) {
+                        task.executeOn(mExecutorService);
+                    }
                 }
             }
         }
@@ -117,9 +158,9 @@ public class PreloadManager {
      * @param rawUrl 原始地址
      */
     public void removePreloadTask(String rawUrl) {
-        PreloadTask preloadTask = mPreloadTasks.get(rawUrl);
-        if (preloadTask != null) {
-            preloadTask.cancel();
+        PreloadTask task = mPreloadTasks.get(rawUrl);
+        if (task != null) {
+            task.cancel();
             mPreloadTasks.remove(rawUrl);
         }
     }
@@ -138,18 +179,13 @@ public class PreloadManager {
     }
 
     /**
-     * 获取代理地址，获取不到就返回原始地址
+     * 获取代理地址
      */
     public String getPlayUrl(String rawUrl) {
-        String proxyUrl = null;
-        PreloadTask preloadTask = mPreloadTasks.get(rawUrl);
-        if (preloadTask != null) {
-            proxyUrl = preloadTask.cancel();
+        PreloadTask task = mPreloadTasks.get(rawUrl);
+        if (task != null) {
+            task.cancel();
         }
-        if (proxyUrl == null) {
-            return mHttpProxyCacheServer.getProxyUrl(rawUrl);
-        } else {
-            return proxyUrl;
-        }
+        return mHttpProxyCacheServer.getProxyUrl(rawUrl);
     }
 }

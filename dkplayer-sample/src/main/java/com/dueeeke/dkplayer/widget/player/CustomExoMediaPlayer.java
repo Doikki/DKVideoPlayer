@@ -1,7 +1,6 @@
 package com.dueeeke.dkplayer.widget.player;
 
 
-import com.dueeeke.dkplayer.util.ExoVideoCacheManager;
 import com.dueeeke.videoplayer.exo.ExoMediaPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;

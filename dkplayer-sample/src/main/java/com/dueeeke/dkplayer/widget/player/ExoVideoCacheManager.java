@@ -1,4 +1,4 @@
-package com.dueeeke.dkplayer.util;
+package com.dueeeke.dkplayer.widget.player;
 
 import android.content.Context;
 

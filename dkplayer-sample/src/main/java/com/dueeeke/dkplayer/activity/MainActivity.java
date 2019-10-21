@@ -18,7 +18,7 @@ import com.dueeeke.dkplayer.activity.extend.ExtendActivity;
 import com.dueeeke.dkplayer.activity.list.ListActivity;
 import com.dueeeke.dkplayer.activity.pip.PIPDemoActivity;
 import com.dueeeke.dkplayer.util.PIPManager;
-import com.dueeeke.dkplayer.util.ProxyVideoCacheManager;
+import com.dueeeke.dkplayer.util.cache.ProxyVideoCacheManager;
 import com.dueeeke.dkplayer.util.Utils;
 import com.dueeeke.videoplayer.exo.ExoMediaPlayerFactory;
 import com.dueeeke.videoplayer.ijk.IjkPlayerFactory;

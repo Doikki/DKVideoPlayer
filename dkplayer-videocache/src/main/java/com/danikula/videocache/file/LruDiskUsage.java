@@ -1,7 +1,6 @@
 package com.danikula.videocache.file;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.danikula.videocache.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +16,6 @@ import java.util.concurrent.Executors;
  */
 public abstract class LruDiskUsage implements DiskUsage {
 
-    private static final Logger LOG = LoggerFactory.getLogger("LruDiskUsage");
     private final ExecutorService workerThread = Executors.newSingleThreadExecutor();
 
     @Override
@@ -44,9 +42,9 @@ public abstract class LruDiskUsage implements DiskUsage {
                 if (deleted) {
                     totalCount--;
                     totalSize -= fileSize;
-                    LOG.info("Cache file " + file + " is deleted because it exceeds cache limit");
+                    Logger.info("Cache file " + file + " is deleted because it exceeds cache limit");
                 } else {
-                    LOG.error("Error deleting file " + file + " for trimming cache");
+                    Logger.error("Error deleting file " + file + " for trimming cache");
                 }
             }
         }

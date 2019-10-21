@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.bean.TiktokBean;
-import com.dueeeke.dkplayer.util.PreloadManager;
+import com.dueeeke.dkplayer.util.cache.PreloadManager;
 import com.dueeeke.dkplayer.widget.controller.TikTokController;
 import com.dueeeke.videoplayer.player.VideoView;
 

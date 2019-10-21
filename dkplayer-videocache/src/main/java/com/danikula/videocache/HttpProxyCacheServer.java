@@ -13,9 +13,6 @@ import com.danikula.videocache.headers.HeaderInjector;
 import com.danikula.videocache.sourcestorage.SourceInfoStorage;
 import com.danikula.videocache.sourcestorage.SourceInfoStorageFactory;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -53,7 +50,6 @@ import static com.danikula.videocache.Preconditions.checkNotNull;
  */
 public class HttpProxyCacheServer {
 
-    private static final Logger LOG = LoggerFactory.getLogger("HttpProxyCacheServer");
     private static final String PROXY_HOST = "127.0.0.1";
 
     private final Object clientsLock = new Object();
@@ -111,7 +107,7 @@ public class HttpProxyCacheServer {
      * @return a wrapped by proxy url if file is not fully cached or url pointed to cache file otherwise (if {@code allowCachedFileUri} is {@code true}).
      */
     public String getProxyUrl(String url, boolean allowCachedFileUri) {
-        if (allowCachedFileUri && isCached(url)) {
+        if (allowCachedFileUri && getCacheFile(url).exists()) {
             File cacheFile = getCacheFile(url);
             touchFileSafely(cacheFile);
             return Uri.fromFile(cacheFile).toString();
@@ -125,7 +121,7 @@ public class HttpProxyCacheServer {
             try {
                 getClients(url).registerCacheListener(cacheListener);
             } catch (ProxyCacheException e) {
-                LOG.warn("Error registering cache listener", e);
+                Logger.warn("Error registering cache listener");
             }
         }
     }
@@ -136,7 +132,7 @@ public class HttpProxyCacheServer {
             try {
                 getClients(url).unregisterCacheListener(cacheListener);
             } catch (ProxyCacheException e) {
-                LOG.warn("Error registering cache listener", e);
+                Logger.warn("Error registering cache listener");
             }
         }
     }
@@ -162,7 +158,7 @@ public class HttpProxyCacheServer {
     }
 
     public void shutdown() {
-        LOG.info("Shutdown proxy server");
+        Logger.info("Shutdown proxy server");
 
         shutdownClients();
 
@@ -182,17 +178,27 @@ public class HttpProxyCacheServer {
         return String.format(Locale.US, "http://%s:%d/%s", PROXY_HOST, port, ProxyCacheUtils.encode(url));
     }
 
-    private File getCacheFile(String url) {
+    public File getCacheFile(String url) {
         File cacheDir = config.cacheRoot;
         String fileName = config.fileNameGenerator.generate(url);
         return new File(cacheDir, fileName);
+    }
+
+    public File getTempCacheFile(String url) {
+        File cacheDir = config.cacheRoot;
+        String fileName = config.fileNameGenerator.generate(url) + ".download";
+        return new File(cacheDir, fileName);
+    }
+
+    public File getCacheRoot() {
+        return config.cacheRoot;
     }
 
     private void touchFileSafely(File cacheFile) {
         try {
             config.diskUsage.touch(cacheFile);
         } catch (IOException e) {
-            LOG.error("Error touching file " + cacheFile, e);
+            Logger.error("Error touching file " + cacheFile);
         }
     }
 
@@ -209,7 +215,7 @@ public class HttpProxyCacheServer {
         try {
             while (!Thread.currentThread().isInterrupted()) {
                 Socket socket = serverSocket.accept();
-                LOG.debug("Accept new socket " + socket);
+                Logger.debug("Accept new socket " + socket);
                 socketProcessor.submit(new SocketProcessorRunnable(socket));
             }
         } catch (IOException e) {
@@ -220,19 +226,19 @@ public class HttpProxyCacheServer {
     private void processSocket(Socket socket) {
         try {
             GetRequest request = GetRequest.read(socket.getInputStream());
-            LOG.debug("Request to cache proxy:" + request);
+            Logger.debug("Request to cache proxy:" + request);
             String url = ProxyCacheUtils.decode(request.uri);
             HttpProxyCacheServerClients clients = getClients(url);
             clients.processRequest(request, socket);
         } catch (SocketException e) {
             // There is no way to determine that client closed connection http://stackoverflow.com/a/10241044/999458
             // So just to prevent log flooding don't log stacktrace
-            LOG.debug("Closing socket… Socket is closed by client.");
+            Logger.debug("Closing socket… Socket is closed by client.");
         } catch (ProxyCacheException | IOException e) {
             onError(new ProxyCacheException("Error processing request", e));
         } finally {
             releaseSocket(socket);
-            LOG.debug("Opened connections: " + getClientsCount());
+            Logger.debug("Opened connections: " + getClientsCount());
         }
     }
 
@@ -271,7 +277,7 @@ public class HttpProxyCacheServer {
         } catch (SocketException e) {
             // There is no way to determine that client closed connection http://stackoverflow.com/a/10241044/999458
             // So just to prevent log flooding don't log stacktrace
-            LOG.debug("Releasing input stream… Socket is closed by client.");
+            Logger.debug("Releasing input stream… Socket is closed by client.");
         } catch (IOException e) {
             onError(new ProxyCacheException("Error closing socket input stream", e));
         }
@@ -283,7 +289,7 @@ public class HttpProxyCacheServer {
                 socket.shutdownOutput();
             }
         } catch (IOException e) {
-            LOG.warn("Failed to close socket on proxy side: {}. It seems client have already closed connection.", e.getMessage());
+            Logger.warn("Failed to close socket on proxy side: {}. It seems client have already closed connection.");
         }
     }
 
@@ -298,7 +304,7 @@ public class HttpProxyCacheServer {
     }
 
     private void onError(Throwable e) {
-        LOG.error("HttpProxyCacheServer error", e);
+        Logger.error("HttpProxyCacheServer error");
     }
 
     private final class WaitRequestsRunnable implements Runnable {
