@@ -49,7 +49,7 @@ public class PreloadManager {
      *
      * @param rawUrl 原始视频地址
      */
-    public void startPreload(String rawUrl, int position) {
+    public void addPreloadTask(String rawUrl, int position) {
         PreloadTask task = new PreloadTask();
         task.mRawUrl = rawUrl;
         task.mPosition = position;
@@ -59,10 +59,7 @@ public class PreloadManager {
 
         if (mIsStartPreload) {
             //开始预加载
-            for (Map.Entry<String, PreloadTask> next : mPreloadTasks.entrySet()) {
-                PreloadTask preloadTask = next.getValue();
-                preloadTask.executeOn(mExecutorService);
-            }
+            task.executeOn(mExecutorService);
         }
     }
 
@@ -79,11 +76,11 @@ public class PreloadManager {
         for (Map.Entry<String, PreloadTask> next : mPreloadTasks.entrySet()) {
             PreloadTask task = next.getValue();
             if (isReverseScroll) {
-                if (task.mPosition > position) {
+                if (task.mPosition >= position) {
                     task.cancel();
                 }
             } else {
-                if (task.mPosition < position) {
+                if (task.mPosition <= position) {
                     task.cancel();
                 }
             }
@@ -118,27 +115,19 @@ public class PreloadManager {
      * 通过原始地址取消预加载
      *
      * @param rawUrl 原始地址
-     * @param remove 是否移除
      */
-    public String cancelPreloadByUrl(String rawUrl, boolean remove) {
-        Iterator<Map.Entry<String, PreloadTask>> iterator = mPreloadTasks.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<String, PreloadTask> next = iterator.next();
-            if (next.getKey().equals(rawUrl)) {
-                PreloadTask task = next.getValue();
-                if (remove) {
-                    iterator.remove();
-                }
-                return task.cancel();
-            }
+    public void removePreloadTask(String rawUrl) {
+        PreloadTask preloadTask = mPreloadTasks.get(rawUrl);
+        if (preloadTask != null) {
+            preloadTask.cancel();
+            mPreloadTasks.remove(rawUrl);
         }
-        return null;
     }
 
     /**
      * 取消所有的预加载
      */
-    public void cancelAll() {
+    public void removeAllPreloadTask() {
         Iterator<Map.Entry<String, PreloadTask>> iterator = mPreloadTasks.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<String, PreloadTask> next = iterator.next();
@@ -152,7 +141,11 @@ public class PreloadManager {
      * 获取代理地址，获取不到就返回原始地址
      */
     public String getPlayUrl(String rawUrl) {
-        String proxyUrl = cancelPreloadByUrl(rawUrl, false);
+        String proxyUrl = null;
+        PreloadTask preloadTask = mPreloadTasks.get(rawUrl);
+        if (preloadTask != null) {
+            proxyUrl = preloadTask.cancel();
+        }
         if (proxyUrl == null) {
             return mHttpProxyCacheServer.getProxyUrl(rawUrl);
         } else {

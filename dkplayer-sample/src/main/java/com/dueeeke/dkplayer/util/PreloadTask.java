@@ -52,7 +52,7 @@ public class PreloadTask implements Runnable {
 
     @Override
     public void run() {
-        if (!isPreloaded()) {
+        if (!isPreloaded() && !mIsCanceled) {
             start();
         }
         mIsExecuted = false;
@@ -128,7 +128,9 @@ public class PreloadTask implements Runnable {
     }
 
     public String cancel() {
-        mIsCanceled = true;
+        if (mIsExecuted) {
+            mIsCanceled = true;
+        }
         return mProxyUrl;
     }
 }

@@ -69,7 +69,7 @@ public class Tiktok2Adapter extends PagerAdapter {
 
         TiktokBean item = mVideoBeans.get(position);
         //开始预加载
-        PreloadManager.getInstance(context).startPreload(item.videoDownloadUrl, position);
+        PreloadManager.getInstance(context).addPreloadTask(item.videoDownloadUrl, position);
         ImageView thumb = viewHolder.mTikTokController.getThumb();
         Glide.with(context)
                 .load(item.coverImgUrl)
@@ -86,7 +86,7 @@ public class Tiktok2Adapter extends PagerAdapter {
         container.removeView(itemView);
         TiktokBean item = mVideoBeans.get(position);
         //取消预加载
-        PreloadManager.getInstance(container.getContext()).cancelPreloadByUrl(item.videoDownloadUrl, true);
+        PreloadManager.getInstance(container.getContext()).removePreloadTask(item.videoDownloadUrl);
         //保存起来用来复用
         mViewPool.add(itemView);
     }

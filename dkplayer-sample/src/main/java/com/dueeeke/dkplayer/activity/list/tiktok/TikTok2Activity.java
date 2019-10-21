@@ -146,7 +146,7 @@ public class TikTok2Activity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         VideoViewManager.instance().release();
-        mPreloadManager.cancelAll();
+        mPreloadManager.removeAllPreloadTask();
 
         //清除缓存，实际使用可以不需要清除，这里为了方便测试
         ProxyVideoCacheManager.clearAllCache(this);

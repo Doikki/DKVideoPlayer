@@ -51,6 +51,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
     private RenderersFactory mRenderersFactory;
     private TrackSelector mTrackSelector;
 
+    private Handler mHandler = new Handler(Looper.getMainLooper());
+
     public ExoMediaPlayer() {
         mAppContext = PlayerUtils.getApplication();
         if (mAppContext == null) {
@@ -176,6 +178,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
             }.start();
             mInternalPlayer = null;
         }
+
+        mHandler.removeCallbacksAndMessages(null);
 
         mSurface = null;
         mIsPreparing = false;
@@ -323,15 +327,14 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
         public void onPrepared() {
             mLoadControl.onPrepared();
             //切换到主线程
-            new Handler(Looper.getMainLooper())
-                    .post(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (mPlayerEventListener != null) {
-                                mPlayerEventListener.onPrepared();
-                            }
-                        }
-                    });
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (mPlayerEventListener != null) {
+                        mPlayerEventListener.onPrepared();
+                    }
+                }
+            });
         }
 
         @Override
