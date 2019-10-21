@@ -80,14 +80,11 @@ dependencies {
     implementation "com.android.support:design:$project.supportLibraryVersion"
     implementation 'com.google.code.gson:gson:2.8.6'
 
-    //缓存
-//    implementation 'com.danikula:videocache:2.7.1'
-
     implementation project(':dkplayer-java')
     implementation project(':dkplayer-ui')
     implementation project(path: ':dkplayer-players:ijk')
     implementation project(path: ':dkplayer-players:exo')
-
+    //缓存
     implementation project(':dkplayer-videocache')
 
 
