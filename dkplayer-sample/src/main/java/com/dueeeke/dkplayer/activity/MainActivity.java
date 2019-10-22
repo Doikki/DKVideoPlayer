@@ -1,6 +1,5 @@
 package com.dueeeke.dkplayer.activity;
 
-import android.Manifest;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -18,15 +17,14 @@ import com.dueeeke.dkplayer.activity.extend.ExtendActivity;
 import com.dueeeke.dkplayer.activity.list.ListActivity;
 import com.dueeeke.dkplayer.activity.pip.PIPDemoActivity;
 import com.dueeeke.dkplayer.util.PIPManager;
-import com.dueeeke.dkplayer.util.cache.ProxyVideoCacheManager;
 import com.dueeeke.dkplayer.util.Utils;
+import com.dueeeke.dkplayer.util.cache.ProxyVideoCacheManager;
 import com.dueeeke.videoplayer.exo.ExoMediaPlayerFactory;
 import com.dueeeke.videoplayer.ijk.IjkPlayerFactory;
 import com.dueeeke.videoplayer.player.AndroidMediaPlayerFactory;
 import com.dueeeke.videoplayer.player.PlayerFactory;
 import com.dueeeke.videoplayer.player.VideoViewConfig;
 import com.dueeeke.videoplayer.player.VideoViewManager;
-import com.yanzhenjie.permission.AndPermission;
 
 import java.lang.reflect.Field;
 
@@ -73,15 +71,6 @@ public class MainActivity extends BaseActivity {
                     break;
             }
         });
-        AndPermission
-                .with(this)
-                .runtime()
-                .permission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .onDenied(data -> {
-                })
-                .onGranted(data -> {
-                })
-                .start();
     }
 
     @Override
