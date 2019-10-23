@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewParent;
 import android.view.WindowInsets;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
@@ -89,10 +90,11 @@ public class TikTokActivity extends AppCompatActivity {
     private void startPlay(int position) {
         View itemView = mRecyclerView.getChildAt(0);
         FrameLayout frameLayout = itemView.findViewById(R.id.container);
+        ImageView thumb = mTikTokController.findViewById(R.id.iv_thumb);
         Glide.with(this)
                 .load(mVideoList.get(position).getThumb())
                 .placeholder(android.R.color.white)
-                .into(mTikTokController.getThumb());
+                .into(thumb);
         ViewParent parent = mVideoView.getParent();
         if (parent instanceof FrameLayout) {
             ((FrameLayout) parent).removeView(mVideoView);

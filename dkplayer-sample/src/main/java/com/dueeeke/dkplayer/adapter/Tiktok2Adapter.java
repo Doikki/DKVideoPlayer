@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
@@ -65,11 +66,11 @@ public class Tiktok2Adapter extends PagerAdapter {
         TiktokBean item = mVideoBeans.get(position);
         //开始预加载
         PreloadManager.getInstance(context).addPreloadTask(item.videoDownloadUrl, position);
-        ImageView thumb = viewHolder.mTikTokController.getThumb();
         Glide.with(context)
                 .load(item.coverImgUrl)
                 .placeholder(android.R.color.white)
-                .into(thumb);
+                .into(viewHolder.mThumb);
+        viewHolder.mTitle.setText(item.title);
         viewHolder.mPosition = position;
         container.addView(view);
         return view;
@@ -94,15 +95,17 @@ public class Tiktok2Adapter extends PagerAdapter {
         public TikTokController mTikTokController;
         public VideoView mVideoView;
         public int mPosition;
+        public TextView mTitle;//标题
+        public ImageView mThumb;//封面图
 
         ViewHolder(View itemView) {
             mVideoView = itemView.findViewById(R.id.video_view);
             mVideoView.setLooping(true);
-//            mVideoView.setEnableParallelPlay(true);
-//            mVideoView.setEnableAudioFocus(false);
             mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_CENTER_CROP);
             mTikTokController = new TikTokController(itemView.getContext());
             mVideoView.setVideoController(mTikTokController);
+            mTitle = mTikTokController.findViewById(R.id.tv_title);
+            mThumb = mTikTokController.findViewById(R.id.iv_thumb);
             itemView.setTag(this);
         }
     }

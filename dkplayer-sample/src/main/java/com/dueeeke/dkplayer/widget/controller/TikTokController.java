@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -21,6 +22,7 @@ import com.dueeeke.videoplayer.util.L;
 public class TikTokController extends BaseVideoController<MediaPlayerControl> {
 
     private ImageView thumb;
+    private ImageView mPlayBtn;
 
     public TikTokController(@NonNull Context context) {
         super(context);
@@ -43,6 +45,13 @@ public class TikTokController extends BaseVideoController<MediaPlayerControl> {
     protected void initView() {
         super.initView();
         thumb = mControllerView.findViewById(R.id.iv_thumb);
+        mPlayBtn = mControllerView.findViewById(R.id.play_btn);
+        setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                doPauseResume();
+            }
+        });
     }
 
     @Override
@@ -57,10 +66,12 @@ public class TikTokController extends BaseVideoController<MediaPlayerControl> {
             case VideoView.STATE_PLAYING:
                 L.e("STATE_PLAYING " + hashCode());
                 thumb.setVisibility(GONE);
+                mPlayBtn.setVisibility(GONE);
                 break;
             case VideoView.STATE_PAUSED:
                 L.e("STATE_PAUSED " + hashCode());
                 thumb.setVisibility(GONE);
+                mPlayBtn.setVisibility(VISIBLE);
                 break;
             case VideoView.STATE_PREPARED:
                 L.e("STATE_PREPARED " + hashCode());
@@ -76,9 +87,5 @@ public class TikTokController extends BaseVideoController<MediaPlayerControl> {
     public boolean showNetWarning() {
         //不显示移动网络播放警告
         return false;
-    }
-
-    public ImageView getThumb() {
-        return thumb;
     }
 }

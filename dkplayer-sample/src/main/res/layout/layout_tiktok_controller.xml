@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
     <ImageView
         android:id="@+id/iv_thumb"
@@ -8,4 +10,28 @@
         android:layout_height="match_parent"
         android:scaleType="centerCrop"/>
 
-</LinearLayout>
+    <ImageView
+        android:id="@+id/play_btn"
+        android:layout_width="@dimen/dkplayer_play_btn_size"
+        android:layout_height="@dimen/dkplayer_play_btn_size"
+        android:layout_gravity="center"
+        android:background="@drawable/dkplayer_shape_play_bg"
+        android:padding="@dimen/dkplayer_default_spacing"
+        android:src="@drawable/dkplayer_selector_play_button"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:padding="20dp"
+        android:textSize="16sp"
+        android:lineSpacingExtra="4dp"
+        android:textColor="@android:color/white"
+        android:elevation="5dp"
+        android:text="标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题"/>
+
+</FrameLayout>
