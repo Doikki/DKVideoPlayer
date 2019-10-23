@@ -12,7 +12,7 @@ android {
 }
 
 ext {
-    releaseArtifact = 'dkplayer-videocache'
+    releaseArtifact = 'videocache'
 }
 
 apply from: '../publish.gradle'
