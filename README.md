@@ -25,10 +25,10 @@ A video player for Android.
 |  没有任何控制UI的纯播放 | 支持  |  支持 | 支持  |
 |  Android 8.0画中画 | 支持  |  支持 | 支持  |
 |  无缝衔接播放 | 支持  |  支持 | 支持  |
-|  抖音 | 支持  |  支持 | 支持  |
+|  抖音，实现预加载 | 支持  |  支持 | 支持  |
 
 #### 协议/格式支持情况（只列举常用格式/协议）
-| 协议/格式  | MediaPlayer  | IjkPlayer  | ExoPlayer  |
+| 协议/格式  | MediaPlayer  | [IjkPlayer](https://github.com/bilibili/ijkplayer)  | [ExoPlayer](https://github.com/google/ExoPlayer)  |
 | :------------ | :------------ | :------------ | :------------ |
 |  https | 支持  | 支持  |  支持 |
 |  rtsp | 不支持  |  支持 | 不支持  |
