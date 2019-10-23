@@ -30,11 +30,6 @@ public class Tiktok2Adapter extends PagerAdapter {
      */
     private List<TiktokBean> mVideoBeans;
 
-    /**
-     * 当前可见的itemView
-     */
-    private View mCurrentItemView;
-
     public Tiktok2Adapter(List<TiktokBean> videoBeans) {
         this.mVideoBeans = videoBeans;
     }
@@ -91,21 +86,10 @@ public class Tiktok2Adapter extends PagerAdapter {
         mViewPool.add(itemView);
     }
 
-    @Override
-    public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-        super.setPrimaryItem(container, position, object);
-        mCurrentItemView = (View) object;
-    }
-
-    public View getCurrentItemView() {
-        return mCurrentItemView;
-    }
-
-
     /**
      * 借鉴ListView item复用方法
      */
-    private static class ViewHolder {
+    public static class ViewHolder {
 
         public TikTokController mTikTokController;
         public VideoView mVideoView;

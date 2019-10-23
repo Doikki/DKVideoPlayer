@@ -38,11 +38,6 @@ public class TikTok2Activity extends BaseActivity {
      */
     private boolean mIsReverseScroll;
 
-    /**
-     * 当前正在播放的VideoView
-     */
-    private VideoView mCurrentVideoView;
-
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_tiktok2;
@@ -84,9 +79,8 @@ public class TikTok2Activity extends BaseActivity {
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
                 mCurrentPosition = position;
-                if (mCurrentVideoView != null) {
-                    mCurrentVideoView.release();
-                }
+                if (position == mPlayingPosition) return;
+                startPlay(position);
             }
 
             @Override
@@ -94,12 +88,6 @@ public class TikTok2Activity extends BaseActivity {
                 super.onPageScrollStateChanged(state);
                 if (mCurrentPosition == mPlayingPosition) return;
                 if (state == VerticalViewPager.SCROLL_STATE_IDLE) {
-                    mViewPager.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            startPlay();
-                        }
-                    });
                     mPreloadManager.resumePreload(mCurrentPosition, mIsReverseScroll);
                 } else {
                     mPreloadManager.pausePreload(mCurrentPosition, mIsReverseScroll);
@@ -111,23 +99,29 @@ public class TikTok2Activity extends BaseActivity {
         mViewPager.post(new Runnable() {
             @Override
             public void run() {
-                startPlay();
+                startPlay(0);
             }
         });
 
 
     }
 
-    private void startPlay() {
-        View itemView = mTiktok2Adapter.getCurrentItemView();
-        VideoView videoView = itemView.findViewById(R.id.video_view);
-        TiktokBean tiktokBean = mVideoList.get(mCurrentPosition);
-        String playUrl = mPreloadManager.getPlayUrl(tiktokBean.videoDownloadUrl);
-        L.i("startPlay: " + "position: " + mCurrentPosition + "  url: " + playUrl);
-        videoView.setUrl(playUrl);
-        videoView.start();
-        mPlayingPosition = mCurrentPosition;
-        mCurrentVideoView = videoView;
+    private void startPlay(int position) {
+        int count = mViewPager.getChildCount();
+        for (int i = 0; i < count; i ++) {
+            View itemView = mViewPager.getChildAt(i);
+            Tiktok2Adapter.ViewHolder viewHolder = (Tiktok2Adapter.ViewHolder) itemView.getTag();
+            if (viewHolder.mPosition == position) {
+                VideoView videoView = itemView.findViewById(R.id.video_view);
+                TiktokBean tiktokBean = mVideoList.get(position);
+                String playUrl = mPreloadManager.getPlayUrl(tiktokBean.videoDownloadUrl);
+                L.i("startPlay: " + "position: " + position + "  url: " + playUrl);
+                videoView.setUrl(playUrl);
+                videoView.start();
+                mPlayingPosition = position;
+                break;
+            }
+        }
     }
 
     @Override
