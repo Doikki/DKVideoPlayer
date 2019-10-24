@@ -9,7 +9,9 @@ import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.exo.ExoMediaPlayer;
 import com.dueeeke.videoplayer.exo.ExoMediaSourceHelper;
 import com.dueeeke.videoplayer.player.AbstractPlayer;
+import com.google.android.exoplayer2.source.ClippingMediaSource;
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
+import com.google.android.exoplayer2.source.LoopingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 
 /**
@@ -38,11 +40,12 @@ public class CustomPlayerActivity extends BaseActivity<ExoVideoView> {
     public void onButtonClick(View view) {
         mVideoView.release();
         switch (view.getId()) {
-            case R.id.cache:
+            case R.id.cache: {
                 mVideoView.setCacheEnabled(true);
                 mVideoView.setUrl("http://playertest.longtailvideo.com/adaptive/bipbop/gear4/prog_index.m3u8");
                 break;
-            case R.id.concat:
+            }
+            case R.id.concat: {
                 mVideoView.setCacheEnabled(false);
                 //将多个视频拼接在一起播放
                 ConcatenatingMediaSource concatenatingMediaSource = new ConcatenatingMediaSource();
@@ -55,6 +58,16 @@ public class CustomPlayerActivity extends BaseActivity<ExoVideoView> {
                 concatenatingMediaSource.addMediaSource(mediaSource3);
                 mVideoView.setMediaSource(concatenatingMediaSource);
                 break;
+            }
+            case R.id.clip: {
+                ExoMediaSourceHelper helper = new ExoMediaSourceHelper(this);
+                MediaSource mediaSource = helper.getMediaSource("http://vfx.mtime.cn/Video/2019/02/04/mp4/190204084208765161.mp4");
+                //裁剪10-15秒的内容进行播放
+                ClippingMediaSource clippingMediaSource = new ClippingMediaSource(mediaSource, 10_000_000, 15_000_000);
+                LoopingMediaSource loopingMediaSource = new LoopingMediaSource(clippingMediaSource);
+                mVideoView.setMediaSource(loopingMediaSource);
+                break;
+            }
         }
 
         mVideoView.start();

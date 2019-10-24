@@ -25,4 +25,11 @@
         android:onClick="onButtonClick"
         android:text="exo concat"/>
 
+    <Button
+        android:id="@+id/clip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onButtonClick"
+        android:text="exo clip"/>
+
 </LinearLayout>
