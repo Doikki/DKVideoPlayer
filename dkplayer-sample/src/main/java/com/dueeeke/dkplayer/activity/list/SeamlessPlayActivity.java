@@ -3,11 +3,12 @@ package com.dueeeke.dkplayer.activity.list;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.activity.BaseActivity;

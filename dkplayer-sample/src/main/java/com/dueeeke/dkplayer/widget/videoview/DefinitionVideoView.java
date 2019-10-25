@@ -1,9 +1,10 @@
 package com.dueeeke.dkplayer.widget.videoview;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.dueeeke.dkplayer.interf.DefinitionMediaPlayerControl;
 import com.dueeeke.videoplayer.player.AbstractPlayer;

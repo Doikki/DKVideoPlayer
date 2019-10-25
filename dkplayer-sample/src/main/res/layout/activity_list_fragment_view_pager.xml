@@ -6,14 +6,14 @@
     android:orientation="vertical"
     android:fitsSystemWindows="true">
 
-    <android.support.design.widget.TabLayout
+    <com.google.android.material.tabs.TabLayout
         android:id="@+id/tl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:tabSelectedTextColor="@color/dkplayer_theme_color"
         app:tabIndicatorColor="@color/dkplayer_theme_color"/>
 
-    <android.support.v4.view.ViewPager
+    <androidx.viewpager.widget.ViewPager
         android:id="@+id/vp"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
