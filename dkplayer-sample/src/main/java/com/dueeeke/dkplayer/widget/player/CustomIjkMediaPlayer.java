@@ -22,4 +22,11 @@ public class CustomIjkMediaPlayer extends IjkPlayer {
         super.reset();
         setEnableMediaCodec(mIsEnableMediaCodec);
     }
+
+    /**
+     * 设置IjkMediaPlayer.OPT_CATEGORY_PLAYER相关配置
+     */
+    public void setPlayerOption(String name, int value) {
+        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, name, value);
+    }
 }

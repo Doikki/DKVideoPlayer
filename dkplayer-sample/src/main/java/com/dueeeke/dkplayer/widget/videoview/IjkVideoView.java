@@ -8,9 +8,14 @@ import com.dueeeke.dkplayer.widget.player.CustomIjkMediaPlayer;
 import com.dueeeke.videoplayer.player.PlayerFactory;
 import com.dueeeke.videoplayer.player.VideoView;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class IjkVideoView extends VideoView<CustomIjkMediaPlayer> {
 
     private boolean mIsEnableMediaCodec;
+
+    private HashMap<String, Integer> mPlayerOptions = new HashMap<>();
 
     public IjkVideoView(@NonNull Context context) {
         super(context);
@@ -28,11 +33,18 @@ public class IjkVideoView extends VideoView<CustomIjkMediaPlayer> {
     @Override
     protected void setOptions() {
         super.setOptions();
+        for (Map.Entry<String, Integer> next : mPlayerOptions.entrySet()) {
+            mMediaPlayer.setPlayerOption(next.getKey(), next.getValue());
+        }
         mMediaPlayer.setEnableMediaCodec(mIsEnableMediaCodec);
     }
 
     public void setEnableMediaCodec(boolean isEnable) {
         this.mIsEnableMediaCodec = isEnable;
+    }
+
+    public void setPlayerOption(String name, int value) {
+        mPlayerOptions.put(name, value);
     }
 
 }
