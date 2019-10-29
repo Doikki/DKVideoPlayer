@@ -75,7 +75,7 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:1.0.0"
     implementation "androidx.constraintlayout:constraintlayout:1.1.3"
     implementation 'com.github.bumptech.glide:glide:3.7.0'
-    implementation 'com.yanzhenjie.permission:support:2.0.1'
+    implementation 'com.yanzhenjie:permission:2.0.3'
     implementation 'com.github.ctiao:DanmakuFlameMaster:0.9.25'
     implementation 'com.github.ctiao:ndkbitmap-armv7a:0.9.21'
     implementation "com.google.android.material:material:1.0.0"
@@ -89,10 +89,10 @@ dependencies {
     implementation project(':dkplayer-videocache')
 
 
-//    implementation 'com.github.dueeeke.dkplayer:dkplayer-java:3.1.3'
-//    implementation 'com.github.dueeeke.dkplayer:dkplayer-ui:3.1.3'
+//    implementation 'com.github.dueeeke.dkplayer:dkplayer-java:3.1.4'
+//    implementation 'com.github.dueeeke.dkplayer:dkplayer-ui:3.1.4'
 //
-//    implementation 'com.github.dueeeke.dkplayer:player-exo:3.1.3'
+//    implementation 'com.github.dueeeke.dkplayer:player-exo:3.1.4'
 //
-//    implementation 'com.github.dueeeke.dkplayer:player-ijk:3.1.3'
+//    implementation 'com.github.dueeeke.dkplayer:player-ijk:3.1.4'
 }

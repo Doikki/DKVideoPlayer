@@ -642,6 +642,10 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
 
     @Override
     public void onStartSlide() {
+        if (mIsLive && mChangePosition) {
+            mChangePosition = false;
+            return;
+        }
         hide();
         mCenterView.setVisibility(VISIBLE);
     }
