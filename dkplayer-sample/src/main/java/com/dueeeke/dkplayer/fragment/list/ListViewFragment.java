@@ -1,4 +1,4 @@
-package com.dueeeke.dkplayer.activity.list;
+package com.dueeeke.dkplayer.fragment.list;
 
 import android.view.View;
 import android.widget.AbsListView;
@@ -6,15 +6,19 @@ import android.widget.ListView;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.adapter.VideoListViewAdapter;
+import com.dueeeke.dkplayer.bean.VideoBean;
+import com.dueeeke.dkplayer.fragment.BaseFragment;
 import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.videoplayer.player.VideoView;
+import com.dueeeke.videoplayer.player.VideoViewManager;
 
-/**
- * ListView
- * Created by Devlin_n on 2017/6/14.
- */
+import java.util.ArrayList;
+import java.util.List;
 
-public class ListViewActivity extends BaseListActivity {
+public class ListViewFragment extends BaseFragment {
+
+    private List<VideoBean> videos = new ArrayList<>();
+    private VideoListViewAdapter mVideoListViewAdapter;
 
     @Override
     protected int getLayoutResId() {
@@ -22,17 +26,11 @@ public class ListViewActivity extends BaseListActivity {
     }
 
     @Override
-    protected int getTitleResId() {
-        return R.string.str_list_view;
-    }
-
-    @Override
-    protected void initView() {
-        super.initView();
-
+    protected void initViews() {
+        super.initViews();
         ListView listView = findViewById(R.id.lv);
-        listView.setAdapter(new VideoListViewAdapter(DataUtil.getVideoList()));
-
+        mVideoListViewAdapter = new VideoListViewAdapter(videos);
+        listView.setAdapter(mVideoListViewAdapter);
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
 
             private View firstView; //记录当前屏幕中第一个可见的item对象
@@ -86,6 +84,36 @@ public class ListViewActivity extends BaseListActivity {
                 }
             }
         });
+    }
 
+    @Override
+    protected void initData() {
+        super.initData();
+        List<VideoBean> videoList = DataUtil.getVideoList();
+        videos.addAll(videoList);
+        mVideoListViewAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected boolean isLazyLoad() {
+        return true;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        VideoViewManager.instance().pause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        VideoViewManager.instance().resume();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        VideoViewManager.instance().release();
     }
 }

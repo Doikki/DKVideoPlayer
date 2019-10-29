@@ -1,23 +1,34 @@
-package com.dueeeke.dkplayer.activity.list;
+package com.dueeeke.dkplayer.fragment.list;
 
 import android.graphics.Rect;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.dueeeke.dkplayer.R;
-import com.dueeeke.dkplayer.adapter.VideoRecyclerViewAdapter;
+import com.dueeeke.dkplayer.adapter.RotateRecyclerViewAdapter;
+import com.dueeeke.dkplayer.bean.VideoBean;
+import com.dueeeke.dkplayer.fragment.BaseFragment;
 import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.videoplayer.player.VideoView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
 
-/**
- * 自动播放
- * Created by Devlin_n on 2017/5/31.
- */
+public class RecyclerViewRotateFragment extends BaseFragment {
 
-public class AutoPlayRecyclerViewActivity extends BaseListActivity {
+    private List<VideoBean> mVideos = new ArrayList<>();
+    private RecyclerView mRecyclerView;
+    private RotateRecyclerViewAdapter mVideoRecyclerViewAdapter;
+
+    /**
+     * 当前正在播放的VideoView
+     */
+    private VideoView mCurrentVideoView;
 
     @Override
     protected int getLayoutResId() {
@@ -25,35 +36,30 @@ public class AutoPlayRecyclerViewActivity extends BaseListActivity {
     }
 
     @Override
-    protected int getTitleResId() {
-        return R.string.str_auto_play_recycler_view;
-    }
+    protected void initViews() {
+        super.initViews();
+        mRecyclerView = findViewById(R.id.rv);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(layoutManager);
+        mVideoRecyclerViewAdapter = new RotateRecyclerViewAdapter(mVideos);
+        mRecyclerView.setAdapter(mVideoRecyclerViewAdapter);
 
-    @Override
-    protected void initView() {
-        RecyclerView recyclerView = findViewById(R.id.rv);
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(new VideoRecyclerViewAdapter(DataUtil.getVideoList()));
-        recyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
+        mRecyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
             @Override
-            public void onChildViewAttachedToWindow(View view) {
+            public void onChildViewAttachedToWindow(@NonNull View view) {
 
             }
 
             @Override
-            public void onChildViewDetachedFromWindow(View view) {
+            public void onChildViewDetachedFromWindow(@NonNull View view) {
                 VideoView videoView = view.findViewById(R.id.video_player);
                 if (videoView != null && !videoView.isFullScreen()) {
-//                    Log.d("@@@@@@", "onChildViewDetachedFromWindow: called");
-//                    int tag = (int) videoView.getTag();
-//                    Log.d("@@@@@@", "onChildViewDetachedFromWindow: position: " + tag);
                     videoView.release();
                 }
             }
         });
 
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             int firstVisibleItem, lastVisibleItem, visibleCount;
 
@@ -87,19 +93,58 @@ public class AutoPlayRecyclerViewActivity extends BaseListActivity {
                         int videoHeight = videoView.getHeight();
                         if (rect.top == 0 && rect.bottom == videoHeight) {
                             videoView.start();
-                            return;
+                            mCurrentVideoView = videoView;
+                            break;
                         }
                     }
                 }
             }
         });
 
-        recyclerView.post(() -> {
+    }
+
+    @Override
+    protected void initData() {
+        super.initData();
+        List<VideoBean> videoList = DataUtil.getVideoList();
+        mVideos.addAll(videoList);
+        mVideoRecyclerViewAdapter.notifyDataSetChanged();
+
+        mRecyclerView.post(() -> {
             //自动播放第一个
-            View view = recyclerView.getChildAt(0);
+            View view = mRecyclerView.getChildAt(0);
             VideoView videoView = view.findViewById(R.id.video_player);
             videoView.start();
+            mCurrentVideoView = videoView;
         });
+    }
 
+    @Override
+    protected boolean isLazyLoad() {
+        return true;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mCurrentVideoView != null) {
+            mCurrentVideoView.pause();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mCurrentVideoView != null) {
+            mCurrentVideoView.start();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mCurrentVideoView != null) {
+            mCurrentVideoView.release();
+        }
     }
 }

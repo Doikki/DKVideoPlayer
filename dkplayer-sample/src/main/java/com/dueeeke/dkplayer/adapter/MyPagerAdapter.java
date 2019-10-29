@@ -1,11 +1,16 @@
 package com.dueeeke.dkplayer.adapter;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 
-import com.dueeeke.dkplayer.fragment.RecyclerViewFragment;
+import com.dueeeke.dkplayer.fragment.list.ListViewFragment;
+import com.dueeeke.dkplayer.fragment.list.RecyclerViewAutoPlayFragment;
+import com.dueeeke.dkplayer.fragment.list.RecyclerViewFragment;
+import com.dueeeke.dkplayer.fragment.list.RecyclerViewRotateFragment;
+import com.dueeeke.dkplayer.fragment.list.TikTokFragment;
 
 import java.util.List;
 
@@ -14,29 +19,41 @@ import java.util.List;
  * Created by xinyu on 2018/1/3.
  */
 
-public class MyPagerAdapter extends FragmentPagerAdapter {
+public class MyPagerAdapter extends FragmentStatePagerAdapter {
 
-    private List<RecyclerViewFragment> mFragmentList;
-    private List<String> titles;
+    private List<String> mTitles;
 
-    public MyPagerAdapter(FragmentManager fm, List<RecyclerViewFragment> fragmentList, List<String> titles) {
-        super(fm);
-        mFragmentList = fragmentList;
-        this.titles = titles;
+    public MyPagerAdapter(FragmentManager fm, List<String> titles) {
+        super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        mTitles = titles;
     }
+
     @Override
+    @NonNull
     public Fragment getItem(int position) {
-        return mFragmentList.get(position);
+        switch (position) {
+            default:
+            case 0:
+                return new ListViewFragment();
+            case 1:
+                return new RecyclerViewFragment();
+            case 2:
+                return new RecyclerViewAutoPlayFragment();
+            case 3:
+                return new TikTokFragment();
+            case 4:
+                return new RecyclerViewRotateFragment();
+        }
     }
 
     @Override
     public int getCount() {
-        return mFragmentList.size();
+        return mTitles.size();
     }
 
     @Nullable
     @Override
     public CharSequence getPageTitle(int position) {
-        return titles.get(position);
+        return mTitles.get(position);
     }
 }

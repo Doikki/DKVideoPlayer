@@ -1,33 +1,28 @@
-package com.dueeeke.dkplayer.activity.list.tiktok;
+package com.dueeeke.dkplayer.fragment.list;
 
-import androidx.viewpager.widget.ViewPager;
 import android.view.View;
 
+import androidx.viewpager.widget.ViewPager;
+
 import com.dueeeke.dkplayer.R;
-import com.dueeeke.dkplayer.activity.BaseActivity;
 import com.dueeeke.dkplayer.adapter.Tiktok2Adapter;
 import com.dueeeke.dkplayer.bean.TiktokBean;
+import com.dueeeke.dkplayer.fragment.BaseFragment;
 import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.dkplayer.util.cache.PreloadManager;
 import com.dueeeke.dkplayer.util.cache.ProxyVideoCacheManager;
 import com.dueeeke.dkplayer.widget.VerticalViewPager;
 import com.dueeeke.videoplayer.player.VideoView;
-import com.dueeeke.videoplayer.player.VideoViewManager;
 import com.dueeeke.videoplayer.util.L;
 
+import java.util.ArrayList;
 import java.util.List;
 
-
-/**
- * 模仿抖音短视频，使用VerticalViewPager实现，实现了预加载功能，推荐
- * Created by dueeeke on 2019/10/13.
- */
-
-public class TikTok2Activity extends BaseActivity {
+public class TikTokFragment extends BaseFragment {
 
     private int mCurrentPosition;
     private int mPlayingPosition;
-    private List<TiktokBean> mVideoList;
+    private List<TiktokBean> mVideoList = new ArrayList<>();
     private Tiktok2Adapter mTiktok2Adapter;
     private VerticalViewPager mViewPager;
 
@@ -38,23 +33,21 @@ public class TikTok2Activity extends BaseActivity {
      */
     private boolean mIsReverseScroll;
 
+    /**
+     * 当前正在播放的VideoView
+     */
+    private VideoView mCurrentVideoView;
+
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_tiktok2;
     }
 
     @Override
-    protected int getTitleResId() {
-        return R.string.str_tiktok_2;
-    }
-
-    @Override
-    protected void initView() {
-        super.initView();
-        setStatusBarTransparent();
-        mVideoList = DataUtil.getTiktokDataFromAssets(this);
+    protected void initViews() {
+        super.initViews();
         initViewPager();
-        mPreloadManager = PreloadManager.getInstance(this);
+        mPreloadManager = PreloadManager.getInstance(getContext());
     }
 
     private void initViewPager() {
@@ -94,16 +87,6 @@ public class TikTok2Activity extends BaseActivity {
                 }
             }
         });
-
-
-        mViewPager.post(new Runnable() {
-            @Override
-            public void run() {
-                startPlay(0);
-            }
-        });
-
-
     }
 
     private void startPlay(int position) {
@@ -119,35 +102,65 @@ public class TikTok2Activity extends BaseActivity {
                 videoView.setUrl(playUrl);
                 videoView.start();
                 mPlayingPosition = position;
+                mCurrentVideoView = videoView;
                 break;
             }
         }
     }
 
     @Override
-    protected void onPause() {
+    protected void initData() {
+        super.initData();
+        //模拟请求数据
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<TiktokBean> tiktokBeans = DataUtil.getTiktokDataFromAssets(getActivity());
+                mVideoList.addAll(tiktokBeans);
+
+                mViewPager.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mTiktok2Adapter.notifyDataSetChanged();
+                        startPlay(0);
+                    }
+                });
+            }
+        }).start();
+
+    }
+
+    @Override
+    protected boolean isLazyLoad() {
+        return true;
+    }
+
+    @Override
+    public void onPause() {
         super.onPause();
-        VideoViewManager.instance().pause();
+        if (mCurrentVideoView != null) {
+            mCurrentVideoView.pause();
+        }
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
-        VideoViewManager.instance().resume();
+        if (mCurrentVideoView != null) {
+            mCurrentVideoView.start();
+        }
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
-        VideoViewManager.instance().release();
+        if (mCurrentVideoView != null) {
+            mCurrentVideoView.release();
+        }
         mPreloadManager.removeAllPreloadTask();
 
         //清除缓存，实际使用可以不需要清除，这里为了方便测试
-        ProxyVideoCacheManager.clearAllCache(this);
+        ProxyVideoCacheManager.clearAllCache(getActivity());
     }
 
-    public void addData(View view) {
-        mVideoList.addAll(DataUtil.getTiktokDataFromAssets(this));
-        mTiktok2Adapter.notifyDataSetChanged();
-    }
 }

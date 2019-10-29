@@ -143,17 +143,29 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
                 break;
         }
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        Fragment fragment = mFragments.get(index);
-        Fragment currFragment = mFragments.get(mCurrentIndex);
-        if (fragment.isAdded()) {
-            transaction.hide(currFragment).show(fragment);
-        } else {
-            transaction.add(R.id.layout_content, fragment).hide(currFragment);
+        if (mCurrentIndex != index) {
+            //切换tab，释放正在播放的播放器
+            if (mCurrentIndex == 1) {
+                VideoViewManager.instance().release();
+            }
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            Fragment fragment = mFragments.get(index);
+            Fragment currFragment = mFragments.get(mCurrentIndex);
+            if (fragment.isAdded()) {
+                transaction.hide(currFragment).show(fragment);
+            } else {
+                transaction.add(R.id.layout_content, fragment).hide(currFragment);
+            }
+            transaction.commitAllowingStateLoss();
+            mCurrentIndex = index;
         }
-        transaction.commitAllowingStateLoss();
-        mCurrentIndex = index;
-
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (VideoViewManager.instance().onBackPressed())
+            return;
+        super.onBackPressed();
     }
 }

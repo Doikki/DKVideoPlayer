@@ -1,12 +1,13 @@
 package com.dueeeke.dkplayer.adapter;
 
-import android.content.Context;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
@@ -20,16 +21,15 @@ import java.util.List;
 public class RotateRecyclerViewAdapter extends RecyclerView.Adapter<RotateRecyclerViewAdapter.VideoHolder> {
 
     private List<VideoBean> videos;
-    private Context context;
 
-    public RotateRecyclerViewAdapter(List<VideoBean> videos, Context context) {
+    public RotateRecyclerViewAdapter(List<VideoBean> videos) {
         this.videos = videos;
-        this.context = context;
     }
 
     @Override
+    @NonNull
     public VideoHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(context).inflate(R.layout.item_video_rotate, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_video_rotate, parent, false);
         return new VideoHolder(itemView);
     }
 
@@ -37,11 +37,12 @@ public class RotateRecyclerViewAdapter extends RecyclerView.Adapter<RotateRecycl
     public void onBindViewHolder(final VideoHolder holder, int position) {
 
         VideoBean videoBean = videos.get(position);
-        Glide.with(context)
+        ImageView thumb = holder.controller.getThumb();
+        Glide.with(thumb.getContext())
                 .load(videoBean.getThumb())
                 .crossFade()
                 .placeholder(android.R.color.darker_gray)
-                .into(holder.controller.getThumb());
+                .into(thumb);
         holder.mVideoView.setUrl(videoBean.getUrl());
         holder.controller.setTitle(videoBean.getTitle());
         holder.mVideoView.setVideoController(holder.controller);
@@ -81,7 +82,7 @@ public class RotateRecyclerViewAdapter extends RecyclerView.Adapter<RotateRecycl
                     }
                 }
             });
-            controller = new RotateInFullscreenController(context);
+            controller = new RotateInFullscreenController(itemView.getContext());
             title = itemView.findViewById(R.id.tv_title);
         }
     }

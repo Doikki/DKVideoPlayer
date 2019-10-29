@@ -1,20 +1,20 @@
 package com.dueeeke.dkplayer.fragment.main;
 
-import android.content.Intent;
-import android.view.View;
+import androidx.viewpager.widget.ViewPager;
 
 import com.dueeeke.dkplayer.R;
-import com.dueeeke.dkplayer.activity.list.AutoPlayRecyclerViewActivity;
-import com.dueeeke.dkplayer.activity.list.ListFragmentViewPagerActivity;
-import com.dueeeke.dkplayer.activity.list.ListViewActivity;
-import com.dueeeke.dkplayer.activity.list.RecyclerViewActivity;
-import com.dueeeke.dkplayer.activity.list.RotateRecyclerViewActivity;
-import com.dueeeke.dkplayer.activity.list.SeamlessPlayActivity;
-import com.dueeeke.dkplayer.activity.list.tiktok.TikTok2Activity;
-import com.dueeeke.dkplayer.activity.list.tiktok.TikTokActivity;
+import com.dueeeke.dkplayer.adapter.MyPagerAdapter;
 import com.dueeeke.dkplayer.fragment.BaseFragment;
+import com.dueeeke.videoplayer.player.VideoViewManager;
+import com.google.android.material.tabs.TabLayout;
 
-public class ListFragment extends BaseFragment implements View.OnClickListener {
+import java.util.ArrayList;
+import java.util.List;
+
+public class ListFragment extends BaseFragment implements ViewPager.OnPageChangeListener {
+
+    private int mCurrentPosition;
+    private boolean mNeedRelease;
 
     @Override
     protected int getLayoutResId() {
@@ -24,43 +24,42 @@ public class ListFragment extends BaseFragment implements View.OnClickListener {
     @Override
     protected void initViews() {
         super.initViews();
-        findViewById(R.id.btn_list_view).setOnClickListener(this);
-        findViewById(R.id.btn_recycler_view).setOnClickListener(this);
-        findViewById(R.id.btn_auto_recycler_view).setOnClickListener(this);
-        findViewById(R.id.btn_list_fragment_viewpager).setOnClickListener(this);
-        findViewById(R.id.btn_rotate_fullscreen).setOnClickListener(this);
-        findViewById(R.id.btn_tiktok_recyclerview).setOnClickListener(this);
-        findViewById(R.id.btn_tiktok_verticalviewpager).setOnClickListener(this);
-        findViewById(R.id.btn_seamless_play).setOnClickListener(this);
+
+        ViewPager viewPager = findViewById(R.id.view_pager);
+        viewPager.addOnPageChangeListener(this);
+
+        List<String> titles = new ArrayList<>();
+        titles.add(getString(R.string.str_list_view));
+        titles.add(getString(R.string.str_recycler_view));
+        titles.add(getString(R.string.str_auto_play_recycler_view));
+        titles.add(getString(R.string.str_tiktok_2));
+        titles.add(getString(R.string.str_rotate_in_fullscreen));
+
+        viewPager.setAdapter(new MyPagerAdapter(getChildFragmentManager(), titles));
+
+        TabLayout tabLayout = findViewById(R.id.tab_layout);
+        tabLayout.setupWithViewPager(viewPager);
+
     }
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_list_view:
-                startActivity(new Intent(getActivity(), ListViewActivity.class));
-                break;
-            case R.id.btn_recycler_view:
-                startActivity(new Intent(getActivity(), RecyclerViewActivity.class));
-                break;
-            case R.id.btn_auto_recycler_view:
-                startActivity(new Intent(getActivity(), AutoPlayRecyclerViewActivity.class));
-                break;
-            case R.id.btn_list_fragment_viewpager:
-                startActivity(new Intent(getActivity(), ListFragmentViewPagerActivity.class));
-                break;
-            case R.id.btn_rotate_fullscreen:
-                startActivity(new Intent(getActivity(), RotateRecyclerViewActivity.class));
-                break;
-            case R.id.btn_tiktok_recyclerview:
-                startActivity(new Intent(getActivity(), TikTokActivity.class));
-                break;
-            case R.id.btn_tiktok_verticalviewpager:
-                startActivity(new Intent(getActivity(), TikTok2Activity.class));
-                break;
-            case R.id.btn_seamless_play:
-                startActivity(new Intent(getActivity(), SeamlessPlayActivity.class));
-                break;
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        if (position == mCurrentPosition) return;
+        mNeedRelease = true;
+        mCurrentPosition = position;
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+        if (state == ViewPager.SCROLL_STATE_IDLE && mNeedRelease) {
+            //左右滑动ViewPager释放正在播放的播放器
+            VideoViewManager.instance().release();
+            mNeedRelease = false;
         }
     }
 }

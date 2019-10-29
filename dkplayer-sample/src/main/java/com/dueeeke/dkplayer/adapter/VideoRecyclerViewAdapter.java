@@ -20,14 +20,14 @@ import java.util.List;
 
 public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecyclerViewAdapter.VideoHolder> {
 
-    private List<VideoBean> videos = new ArrayList<>();
+    private List<VideoBean> videos;
 
 //    private ProgressManagerImpl mProgressManager;
 
 //    private PlayerFactory mPlayerFactory = IjkPlayerFactory.create();
 
     public VideoRecyclerViewAdapter(List<VideoBean> videos) {
-        this.videos.addAll(videos);
+        this.videos = videos;
     }
 
     @Override

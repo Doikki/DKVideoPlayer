@@ -10,11 +10,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.dueeeke.videoplayer.util.L;
+
+/**
+ * 可以懒加载的Fragment，使用androidx fragment的方式实现，区别传统方式
+ */
 public abstract class BaseFragment extends Fragment {
 
     private View mRootView;
 
-    private boolean mIsViewCreated;
     private boolean mIsInitData;
 
     @Nullable
@@ -22,29 +26,44 @@ public abstract class BaseFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (mRootView == null) {
             mRootView = inflater.inflate(getLayoutResId(), container, false);
+            initViews();
         }
-        initViews();
         return mRootView;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mIsViewCreated = true;
         if (!isLazyLoad()) {
             fetchData();
         }
     }
 
     @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser && mIsViewCreated && !mIsInitData) {
-            fetchData();
-        }
+    public void onResume() {
+        super.onResume();
+        fetchData();
+        String simpleName = getClass().getSimpleName();
+        L.d("BaseFragment " + simpleName + " onResume");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        String simpleName = getClass().getSimpleName();
+        L.d("BaseFragment " + simpleName + " onPause");
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        String simpleName = getClass().getSimpleName();
+        L.d("BaseFragment " + simpleName + " onHiddenChanged " + hidden);
     }
 
     private void fetchData() {
+        if (mIsInitData)
+            return;
         initData();
         mIsInitData = true;
     }
@@ -55,9 +74,11 @@ public abstract class BaseFragment extends Fragment {
 
     protected abstract int getLayoutResId();
 
-    protected void initViews() {}
+    protected void initViews() {
+    }
 
-    protected void initData() {}
+    protected void initData() {
+    }
 
     protected boolean isLazyLoad() {
         return false;
