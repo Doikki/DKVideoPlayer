@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/btn_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/str_list_view" />
+
+    <Button
+        android:id="@+id/btn_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/str_recycler_view" />
+
+    <Button
+        android:id="@+id/btn_auto_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/str_auto_play_recycler_view" />
+
+    <Button
+        android:id="@+id/btn_list_fragment_viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/str_list_fragment_viewpager" />
+
+    <Button
+        android:id="@+id/btn_rotate_fullscreen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/str_rotate_in_fullscreen" />
+
+    <Button
+        android:id="@+id/btn_tiktok_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/str_tiktok_1" />
+
+    <Button
+        android:id="@+id/btn_tiktok_verticalviewpager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/str_tiktok_2" />
+
+    <Button
+        android:id="@+id/btn_seamless_play"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="无缝衔接" />
+
+</LinearLayout>

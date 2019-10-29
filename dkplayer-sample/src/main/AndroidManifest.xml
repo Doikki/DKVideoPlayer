@@ -69,18 +69,6 @@
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.api.ApiActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.list.ListActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.extend.ExtendActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".activity.list.tiktok.TikTokActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
             android:screenOrientation="portrait"
@@ -92,10 +80,6 @@
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".activity.pip.PIPListActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.pip.PIPDemoActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
             android:screenOrientation="portrait" />
         <activity

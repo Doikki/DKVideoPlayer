@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/btn_fullscreen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/str_fullscreen_directly" />
+
+    <Button
+        android:id="@+id/btn_danmu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/str_danmu" />
+
+    <Button
+        android:id="@+id/btn_ad"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/str_ad" />
+
+    <Button
+        android:id="@+id/btn_fullscreen_rotate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/str_extend_rotate_in_fullscreen" />
+
+    <Button
+        android:id="@+id/btn_switch_player"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/str_switch_player" />
+
+    <Button
+        android:id="@+id/btn_proxy_cache"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/str_cache" />
+
+    <Button
+        android:id="@+id/btn_play_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/str_play_list"/>
+
+    <Button
+        android:id="@+id/btn_pad"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="pad"/>
+
+    <Button
+        android:id="@+id/btn_custom_player"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="自定义MediaPlayer"/>
+
+</LinearLayout>

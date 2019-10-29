@@ -1,21 +1,18 @@
 package com.dueeeke.dkplayer.activity;
 
-import android.content.Intent;
-import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.dueeeke.dkplayer.R;
-import com.dueeeke.dkplayer.activity.api.ApiActivity;
-import com.dueeeke.dkplayer.activity.api.PlayerActivity;
-import com.dueeeke.dkplayer.activity.extend.ExtendActivity;
-import com.dueeeke.dkplayer.activity.list.ListActivity;
-import com.dueeeke.dkplayer.activity.pip.PIPDemoActivity;
+import com.dueeeke.dkplayer.fragment.main.ApiFragment;
+import com.dueeeke.dkplayer.fragment.main.ExtensionFragment;
+import com.dueeeke.dkplayer.fragment.main.ListFragment;
+import com.dueeeke.dkplayer.fragment.main.PipFragment;
 import com.dueeeke.dkplayer.util.PIPManager;
 import com.dueeeke.dkplayer.util.Utils;
 import com.dueeeke.dkplayer.util.cache.ProxyVideoCacheManager;
@@ -25,15 +22,16 @@ import com.dueeeke.videoplayer.player.AndroidMediaPlayerFactory;
 import com.dueeeke.videoplayer.player.PlayerFactory;
 import com.dueeeke.videoplayer.player.VideoViewConfig;
 import com.dueeeke.videoplayer.player.VideoViewManager;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
-    private EditText editText;
-    private boolean isLive;
-
-    private TextView mCurrentPlayer;
+    private List<Fragment> mFragments;
+    private int mCurrentIndex;
 
     @Override
     protected int getLayoutResId() {
@@ -48,29 +46,29 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void initView() {
         super.initView();
-        editText = findViewById(R.id.et);
-        mCurrentPlayer = findViewById(R.id.curr_player);
 
-        Object playerFactory = Utils.getCurrentPlayerFactory();
-        String msg = getString(R.string.str_current_player);
-        if (playerFactory instanceof IjkPlayerFactory) {
-            mCurrentPlayer.setText(msg + "IjkPlayer");
-        } else if (playerFactory instanceof ExoMediaPlayerFactory) {
-            mCurrentPlayer.setText(msg + "ExoPlayer");
+        //检测当前是用的哪个播放器
+        Object factory = Utils.getCurrentPlayerFactory();
+        if (factory instanceof ExoMediaPlayerFactory) {
+            setTitle(getResources().getString(R.string.app_name) + " (ExoPlayer)");
+        } else if (factory instanceof IjkPlayerFactory) {
+            setTitle(getResources().getString(R.string.app_name) + " (IjkPlayer)");
         } else {
-            mCurrentPlayer.setText(msg + "MediaPlayer");
+            setTitle(getResources().getString(R.string.app_name) + " (MediaPlayer)");
         }
 
-        ((RadioGroup) findViewById(R.id.rg)).setOnCheckedChangeListener((group, checkedId) -> {
-            switch (checkedId) {
-                case R.id.vod:
-                    isLive = false;
-                    break;
-                case R.id.live:
-                    isLive = true;
-                    break;
-            }
-        });
+        BottomNavigationView bottomNavigationView = findViewById(R.id.nav_view);
+        bottomNavigationView.setOnNavigationItemSelectedListener(this);
+
+        mFragments = new ArrayList<>();
+        mFragments.add(new ApiFragment());
+        mFragments.add(new ListFragment());
+        mFragments.add(new ExtensionFragment());
+        mFragments.add(new PipFragment());
+
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.layout_content, mFragments.get(0))
+                .commitAllowingStateLoss();
     }
 
     @Override
@@ -99,15 +97,15 @@ public class MainActivity extends BaseActivity {
                 switch (itemId) {
                     case R.id.ijk:
                         playerFactory = IjkPlayerFactory.create();
-                        mCurrentPlayer.setText(msg + "IjkPlayer");
+                        setTitle(getResources().getString(R.string.app_name) + " (IjkPlayer)");
                         break;
                     case R.id.exo:
                         playerFactory = ExoMediaPlayerFactory.create();
-                        mCurrentPlayer.setText(msg + "ExoPlayer");
+                        setTitle(getResources().getString(R.string.app_name) + " (ExoPlayer)");
                         break;
                     case R.id.media:
                         playerFactory = AndroidMediaPlayerFactory.create();
-                        mCurrentPlayer.setText(msg + "MediaPlayer");
+                        setTitle(getResources().getString(R.string.app_name) + " (MediaPlayer)");
                         break;
                 }
                 mPlayerFactoryField.set(config, playerFactory);
@@ -125,32 +123,37 @@ public class MainActivity extends BaseActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    public void playOther(View view) {
-        String url = editText.getText().toString();
-        if (TextUtils.isEmpty(url)) return;
-        Intent intent = new Intent(this, PlayerActivity.class);
-        intent.putExtra("url", url);
-        intent.putExtra("isLive", isLive);
-        startActivity(intent);
-    }
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        int index;
+        int itemId = menuItem.getItemId();
+        switch (itemId) {
+            default:
+            case R.id.tab_api:
+                index = 0;
+                break;
+            case R.id.tab_list:
+                index = 1;
+                break;
+            case R.id.tab_extension:
+                index = 2;
+                break;
+            case R.id.tab_pip:
+                index = 3;
+                break;
+        }
 
-    public void clearUrl(View view) {
-        editText.setText("");
-    }
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        Fragment fragment = mFragments.get(index);
+        Fragment currFragment = mFragments.get(mCurrentIndex);
+        if (fragment.isAdded()) {
+            transaction.hide(currFragment).show(fragment);
+        } else {
+            transaction.add(R.id.layout_content, fragment).hide(currFragment);
+        }
+        transaction.commitAllowingStateLoss();
+        mCurrentIndex = index;
 
-    public void api(View view) {
-        startActivity(new Intent(this, ApiActivity.class));
-    }
-
-    public void extend(View view) {
-        startActivity(new Intent(this, ExtendActivity.class));
-    }
-
-    public void list(View view) {
-        startActivity(new Intent(this, ListActivity.class));
-    }
-
-    public void pip(View view) {
-        startActivity(new Intent(this, PIPDemoActivity.class));
+        return true;
     }
 }

@@ -63,6 +63,13 @@ public class BaseActivity<T extends VideoView> extends AppCompatActivity {
 
     }
 
+    protected void setTitle(String title) {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(title);
+        }
+    }
+
     protected void initView() {
 
     }

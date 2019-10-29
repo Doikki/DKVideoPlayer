@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">DK播放器</string>
-    <string name="str_api">API演示</string>
-    <string name="str_list">列表播放</string>
-    <string name="str_extend">扩展功能</string>
+    <string name="str_api">API</string>
+    <string name="str_list">列表</string>
+    <string name="str_extend">扩展</string>
     <string name="str_pip">画中画</string>
     <string name="str_other">其他:</string>
     <string name="str_play">播放</string>
