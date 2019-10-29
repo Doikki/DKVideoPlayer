@@ -84,8 +84,6 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
         VideoHolder(View itemView) {
             super(itemView);
             mVideoView = itemView.findViewById(R.id.video_player);
-            int widthPixels = itemView.getContext().getResources().getDisplayMetrics().widthPixels;
-            mVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels * 9 / 16 + 1));
             mController = new StandardVideoController(itemView.getContext());
             mTitle = itemView.findViewById(R.id.tv_title);
         }

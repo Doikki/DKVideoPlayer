@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <com.dueeeke.videoplayer.player.VideoView
         android:id="@+id/video_player"
         android:layout_width="match_parent"
-        android:layout_height="200dp" />
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="16:9"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_title"
@@ -16,6 +19,7 @@
         android:layout_height="40dp"
         android:gravity="center_vertical"
         android:padding="10dp"
-        tools:text="这是一个标题"/>
+        tools:text="这是一个标题"
+        app:layout_constraintTop_toBottomOf="@id/video_player"/>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

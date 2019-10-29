@@ -61,15 +61,11 @@ public class SeamlessRecyclerViewAdapter extends RecyclerView.Adapter<SeamlessRe
     public class VideoHolder extends RecyclerView.ViewHolder {
 
         private TextView title;
-        private FrameLayout mPlayerContainer;
         private ImageView mThumb;
 
         VideoHolder(View itemView) {
             super(itemView);
-            mPlayerContainer = itemView.findViewById(R.id.player_container);
             mThumb = itemView.findViewById(R.id.thumb);
-            int widthPixels = context.getResources().getDisplayMetrics().widthPixels;
-            mPlayerContainer.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels * 9 / 16 + 1));
             title = itemView.findViewById(R.id.tv_title);
         }
     }

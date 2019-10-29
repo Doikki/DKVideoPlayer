@@ -62,8 +62,6 @@ public class RotateRecyclerViewAdapter extends RecyclerView.Adapter<RotateRecycl
         VideoHolder(View itemView) {
             super(itemView);
             mVideoView = itemView.findViewById(R.id.video_player);
-            int widthPixels = context.getResources().getDisplayMetrics().widthPixels;
-            mVideoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels * 9 / 16 + 1));
             //这段代码用于实现小屏时静音，全屏时有声音
             mVideoView.setOnVideoViewStateChangeListener(new OnVideoViewStateChangeListener() {
                 @Override
