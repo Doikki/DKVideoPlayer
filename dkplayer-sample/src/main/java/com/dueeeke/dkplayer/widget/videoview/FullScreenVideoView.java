@@ -43,9 +43,9 @@ public class FullScreenVideoView extends VideoView {
     }
 
     @Override
-    protected void startPlay() {
+    protected boolean startPlay() {
         startFullScreenDirectly();
-        super.startPlay();
+        return super.startPlay();
     }
 
     @Override

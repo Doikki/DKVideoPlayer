@@ -180,8 +180,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
     public void start() {
         boolean isStarted = false;
         if (isInIdleState()) {
-            startPlay();
-            isStarted = true;
+            isStarted = startPlay();
         } else if (isInPlaybackState()) {
             startInPlaybackState();
             isStarted = true;
@@ -195,15 +194,16 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
 
     /**
      * 第一次播放
+     * @return 是否成功开始播放
      */
-    protected void startPlay() {
+    protected boolean startPlay() {
         if (!mEnableParallelPlay) {
             VideoViewManager.instance().release();
         }
         VideoViewManager.instance().addVideoView(this);
 
         //如果要显示移动网络提示则不继续播放
-        if (showNetWarning()) return;
+        if (showNetWarning()) return false;
 
         //监听音频焦点改变
         if (mEnableAudioFocus) {
@@ -217,6 +217,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
 
         initPlayer();
         startPrepare(false);
+        return true;
     }
 
     /**
