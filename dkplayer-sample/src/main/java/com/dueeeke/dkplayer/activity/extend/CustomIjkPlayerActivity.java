@@ -1,13 +1,11 @@
-package com.dueeeke.dkplayer.activity.api;
+package com.dueeeke.dkplayer.activity.extend;
 
 import android.view.View;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.activity.BaseActivity;
+import com.dueeeke.dkplayer.widget.videoview.IjkVideoView;
 import com.dueeeke.videocontroller.StandardVideoController;
-import com.dueeeke.videoplayer.ijk.IjkPlayer;
-import com.dueeeke.videoplayer.player.PlayerFactory;
-import com.dueeeke.videoplayer.player.VideoView;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -15,57 +13,39 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import tv.danmaku.ijk.media.player.IjkMediaPlayer;
-
 /**
- * rtsp/concat，注意：本demo只针对ijkplayer
+ * 自定义的IjkVideoView
  */
-
-public class ConcatPlayActivity extends BaseActivity<VideoView<IjkPlayer>> {
-
-    @Override
-    protected int getLayoutResId() {
-        return R.layout.activity_concat_play;
-    }
+public class CustomIjkPlayerActivity extends BaseActivity<IjkVideoView> implements View.OnClickListener {
 
     @Override
     protected int getTitleResId() {
-        return R.string.str_rtsp_concat;
+        return super.getTitleResId();
+    }
+
+    @Override
+    protected int getLayoutResId() {
+        return R.layout.activity_custom_ijk_player;
     }
 
     @Override
     protected void initView() {
         super.initView();
-        mVideoView = findViewById(R.id.player);
-        StandardVideoController controller = new StandardVideoController(this);
-        mVideoView.setVideoController(controller);
-        mVideoView.setPlayerFactory(new MyPlayerFactory());
+        mVideoView = findViewById(R.id.video_view);
+        findViewById(R.id.btn_ffconcat).setOnClickListener(this);
+        findViewById(R.id.btn_rtsp).setOnClickListener(this);
+        mVideoView.setVideoController(new StandardVideoController(this));
     }
 
-    class MyPlayerFactory extends PlayerFactory<IjkPlayer> {
-
-        @Override
-        public IjkPlayer createPlayer() {
-            return new IjkPlayer() {
-                @Override
-                public void setOptions() {
-                    super.setOptions();
-                    //支持concat
-                    mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "safe", 0);
-                    mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "protocol_whitelist",
-                            "rtmp,concat,ffconcat,file,subfile,http,https,tls,rtp,tcp,udp,crypto,rtsp");
-                    //使用tcp方式拉取rtsp流，默认是通过udp方式
-                    mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "rtsp_transport", "tcp");
-                }
-            };
-        }
-    }
-
-
-    public void onButtonClick(View view) {
+    @Override
+    public void onClick(View v) {
         mVideoView.release();
-        switch (view.getId()) {
-            case R.id.concat:
+        switch (v.getId()) {
+            case R.id.btn_ffconcat:
+                //支持concat
+                mVideoView.addFormatOption("safe", "0");
+                mVideoView.addFormatOption("protocol_whitelist",
+                        "rtmp,concat,ffconcat,file,subfile,http,https,tls,rtp,tcp,udp,crypto,rtsp");
                 File cacheDir = getExternalCacheDir();
                 File concat = new File(cacheDir, "playlist.ffconcat");
                 if (concat.exists()) {
@@ -96,16 +76,17 @@ public class ConcatPlayActivity extends BaseActivity<VideoView<IjkPlayer>> {
                 String concatUrl = "file://" + concat.getAbsolutePath();
                 mVideoView.setUrl(concatUrl);
                 break;
-            case R.id.rtsp:
+            case R.id.btn_rtsp:
+                //使用tcp方式拉取rtsp流，默认是通过udp方式
+                mVideoView.addFormatOption("rtsp_transport", "tcp");
                 String rtspUrl = "rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov";
                 mVideoView.setUrl(rtspUrl);
                 break;
         }
-
         mVideoView.start();
     }
 
-    class ConcatMedia {
+    static class ConcatMedia {
         public ConcatMedia(String url, long duration) {
             this.url = url;
             this.duration = duration;

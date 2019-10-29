@@ -288,7 +288,11 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
      * 开始准备播放（直接播放）
      */
     protected void startPrepare(boolean reset) {
-        if (reset) mMediaPlayer.reset();
+        if (reset) {
+            mMediaPlayer.reset();
+            //重新设置option，media player reset之后，option会失效
+            setOptions();
+        }
         if (prepareDataSource()) {
             mMediaPlayer.prepareAsync();
             setPlayState(STATE_PREPARING);

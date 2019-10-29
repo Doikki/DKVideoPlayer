@@ -14,11 +14,6 @@
         android:layout_height="wrap_content"
         android:text="@string/str_api_live" />
     <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="onButtonClick"
-        android:text="@string/str_rtsp_concat" />
-    <Button
         android:id="@+id/btn_definition"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

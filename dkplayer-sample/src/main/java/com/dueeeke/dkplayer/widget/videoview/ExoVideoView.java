@@ -1,6 +1,10 @@
 package com.dueeeke.dkplayer.widget.videoview;
 
 import android.content.Context;
+import android.util.AttributeSet;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.dueeeke.dkplayer.widget.player.CustomExoMediaPlayer;
 import com.dueeeke.videoplayer.player.PlayerFactory;
@@ -22,6 +26,14 @@ public class ExoVideoView extends VideoView<CustomExoMediaPlayer> {
 
     public ExoVideoView(Context context) {
         super(context);
+    }
+
+    public ExoVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public ExoVideoView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
     }
 
     {

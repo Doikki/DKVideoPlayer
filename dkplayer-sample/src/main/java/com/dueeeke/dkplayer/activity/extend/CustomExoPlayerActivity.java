@@ -20,11 +20,11 @@ import com.google.android.exoplayer2.source.MediaSource;
  * 对其功能进行扩展。
  * 第二：通过继承{@link AbstractPlayer}扩展一些其他的播放器。
  */
-public class CustomPlayerActivity extends BaseActivity<ExoVideoView> {
+public class CustomExoPlayerActivity extends BaseActivity<ExoVideoView> {
 
     @Override
     protected int getLayoutResId() {
-        return R.layout.activity_custom_player;
+        return R.layout.activity_custom_exo_player;
     }
 
     @Override

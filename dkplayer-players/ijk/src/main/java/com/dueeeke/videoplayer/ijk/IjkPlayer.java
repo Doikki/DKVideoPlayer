@@ -21,7 +21,6 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 public class IjkPlayer extends AbstractPlayer {
 
     protected IjkMediaPlayer mMediaPlayer;
-    private boolean mIsLooping;
     private int mBufferedPercent;
 
     @Override
@@ -117,7 +116,6 @@ public class IjkPlayer extends AbstractPlayer {
     public void reset() {
         mMediaPlayer.reset();
         mMediaPlayer.setOnVideoSizeChangedListener(onVideoSizeChangedListener);
-        mMediaPlayer.setLooping(mIsLooping);
         setOptions();
     }
 
@@ -187,7 +185,6 @@ public class IjkPlayer extends AbstractPlayer {
 
     @Override
     public void setLooping(boolean isLooping) {
-        this.mIsLooping = isLooping;
         mMediaPlayer.setLooping(isLooping);
     }
 

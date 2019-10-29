@@ -15,7 +15,6 @@ import java.util.Map;
 public class AndroidMediaPlayer extends AbstractPlayer {
 
     protected MediaPlayer mMediaPlayer;
-    private boolean isLooping;
     private int mBufferedPercent;
 
     @Override
@@ -93,7 +92,6 @@ public class AndroidMediaPlayer extends AbstractPlayer {
         mMediaPlayer.release();
         initPlayer();
         mMediaPlayer.setVolume(1, 1);
-        mMediaPlayer.setLooping(isLooping);
     }
 
     @Override
@@ -162,7 +160,6 @@ public class AndroidMediaPlayer extends AbstractPlayer {
 
     @Override
     public void setLooping(boolean isLooping) {
-        this.isLooping = isLooping;
         mMediaPlayer.setLooping(isLooping);
     }
 

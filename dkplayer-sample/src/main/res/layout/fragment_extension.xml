@@ -53,9 +53,15 @@
         android:text="pad"/>
 
     <Button
-        android:id="@+id/btn_custom_player"
+        android:id="@+id/btn_custom_exo_player"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="自定义MediaPlayer"/>
+        android:text="自定义ExoMediaPlayer"/>
+
+    <Button
+        android:id="@+id/btn_custom_ijk_player"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="自定义IjkMediaPlayer"/>
 
 </LinearLayout>
