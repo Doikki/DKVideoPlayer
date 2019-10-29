@@ -3,7 +3,16 @@ package com.dueeeke.videoplayer.render;
 import android.graphics.Bitmap;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+
+import com.dueeeke.videoplayer.player.AbstractPlayer;
+
 public interface IRenderView {
+
+    /**
+     * 关联AbstractPlayer
+     */
+    void attachToPlayer(@NonNull AbstractPlayer player);
 
     /**
      * 设置视频宽高

@@ -22,7 +22,6 @@ public class IjkPlayer extends AbstractPlayer {
 
     protected IjkMediaPlayer mMediaPlayer;
     private boolean mIsLooping;
-    private boolean mIsEnableMediaCodec;
     private int mBufferedPercent;
 
     @Override
@@ -120,7 +119,6 @@ public class IjkPlayer extends AbstractPlayer {
         mMediaPlayer.setOnVideoSizeChangedListener(onVideoSizeChangedListener);
         mMediaPlayer.setLooping(mIsLooping);
         setOptions();
-        setEnableMediaCodec(mIsEnableMediaCodec);
     }
 
     @Override
@@ -191,16 +189,6 @@ public class IjkPlayer extends AbstractPlayer {
     public void setLooping(boolean isLooping) {
         this.mIsLooping = isLooping;
         mMediaPlayer.setLooping(isLooping);
-    }
-
-    @Override
-    public void setEnableMediaCodec(boolean isEnable) {
-        mIsEnableMediaCodec = isEnable;
-        int value = isEnable ? 1 : 0;
-        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", value);//开启硬解码
-        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", value);
-        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", value);
-        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-hevc", value);//开启hevc硬解
     }
 
     @Override

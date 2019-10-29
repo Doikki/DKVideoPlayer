@@ -237,11 +237,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
     }
 
     @Override
-    public void setEnableMediaCodec(boolean isEnable) {
-        // exo player is based on MediaCodec, no need to enable
-    }
-
-    @Override
     public void setOptions() {
         //准备好就开始播放
         mInternalPlayer.setPlayWhenReady(true);

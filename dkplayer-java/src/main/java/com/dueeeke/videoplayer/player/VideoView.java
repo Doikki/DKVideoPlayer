@@ -26,8 +26,7 @@ import com.dueeeke.videoplayer.controller.MediaPlayerControl;
 import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.listener.PlayerEventListener;
 import com.dueeeke.videoplayer.render.IRenderView;
-import com.dueeeke.videoplayer.render.SurfaceRenderView;
-import com.dueeeke.videoplayer.render.TextureRenderView;
+import com.dueeeke.videoplayer.render.RenderViewFactory;
 import com.dueeeke.videoplayer.util.L;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 
@@ -49,6 +48,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
     protected BaseVideoController mVideoController;//控制器
 
     protected IRenderView mRenderView;
+    protected RenderViewFactory mRenderViewFactory;
     /**
      * 真正承载播放器视图的容器
      */
@@ -120,19 +120,9 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
     protected ProgressManager mProgressManager;
 
     /**
-     * 使用SurfaceView渲染视频，默认是TextureView
-     */
-    protected boolean mUsingSurfaceView;
-
-    /**
      * 循环播放
      */
     protected boolean mIsLooping;
-
-    /**
-     * 启用MediaCodec解码,就是所谓的硬解码，此设置仅适用于ijkplayer
-     */
-    protected boolean mEnableMediaCodec;
 
     /**
      * 支持多开，注意这里的多开不仅仅是指同一个页面需要同时存在多个播放器，也适用于Activity和Activity之间以及Activity
@@ -153,20 +143,16 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
 
         //读取全局配置
         VideoViewConfig config = VideoViewManager.getConfig();
-        mUsingSurfaceView = config.mUsingSurfaceView;
-        mEnableMediaCodec = config.mEnableMediaCodec;
         mEnableAudioFocus = config.mEnableAudioFocus;
         mEnableParallelPlay = config.mEnableParallelPlay;
         mProgressManager = config.mProgressManager;
-        //默认使用系统的MediaPlayer进行解码
         mPlayerFactory = config.mPlayerFactory;
         mCurrentScreenScaleType = config.mScreenScaleType;
+        mRenderViewFactory = config.mRenderViewFactory;
 
         //读取xml中的配置，并综合全局配置
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.VideoView);
-        mUsingSurfaceView = a.getBoolean(R.styleable.VideoView_usingSurfaceView, mUsingSurfaceView);
         mEnableAudioFocus = a.getBoolean(R.styleable.VideoView_enableAudioFocus, mEnableAudioFocus);
-        mEnableMediaCodec = a.getBoolean(R.styleable.VideoView_enableMediaCodec, mEnableMediaCodec);
         mEnableParallelPlay = a.getBoolean(R.styleable.VideoView_enableParallelPlay, mEnableParallelPlay);
         mIsLooping = a.getBoolean(R.styleable.VideoView_looping, false);
         mCurrentScreenScaleType = a.getInt(R.styleable.VideoView_screenScaleType, mCurrentScreenScaleType);
@@ -278,7 +264,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
      * 初始化之后的配置项
      */
     protected void setOptions() {
-        mMediaPlayer.setEnableMediaCodec(mEnableMediaCodec);
         mMediaPlayer.setLooping(mIsLooping);
     }
 
@@ -290,11 +275,8 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
             mPlayerContainer.removeView(mRenderView.getView());
             mRenderView.release();
         }
-        if (mUsingSurfaceView) {
-            mRenderView = new SurfaceRenderView(getContext(), mMediaPlayer);
-        } else {
-            mRenderView = new TextureRenderView(getContext(), mMediaPlayer);
-        }
+        mRenderView = mRenderViewFactory.createRenderView(getContext());
+        mRenderView.attachToPlayer(mMediaPlayer);
         LayoutParams params = new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -666,24 +648,10 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
     }
 
     /**
-     * 是否启用SurfaceView，默认不启用
-     */
-    public void setUsingSurfaceView(boolean usingSurfaceView) {
-        mUsingSurfaceView = usingSurfaceView;
-    }
-
-    /**
      * 是否开启AudioFocus监听， 默认开启
      */
     public void setEnableAudioFocus(boolean enableAudioFocus) {
         mEnableAudioFocus = enableAudioFocus;
-    }
-
-    /**
-     * 是否使用MediaCodec进行解码（硬解码），默认不开启，使用软解
-     */
-    public void setEnableMediaCodec(boolean enableMediaCodec) {
-        mEnableMediaCodec = enableMediaCodec;
     }
 
     /**
@@ -701,6 +669,16 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
      */
     public void setEnableParallelPlay(boolean enableParallelPlay) {
         mEnableParallelPlay = enableParallelPlay;
+    }
+
+    /**
+     * 自定义RenderView，继承{@link RenderViewFactory}实现自己的RenderView
+     */
+    public void setRenderViewFactory(RenderViewFactory renderViewFactory) {
+        if (renderViewFactory == null) {
+            throw new IllegalArgumentException("RenderViewFactory can not be null!");
+        }
+        mRenderViewFactory = renderViewFactory;
     }
 
     /**

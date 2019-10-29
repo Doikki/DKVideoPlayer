@@ -167,11 +167,6 @@ public class AndroidMediaPlayer extends AbstractPlayer {
     }
 
     @Override
-    public void setEnableMediaCodec(boolean isEnable) {
-        // no support
-    }
-
-    @Override
     public void setOptions() {
         // no support
     }

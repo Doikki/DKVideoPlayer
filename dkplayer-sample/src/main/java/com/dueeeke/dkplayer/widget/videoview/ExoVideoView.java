@@ -1,7 +1,6 @@
 package com.dueeeke.dkplayer.widget.videoview;
 
 import android.content.Context;
-import android.util.AttributeSet;
 
 import com.dueeeke.dkplayer.widget.player.CustomExoMediaPlayer;
 import com.dueeeke.videoplayer.player.PlayerFactory;
@@ -22,15 +21,10 @@ public class ExoVideoView extends VideoView<CustomExoMediaPlayer> {
     private TrackSelector mTrackSelector;
 
     public ExoVideoView(Context context) {
-        this(context, null);
+        super(context);
     }
 
-    public ExoVideoView(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
-
-    public ExoVideoView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
+    {
         //由于传递了泛型，必须将CustomExoMediaPlayer设置进来，否者报错
         setPlayerFactory(new PlayerFactory<CustomExoMediaPlayer>() {
             @Override

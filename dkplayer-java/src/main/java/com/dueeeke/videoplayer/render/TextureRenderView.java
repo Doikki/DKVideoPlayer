@@ -9,6 +9,7 @@ import android.view.TextureView;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.dueeeke.videoplayer.player.AbstractPlayer;
 
@@ -17,19 +18,22 @@ public class TextureRenderView extends TextureView implements IRenderView, Textu
     private MeasureHelper mMeasureHelper;
     private SurfaceTexture mSurfaceTexture;
 
+    @Nullable
     private AbstractPlayer mMediaPlayer;
     private Surface mSurface;
 
-    public TextureRenderView(Context context, @NonNull AbstractPlayer player) {
+    public TextureRenderView(Context context) {
         super(context);
-        mMediaPlayer = player;
-        initView();
     }
 
-
-    private void initView() {
+    {
         mMeasureHelper = new MeasureHelper();
         setSurfaceTextureListener(this);
+    }
+
+    @Override
+    public void attachToPlayer(@NonNull AbstractPlayer player) {
+        this.mMediaPlayer = player;
     }
 
     @Override
@@ -84,7 +88,9 @@ public class TextureRenderView extends TextureView implements IRenderView, Textu
         } else {
             mSurfaceTexture = surfaceTexture;
             mSurface = new Surface(surfaceTexture);
-            mMediaPlayer.setSurface(mSurface);
+            if (mMediaPlayer != null) {
+                mMediaPlayer.setSurface(mSurface);
+            }
         }
     }
 

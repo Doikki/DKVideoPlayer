@@ -132,11 +132,6 @@ public abstract class AbstractPlayer {
     public abstract void setLooping(boolean isLooping);
 
     /**
-     * 设置硬解码
-     */
-    public abstract void setEnableMediaCodec(boolean isEnable);
-
-    /**
      * 设置其他播放配置
      */
     public abstract void setOptions();

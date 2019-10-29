@@ -1,4 +1,4 @@
-package com.dueeeke.videoplayer.render;
+package com.dueeeke.dkplayer.widget.render;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -11,6 +11,8 @@ import android.view.View;
 import androidx.annotation.NonNull;
 
 import com.dueeeke.videoplayer.player.AbstractPlayer;
+import com.dueeeke.videoplayer.render.IRenderView;
+import com.dueeeke.videoplayer.render.MeasureHelper;
 
 @SuppressLint("ViewConstructor")
 public class SurfaceRenderView extends SurfaceView implements IRenderView, SurfaceHolder.Callback {
@@ -18,17 +20,20 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
 
     private AbstractPlayer mMediaPlayer;
 
-    public SurfaceRenderView(Context context, @NonNull AbstractPlayer player) {
-        super(context);
-        mMediaPlayer = player;
-        initView();
-    }
-
-    private void initView() {
+    {
         mMeasureHelper = new MeasureHelper();
         SurfaceHolder surfaceHolder = getHolder();
         surfaceHolder.addCallback(this);
         surfaceHolder.setFormat(PixelFormat.RGBA_8888);
+    }
+
+    public SurfaceRenderView(Context context) {
+        super(context);
+    }
+
+    @Override
+    public void attachToPlayer(@NonNull AbstractPlayer player) {
+        this.mMediaPlayer = player;
     }
 
     @Override
