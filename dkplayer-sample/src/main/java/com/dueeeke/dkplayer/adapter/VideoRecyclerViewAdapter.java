@@ -1,21 +1,21 @@
 package com.dueeeke.dkplayer.adapter;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.bean.VideoBean;
-import com.dueeeke.videocontroller.StandardVideoController;
-import com.dueeeke.videoplayer.player.VideoView;
+import com.dueeeke.dkplayer.interf.OnItemChildClickListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecyclerViewAdapter.VideoHolder> {
@@ -26,6 +26,8 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
 
 //    private PlayerFactory mPlayerFactory = IjkPlayerFactory.create();
 
+    private OnItemChildClickListener mOnItemChildClickListener;
+
     public VideoRecyclerViewAdapter(List<VideoBean> videos) {
         this.videos = videos;
     }
@@ -33,9 +35,8 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
     @Override
     @NonNull
     public VideoHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_video_auto_play, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_video, parent, false);
         return new VideoHolder(itemView);
-
     }
 
     @Override
@@ -43,24 +44,14 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
 
         VideoBean videoBean = videos.get(position);
 
-        ImageView thumb = holder.mController.getThumb();
-        Glide.with(thumb.getContext())
+        Glide.with(holder.mThumb.getContext())
                 .load(videoBean.getThumb())
                 .crossFade()
                 .placeholder(android.R.color.white)
-                .into(thumb);
-        holder.mController.setEnableOrientation(true);
-        holder.mController.setTitle(videoBean.getTitle());
-
-        holder.mVideoView.setUrl(videoBean.getUrl());
-        holder.mVideoView.setVideoController(holder.mController);
-//        //保存播放进度
-//        if (mProgressManager == null)
-//            mProgressManager = new ProgressManagerImpl();
-//        holder.mVideoView.setProgressManager(mProgressManager);
-//        holder.mVideoView.setPlayerFactory(mPlayerFactory);
-
+                .into(holder.mThumb);
         holder.mTitle.setText(videoBean.getTitle());
+
+        holder.mPosition = position;
     }
 
     @Override
@@ -75,17 +66,36 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
         notifyItemRangeChanged(size, videos.size());
     }
 
-    public class VideoHolder extends RecyclerView.ViewHolder {
+    public class VideoHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private VideoView mVideoView;
-        private StandardVideoController mController;
-        private TextView mTitle;
+        public ImageView mThumb;
+        public int mPosition;
+        public FrameLayout mPlayerContainer;
+        public ImageView mStartPlay;
+        public ProgressBar mLoading;
+        public TextView mTitle;
 
         VideoHolder(View itemView) {
             super(itemView);
-            mVideoView = itemView.findViewById(R.id.video_player);
-            mController = new StandardVideoController(itemView.getContext());
+            mThumb = itemView.findViewById(R.id.thumb);
+            mStartPlay = itemView.findViewById(R.id.start_play);
+            mPlayerContainer = itemView.findViewById(R.id.player_container);
+            mLoading = itemView.findViewById(R.id.loading);
             mTitle = itemView.findViewById(R.id.tv_title);
+            mPlayerContainer.setOnClickListener(this);
+            itemView.setTag(this);
         }
+
+        @Override
+        public void onClick(View v) {
+            if (mOnItemChildClickListener != null) {
+                mOnItemChildClickListener.onItemChildClick(v, mPosition);
+            }
+        }
+    }
+
+
+    public void setOnItemChildClickListener(OnItemChildClickListener onItemChildClickListener) {
+        mOnItemChildClickListener = onItemChildClickListener;
     }
 }

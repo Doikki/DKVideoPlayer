@@ -32,7 +32,7 @@ public class RecyclerViewRotateFragment extends BaseFragment {
 
     @Override
     protected int getLayoutResId() {
-        return R.layout.activity_recycler_view;
+        return R.layout.fragment_recycler_view;
     }
 
     @Override

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
+import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -20,15 +21,23 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
 
     private AbstractPlayer mMediaPlayer;
 
+    public SurfaceRenderView(Context context) {
+        super(context);
+    }
+
+    public SurfaceRenderView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public SurfaceRenderView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+    }
+
     {
         mMeasureHelper = new MeasureHelper();
         SurfaceHolder surfaceHolder = getHolder();
         surfaceHolder.addCallback(this);
         surfaceHolder.setFormat(PixelFormat.RGBA_8888);
-    }
-
-    public SurfaceRenderView(Context context) {
-        super(context);
     }
 
     @Override

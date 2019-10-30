@@ -39,7 +39,7 @@ public class TinyScreenListActivity extends AppCompatActivity implements FloatRe
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recycler_view);
+        setContentView(R.layout.fragment_recycler_view);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle(R.string.str_recycler_view);

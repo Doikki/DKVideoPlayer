@@ -34,6 +34,7 @@ public class ListFragment extends BaseFragment implements ViewPager.OnPageChange
         titles.add(getString(R.string.str_auto_play_recycler_view));
         titles.add(getString(R.string.str_tiktok_2));
         titles.add(getString(R.string.str_rotate_in_fullscreen));
+        titles.add(getString(R.string.str_seamless_play));
 
         viewPager.setAdapter(new MyPagerAdapter(getChildFragmentManager(), titles));
 

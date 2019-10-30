@@ -1,24 +1,32 @@
 package com.dueeeke.dkplayer.fragment.list;
 
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.AbsListView;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.adapter.VideoListViewAdapter;
 import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.dkplayer.fragment.BaseFragment;
+import com.dueeeke.dkplayer.interf.OnItemChildClickListener;
 import com.dueeeke.dkplayer.util.DataUtil;
+import com.dueeeke.videocontroller.StandardVideoController;
+import com.dueeeke.videoplayer.listener.SimpleOnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.VideoView;
-import com.dueeeke.videoplayer.player.VideoViewManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListViewFragment extends BaseFragment {
+public class ListViewFragment extends BaseFragment implements OnItemChildClickListener {
 
-    private List<VideoBean> videos = new ArrayList<>();
+    private List<VideoBean> mVideos = new ArrayList<>();
     private VideoListViewAdapter mVideoListViewAdapter;
+
+    private VideoView mVideoView;
 
     @Override
     protected int getLayoutResId() {
@@ -28,8 +36,14 @@ public class ListViewFragment extends BaseFragment {
     @Override
     protected void initViews() {
         super.initViews();
+        mVideoView = new VideoView(getActivity());
+        StandardVideoController controller = new StandardVideoController(getActivity());
+        controller.setEnableOrientation(true);
+        mVideoView.setVideoController(controller);
+        mVideoView.setEnableParallelPlay(true);
         ListView listView = findViewById(R.id.lv);
-        mVideoListViewAdapter = new VideoListViewAdapter(videos);
+        mVideoListViewAdapter = new VideoListViewAdapter(mVideos);
+        mVideoListViewAdapter.setOnItemChildClickListener(this);
         listView.setAdapter(mVideoListViewAdapter);
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
 
@@ -77,9 +91,11 @@ public class ListViewFragment extends BaseFragment {
 
             private void gcView(View gcView) {
                 if (gcView != null) {
-                    VideoView videoView = gcView.findViewById(R.id.video_player);
-                    if (videoView != null && !videoView.isFullScreen()) {
-                        videoView.release();
+                    FrameLayout playerContainer = gcView.findViewById(R.id.player_container);
+                    View view = playerContainer.getChildAt(0);
+                    if (view != null && view == mVideoView && !mVideoView.isFullScreen()) {
+                        mVideoView.release();
+                        removeVideoViewFromParent();
                     }
                 }
             }
@@ -90,7 +106,7 @@ public class ListViewFragment extends BaseFragment {
     protected void initData() {
         super.initData();
         List<VideoBean> videoList = DataUtil.getVideoList();
-        videos.addAll(videoList);
+        mVideos.addAll(videoList);
         mVideoListViewAdapter.notifyDataSetChanged();
     }
 
@@ -102,18 +118,64 @@ public class ListViewFragment extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
-        VideoViewManager.instance().pause();
+        mVideoView.pause();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        VideoViewManager.instance().resume();
+        mVideoView.resume();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        VideoViewManager.instance().release();
+        mVideoView.release();
+    }
+
+    private static final String TAG = "ListViewFragment";
+    @Override
+    public void onItemChildClick(View view, int position) {
+        Log.d(TAG, "onItemChildClick: ");
+        mVideoView.release();
+        removeVideoViewFromParent();
+
+        VideoBean videoBean = mVideos.get(position);
+        mVideoView.setUrl(videoBean.getUrl());
+
+        View itemView = mVideoListViewAdapter.getItemView(position);
+        VideoListViewAdapter.ViewHolder viewHolder = (VideoListViewAdapter.ViewHolder) itemView.getTag();
+        mVideoView.setOnVideoViewStateChangeListener(new SimpleOnVideoViewStateChangeListener() {
+            @Override
+            public void onPlayStateChanged(int playState) {
+                super.onPlayStateChanged(playState);
+                switch (playState) {
+                    case VideoView.STATE_PREPARING:
+                        viewHolder.mStartPlay.setVisibility(View.GONE);
+                        viewHolder.mLoading.setVisibility(View.VISIBLE);
+                        break;
+                    case VideoView.STATE_PLAYING:
+                        viewHolder.mStartPlay.setVisibility(View.GONE);
+                        viewHolder.mLoading.setVisibility(View.GONE);
+                        viewHolder.mThumb.setVisibility(View.GONE);
+                        break;
+                    case VideoView.STATE_IDLE:
+                        viewHolder.mLoading.setVisibility(View.GONE);
+                        viewHolder.mStartPlay.setVisibility(View.VISIBLE);
+                        viewHolder.mThumb.setVisibility(View.VISIBLE);
+                        break;
+                }
+            }
+        });
+
+        viewHolder.mPlayerContainer.addView(mVideoView, 0);
+        mVideoView.start();
+    }
+
+    private void removeVideoViewFromParent() {
+        ViewParent parent = mVideoView.getParent();
+        if (parent instanceof ViewGroup) {
+            ((ViewGroup) parent).removeView(mVideoView);
+        }
     }
 }

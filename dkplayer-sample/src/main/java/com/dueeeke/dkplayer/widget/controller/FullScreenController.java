@@ -1,10 +1,11 @@
 package com.dueeeke.dkplayer.widget.controller;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videocontroller.StandardVideoController;
@@ -22,6 +23,12 @@ public class FullScreenController extends StandardVideoController {
 
     public FullScreenController(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+    }
+
+    @Override
+    protected void initView() {
+        super.initView();
+        adjustLandscape();
     }
 
     @Override
@@ -48,12 +55,12 @@ public class FullScreenController extends StandardVideoController {
     @Override
     protected void adjustReserveLandscape() {
         super.adjustReserveLandscape();
-        mBottomContainer.setPadding(0, 0, (int) (mPadding + getResources().getDimension(R.dimen.dkplayer_default_spacing)), 0);
+        mBottomContainer.setPadding(0, 0, (int) (mPadding + getResources().getDimension(R.dimen.default_spacing)), 0);
     }
 
     @Override
     protected void adjustLandscape() {
         super.adjustLandscape();
-        mBottomContainer.setPadding(mPadding, 0, (int) getResources().getDimension(R.dimen.dkplayer_default_spacing), 0);
+        mBottomContainer.setPadding(mPadding, 0, (int) getResources().getDimension(R.dimen.default_spacing), 0);
     }
 }

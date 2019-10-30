@@ -1,4 +1,4 @@
-package com.dueeeke.dkplayer.activity.list;
+package com.dueeeke.dkplayer.fragment.list;
 
 import android.content.Intent;
 import android.graphics.Rect;
@@ -11,9 +11,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dueeeke.dkplayer.R;
-import com.dueeeke.dkplayer.activity.BaseActivity;
+import com.dueeeke.dkplayer.activity.list.DetailActivity;
 import com.dueeeke.dkplayer.adapter.SeamlessRecyclerViewAdapter;
 import com.dueeeke.dkplayer.bean.VideoBean;
+import com.dueeeke.dkplayer.fragment.BaseFragment;
 import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.dkplayer.util.IntentKeys;
 import com.dueeeke.dkplayer.util.SeamlessPlayHelper;
@@ -21,51 +22,47 @@ import com.dueeeke.dkplayer.widget.controller.SeamlessController;
 import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.VideoView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 无缝播放, 模仿哔哩哔哩
+ * 无缝播放
  */
-
-public class SeamlessPlayActivity extends BaseActivity {
+public class SeamlessPlayFragment extends BaseFragment {
 
     private VideoView mVideoView;
-    private List<VideoBean> mVideoList;
+    private List<VideoBean> mVideoList = new ArrayList<>();
     private boolean mSkipToDetail;
     private SeamlessController mSeamlessController;
     private int mCurrentPlayPosition = -1;
+    private SeamlessRecyclerViewAdapter mSeamlessRecyclerViewAdapter;
+    private RecyclerView mRecyclerView;
 
     @Override
     protected int getLayoutResId() {
-        return R.layout.activity_recycler_view;
+        return R.layout.fragment_recycler_view;
     }
 
     @Override
-    protected int getTitleResId() {
-        return R.string.str_seamless_play;
-    }
-
-    @Override
-    protected void initView() {
+    protected void initViews() {
 
         mVideoView = SeamlessPlayHelper.getInstance().getVideoView();
-        mSeamlessController = new SeamlessController(this);
+        mSeamlessController = new SeamlessController(getActivity());
         mVideoView.setVideoController(mSeamlessController);
 
-        RecyclerView recyclerView = findViewById(R.id.rv);
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        mVideoList = DataUtil.getVideoList();
-        SeamlessRecyclerViewAdapter seamlessRecyclerViewAdapter = new SeamlessRecyclerViewAdapter(mVideoList, this);
-        recyclerView.setAdapter(seamlessRecyclerViewAdapter);
-        seamlessRecyclerViewAdapter.setOnItemClickListener(position -> {
+        mRecyclerView = findViewById(R.id.rv);
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(layoutManager);
+        mSeamlessRecyclerViewAdapter = new SeamlessRecyclerViewAdapter(mVideoList, getActivity());
+        mRecyclerView.setAdapter(mSeamlessRecyclerViewAdapter);
+        mSeamlessRecyclerViewAdapter.setOnItemClickListener(position -> {
 
             mSkipToDetail = true;
             //移除Controller
             mVideoView.setVideoController(null);
             //重置Controller
             mSeamlessController.resetController();
-            Intent intent = new Intent(this, DetailActivity.class);
+            Intent intent = new Intent(getActivity(), DetailActivity.class);
             Bundle bundle = new Bundle();
 
             if (mCurrentPlayPosition == position) {
@@ -85,8 +82,7 @@ public class SeamlessPlayActivity extends BaseActivity {
             mCurrentPlayPosition = -1;
         });
 
-
-        recyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
+        mRecyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
             @Override
             public void onChildViewAttachedToWindow(View view) {
 
@@ -110,7 +106,7 @@ public class SeamlessPlayActivity extends BaseActivity {
             }
         });
 
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             int firstVisibleItem, lastVisibleItem, visibleCount;
 
@@ -160,18 +156,6 @@ public class SeamlessPlayActivity extends BaseActivity {
             }
         });
 
-        recyclerView.post(() -> {
-            //自动播放第一个
-            VideoBean videoBean = mVideoList.get(0);
-            mVideoView.setUrl(videoBean.getUrl());
-            mVideoView.start();
-            mCurrentPlayPosition = 0;
-
-            View view = recyclerView.getChildAt(0);
-            FrameLayout playerContainer = view.findViewById(R.id.player_container);
-            playerContainer.addView(mVideoView);
-        });
-
     }
 
     /**
@@ -200,7 +184,27 @@ public class SeamlessPlayActivity extends BaseActivity {
     };
 
     @Override
-    protected void onPause() {
+    protected void initData() {
+        super.initData();
+        List<VideoBean> videoList = DataUtil.getVideoList();
+        mVideoList.addAll(videoList);
+        mSeamlessRecyclerViewAdapter.notifyDataSetChanged();
+
+        mRecyclerView.post(() -> {
+            //自动播放第一个
+            VideoBean videoBean = mVideoList.get(0);
+            mVideoView.setUrl(videoBean.getUrl());
+            mVideoView.start();
+            mCurrentPlayPosition = 0;
+
+            View view = mRecyclerView.getChildAt(0);
+            FrameLayout playerContainer = view.findViewById(R.id.player_container);
+            playerContainer.addView(mVideoView);
+        });
+    }
+
+    @Override
+    public void onPause() {
         super.onPause();
         if (!mSkipToDetail) {
             mVideoView.pause();
@@ -211,7 +215,7 @@ public class SeamlessPlayActivity extends BaseActivity {
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         if (!mSkipToDetail) {
             mVideoView.resume();
@@ -220,7 +224,7 @@ public class SeamlessPlayActivity extends BaseActivity {
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         removePlayerFormParent();
         mVideoView.setVideoController(null);
@@ -228,5 +232,4 @@ public class SeamlessPlayActivity extends BaseActivity {
         SeamlessPlayHelper.getInstance().release();
 
     }
-
 }

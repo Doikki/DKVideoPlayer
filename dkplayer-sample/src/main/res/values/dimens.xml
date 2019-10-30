@@ -3,7 +3,7 @@
     <dimen name="controller_height">46dp</dimen>
     <dimen name="controller_icon_padding">12dp</dimen>
     <dimen name="controller_text_size">16sp</dimen>
-    <dimen name="default_spacing">10dp</dimen>
+    <dimen name="default_spacing">16dp</dimen>
     <dimen name="controller_seekbar_size_n">14dp</dimen>
     <dimen name="controller_seekbar_size_s">14dp</dimen>
     <dimen name="controller_seekbar_max_size">1dp</dimen>

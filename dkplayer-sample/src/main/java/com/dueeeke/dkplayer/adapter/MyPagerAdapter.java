@@ -10,6 +10,7 @@ import com.dueeeke.dkplayer.fragment.list.ListViewFragment;
 import com.dueeeke.dkplayer.fragment.list.RecyclerViewAutoPlayFragment;
 import com.dueeeke.dkplayer.fragment.list.RecyclerViewFragment;
 import com.dueeeke.dkplayer.fragment.list.RecyclerViewRotateFragment;
+import com.dueeeke.dkplayer.fragment.list.SeamlessPlayFragment;
 import com.dueeeke.dkplayer.fragment.list.TikTokFragment;
 
 import java.util.List;
@@ -43,6 +44,8 @@ public class MyPagerAdapter extends FragmentStatePagerAdapter {
                 return new TikTokFragment();
             case 4:
                 return new RecyclerViewRotateFragment();
+            case 5:
+                return new SeamlessPlayFragment();
         }
     }
 
