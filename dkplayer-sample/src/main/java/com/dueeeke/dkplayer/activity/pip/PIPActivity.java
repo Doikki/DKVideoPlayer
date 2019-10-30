@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -44,12 +45,13 @@ public class PIPActivity extends AppCompatActivity{
             mPIPManager.setActClass(PIPActivity.class);
 //        int widthPixels = getResources().getDisplayMetrics().widthPixels;
 //        videoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 4 * 3));
+            ImageView thumb = controller.findViewById(R.id.thumb);
             Glide.with(this)
                     .load("http://sh.people.com.cn/NMediaFile/2016/0112/LOCAL201601121344000138197365721.jpg")
                     .asBitmap()
                     .animate(R.anim.anim_alpha_in)
                     .placeholder(android.R.color.darker_gray)
-                    .into(controller.getThumb());
+                    .into(thumb);
             videoView.setUrl(URL);
             controller.setTitle("香港卫视");
         }

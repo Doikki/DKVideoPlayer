@@ -3,12 +3,13 @@ package com.dueeeke.dkplayer.widget.controller;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videocontroller.StandardVideoController;
@@ -65,7 +66,7 @@ public class RotateInFullscreenController extends StandardVideoController {
         switch (playerState) {
             case VideoView.PLAYER_FULL_SCREEN:
                 mFullScreenButton.setSelected(false);
-                getThumb().setVisibility(GONE);
+//                getThumb().setVisibility(GONE);
                 mOrientationHelper.disable();
                 break;
             case VideoView.PLAYER_NORMAL:

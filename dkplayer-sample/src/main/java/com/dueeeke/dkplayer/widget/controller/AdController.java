@@ -2,16 +2,17 @@ package com.dueeeke.dkplayer.widget.controller;
 
 import android.content.Context;
 import android.content.pm.ActivityInfo;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.interf.ControllerListener;
-import com.dueeeke.videocontroller.StatusView;
+import com.dueeeke.videocontroller.ErrorView;
 import com.dueeeke.videoplayer.controller.BaseVideoController;
 import com.dueeeke.videoplayer.controller.MediaPlayerControl;
 import com.dueeeke.videoplayer.player.VideoView;
@@ -26,8 +27,6 @@ public class AdController extends BaseVideoController<MediaPlayerControl> implem
     protected TextView adTime, adDetail;
     protected ImageView back, volume, fullScreen, playButton;
     protected ControllerListener listener;
-
-    private StatusView mStatusView;
 
     public AdController(@NonNull Context context) {
         super(context);
@@ -66,14 +65,8 @@ public class AdController extends BaseVideoController<MediaPlayerControl> implem
             }
         });
 
-        mStatusView = new StatusView(getContext());
+        addControlComponent(new ErrorView<>(getContext()));
 
-    }
-
-    @Override
-    public void setMediaPlayer(MediaPlayerControl mediaPlayer) {
-        super.setMediaPlayer(mediaPlayer);
-        mStatusView.attachMediaPlayer(mediaPlayer);
     }
 
     @Override
@@ -123,27 +116,7 @@ public class AdController extends BaseVideoController<MediaPlayerControl> implem
                 back.setVisibility(VISIBLE);
                 fullScreen.setSelected(true);
                 break;
-            case VideoView.STATE_ERROR:
-                mStatusView.showErrorView(this);
-                break;
         }
-    }
-
-    /**
-     * 显示移动网络播放警告
-     */
-    @Override
-    public boolean showNetWarning() {
-        //现在是按父类的逻辑显示移动网络播放警告
-        if (super.showNetWarning()) {
-            mStatusView.showNetWarning(this);
-        }
-        return super.showNetWarning();
-    }
-
-    @Override
-    public void hideNetWarning() {
-        mStatusView.dismiss();
     }
 
     @Override

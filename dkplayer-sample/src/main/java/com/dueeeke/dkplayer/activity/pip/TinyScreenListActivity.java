@@ -1,15 +1,17 @@
 package com.dueeeke.dkplayer.activity.pip;
 
 import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
 
 import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
@@ -143,7 +145,8 @@ public class TinyScreenListActivity extends AppCompatActivity implements FloatRe
         VideoBean videoBean = mVideoList.get(position);
         mVideoView.release();
         mVideoView.setUrl(videoBean.getUrl());
-        Glide.with(this).load(videoBean.getThumb()).into(mStandardVideoController.getThumb());
+        ImageView iv = mStandardVideoController.findViewById(R.id.thumb);
+        Glide.with(this).load(videoBean.getThumb()).into(iv);
         mVideoView.setVideoController(mStandardVideoController);
         mVideoView.start();
         player.addView(mVideoView);

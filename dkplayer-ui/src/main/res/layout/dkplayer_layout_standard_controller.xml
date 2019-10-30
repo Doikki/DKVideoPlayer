@@ -162,63 +162,6 @@
         android:progressDrawable="@drawable/dkplayer_layer_progress_bar"
         android:visibility="gone" />
 
-    <ImageView
-        android:id="@+id/thumb"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop" />
-
-    <FrameLayout
-        android:id="@+id/complete_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        android:background="#33000000"
-        tools:visibility="visible">
-
-        <ImageView
-            android:id="@+id/stop_fullscreen"
-            android:layout_width="@dimen/dkplayer_controller_height"
-            android:layout_height="@dimen/dkplayer_controller_height"
-            android:padding="@dimen/dkplayer_controller_icon_padding"
-            android:src="@drawable/dkplayer_ic_action_arrow_back"
-            android:visibility="gone"
-            tools:visibility="visible" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/iv_replay"
-                android:layout_width="@dimen/dkplayer_play_btn_size"
-                android:layout_height="@dimen/dkplayer_play_btn_size"
-                android:layout_gravity="center"
-                android:background="@drawable/dkplayer_shape_play_bg"
-                android:padding="@dimen/dkplayer_controller_icon_padding"
-                android:src="@drawable/dkplayer_ic_action_replay" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/dkplayer_controller_icon_padding"
-                android:text="@string/dkplayer_replay"
-                android:textColor="@android:color/white" />
-
-        </LinearLayout>
-    </FrameLayout>
-
-    <ImageView
-        android:id="@+id/start_play"
-        android:layout_width="@dimen/dkplayer_play_btn_size"
-        android:layout_height="@dimen/dkplayer_play_btn_size"
-        android:layout_gravity="center"
-        android:background="@drawable/dkplayer_shape_play_bg"
-        android:padding="@dimen/dkplayer_default_spacing"
-        android:src="@drawable/dkplayer_selector_play_button" />
-
     <ProgressBar
         android:id="@+id/loading"
         android:layout_width="@dimen/dkplayer_play_btn_size"

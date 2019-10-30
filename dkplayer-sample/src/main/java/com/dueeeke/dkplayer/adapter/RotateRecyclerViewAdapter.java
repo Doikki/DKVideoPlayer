@@ -37,7 +37,7 @@ public class RotateRecyclerViewAdapter extends RecyclerView.Adapter<RotateRecycl
     public void onBindViewHolder(final VideoHolder holder, int position) {
 
         VideoBean videoBean = videos.get(position);
-        ImageView thumb = holder.controller.getThumb();
+        ImageView thumb = holder.mThumb;
         Glide.with(thumb.getContext())
                 .load(videoBean.getThumb())
                 .crossFade()
@@ -59,6 +59,7 @@ public class RotateRecyclerViewAdapter extends RecyclerView.Adapter<RotateRecycl
         private VideoView mVideoView;
         private RotateInFullscreenController controller;
         private TextView title;
+        private ImageView mThumb;
 
         VideoHolder(View itemView) {
             super(itemView);
@@ -83,6 +84,7 @@ public class RotateRecyclerViewAdapter extends RecyclerView.Adapter<RotateRecycl
                 }
             });
             controller = new RotateInFullscreenController(itemView.getContext());
+            mThumb = controller.findViewById(R.id.thumb);
             title = itemView.findViewById(R.id.tv_title);
         }
     }

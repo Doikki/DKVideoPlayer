@@ -2,16 +2,17 @@ package com.dueeeke.dkplayer.widget.controller;
 
 import android.content.Context;
 import android.content.Intent;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.util.PIPManager;
-import com.dueeeke.videocontroller.StatusView;
+import com.dueeeke.videocontroller.ErrorView;
 import com.dueeeke.videoplayer.controller.GestureVideoController;
 import com.dueeeke.videoplayer.controller.MediaPlayerControl;
 import com.dueeeke.videoplayer.player.VideoView;
@@ -26,9 +27,6 @@ public class FloatController extends GestureVideoController<MediaPlayerControl> 
 
     private ProgressBar proLoading;
     private ImageView playButton;
-
-    private StatusView mStatusView;
-
 
     public FloatController(@NonNull Context context) {
         super(context);
@@ -52,14 +50,12 @@ public class FloatController extends GestureVideoController<MediaPlayerControl> 
         proLoading = mControllerView.findViewById(R.id.loading);
         playButton = mControllerView.findViewById(R.id.start_play);
         playButton.setOnClickListener(this);
-
-        mStatusView = new StatusView(getContext());
+        addControlComponent(new ErrorView<>(getContext()));
     }
 
     @Override
     public void setMediaPlayer(MediaPlayerControl mediaPlayer) {
         super.setMediaPlayer(mediaPlayer);
-        mStatusView.attachMediaPlayer(mMediaPlayer);
     }
 
     @Override
@@ -87,7 +83,6 @@ public class FloatController extends GestureVideoController<MediaPlayerControl> 
                 playButton.setSelected(false);
                 playButton.setVisibility(VISIBLE);
                 proLoading.setVisibility(GONE);
-                mStatusView.dismiss();
                 break;
             case VideoView.STATE_PLAYING:
                 playButton.setSelected(true);
@@ -103,7 +98,6 @@ public class FloatController extends GestureVideoController<MediaPlayerControl> 
                 break;
             case VideoView.STATE_PREPARING:
                 playButton.setVisibility(GONE);
-                mStatusView.dismiss();
                 proLoading.setVisibility(VISIBLE);
                 break;
             case VideoView.STATE_PREPARED:
@@ -111,7 +105,6 @@ public class FloatController extends GestureVideoController<MediaPlayerControl> 
                 proLoading.setVisibility(GONE);
                 break;
             case VideoView.STATE_ERROR:
-                mStatusView.showErrorView(this, 0);
                 proLoading.setVisibility(GONE);
                 playButton.setVisibility(GONE);
                 break;
@@ -129,24 +122,6 @@ public class FloatController extends GestureVideoController<MediaPlayerControl> 
                 removeCallbacks(mShowProgress);
                 break;
         }
-    }
-
-
-    /**
-     * 显示移动网络播放警告
-     */
-    @Override
-    public boolean showNetWarning() {
-        //现在是按父类的逻辑显示移动网络播放警告
-        if (super.showNetWarning()) {
-            mStatusView.showNetWarning(this, 0);
-        }
-        return super.showNetWarning();
-    }
-
-    @Override
-    public void hideNetWarning() {
-        mStatusView.dismiss();
     }
 
     @Override

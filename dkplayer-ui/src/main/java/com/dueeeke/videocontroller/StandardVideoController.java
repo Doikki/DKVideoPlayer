@@ -36,6 +36,7 @@ import com.dueeeke.videoplayer.util.PlayerUtils;
 
 public class StandardVideoController<T extends MediaPlayerControl> extends GestureVideoController<T>
         implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, GestureVideoController.GestureListener {
+
     protected TextView mTotalTime, mCurrTime;
     protected ImageView mFullScreenButton;
     protected LinearLayout mBottomContainer, mTopContainer;
@@ -48,11 +49,7 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
 
     private ProgressBar mBottomProgress;
     private ImageView mPlayButton;
-    private ImageView mStartPlayButton;
     private ProgressBar mLoadingProgress;
-    private ImageView mThumb;
-    private FrameLayout mCompleteContainer;
-    private ImageView mStopFullscreen;
     private TextView mSysTime;//系统当前时间
     private ImageView mBatteryLevel;//电量
     private Animation mShowAnim;
@@ -60,7 +57,6 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
     private BatteryReceiver mBatteryReceiver;
     protected ImageView mRefreshButton;
 
-    protected StatusView mStatusView;
     protected CenterView mCenterView;
 
     /**
@@ -103,19 +99,10 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
         mBackButton.setOnClickListener(this);
         mLockButton = mControllerView.findViewById(R.id.lock);
         mLockButton.setOnClickListener(this);
-        mThumb = mControllerView.findViewById(R.id.thumb);
-        mThumb.setOnClickListener(this);
         mPlayButton = mControllerView.findViewById(R.id.iv_play);
         mPlayButton.setOnClickListener(this);
-        mStartPlayButton = mControllerView.findViewById(R.id.start_play);
         mLoadingProgress = mControllerView.findViewById(R.id.loading);
         mBottomProgress = mControllerView.findViewById(R.id.bottom_progress);
-        ImageView rePlayButton = mControllerView.findViewById(R.id.iv_replay);
-        rePlayButton.setOnClickListener(this);
-        mCompleteContainer = mControllerView.findViewById(R.id.complete_container);
-        mCompleteContainer.setOnClickListener(this);
-        mStopFullscreen = mControllerView.findViewById(R.id.stop_fullscreen);
-        mStopFullscreen.setOnClickListener(this);
         mTitle = mControllerView.findViewById(R.id.title);
         mSysTime = mControllerView.findViewById(R.id.sys_time);
         mBatteryLevel = mControllerView.findViewById(R.id.iv_battery);
@@ -125,8 +112,6 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
 
         setGestureListener(this);
 
-        mStatusView = new StatusView(getContext());
-
         mCenterView = new CenterView(getContext());
         mCenterView.setVisibility(GONE);
         addView(mCenterView);
@@ -135,12 +120,16 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
         mHideAnim.setDuration(300);
         mShowAnim = new AlphaAnimation(0f, 1f);
         mShowAnim.setDuration(300);
+
+        addControlComponent(new ThumbView<T>(getContext()));
+        addControlComponent(new CompleteView<T>(getContext()));
+        addControlComponent(new ErrorView<T>(getContext()));
+        addControlComponent(new NetWarningView<T>(getContext()));
     }
 
     @Override
     public void setMediaPlayer(T mediaPlayer) {
         super.setMediaPlayer(mediaPlayer);
-        mStatusView.attachMediaPlayer(mMediaPlayer);
     }
 
     @Override
@@ -208,8 +197,8 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
         FrameLayout.LayoutParams lblp = (LayoutParams) mLockButton.getLayoutParams();
         int dp24 = PlayerUtils.dp2px(getContext(), 24);
         lblp.setMargins(dp24, 0, dp24, 0);
-        FrameLayout.LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
-        sflp.setMargins(0, 0, 0, 0);
+//        FrameLayout.LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
+//        sflp.setMargins(0, 0, 0, 0);
     }
 
     protected void adjustLandscape() {
@@ -219,8 +208,8 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
         FrameLayout.LayoutParams layoutParams = (LayoutParams) mLockButton.getLayoutParams();
         int dp24 = PlayerUtils.dp2px(getContext(), 24);
         layoutParams.setMargins(dp24 + mPadding, 0, dp24 + mPadding, 0);
-        FrameLayout.LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
-        sflp.setMargins(mPadding, 0, 0, 0);
+//        FrameLayout.LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
+//        sflp.setMargins(mPadding, 0, 0, 0);
     }
 
     protected void adjustReserveLandscape() {
@@ -230,8 +219,8 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
         FrameLayout.LayoutParams layoutParams = (LayoutParams) mLockButton.getLayoutParams();
         int dp24 = PlayerUtils.dp2px(getContext(), 24);
         layoutParams.setMargins(dp24, 0, dp24, 0);
-        FrameLayout.LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
-        sflp.setMargins(0, 0, 0, 0);
+//        FrameLayout.LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
+//        sflp.setMargins(0, 0, 0, 0);
     }
 
     @Override
@@ -277,7 +266,6 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
                 mSysTime.setVisibility(GONE);
                 mBatteryLevel.setVisibility(GONE);
                 mTopContainer.setVisibility(GONE);
-                mStopFullscreen.setVisibility(GONE);
                 break;
             case VideoView.PLAYER_FULL_SCREEN:
                 L.e("PLAYER_FULL_SCREEN");
@@ -292,7 +280,6 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
                 mTitle.setNeedFocus(true);
                 mSysTime.setVisibility(VISIBLE);
                 mBatteryLevel.setVisibility(VISIBLE);
-                mStopFullscreen.setVisibility(VISIBLE);
                 if (mShowing) {
                     mLockButton.setVisibility(VISIBLE);
                     mTopContainer.setVisibility(VISIBLE);
@@ -317,12 +304,8 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
                 mBottomProgress.setSecondaryProgress(0);
                 mVideoProgress.setProgress(0);
                 mVideoProgress.setSecondaryProgress(0);
-                mCompleteContainer.setVisibility(GONE);
                 mBottomProgress.setVisibility(GONE);
                 mLoadingProgress.setVisibility(GONE);
-                mStatusView.dismiss();
-                mStartPlayButton.setVisibility(VISIBLE);
-                mThumb.setVisibility(VISIBLE);
                 break;
             case VideoView.STATE_PLAYING:
                 L.e("STATE_PLAYING");
@@ -330,64 +313,42 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
                 post(mShowProgress);
                 mPlayButton.setSelected(true);
                 mLoadingProgress.setVisibility(GONE);
-                mCompleteContainer.setVisibility(GONE);
-                mThumb.setVisibility(GONE);
-                mStartPlayButton.setVisibility(GONE);
                 break;
             case VideoView.STATE_PAUSED:
                 L.e("STATE_PAUSED");
                 mPlayButton.setSelected(false);
-                mStartPlayButton.setVisibility(GONE);
-                //removeCallbacks(mShowProgress);
                 break;
             case VideoView.STATE_PREPARING:
                 L.e("STATE_PREPARING");
-                mCompleteContainer.setVisibility(GONE);
-                mStartPlayButton.setVisibility(GONE);
-                mStatusView.dismiss();
                 mLoadingProgress.setVisibility(VISIBLE);
-//                mThumb.setVisibility(VISIBLE);
                 break;
             case VideoView.STATE_PREPARED:
                 L.e("STATE_PREPARED");
                 if (!mIsLive) mBottomProgress.setVisibility(VISIBLE);
-//                mLoadingProgress.setVisibility(GONE);
-                mStartPlayButton.setVisibility(GONE);
                 break;
             case VideoView.STATE_ERROR:
                 L.e("STATE_ERROR");
                 removeCallbacks(mFadeOut);
                 hide();
-                mStatusView.showErrorView(this);
                 removeCallbacks(mShowProgress);
-                mStartPlayButton.setVisibility(GONE);
                 mLoadingProgress.setVisibility(GONE);
-                mThumb.setVisibility(GONE);
                 mBottomProgress.setVisibility(GONE);
                 mTopContainer.setVisibility(GONE);
                 break;
             case VideoView.STATE_BUFFERING:
                 L.e("STATE_BUFFERING");
-                mStartPlayButton.setVisibility(GONE);
                 mLoadingProgress.setVisibility(VISIBLE);
-                mThumb.setVisibility(GONE);
                 mPlayButton.setSelected(mMediaPlayer.isPlaying());
                 break;
             case VideoView.STATE_BUFFERED:
                 L.e("STATE_BUFFERED");
                 mLoadingProgress.setVisibility(GONE);
-                mStartPlayButton.setVisibility(GONE);
-                mThumb.setVisibility(GONE);
                 mPlayButton.setSelected(mMediaPlayer.isPlaying());
                 break;
             case VideoView.STATE_PLAYBACK_COMPLETED:
                 L.e("STATE_PLAYBACK_COMPLETED");
                 hide();
                 removeCallbacks(mShowProgress);
-                mStartPlayButton.setVisibility(GONE);
-                mThumb.setVisibility(VISIBLE);
-                mCompleteContainer.setVisibility(VISIBLE);
-                mStopFullscreen.setVisibility(mMediaPlayer.isFullScreen() ? VISIBLE : GONE);
                 mBottomProgress.setVisibility(GONE);
                 mBottomProgress.setProgress(0);
                 mBottomProgress.setSecondaryProgress(0);
@@ -395,23 +356,6 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
                 mIsLocked = false;
                 break;
         }
-    }
-
-    /**
-     * 显示移动网络播放警告
-     */
-    @Override
-    public boolean showNetWarning() {
-        //现在是按父类的逻辑显示移动网络播放警告
-        if (super.showNetWarning()) {
-            mStatusView.showNetWarning(this);
-        }
-        return super.showNetWarning();
-    }
-
-    @Override
-    public void hideNetWarning() {
-        mStatusView.dismiss();
     }
 
     protected void doLockUnlock() {
@@ -585,10 +529,6 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
         } else {
             super.slideToChangePosition(deltaX);
         }
-    }
-
-    public ImageView getThumb() {
-        return mThumb;
     }
 
     @Override

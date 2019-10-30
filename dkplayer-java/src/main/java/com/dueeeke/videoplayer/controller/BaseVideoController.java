@@ -1,5 +1,6 @@
 package com.dueeeke.videoplayer.controller;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -18,15 +19,17 @@ import com.dueeeke.videoplayer.player.VideoViewManager;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Formatter;
+import java.util.List;
 import java.util.Locale;
 
 /**
  * 控制器基类
  * Created by Devlin_n on 2017/4/12.
  */
-
+@SuppressLint("SourceLockedOrientationActivity")
 public abstract class BaseVideoController<T extends MediaPlayerControl> extends FrameLayout
         implements OrientationHelper.OnOrientationChangeListener {
 
@@ -43,6 +46,8 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
     protected OrientationHelper mOrientationHelper;
     private boolean mEnableOrientation;
     protected boolean mFromUser;//是否为用户点击
+
+    private List<IControlComponent<T>> mControlComponents = new ArrayList<>();
 
     public BaseVideoController(@NonNull Context context) {
         this(context, null);
@@ -81,18 +86,28 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
         this.mMediaPlayer = mediaPlayer;
         //开始监听
         mOrientationHelper.setOnOrientationChangeListener(this);
+
+        for (IControlComponent<T> component : mControlComponents) {
+            component.setMediaPlayer(mMediaPlayer);
+        }
     }
 
     /**
      * 显示
      */
-    public void show() {
+    protected void show() {
+        for (IControlComponent<T> component : mControlComponents) {
+            component.show();
+        }
     }
 
     /**
      * 隐藏
      */
-    public void hide() {
+    protected void hide() {
+        for (IControlComponent<T> component : mControlComponents) {
+            component.hide();
+        }
     }
 
     /**
@@ -102,6 +117,9 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
     @CallSuper
     public void setPlayState(int playState) {
         mCurrentPlayState = playState;
+        for (IControlComponent<T> component : mControlComponents) {
+            component.setPlayState(playState);
+        }
         if (playState == VideoView.STATE_IDLE) {
             mOrientationHelper.disable();
         }
@@ -114,6 +132,9 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
     @CallSuper
     public void setPlayerState(int playerState) {
         mCurrentPlayerState = playerState;
+        for (IControlComponent<T> component : mControlComponents) {
+            component.setPlayerState(playerState);
+        }
         switch (playerState) {
             case VideoView.PLAYER_NORMAL:
                 if (mEnableOrientation) {
@@ -138,15 +159,39 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
      *          此处默认根据手机网络类型来决定是否显示，开发者可以重写相关逻辑
      */
     public boolean showNetWarning() {
-        return PlayerUtils.getNetworkType(getContext()) == PlayerUtils.NETWORK_MOBILE
+        boolean isShow = PlayerUtils.getNetworkType(getContext()) == PlayerUtils.NETWORK_MOBILE
                 && !VideoViewManager.instance().playOnMobileNetwork();
+        if (isShow) {
+            for (IControlComponent<T> component : mControlComponents) {
+                component.show();
+            }
+        }
+        return isShow;
     }
 
     /**
      * 隐藏移动网络播放提示
      */
     public void hideNetWarning() {
+        for (IControlComponent<T> f : mControlComponents) {
+            f.hide();
+        }
+    }
 
+    /**
+     * 添加控制组件
+     */
+    public void addControlComponent(IControlComponent<T> component) {
+        mControlComponents.add(component);
+        addView(component.getView());
+    }
+
+    /**
+     * 移除控制组件
+     */
+    public void removeControlComponent(IControlComponent<T> component) {
+        mControlComponents.remove(component);
+        removeView(component.getView());
     }
 
     /**
