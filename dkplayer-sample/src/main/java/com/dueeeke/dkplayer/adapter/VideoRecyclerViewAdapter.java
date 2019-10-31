@@ -5,7 +5,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.dkplayer.interf.OnItemChildClickListener;
+import com.dueeeke.videocontroller.PrepareView;
 
 import java.util.List;
 
@@ -68,20 +68,17 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
 
     public class VideoHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        public ImageView mThumb;
         public int mPosition;
         public FrameLayout mPlayerContainer;
-        public ImageView mStartPlay;
-        public ProgressBar mLoading;
         public TextView mTitle;
+        public ImageView mThumb;
 
         VideoHolder(View itemView) {
             super(itemView);
-            mThumb = itemView.findViewById(R.id.thumb);
-            mStartPlay = itemView.findViewById(R.id.start_play);
             mPlayerContainer = itemView.findViewById(R.id.player_container);
-            mLoading = itemView.findViewById(R.id.loading);
             mTitle = itemView.findViewById(R.id.tv_title);
+            PrepareView prepareView = itemView.findViewById(R.id.prepare_view);
+            mThumb = prepareView.findViewById(R.id.thumb);
             mPlayerContainer.setOnClickListener(this);
             itemView.setTag(this);
         }

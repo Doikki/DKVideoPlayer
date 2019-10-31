@@ -176,8 +176,6 @@ public class PreloadManager {
             task.cancel();
             iterator.remove();
         }
-
-        mExecutorService.shutdownNow();
     }
 
     /**

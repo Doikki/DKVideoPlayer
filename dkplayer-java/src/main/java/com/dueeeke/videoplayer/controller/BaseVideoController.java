@@ -19,22 +19,23 @@ import com.dueeeke.videoplayer.player.VideoViewManager;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Formatter;
-import java.util.List;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * 控制器基类
  * Created by Devlin_n on 2017/4/12.
  */
 @SuppressLint("SourceLockedOrientationActivity")
-public abstract class BaseVideoController<T extends MediaPlayerControl> extends FrameLayout
+public abstract class BaseVideoController extends FrameLayout
         implements OrientationHelper.OnOrientationChangeListener {
 
     protected View mControllerView;//控制器视图
-    protected T mMediaPlayer;//播放器
+    protected MediaPlayerControl mMediaPlayer;//播放器
     protected boolean mShowing;//控制器是否处于显示状态
     protected boolean mIsLocked;
     protected int mDefaultTimeout = 4000;
@@ -47,7 +48,7 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
     private boolean mEnableOrientation;
     protected boolean mFromUser;//是否为用户点击
 
-    private List<IControlComponent<T>> mControlComponents = new ArrayList<>();
+    private LinkedHashMap<IControlComponent, Boolean> mControlComponents = new LinkedHashMap<>();
 
     public BaseVideoController(@NonNull Context context) {
         this(context, null);
@@ -64,7 +65,9 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
     }
 
     protected void initView() {
-        mControllerView = LayoutInflater.from(getContext()).inflate(getLayoutId(), this);
+        if (getLayoutId() != 0) {
+            mControllerView = LayoutInflater.from(getContext()).inflate(getLayoutId(), this);
+        }
         mFormatBuilder = new StringBuilder();
         mFormatter = new Formatter(mFormatBuilder, Locale.getDefault());
         setClickable(true);
@@ -82,13 +85,13 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
      * 重要：此方法用于将{@link VideoView} 和控制器绑定
      */
     @CallSuper
-    public void setMediaPlayer(T mediaPlayer) {
+    public void setMediaPlayer(MediaPlayerControl mediaPlayer) {
         this.mMediaPlayer = mediaPlayer;
         //开始监听
         mOrientationHelper.setOnOrientationChangeListener(this);
 
-        for (IControlComponent<T> component : mControlComponents) {
-            component.setMediaPlayer(mMediaPlayer);
+        for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
+            next.getKey().attach(mediaPlayer);
         }
     }
 
@@ -96,8 +99,8 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
      * 显示
      */
     protected void show() {
-        for (IControlComponent<T> component : mControlComponents) {
-            component.show();
+        for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
+            next.getKey().show();
         }
     }
 
@@ -105,8 +108,8 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
      * 隐藏
      */
     protected void hide() {
-        for (IControlComponent<T> component : mControlComponents) {
-            component.hide();
+        for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
+            next.getKey().hide();
         }
     }
 
@@ -117,11 +120,12 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
     @CallSuper
     public void setPlayState(int playState) {
         mCurrentPlayState = playState;
-        for (IControlComponent<T> component : mControlComponents) {
-            component.setPlayState(playState);
+        for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
+            next.getKey().setPlayState(playState);
         }
         if (playState == VideoView.STATE_IDLE) {
             mOrientationHelper.disable();
+            removeAllPrivateComponents();
         }
     }
 
@@ -132,8 +136,8 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
     @CallSuper
     public void setPlayerState(int playerState) {
         mCurrentPlayerState = playerState;
-        for (IControlComponent<T> component : mControlComponents) {
-            component.setPlayerState(playerState);
+        for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
+            next.getKey().setPlayerState(playerState);
         }
         switch (playerState) {
             case VideoView.PLAYER_NORMAL:
@@ -159,39 +163,54 @@ public abstract class BaseVideoController<T extends MediaPlayerControl> extends 
      *          此处默认根据手机网络类型来决定是否显示，开发者可以重写相关逻辑
      */
     public boolean showNetWarning() {
-        boolean isShow = PlayerUtils.getNetworkType(getContext()) == PlayerUtils.NETWORK_MOBILE
+        return PlayerUtils.getNetworkType(getContext()) == PlayerUtils.NETWORK_MOBILE
                 && !VideoViewManager.instance().playOnMobileNetwork();
-        if (isShow) {
-            for (IControlComponent<T> component : mControlComponents) {
-                component.show();
-            }
-        }
-        return isShow;
-    }
-
-    /**
-     * 隐藏移动网络播放提示
-     */
-    public void hideNetWarning() {
-        for (IControlComponent<T> f : mControlComponents) {
-            f.hide();
-        }
     }
 
     /**
      * 添加控制组件
      */
-    public void addControlComponent(IControlComponent<T> component) {
-        mControlComponents.add(component);
-        addView(component.getView());
+    public void addControlComponent(IControlComponent component) {
+       addControlComponent(component, false);
+    }
+
+    /**
+     * 添加控制组件
+     * @param isPrivate 是否为独有的组件，如果是就不添加到控制器中
+     */
+    public void addControlComponent(IControlComponent component, boolean isPrivate) {
+        mControlComponents.put(component, isPrivate);
+        if (mMediaPlayer != null) {
+            component.attach(mMediaPlayer);
+        }
+        if (!isPrivate) {
+            addView(component.getView());
+        }
     }
 
     /**
      * 移除控制组件
      */
-    public void removeControlComponent(IControlComponent<T> component) {
-        mControlComponents.remove(component);
+    public void removeControlComponent(IControlComponent component) {
         removeView(component.getView());
+        mControlComponents.remove(component);
+    }
+
+    public void removeAllControlComponent() {
+        for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
+            removeView(next.getKey().getView());
+        }
+        mControlComponents.clear();
+    }
+
+    public void removeAllPrivateComponents() {
+        Iterator<Map.Entry<IControlComponent, Boolean>> it = mControlComponents.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<IControlComponent, Boolean> next = it.next();
+            if (next.getValue()) {
+                it.remove();
+            }
+        }
     }
 
     /**

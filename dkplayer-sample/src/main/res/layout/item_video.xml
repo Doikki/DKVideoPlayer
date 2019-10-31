@@ -13,29 +13,10 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintDimensionRatio="16:9">
 
-        <ImageView
-            android:id="@+id/thumb"
+        <com.dueeeke.videocontroller.PrepareView
+            android:id="@+id/prepare_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"/>
-
-        <ImageView
-            android:id="@+id/start_play"
-            android:layout_width="@dimen/dkplayer_play_btn_size"
-            android:layout_height="@dimen/dkplayer_play_btn_size"
-            android:layout_gravity="center"
-            android:background="@drawable/dkplayer_shape_play_bg"
-            android:padding="@dimen/dkplayer_default_spacing"
-            android:src="@drawable/dkplayer_selector_play_button" />
-
-        <ProgressBar
-            android:id="@+id/loading"
-            android:layout_width="@dimen/dkplayer_play_btn_size"
-            android:layout_height="@dimen/dkplayer_play_btn_size"
-            android:layout_gravity="center"
-            android:indeterminateDrawable="@drawable/dkplayer_progress_loading"
-            android:visibility="gone"
-            tools:visibility="visible" />
+            android:layout_height="match_parent"/>
 
     </FrameLayout>
 

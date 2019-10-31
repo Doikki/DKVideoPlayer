@@ -24,7 +24,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.dueeeke.videoplayer.controller.GestureVideoController;
-import com.dueeeke.videoplayer.controller.MediaPlayerControl;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.L;
 import com.dueeeke.videoplayer.util.PlayerUtils;
@@ -34,7 +33,7 @@ import com.dueeeke.videoplayer.util.PlayerUtils;
  * Created by Devlin_n on 2017/4/7.
  */
 
-public class StandardVideoController<T extends MediaPlayerControl> extends GestureVideoController<T>
+public class StandardVideoController extends GestureVideoController
         implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, GestureVideoController.GestureListener {
 
     protected TextView mTotalTime, mCurrTime;
@@ -120,16 +119,14 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
         mHideAnim.setDuration(300);
         mShowAnim = new AlphaAnimation(0f, 1f);
         mShowAnim.setDuration(300);
-
-        addControlComponent(new ThumbView<T>(getContext()));
-        addControlComponent(new CompleteView<T>(getContext()));
-        addControlComponent(new ErrorView<T>(getContext()));
-        addControlComponent(new NetWarningView<T>(getContext()));
     }
 
-    @Override
-    public void setMediaPlayer(T mediaPlayer) {
-        super.setMediaPlayer(mediaPlayer);
+    public void addDefaultControlComponent() {
+        addControlComponent(new CompleteView(getContext()));
+        addControlComponent(new ErrorView(getContext()));
+        PrepareView prepareView = new PrepareView(getContext());
+        prepareView.setClickStart();
+        addControlComponent(prepareView);
     }
 
     @Override
@@ -312,7 +309,6 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
                 //开始刷新进度
                 post(mShowProgress);
                 mPlayButton.setSelected(true);
-                mLoadingProgress.setVisibility(GONE);
                 break;
             case VideoView.STATE_PAUSED:
                 L.e("STATE_PAUSED");
@@ -320,7 +316,6 @@ public class StandardVideoController<T extends MediaPlayerControl> extends Gestu
                 break;
             case VideoView.STATE_PREPARING:
                 L.e("STATE_PREPARING");
-                mLoadingProgress.setVisibility(VISIBLE);
                 break;
             case VideoView.STATE_PREPARED:
                 L.e("STATE_PREPARED");

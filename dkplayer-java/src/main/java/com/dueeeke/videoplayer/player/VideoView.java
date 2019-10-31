@@ -94,6 +94,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
     public static final int STATE_PLAYBACK_COMPLETED = 5;
     public static final int STATE_BUFFERING = 6;
     public static final int STATE_BUFFERED = 7;
+    public static final int STATE_START_FAIL = 8;//开始播放失败
     protected int mCurrentPlayState = STATE_IDLE;//当前播放器的状态
 
     public static final int PLAYER_NORMAL = 10;        // 普通播放器
@@ -102,7 +103,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
     protected int mCurrentPlayerState = PLAYER_NORMAL;
 
     /**
-     * 监听系统中其他播放的音频焦点改变，当然也包括自己的App内
+     * 监听系统中音频焦点改变，见{@link #setEnableAudioFocus(boolean)}
      */
     protected boolean mEnableAudioFocus;
     @Nullable
@@ -124,12 +125,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
      */
     protected boolean mIsLooping;
 
-    /**
-     * 支持多开，注意这里的多开不仅仅是指同一个页面需要同时存在多个播放器，也适用于Activity和Activity之间以及Activity
-     * 和Fragment之间，甚至是Fragment和Fragment之间的场景。
-     */
-    protected boolean mEnableParallelPlay;
-
     public VideoView(@NonNull Context context) {
         this(context, null);
     }
@@ -144,7 +139,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
         //读取全局配置
         VideoViewConfig config = VideoViewManager.getConfig();
         mEnableAudioFocus = config.mEnableAudioFocus;
-        mEnableParallelPlay = config.mEnableParallelPlay;
         mProgressManager = config.mProgressManager;
         mPlayerFactory = config.mPlayerFactory;
         mCurrentScreenScaleType = config.mScreenScaleType;
@@ -153,7 +147,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
         //读取xml中的配置，并综合全局配置
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.VideoView);
         mEnableAudioFocus = a.getBoolean(R.styleable.VideoView_enableAudioFocus, mEnableAudioFocus);
-        mEnableParallelPlay = a.getBoolean(R.styleable.VideoView_enableParallelPlay, mEnableParallelPlay);
         mIsLooping = a.getBoolean(R.styleable.VideoView_looping, false);
         mCurrentScreenScaleType = a.getInt(R.styleable.VideoView_screenScaleType, mCurrentScreenScaleType);
         a.recycle();
@@ -189,6 +182,8 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
             setKeepScreenOn(true);
             if (mAudioFocusHelper != null)
                 mAudioFocusHelper.requestFocus();
+        } else {
+            setPlayState(STATE_START_FAIL);
         }
     }
 
@@ -197,9 +192,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
      * @return 是否成功开始播放
      */
     protected boolean startPlay() {
-        if (!mEnableParallelPlay) {
-            VideoViewManager.instance().release();
-        }
         VideoViewManager.instance().addVideoView(this);
 
         //如果要显示移动网络提示则不继续播放
@@ -367,13 +359,19 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
      */
     public void release() {
         VideoViewManager.instance().removeVideoView(this);
-        if (mVideoController != null) {
-            mVideoController.hideNetWarning();
-        }
         if (!isInIdleState()) {
-            saveProgress();
-            mMediaPlayer.release();
-            mMediaPlayer = null;
+            //释放播放器
+            if (mMediaPlayer != null) {
+                mMediaPlayer.release();
+                mMediaPlayer = null;
+            }
+            //释放renderView
+            if (mRenderView != null) {
+                mPlayerContainer.removeView(mRenderView.getView());
+                mRenderView.release();
+                mRenderView = null;
+            }
+            //释放Assets资源
             if (mAssetFileDescriptor != null) {
                 try {
                     mAssetFileDescriptor.close();
@@ -381,15 +379,18 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
                     e.printStackTrace();
                 }
             }
-            setKeepScreenOn(false);
+            //关闭AudioFocus监听
             if (mAudioFocusHelper != null) {
                 mAudioFocusHelper.abandonFocus();
+                mAudioFocusHelper = null;
             }
-            if (mRenderView != null) {
-                mPlayerContainer.removeView(mRenderView.getView());
-                mRenderView.release();
-            }
+            //关闭屏幕常亮
+            setKeepScreenOn(false);
+            //保存播放进度
+            saveProgress();
+            //重置播放进度
             mCurrentPosition = 0;
+            //切换转态
             setPlayState(STATE_IDLE);
         }
     }
@@ -416,11 +417,10 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
     }
 
     /**
-     * 是否处于未播放转态，此时{@link #mMediaPlayer}为null
+     * 是否处于未播放转态
      */
     protected boolean isInIdleState() {
-        return mMediaPlayer == null
-                || mCurrentPlayState == STATE_IDLE;
+        return mCurrentPlayState == STATE_IDLE;
     }
 
     /**
@@ -653,7 +653,8 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
     }
 
     /**
-     * 是否开启AudioFocus监听， 默认开启
+     * 是否开启AudioFocus监听， 默认开启，用于监听其它地方是否获取音频焦点，如果有其它地方获取了
+     * 音频焦点，此播放器将做出相应反应，具体实现见{@link AudioFocusHelper}
      */
     public void setEnableAudioFocus(boolean enableAudioFocus) {
         mEnableAudioFocus = enableAudioFocus;
@@ -671,9 +672,10 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
 
     /**
      * 支持多开
+     * @deprecated 此api已经无效，你需要自己去控制同时只有一个播放器在播放的效果
      */
+    @Deprecated
     public void setEnableParallelPlay(boolean enableParallelPlay) {
-        mEnableParallelPlay = enableParallelPlay;
     }
 
     /**

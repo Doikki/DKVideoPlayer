@@ -22,7 +22,7 @@ import com.dueeeke.videoplayer.player.VideoView;
  * Created by Devlin_n on 2017/6/1.
  */
 
-public class FloatController extends GestureVideoController<MediaPlayerControl> implements View.OnClickListener {
+public class FloatController extends GestureVideoController implements View.OnClickListener {
 
 
     private ProgressBar proLoading;
@@ -50,7 +50,7 @@ public class FloatController extends GestureVideoController<MediaPlayerControl> 
         proLoading = mControllerView.findViewById(R.id.loading);
         playButton = mControllerView.findViewById(R.id.start_play);
         playButton.setOnClickListener(this);
-        addControlComponent(new ErrorView<>(getContext()));
+        addControlComponent(new ErrorView(getContext()));
     }
 
     @Override

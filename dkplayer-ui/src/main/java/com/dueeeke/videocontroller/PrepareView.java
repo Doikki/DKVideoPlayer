@@ -14,34 +14,53 @@ import androidx.annotation.Nullable;
 import com.dueeeke.videoplayer.controller.IControlComponent;
 import com.dueeeke.videoplayer.controller.MediaPlayerControl;
 import com.dueeeke.videoplayer.player.VideoView;
+import com.dueeeke.videoplayer.player.VideoViewManager;
 
-public class ThumbView<T extends MediaPlayerControl> extends FrameLayout implements IControlComponent<T> {
+/**
+ * 准备播放界面
+ */
+public class PrepareView extends FrameLayout implements IControlComponent {
 
-    private T mMediaPlayer;
+    private MediaPlayerControl mMediaPlayer;
     
     private ImageView mThumb;
     private ImageView mStartPlay;
     private ProgressBar mLoading;
+    private FrameLayout mNetWarning;
 
-    public ThumbView(@NonNull Context context) {
+    public PrepareView(@NonNull Context context) {
         super(context);
     }
 
-    public ThumbView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public PrepareView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public ThumbView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public PrepareView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
     
     {
-        LayoutInflater.from(getContext()).inflate(R.layout.dkplayer_layout_thumb_view, this, true);
+        LayoutInflater.from(getContext()).inflate(R.layout.dkplayer_layout_prepare_view, this, true);
         mThumb = findViewById(R.id.thumb);
         mStartPlay = findViewById(R.id.start_play);
         mLoading = findViewById(R.id.loading);
+        mNetWarning = findViewById(R.id.net_warning_layout);
+        findViewById(R.id.status_btn).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setVisibility(GONE);
+                VideoViewManager.instance().setPlayOnMobileNetwork(true);
+                mMediaPlayer.start();
+            }
+        });
+    }
 
-        this.setOnClickListener(new OnClickListener() {
+    /**
+     * 设置点击此界面开始播放
+     */
+    public void setClickStart() {
+        setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 mMediaPlayer.start();
@@ -63,8 +82,10 @@ public class ThumbView<T extends MediaPlayerControl> extends FrameLayout impleme
     public void setPlayState(int playState) {
         switch (playState) {
             case VideoView.STATE_PREPARING:
+                bringToFront();
                 setVisibility(VISIBLE);
                 mStartPlay.setVisibility(View.GONE);
+                mNetWarning.setVisibility(GONE);
                 mLoading.setVisibility(View.VISIBLE);
                 break;
             case VideoView.STATE_PLAYING:
@@ -73,9 +94,16 @@ public class ThumbView<T extends MediaPlayerControl> extends FrameLayout impleme
                 break;
             case VideoView.STATE_IDLE:
                 setVisibility(VISIBLE);
+                bringToFront();
                 mLoading.setVisibility(View.GONE);
+                mNetWarning.setVisibility(GONE);
                 mStartPlay.setVisibility(View.VISIBLE);
                 mThumb.setVisibility(View.VISIBLE);
+                break;
+            case VideoView.STATE_START_FAIL:
+                setVisibility(VISIBLE);
+                mNetWarning.setVisibility(VISIBLE);
+                mNetWarning.bringToFront();
                 break;
         }
     }
@@ -86,7 +114,7 @@ public class ThumbView<T extends MediaPlayerControl> extends FrameLayout impleme
     }
 
     @Override
-    public void setMediaPlayer(T mediaPlayer) {
+    public void attach(MediaPlayerControl mediaPlayer) {
         mMediaPlayer = mediaPlayer;
     }
 

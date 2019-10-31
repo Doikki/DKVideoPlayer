@@ -14,7 +14,6 @@ import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.interf.ControllerListener;
 import com.dueeeke.videocontroller.ErrorView;
 import com.dueeeke.videoplayer.controller.BaseVideoController;
-import com.dueeeke.videoplayer.controller.MediaPlayerControl;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 
@@ -23,7 +22,7 @@ import com.dueeeke.videoplayer.util.PlayerUtils;
  * Created by Devlin_n on 2017/4/12.
  */
 
-public class AdController extends BaseVideoController<MediaPlayerControl> implements View.OnClickListener {
+public class AdController extends BaseVideoController implements View.OnClickListener {
     protected TextView adTime, adDetail;
     protected ImageView back, volume, fullScreen, playButton;
     protected ControllerListener listener;
@@ -65,7 +64,7 @@ public class AdController extends BaseVideoController<MediaPlayerControl> implem
             }
         });
 
-        addControlComponent(new ErrorView<>(getContext()));
+        addControlComponent(new ErrorView(getContext()));
 
     }
 

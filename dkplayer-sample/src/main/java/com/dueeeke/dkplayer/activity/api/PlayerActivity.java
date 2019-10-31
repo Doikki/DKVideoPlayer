@@ -5,9 +5,13 @@ import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.activity.DebugActivity;
 import com.dueeeke.dkplayer.util.IntentKeys;
+import com.dueeeke.videocontroller.CompleteView;
+import com.dueeeke.videocontroller.ErrorView;
+import com.dueeeke.videocontroller.PrepareView;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.VideoView;
@@ -19,6 +23,8 @@ import com.dueeeke.videoplayer.util.L;
  */
 
 public class PlayerActivity extends DebugActivity {
+
+    private static final String THUMB = "https://cms-bucket.nosdn.127.net/eb411c2810f04ffa8aaafc42052b233820180418095416.jpeg";
 
     @Override
     protected int getLayoutResId() {
@@ -35,6 +41,13 @@ public class PlayerActivity extends DebugActivity {
             StandardVideoController controller = new StandardVideoController(this);
             //根据屏幕方向自动进入/退出全屏
             controller.setEnableOrientation(true);
+            PrepareView prepareView = new PrepareView(this);//准备播放界面
+            ImageView thumb = prepareView.findViewById(R.id.thumb);//封面图
+            Glide.with(this).load(THUMB).into(thumb);
+            controller.addControlComponent(prepareView);
+            controller.addControlComponent(new CompleteView(this));//自动完成播放界面
+            controller.addControlComponent(new ErrorView(this));//错误界面
+
             boolean isLive = intent.getBooleanExtra("isLive", false);
             if (isLive) {
                 controller.setLive();

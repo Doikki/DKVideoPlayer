@@ -31,18 +31,18 @@ public class ParallelPlayActivity extends AppCompatActivity {
         VideoView player1 = findViewById(R.id.player_1);
         player1.setUrl(VOD_URL);
 
-        //这两项必须设置
+        //必须设置
         player1.setEnableAudioFocus(false);
-        player1.setEnableParallelPlay(true);
         StandardVideoController controller1 = new StandardVideoController(this);
+        controller1.addDefaultControlComponent();
         player1.setVideoController(controller1);
 
         VideoView player2 = findViewById(R.id.player_2);
         player2.setUrl(VOD_URL);
-        //这两项必须设置
+        //必须设置
         player2.setEnableAudioFocus(false);
-        player2.setEnableParallelPlay(true);
         StandardVideoController controller2 = new StandardVideoController(this);
+        controller2.addDefaultControlComponent();
         player2.setVideoController(controller2);
     }
 

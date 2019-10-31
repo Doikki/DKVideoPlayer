@@ -102,7 +102,9 @@ public class VideoViewConfig {
 
         /**
          * 支持多开
+         * @deprecated 此api已经无效，你需要自己去控制同时只有一个VideoView在播放的效果
          */
+        @Deprecated
         public Builder setEnableParallelPlay(boolean enableParallelPlay) {
             mEnableParallelPlay = enableParallelPlay;
             return this;

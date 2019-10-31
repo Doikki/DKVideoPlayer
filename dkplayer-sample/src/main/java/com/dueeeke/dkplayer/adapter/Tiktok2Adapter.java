@@ -1,20 +1,21 @@
 package com.dueeeke.dkplayer.adapter;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.viewpager.widget.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.viewpager.widget.PagerAdapter;
 
 import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.bean.TiktokBean;
 import com.dueeeke.dkplayer.util.cache.PreloadManager;
-import com.dueeeke.dkplayer.widget.controller.TikTokController;
-import com.dueeeke.videoplayer.player.VideoView;
+import com.dueeeke.dkplayer.widget.TikTokView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,20 +93,17 @@ public class Tiktok2Adapter extends PagerAdapter {
      */
     public static class ViewHolder {
 
-        public TikTokController mTikTokController;
-        public VideoView mVideoView;
         public int mPosition;
         public TextView mTitle;//标题
         public ImageView mThumb;//封面图
+        public TikTokView mTikTokView;
+        public FrameLayout mPlayerContainer;
 
         ViewHolder(View itemView) {
-            mVideoView = itemView.findViewById(R.id.video_view);
-            mVideoView.setLooping(true);
-            mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_CENTER_CROP);
-            mTikTokController = new TikTokController(itemView.getContext());
-            mVideoView.setVideoController(mTikTokController);
-            mTitle = mTikTokController.findViewById(R.id.tv_title);
-            mThumb = mTikTokController.findViewById(R.id.iv_thumb);
+            mTikTokView = itemView.findViewById(R.id.tiktok_View);
+            mTitle = mTikTokView.findViewById(R.id.tv_title);
+            mThumb = mTikTokView.findViewById(R.id.iv_thumb);
+            mPlayerContainer = itemView.findViewById(R.id.container);
             itemView.setTag(this);
         }
     }

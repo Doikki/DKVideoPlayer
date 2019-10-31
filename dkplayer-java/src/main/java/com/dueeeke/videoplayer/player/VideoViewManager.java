@@ -70,9 +70,16 @@ public class VideoViewManager {
         return mVideoViews;
     }
 
-    @Deprecated
-    public void releaseVideoPlayer() {
-        release();
+    /**
+     * 获取最后一个添加到VideoViewManager的VideoView
+     * 一般来说此VideoView就是正在播放的那个
+     */
+    public VideoView getLast() {
+        if (mVideoViews.size() > 0) {
+            return mVideoViews.get(mVideoViews.size() - 1);
+        } else {
+            return null;
+        }
     }
 
     public void pause() {

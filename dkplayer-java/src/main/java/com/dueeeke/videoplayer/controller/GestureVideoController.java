@@ -20,7 +20,7 @@ import com.dueeeke.videoplayer.util.PlayerUtils;
  * Created by xinyu on 2018/1/6.
  */
 
-public abstract class GestureVideoController<T extends MediaPlayerControl> extends BaseVideoController<T> implements
+public abstract class GestureVideoController extends BaseVideoController implements
         GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener, View.OnTouchListener {
 
     protected GestureDetector mGestureDetector;

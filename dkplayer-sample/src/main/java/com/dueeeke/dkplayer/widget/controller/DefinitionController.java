@@ -3,10 +3,6 @@ package com.dueeeke.dkplayer.widget.controller;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import androidx.annotation.AttrRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -15,6 +11,11 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+
+import androidx.annotation.AttrRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.interf.DefinitionMediaPlayerControl;
@@ -34,7 +35,7 @@ import java.util.Map;
  * Created by Devlin_n on 2018/4/16.
  */
 
-public class DefinitionController extends StandardVideoController<DefinitionMediaPlayerControl> {
+public class DefinitionController extends StandardVideoController {
     protected TextView multiRate;
     //    private PopupMenu mPopupMenu;
     private PopupWindow mPopupWindow;
@@ -109,7 +110,7 @@ public class DefinitionController extends StandardVideoController<DefinitionMedi
     protected int setProgress() {
         if (multiRate != null && TextUtils.isEmpty(multiRate.getText())) {
             L.d("multiRate");
-            LinkedHashMap<String, String> multiRateData = mMediaPlayer.getDefinitionData();
+            LinkedHashMap<String, String> multiRateData = ((DefinitionMediaPlayerControl)mMediaPlayer).getDefinitionData();
             if (multiRateData == null) return super.setProgress();
             mRateStr = new ArrayList<>();
             int index = 0;
@@ -140,7 +141,7 @@ public class DefinitionController extends StandardVideoController<DefinitionMedi
             ((TextView) mPopLayout.getChildAt(currentIndex)).setTextColor(Color.BLACK);
             ((TextView) mPopLayout.getChildAt(index)).setTextColor(ContextCompat.getColor(getContext(), R.color.theme_color));
             multiRate.setText(mRateStr.get(index));
-            mMediaPlayer.switchDefinition(mRateStr.get(index));
+            ((DefinitionMediaPlayerControl)mMediaPlayer).switchDefinition(mRateStr.get(index));
             mPopupWindow.dismiss();
             hide();
             currentIndex = index;

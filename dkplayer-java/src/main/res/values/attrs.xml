@@ -3,7 +3,6 @@
     <declare-styleable name="VideoView">
         <attr name="looping" format="boolean"/>
         <attr name="enableAudioFocus" format="boolean"/>
-        <attr name="enableParallelPlay" format="boolean"/>
 
         <attr name="screenScaleType" format="dimension">
             <enum name="type_default" value="0"/>

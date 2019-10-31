@@ -35,6 +35,7 @@ public class PlayRawAssetsActivity extends BaseActivity {
         super.initView();
         mVideoView = findViewById(R.id.player);
         StandardVideoController controller = new StandardVideoController(this);
+        controller.addDefaultControlComponent();
         mVideoView.setVideoController(controller);
     }
 

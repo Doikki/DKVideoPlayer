@@ -15,16 +15,15 @@ import com.dueeeke.videoplayer.controller.MediaPlayerControl;
 import com.dueeeke.videoplayer.player.VideoView;
 
 /**
- * 错误提示
+ * 播放出错提示界面
  * Created by Devlin_n on 2017/4/13.
  */
-
-public class ErrorView<T extends MediaPlayerControl> extends LinearLayout implements IControlComponent<T> {
+public class ErrorView extends LinearLayout implements IControlComponent {
 
     private float mDownX;
     private float mDownY;
 
-    private T mMediaPlayer;
+    private MediaPlayerControl mMediaPlayer;
 
     public ErrorView(Context context) {
         this(context, null);
@@ -87,6 +86,7 @@ public class ErrorView<T extends MediaPlayerControl> extends LinearLayout implem
     @Override
     public void setPlayState(int playState) {
         if (playState == VideoView.STATE_ERROR) {
+            bringToFront();
             setVisibility(VISIBLE);
         } else if (playState == VideoView.STATE_IDLE) {
             setVisibility(GONE);
@@ -99,7 +99,7 @@ public class ErrorView<T extends MediaPlayerControl> extends LinearLayout implem
     }
 
     @Override
-    public void setMediaPlayer(T mediaPlayer) {
+    public void attach(MediaPlayerControl mediaPlayer) {
         mMediaPlayer = mediaPlayer;
     }
 

@@ -2,7 +2,7 @@ package com.dueeeke.videoplayer.controller;
 
 import android.view.View;
 
-public interface IControlComponent<T extends MediaPlayerControl> {
+public interface IControlComponent {
 
     void show();
 
@@ -12,7 +12,7 @@ public interface IControlComponent<T extends MediaPlayerControl> {
 
     void setPlayerState(int playerState);
 
-    void setMediaPlayer(T mediaPlayer);
+    void attach(MediaPlayerControl mediaPlayer);
 
     View getView();
 

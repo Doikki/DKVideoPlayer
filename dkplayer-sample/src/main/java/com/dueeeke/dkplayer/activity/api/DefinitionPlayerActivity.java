@@ -2,8 +2,8 @@ package com.dueeeke.dkplayer.activity.api;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.activity.BaseActivity;
-import com.dueeeke.dkplayer.widget.controller.DefinitionController;
 import com.dueeeke.dkplayer.widget.videoview.DefinitionVideoView;
+import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.ijk.IjkPlayer;
 import com.dueeeke.videoplayer.player.PlayerFactory;
 
@@ -33,7 +33,8 @@ public class DefinitionPlayerActivity extends BaseActivity<DefinitionVideoView<I
         super.initView();
         mVideoView = findViewById(R.id.player);
 
-        DefinitionController controller = new DefinitionController(this);
+        StandardVideoController controller = new StandardVideoController(this);
+        controller.addDefaultControlComponent();
         controller.setTitle("韩雪：积极的悲观主义者");
 //        mVideoView.setCustomMediaPlayer(new IjkPlayer(this) {
 //            @Override

@@ -1,6 +1,8 @@
 package com.dueeeke.dkplayer.fragment.list;
 
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 
 import androidx.viewpager.widget.ViewPager;
 
@@ -12,6 +14,7 @@ import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.dkplayer.util.cache.PreloadManager;
 import com.dueeeke.dkplayer.util.cache.ProxyVideoCacheManager;
 import com.dueeeke.dkplayer.widget.VerticalViewPager;
+import com.dueeeke.dkplayer.widget.controller.TikTokController;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.L;
 
@@ -33,10 +36,8 @@ public class TikTokFragment extends BaseFragment {
      */
     private boolean mIsReverseScroll;
 
-    /**
-     * 当前正在播放的VideoView
-     */
-    private VideoView mCurrentVideoView;
+    private VideoView mVideoView;
+    private TikTokController mController;
 
     @Override
     protected int getLayoutResId() {
@@ -47,7 +48,17 @@ public class TikTokFragment extends BaseFragment {
     protected void initViews() {
         super.initViews();
         initViewPager();
+        initVideoView();
         mPreloadManager = PreloadManager.getInstance(getContext());
+    }
+
+    private void initVideoView() {
+        mVideoView = new VideoView(getActivity());
+        mVideoView.setLooping(true);
+        mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_CENTER_CROP);
+
+        mController = new TikTokController(getActivity());
+        mVideoView.setVideoController(mController);
     }
 
     private void initViewPager() {
@@ -95,16 +106,26 @@ public class TikTokFragment extends BaseFragment {
             View itemView = mViewPager.getChildAt(i);
             Tiktok2Adapter.ViewHolder viewHolder = (Tiktok2Adapter.ViewHolder) itemView.getTag();
             if (viewHolder.mPosition == position) {
-                VideoView videoView = itemView.findViewById(R.id.video_view);
+                mVideoView.release();
+                removeVideoViewFromParent();
+
                 TiktokBean tiktokBean = mVideoList.get(position);
                 String playUrl = mPreloadManager.getPlayUrl(tiktokBean.videoDownloadUrl);
                 L.i("startPlay: " + "position: " + position + "  url: " + playUrl);
-                videoView.setUrl(playUrl);
-                videoView.start();
+                mVideoView.setUrl(playUrl);
+                mController.addControlComponent(viewHolder.mTikTokView, true);
+                viewHolder.mPlayerContainer.addView(mVideoView, 0);
+                mVideoView.start();
                 mPlayingPosition = position;
-                mCurrentVideoView = videoView;
                 break;
             }
+        }
+    }
+
+    private void removeVideoViewFromParent() {
+        ViewParent parent = mVideoView.getParent();
+        if (parent instanceof ViewGroup) {
+            ((ViewGroup) parent).removeView(mVideoView);
         }
     }
 
@@ -138,25 +159,19 @@ public class TikTokFragment extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
-        if (mCurrentVideoView != null) {
-            mCurrentVideoView.pause();
-        }
+        mVideoView.pause();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (mCurrentVideoView != null) {
-            mCurrentVideoView.start();
-        }
+        mVideoView.resume();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mCurrentVideoView != null) {
-            mCurrentVideoView.release();
-        }
+        mVideoView.release();
         mPreloadManager.removeAllPreloadTask();
 
         //清除缓存，实际使用可以不需要清除，这里为了方便测试

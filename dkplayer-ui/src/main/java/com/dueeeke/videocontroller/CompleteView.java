@@ -17,9 +17,12 @@ import com.dueeeke.videoplayer.controller.MediaPlayerControl;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 
-public class CompleteView<T extends MediaPlayerControl> extends FrameLayout implements IControlComponent<T> {
+/**
+ * 自动播放完成界面
+ */
+public class CompleteView extends FrameLayout implements IControlComponent {
 
-    private T mMediaPlayer;
+    private MediaPlayerControl mMediaPlayer;
 
     private ImageView mStopFullscreen;
 
@@ -90,7 +93,7 @@ public class CompleteView<T extends MediaPlayerControl> extends FrameLayout impl
     }
 
     @Override
-    public void setMediaPlayer(T mediaPlayer) {
+    public void attach(MediaPlayerControl mediaPlayer) {
         mMediaPlayer = mediaPlayer;
     }
 

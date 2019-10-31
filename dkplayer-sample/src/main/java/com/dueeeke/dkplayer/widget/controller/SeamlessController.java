@@ -11,9 +11,8 @@ import androidx.annotation.Nullable;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videocontroller.ErrorView;
 import com.dueeeke.videoplayer.controller.BaseVideoController;
-import com.dueeeke.videoplayer.controller.MediaPlayerControl;
 
-public class SeamlessController extends BaseVideoController<MediaPlayerControl> {
+public class SeamlessController extends BaseVideoController {
 
     private ImageView mMute;
 
@@ -47,7 +46,7 @@ public class SeamlessController extends BaseVideoController<MediaPlayerControl> 
             }
         });
 
-        addControlComponent(new ErrorView<>(getContext()));
+        addControlComponent(new ErrorView(getContext()));
     }
 
     private void toggleMute() {

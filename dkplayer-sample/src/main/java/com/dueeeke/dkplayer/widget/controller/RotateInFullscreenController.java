@@ -71,6 +71,7 @@ public class RotateInFullscreenController extends StandardVideoController {
                 break;
             case VideoView.PLAYER_NORMAL:
                 mOrientationHelper.disable();
+                hide();
                 break;
         }
     }
