@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.dueeeke.dkplayer.R;
-import com.dueeeke.videocontroller.ErrorView;
+import com.dueeeke.videocontroller.component.ErrorView;
 import com.dueeeke.videoplayer.controller.BaseVideoController;
 
 public class SeamlessController extends BaseVideoController {

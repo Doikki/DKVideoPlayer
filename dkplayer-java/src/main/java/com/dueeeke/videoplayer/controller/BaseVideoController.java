@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.OrientationEventListener;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -32,7 +33,7 @@ import java.util.Map;
  */
 @SuppressLint("SourceLockedOrientationActivity")
 public abstract class BaseVideoController extends FrameLayout
-        implements OrientationHelper.OnOrientationChangeListener {
+        implements OrientationHelper.OnOrientationChangeListener, CutoutAdaptHelper.Callback {
 
     protected View mControllerView;//控制器视图
     protected MediaPlayerControl mMediaPlayer;//播放器
@@ -46,7 +47,9 @@ public abstract class BaseVideoController extends FrameLayout
 
     protected OrientationHelper mOrientationHelper;
     private boolean mEnableOrientation;
-    protected boolean mFromUser;//是否为用户点击
+
+    @Nullable
+    private CutoutAdaptHelper mCutoutAdaptHelper;
 
     private LinkedHashMap<IControlComponent, Boolean> mControlComponents = new LinkedHashMap<>();
 
@@ -74,6 +77,10 @@ public abstract class BaseVideoController extends FrameLayout
         setFocusable(true);
         mOrientationHelper = new OrientationHelper(getContext().getApplicationContext());
         mEnableOrientation = VideoViewManager.getConfig().mEnableOrientation;
+        Activity activity = PlayerUtils.scanForActivity(getContext());
+        if (activity != null) {
+            mCutoutAdaptHelper = new CutoutAdaptHelper(activity, this);
+        }
     }
 
     /**
@@ -121,7 +128,7 @@ public abstract class BaseVideoController extends FrameLayout
     public void setPlayState(int playState) {
         mCurrentPlayState = playState;
         for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
-            next.getKey().setPlayState(playState);
+            next.getKey().onPlayStateChange(playState);
         }
         if (playState == VideoView.STATE_IDLE) {
             mOrientationHelper.disable();
@@ -137,7 +144,10 @@ public abstract class BaseVideoController extends FrameLayout
     public void setPlayerState(int playerState) {
         mCurrentPlayerState = playerState;
         for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
-            next.getKey().setPlayerState(playerState);
+            next.getKey().onPlayerStateChange(playerState);
+        }
+        if (mCutoutAdaptHelper != null) {
+            mCutoutAdaptHelper.onPlayerStateChanged(playerState);
         }
         switch (playerState) {
             case VideoView.PLAYER_NORMAL:
@@ -159,8 +169,9 @@ public abstract class BaseVideoController extends FrameLayout
 
     /**
      * 显示移动网络播放提示
+     *
      * @return 返回显示移动网络播放提示的条件，false:不显示, true显示
-     *          此处默认根据手机网络类型来决定是否显示，开发者可以重写相关逻辑
+     * 此处默认根据手机网络类型来决定是否显示，开发者可以重写相关逻辑
      */
     public boolean showNetWarning() {
         return PlayerUtils.getNetworkType(getContext()) == PlayerUtils.NETWORK_MOBILE
@@ -171,11 +182,12 @@ public abstract class BaseVideoController extends FrameLayout
      * 添加控制组件
      */
     public void addControlComponent(IControlComponent component) {
-       addControlComponent(component, false);
+        addControlComponent(component, false);
     }
 
     /**
      * 添加控制组件
+     *
      * @param isPrivate 是否为独有的组件，如果是就不添加到控制器中
      */
     public void addControlComponent(IControlComponent component, boolean isPrivate) {
@@ -230,32 +242,30 @@ public abstract class BaseVideoController extends FrameLayout
      */
     protected void doStartStopFullScreen() {
         if (mMediaPlayer.isFullScreen()) {
-            stopFullScreenFromUser();
+            stopFullScreen();
         } else {
-            startFullScreenFromUser();
+            startFullScreen();
         }
     }
 
     /**
      * 子类中请使用此方法来进入全屏
      */
-    protected void startFullScreenFromUser() {
+    protected void startFullScreen() {
         Activity activity = PlayerUtils.scanForActivity(getContext());
-        if (activity == null) return;
+        if (activity == null || activity.isFinishing()) return;
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         mMediaPlayer.startFullScreen();
-        mFromUser = true;
     }
 
     /**
      * 子类中请使用此方法来退出全屏
      */
-    protected void stopFullScreenFromUser() {
+    protected void stopFullScreen() {
         Activity activity = PlayerUtils.scanForActivity(getContext());
-        if (activity == null) return;
+        if (activity == null || activity.isFinishing()) return;
         mMediaPlayer.stopFullScreen();
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        mFromUser = true;
     }
 
     /**
@@ -319,6 +329,9 @@ public abstract class BaseVideoController extends FrameLayout
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         post(mShowProgress);
+        if (mCutoutAdaptHelper != null) {
+            mCutoutAdaptHelper.checkCutout();
+        }
     }
 
     @Override
@@ -366,16 +379,57 @@ public abstract class BaseVideoController extends FrameLayout
         mEnableOrientation = enableOrientation;
     }
 
+    private int mOrientation = -1;
+
     @Override
     public void onOrientationChanged(int orientation) {
+        if (mCutoutAdaptHelper != null) {
+            mCutoutAdaptHelper.onOrientationChanged();
+        }
+
         Activity activity = PlayerUtils.scanForActivity(getContext());
-        if (activity == null) return;
-        if (orientation >= 340) { //屏幕顶部朝上
+        if (activity == null || activity.isFinishing()) return;
+
+        //记录用户手机上一次放置的位置
+        int lastOrientation = mOrientation;
+
+        if (orientation == OrientationEventListener.ORIENTATION_UNKNOWN) {
+            //手机平放时，检测不到有效的角度
+
+            //重置为原始位置 -1
+            mOrientation = -1;
+            return;
+        }
+
+        if (orientation > 350 || orientation < 10) {
+            int o = activity.getRequestedOrientation();
+            //手动切换横竖屏
+            if (o == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE && lastOrientation == 0) {
+                return;
+            }
+            //0度，用户竖直拿着手机
+            mOrientation = 0;
             onOrientationPortrait(activity);
-        } else if (orientation >= 260 && orientation <= 280) { //屏幕左边朝上
-            onOrientationLandscape(activity);
-        } else if (orientation >= 70 && orientation <= 90) { //屏幕右边朝上
+
+        } else if (orientation > 80 && orientation < 100) {
+
+            int o = activity.getRequestedOrientation();
+            //手动切换横竖屏
+            if (o == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT && lastOrientation == 90) {
+                return;
+            }
+            //90度，用户右侧横屏拿着手机
+            mOrientation = 90;
             onOrientationReverseLandscape(activity);
+        } else if (orientation > 260 && orientation < 280) {
+            int o = activity.getRequestedOrientation();
+            //手动切换横竖屏
+            if (o == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT && lastOrientation == 270) {
+                return;
+            }
+            //270度，用户左侧横屏拿着手机
+            mOrientation = 270;
+            onOrientationLandscape(activity);
         }
     }
 
@@ -388,15 +442,6 @@ public abstract class BaseVideoController extends FrameLayout
         //没有开启设备方向监听的情况
         if (!mEnableOrientation) return;
 
-        int o = activity.getRequestedOrientation();
-        if (o == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-            mFromUser = false;
-            return;
-        }
-        //手动操作的情况
-        if (o == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE && mFromUser) {
-            return;
-        }
         mMediaPlayer.stopFullScreen();
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
@@ -405,18 +450,7 @@ public abstract class BaseVideoController extends FrameLayout
      * 横屏
      */
     protected void onOrientationLandscape(Activity activity) {
-        int o = activity.getRequestedOrientation();
-        if (o == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-            mFromUser = false;
-            return;
-        }
-        //手动操作的情况
-        if (o == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT && mFromUser) {
-            return;
-        }
-        if (!mMediaPlayer.isFullScreen()) {
-            mMediaPlayer.startFullScreen();
-        }
+        mMediaPlayer.startFullScreen();
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     }
 
@@ -424,18 +458,25 @@ public abstract class BaseVideoController extends FrameLayout
      * 反向横屏
      */
     protected void onOrientationReverseLandscape(Activity activity) {
-        int o = activity.getRequestedOrientation();
-        if (o == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
-            mFromUser = false;
-            return;
-        }
-        //手动操作的情况
-        if (o == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT && mFromUser) {
-            return;
-        }
-        if (!mMediaPlayer.isFullScreen()) {
-            mMediaPlayer.startFullScreen();
-        }
+        mMediaPlayer.startFullScreen();
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+    }
+
+    public void adjustReserveLandscape(int space) {
+        for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
+            next.getKey().adjustReserveLandscape(space);
+        }
+    }
+
+    public void adjustLandscape(int space) {
+        for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
+            next.getKey().adjustLandscape(space);
+        }
+    }
+
+    public void adjustPortrait(int space) {
+        for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
+            next.getKey().adjustPortrait(space);
+        }
     }
 }

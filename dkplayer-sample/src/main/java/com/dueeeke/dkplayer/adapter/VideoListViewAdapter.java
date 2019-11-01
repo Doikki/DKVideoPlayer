@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.dkplayer.interf.OnItemChildClickListener;
-import com.dueeeke.videocontroller.PrepareView;
+import com.dueeeke.videocontroller.component.PrepareView;
 
 import java.util.List;
 

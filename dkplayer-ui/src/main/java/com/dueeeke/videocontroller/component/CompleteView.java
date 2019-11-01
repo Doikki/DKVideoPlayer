@@ -1,4 +1,4 @@
-package com.dueeeke.videocontroller;
+package com.dueeeke.videocontroller.component;
 
 import android.app.Activity;
 import android.content.Context;
@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.dueeeke.videocontroller.R;
 import com.dueeeke.videoplayer.controller.IControlComponent;
 import com.dueeeke.videoplayer.controller.MediaPlayerControl;
 import com.dueeeke.videoplayer.player.VideoView;
@@ -25,6 +26,10 @@ public class CompleteView extends FrameLayout implements IControlComponent {
     private MediaPlayerControl mMediaPlayer;
 
     private ImageView mStopFullscreen;
+
+    private boolean mAdaptCutout;
+
+    private int mSpace;
 
     public CompleteView(@NonNull Context context) {
         super(context);
@@ -53,10 +58,10 @@ public class CompleteView extends FrameLayout implements IControlComponent {
             public void onClick(View v) {
                 if (mMediaPlayer.isFullScreen()) {
                     Activity activity = PlayerUtils.scanForActivity(getContext());
-                    if (activity != null) {
+                    if (activity != null && !activity.isFinishing()) {
                         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                        mMediaPlayer.stopFullScreen();
                     }
-                    mMediaPlayer.stopFullScreen();
                 }
             }
         });
@@ -74,7 +79,7 @@ public class CompleteView extends FrameLayout implements IControlComponent {
     }
 
     @Override
-    public void setPlayState(int playState) {
+    public void onPlayStateChange(int playState) {
         if (playState == VideoView.STATE_PLAYBACK_COMPLETED) {
             setVisibility(VISIBLE);
             mStopFullscreen.setVisibility(mMediaPlayer.isFullScreen() ? VISIBLE : GONE);
@@ -84,7 +89,7 @@ public class CompleteView extends FrameLayout implements IControlComponent {
     }
 
     @Override
-    public void setPlayerState(int playerState) {
+    public void onPlayerStateChange(int playerState) {
         if (playerState == VideoView.PLAYER_FULL_SCREEN) {
             mStopFullscreen.setVisibility(VISIBLE);
         } else if (playerState == VideoView.PLAYER_NORMAL) {
@@ -100,5 +105,36 @@ public class CompleteView extends FrameLayout implements IControlComponent {
     @Override
     public View getView() {
         return this;
+    }
+
+    @Override
+    public int setProgress() {
+        return 0;
+    }
+
+    @Override
+    public void onOrientationChanged() {
+
+    }
+
+    @Override
+    public void setAdaptCutout(boolean adaptCutout, int space) {
+        mAdaptCutout = adaptCutout;
+        mSpace = space;
+    }
+
+    protected void adjustPortrait() {
+        FrameLayout.LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
+        sflp.setMargins(0, 0, 0, 0);
+    }
+
+    protected void adjustLandscape() {
+        FrameLayout.LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
+        sflp.setMargins(mSpace, 0, 0, 0);
+    }
+
+    protected void adjustReserveLandscape() {
+        FrameLayout.LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
+        sflp.setMargins(0, 0, 0, 0);
     }
 }

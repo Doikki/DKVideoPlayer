@@ -1,4 +1,4 @@
-package com.dueeeke.videocontroller;
+package com.dueeeke.videoplayer.util;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -9,8 +9,6 @@ import android.view.DisplayCutout;
 import android.view.Window;
 import android.view.WindowInsets;
 import android.view.WindowManager;
-
-import com.dueeeke.videoplayer.util.PlayerUtils;
 
 import java.lang.reflect.Method;
 import java.util.List;

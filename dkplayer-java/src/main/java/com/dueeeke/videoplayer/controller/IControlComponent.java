@@ -8,12 +8,20 @@ public interface IControlComponent {
 
     void hide();
 
-    void setPlayState(int playState);
+    void onPlayStateChange(int playState);
 
-    void setPlayerState(int playerState);
+    void onPlayerStateChange(int playerState);
 
     void attach(MediaPlayerControl mediaPlayer);
 
     View getView();
+
+    int setProgress();
+
+    void adjustPortrait(int space);
+
+    void adjustLandscape(int space);
+
+    void adjustReserveLandscape(int space);
 
 }

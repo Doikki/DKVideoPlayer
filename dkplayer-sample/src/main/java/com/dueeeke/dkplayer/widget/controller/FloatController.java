@@ -12,7 +12,7 @@ import androidx.annotation.Nullable;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.util.PIPManager;
-import com.dueeeke.videocontroller.ErrorView;
+import com.dueeeke.videocontroller.component.ErrorView;
 import com.dueeeke.videoplayer.controller.GestureVideoController;
 import com.dueeeke.videoplayer.controller.MediaPlayerControl;
 import com.dueeeke.videoplayer.player.VideoView;

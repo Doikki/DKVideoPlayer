@@ -69,7 +69,7 @@ public class TikTokView extends FrameLayout implements IControlComponent {
     }
 
     @Override
-    public void setPlayState(int playState) {
+    public void onPlayStateChange(int playState) {
         switch (playState) {
             case VideoView.STATE_IDLE:
                 L.e("STATE_IDLE " + hashCode());
@@ -96,7 +96,7 @@ public class TikTokView extends FrameLayout implements IControlComponent {
     }
 
     @Override
-    public void setPlayerState(int playerState) {
+    public void onPlayerStateChange(int playerState) {
 
     }
 

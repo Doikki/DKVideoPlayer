@@ -413,11 +413,12 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
                 && mCurrentPlayState != STATE_ERROR
                 && mCurrentPlayState != STATE_IDLE
                 && mCurrentPlayState != STATE_PREPARING
+                && mCurrentPlayState != STATE_START_FAIL
                 && mCurrentPlayState != STATE_PLAYBACK_COMPLETED;
     }
 
     /**
-     * 是否处于未播放转态
+     * 是否处于未播放状态
      */
     protected boolean isInIdleState() {
         return mCurrentPlayState == STATE_IDLE;
@@ -700,6 +701,8 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
         if (decorView == null)
             return;
 
+        mIsFullScreen = true;
+
         //隐藏NavigationBar和StatusBar
         if (mHideNavBarView == null) {
             mHideNavBarView = new View(getContext());
@@ -713,7 +716,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
         //将播放器视图添加到DecorView中即实现了全屏
         decorView.addView(mPlayerContainer);
 
-        mIsFullScreen = true;
         setPlayerState(PLAYER_FULL_SCREEN);
     }
 
@@ -729,6 +731,8 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
         if (decorView == null)
             return;
 
+        mIsFullScreen = false;
+
         //显示NavigationBar和StatusBar
         mPlayerContainer.removeView(mHideNavBarView);
         getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -737,7 +741,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
         decorView.removeView(mPlayerContainer);
         this.addView(mPlayerContainer);
 
-        mIsFullScreen = false;
         setPlayerState(PLAYER_NORMAL);
     }
 

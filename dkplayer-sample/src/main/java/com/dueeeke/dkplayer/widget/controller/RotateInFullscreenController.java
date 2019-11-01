@@ -87,7 +87,7 @@ public class RotateInFullscreenController extends StandardVideoController {
         } else if (i == R.id.iv_play) {
             doPauseResume();
         } else if (i == R.id.back) {
-            stopFullScreenFromUser();
+            stopFullScreen();
         } else if (i == R.id.thumb) {
             mMediaPlayer.start();
             mMediaPlayer.startFullScreen();
@@ -105,7 +105,7 @@ public class RotateInFullscreenController extends StandardVideoController {
             return true;
         }
         if (mMediaPlayer.isFullScreen()) {
-            stopFullScreenFromUser();
+            stopFullScreen();
             return true;
         }
         return super.onBackPressed();

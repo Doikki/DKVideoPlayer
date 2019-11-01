@@ -12,7 +12,7 @@ import androidx.annotation.Nullable;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.interf.ControllerListener;
-import com.dueeeke.videocontroller.ErrorView;
+import com.dueeeke.videocontroller.component.ErrorView;
 import com.dueeeke.videoplayer.controller.BaseVideoController;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.PlayerUtils;

@@ -3,8 +3,8 @@ package com.dueeeke.dkplayer.fragment.list;
 import android.view.View;
 
 import com.dueeeke.dkplayer.widget.controller.RotateInFullscreenController;
-import com.dueeeke.videocontroller.CompleteView;
-import com.dueeeke.videocontroller.ErrorView;
+import com.dueeeke.videocontroller.component.CompleteView;
+import com.dueeeke.videocontroller.component.ErrorView;
 import com.dueeeke.videoplayer.player.VideoView;
 
 public class RecyclerViewRotateFragment extends RecyclerViewAutoPlayFragment {

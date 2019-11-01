@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +21,9 @@ import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.dueeeke.videocontroller.component.CompleteView;
+import com.dueeeke.videocontroller.component.ErrorView;
+import com.dueeeke.videocontroller.component.PrepareView;
 import com.dueeeke.videoplayer.controller.GestureVideoController;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.L;
@@ -57,13 +58,6 @@ public class StandardVideoController extends GestureVideoController
     protected ImageView mRefreshButton;
 
     protected CenterView mCenterView;
-
-    /**
-     * 是否需要适配刘海屏
-     */
-    protected boolean mNeedAdaptCutout;
-    protected int mPadding;
-    private int mCurrentOrientation = -1;
 
 
     public StandardVideoController(@NonNull Context context) {
@@ -139,85 +133,36 @@ public class StandardVideoController extends GestureVideoController
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         getContext().registerReceiver(mBatteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-        checkCutout();
-    }
-
-    /**
-     * 检查是否需要适配刘海
-     */
-    private void checkCutout() {
-        mNeedAdaptCutout = CutoutUtil.allowDisplayToCutout(getContext());
-        if (mNeedAdaptCutout) {
-            mPadding = (int) PlayerUtils.getStatusBarHeight(getContext());
-        }
-        L.d("needAdaptCutout: " + mNeedAdaptCutout + " padding: " + mPadding);
     }
 
     @Override
-    protected void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        adjustView();
-    }
-
-    @Override
-    public void onOrientationChanged(int orientation) {
-        super.onOrientationChanged(orientation);
-        adjustView();
-    }
-
-    private void adjustView() {
-        if (mNeedAdaptCutout) {
-            Activity activity = PlayerUtils.scanForActivity(getContext());
-            if (activity == null) {
-                return;
-            }
-            int o = activity.getRequestedOrientation();
-            if (o == mCurrentOrientation) {
-                return;
-            }
-            L.d("adjustView");
-            if (o == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-                adjustPortrait();
-            } else if (o == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-                adjustLandscape();
-            } else if (o == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
-                adjustReserveLandscape();
-            }
-            mCurrentOrientation = o;
-        }
-    }
-
-    protected void adjustPortrait() {
+    public void adjustPortrait(int space) {
         mTopContainer.setPadding(0, 0, 0, 0);
         mBottomContainer.setPadding(0, 0, 0, 0);
         mBottomProgress.setPadding(0, 0, 0, 0);
         FrameLayout.LayoutParams lblp = (LayoutParams) mLockButton.getLayoutParams();
         int dp24 = PlayerUtils.dp2px(getContext(), 24);
         lblp.setMargins(dp24, 0, dp24, 0);
-//        FrameLayout.LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
-//        sflp.setMargins(0, 0, 0, 0);
     }
 
-    protected void adjustLandscape() {
-        mTopContainer.setPadding(mPadding, 0, 0, 0);
-        mBottomContainer.setPadding(mPadding, 0, 0, 0);
-        mBottomProgress.setPadding(mPadding, 0, 0, 0);
+    @Override
+    public void adjustLandscape(int space) {
+        mTopContainer.setPadding(space, 0, 0, 0);
+        mBottomContainer.setPadding(space, 0, 0, 0);
+        mBottomProgress.setPadding(space, 0, 0, 0);
         FrameLayout.LayoutParams layoutParams = (LayoutParams) mLockButton.getLayoutParams();
         int dp24 = PlayerUtils.dp2px(getContext(), 24);
-        layoutParams.setMargins(dp24 + mPadding, 0, dp24 + mPadding, 0);
-//        FrameLayout.LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
-//        sflp.setMargins(mPadding, 0, 0, 0);
+        layoutParams.setMargins(dp24 + space, 0, dp24 + space, 0);
     }
 
-    protected void adjustReserveLandscape() {
-        mTopContainer.setPadding(0, 0, mPadding, 0);
-        mBottomContainer.setPadding(0, 0, mPadding, 0);
-        mBottomProgress.setPadding(0, 0, mPadding, 0);
+    @Override
+    public void adjustReserveLandscape(int space) {
+        mTopContainer.setPadding(0, 0, space, 0);
+        mBottomContainer.setPadding(0, 0, space, 0);
+        mBottomProgress.setPadding(0, 0, space, 0);
         FrameLayout.LayoutParams layoutParams = (LayoutParams) mLockButton.getLayoutParams();
         int dp24 = PlayerUtils.dp2px(getContext(), 24);
         layoutParams.setMargins(dp24, 0, dp24, 0);
-//        FrameLayout.LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
-//        sflp.setMargins(0, 0, 0, 0);
     }
 
     @Override
@@ -248,9 +193,6 @@ public class StandardVideoController extends GestureVideoController
             case VideoView.PLAYER_NORMAL:
                 L.e("PLAYER_NORMAL");
                 if (mIsLocked) return;
-                if (mNeedAdaptCutout) {
-                    CutoutUtil.adaptCutoutAboveAndroidP(getContext(), false);
-                }
                 setLayoutParams(new FrameLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT));
@@ -267,9 +209,6 @@ public class StandardVideoController extends GestureVideoController
             case VideoView.PLAYER_FULL_SCREEN:
                 L.e("PLAYER_FULL_SCREEN");
                 if (mIsLocked) return;
-                if (mNeedAdaptCutout) {
-                    CutoutUtil.adaptCutoutAboveAndroidP(getContext(), true);
-                }
                 mIsGestureEnabled = true;
                 mFullScreenButton.setSelected(true);
                 mBackButton.setVisibility(VISIBLE);
@@ -538,7 +477,7 @@ public class StandardVideoController extends GestureVideoController
         if (activity == null) return super.onBackPressed();
 
         if (mMediaPlayer.isFullScreen()) {
-            stopFullScreenFromUser();
+            stopFullScreen();
             return true;
         }
         return super.onBackPressed();

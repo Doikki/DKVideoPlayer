@@ -1,4 +1,4 @@
-package com.dueeeke.videocontroller;
+package com.dueeeke.videocontroller.component;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
 
+import com.dueeeke.videocontroller.R;
 import com.dueeeke.videoplayer.controller.IControlComponent;
 import com.dueeeke.videoplayer.controller.MediaPlayerControl;
 import com.dueeeke.videoplayer.player.VideoView;
@@ -84,7 +85,7 @@ public class ErrorView extends LinearLayout implements IControlComponent {
     }
 
     @Override
-    public void setPlayState(int playState) {
+    public void onPlayStateChange(int playState) {
         if (playState == VideoView.STATE_ERROR) {
             bringToFront();
             setVisibility(VISIBLE);
@@ -94,7 +95,7 @@ public class ErrorView extends LinearLayout implements IControlComponent {
     }
 
     @Override
-    public void setPlayerState(int playerState) {
+    public void onPlayerStateChange(int playerState) {
 
     }
 

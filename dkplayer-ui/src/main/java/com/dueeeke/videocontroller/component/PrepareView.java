@@ -1,4 +1,4 @@
-package com.dueeeke.videocontroller;
+package com.dueeeke.videocontroller.component;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.dueeeke.videocontroller.R;
 import com.dueeeke.videoplayer.controller.IControlComponent;
 import com.dueeeke.videoplayer.controller.MediaPlayerControl;
 import com.dueeeke.videoplayer.player.VideoView;
@@ -79,7 +80,7 @@ public class PrepareView extends FrameLayout implements IControlComponent {
     }
 
     @Override
-    public void setPlayState(int playState) {
+    public void onPlayStateChange(int playState) {
         switch (playState) {
             case VideoView.STATE_PREPARING:
                 bringToFront();
@@ -109,7 +110,7 @@ public class PrepareView extends FrameLayout implements IControlComponent {
     }
 
     @Override
-    public void setPlayerState(int playerState) {
+    public void onPlayerStateChange(int playerState) {
 
     }
 
