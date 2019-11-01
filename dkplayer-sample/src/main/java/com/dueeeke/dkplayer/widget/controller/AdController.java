@@ -119,16 +119,14 @@ public class AdController extends BaseVideoController implements View.OnClickLis
     }
 
     @Override
-    protected int setProgress() {
+    protected void setProgress(int position) {
         if (mMediaPlayer == null) {
-            return 0;
+            return;
         }
-        int position = (int) mMediaPlayer.getCurrentPosition();
         int duration = (int) mMediaPlayer.getDuration();
 
         if (adTime != null)
             adTime.setText(String.format("%s | 跳过", (duration - position) / 1000));
-        return position;
     }
 
     @Override

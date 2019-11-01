@@ -1,12 +1,13 @@
 package com.dueeeke.videoplayer.controller;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
 
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.CutoutUtil;
@@ -23,29 +24,23 @@ public class CutoutAdaptHelper {
 
     private Activity mActivity;
 
-    private AdaptView mAdaptView;
-
     private Callback mCallback;
 
-    CutoutAdaptHelper(Activity activity, Callback callback) {
+    public CutoutAdaptHelper(@NonNull Activity activity, Callback callback) {
         mActivity = activity;
         mCallback = callback;
+
+        AdaptView adaptView = new AdaptView(mActivity);
+        ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        mActivity.addContentView(adaptView, lp);
     }
 
-    public void checkCutout() {
-        Application application = PlayerUtils.getApplication();
-        if (application == null)
-            return;
+    private void checkCutout() {
         mAdaptCutout = CutoutUtil.allowDisplayToCutout(mActivity);
         if (mAdaptCutout) {
             mSpace = (int) PlayerUtils.getStatusBarHeight(mActivity);
-            if (mAdaptView == null) {
-                mAdaptView = new AdaptView(mActivity);
-                mAdaptView.setLayoutParams(new ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT));
-            }
-            mActivity.addContentView(mAdaptView, mAdaptView.getLayoutParams());
         }
         L.d("adaptCutout: " + mAdaptCutout + " space: " + mSpace);
     }
@@ -92,6 +87,11 @@ public class CutoutAdaptHelper {
             super(context);
         }
 
+        @Override
+        protected void onAttachedToWindow() {
+            super.onAttachedToWindow();
+            checkCutout();
+        }
 
         @Override
         protected void onConfigurationChanged(Configuration newConfig) {

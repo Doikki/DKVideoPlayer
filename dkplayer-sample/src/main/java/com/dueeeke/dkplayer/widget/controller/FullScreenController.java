@@ -28,7 +28,7 @@ public class FullScreenController extends StandardVideoController {
     @Override
     protected void initView() {
         super.initView();
-        adjustLandscape();
+        adjustLandscape(0);
     }
 
     @Override
@@ -53,14 +53,14 @@ public class FullScreenController extends StandardVideoController {
 
 
     @Override
-    protected void adjustReserveLandscape() {
-        super.adjustReserveLandscape();
-        mBottomContainer.setPadding(0, 0, (int) (mPadding + getResources().getDimension(R.dimen.default_spacing)), 0);
+    public void adjustReserveLandscape(int space) {
+        super.adjustReserveLandscape(space);
+        mBottomContainer.setPadding(0, 0, (int) (space + getResources().getDimension(R.dimen.default_spacing)), 0);
     }
 
     @Override
-    protected void adjustLandscape() {
-        super.adjustLandscape();
-        mBottomContainer.setPadding(mPadding, 0, (int) getResources().getDimension(R.dimen.default_spacing), 0);
+    public void adjustLandscape(int space) {
+        super.adjustLandscape(space);
+        mBottomContainer.setPadding(space, 0, (int) getResources().getDimension(R.dimen.default_spacing), 0);
     }
 }

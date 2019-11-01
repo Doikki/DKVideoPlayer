@@ -19,8 +19,6 @@ import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.player.VideoViewManager;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Formatter;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -294,44 +292,22 @@ public abstract class BaseVideoController extends FrameLayout
     /**
      * 重写此方法实现刷新进度功能
      */
-    protected int setProgress() {
-        return 0;
-    }
-
-    /**
-     * 获取当前系统时间
-     */
-    protected String getCurrentSystemTime() {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
-        Date date = new Date();
-        return simpleDateFormat.format(date);
-    }
-
-    /**
-     * 格式化时间
-     */
-    protected String stringForTime(int timeMs) {
-        int totalSeconds = timeMs / 1000;
-
-        int seconds = totalSeconds % 60;
-        int minutes = (totalSeconds / 60) % 60;
-        int hours = totalSeconds / 3600;
-
-        mFormatBuilder.setLength(0);
-        if (hours > 0) {
-            return mFormatter.format("%d:%02d:%02d", hours, minutes, seconds).toString();
-        } else {
-            return mFormatter.format("%02d:%02d", minutes, seconds).toString();
+    private int setProgress() {
+        int position = (int) mMediaPlayer.getCurrentPosition();
+        for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
+            next.getKey().setProgress(position);
         }
+        setProgress(position);
+        return position;
+    }
+
+    protected void setProgress(int position) {
     }
 
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         post(mShowProgress);
-        if (mCutoutAdaptHelper != null) {
-            mCutoutAdaptHelper.checkCutout();
-        }
     }
 
     @Override
@@ -462,18 +438,21 @@ public abstract class BaseVideoController extends FrameLayout
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
     }
 
+    @Override
     public void adjustReserveLandscape(int space) {
         for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
             next.getKey().adjustReserveLandscape(space);
         }
     }
 
+    @Override
     public void adjustLandscape(int space) {
         for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
             next.getKey().adjustLandscape(space);
         }
     }
 
+    @Override
     public void adjustPortrait(int space) {
         for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
             next.getKey().adjustPortrait(space);

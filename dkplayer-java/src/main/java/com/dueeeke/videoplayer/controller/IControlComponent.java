@@ -16,7 +16,7 @@ public interface IControlComponent {
 
     View getView();
 
-    int setProgress();
+    void setProgress(int position);
 
     void adjustPortrait(int space);
 

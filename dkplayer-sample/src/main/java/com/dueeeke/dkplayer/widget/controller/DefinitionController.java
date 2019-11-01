@@ -107,11 +107,11 @@ public class DefinitionController extends StandardVideoController {
     private int currentIndex;
 
     @Override
-    protected int setProgress() {
+    protected void setProgress(int position) {
         if (multiRate != null && TextUtils.isEmpty(multiRate.getText())) {
             L.d("multiRate");
             LinkedHashMap<String, String> multiRateData = ((DefinitionMediaPlayerControl)mMediaPlayer).getDefinitionData();
-            if (multiRateData == null) return super.setProgress();
+            if (multiRateData == null) return;
             mRateStr = new ArrayList<>();
             int index = 0;
             ListIterator<Map.Entry<String, String>> iterator = new ArrayList<>(multiRateData.entrySet()).listIterator(multiRateData.size());
@@ -129,7 +129,6 @@ public class DefinitionController extends StandardVideoController {
             multiRate.setText(mRateStr.get(index - 1));
             currentIndex = index - 1;
         }
-        return super.setProgress();
     }
 
     private OnClickListener rateOnClickListener = new OnClickListener() {

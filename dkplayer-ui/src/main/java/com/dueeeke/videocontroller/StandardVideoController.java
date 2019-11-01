@@ -2,8 +2,6 @@ package com.dueeeke.videocontroller;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,10 +22,13 @@ import androidx.annotation.Nullable;
 import com.dueeeke.videocontroller.component.CompleteView;
 import com.dueeeke.videocontroller.component.ErrorView;
 import com.dueeeke.videocontroller.component.PrepareView;
+import com.dueeeke.videocontroller.component.TitleView;
 import com.dueeeke.videoplayer.controller.GestureVideoController;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.L;
 import com.dueeeke.videoplayer.util.PlayerUtils;
+
+import static com.dueeeke.videoplayer.util.PlayerUtils.stringForTime;
 
 /**
  * 直播/点播控制器
@@ -39,22 +40,17 @@ public class StandardVideoController extends GestureVideoController
 
     protected TextView mTotalTime, mCurrTime;
     protected ImageView mFullScreenButton;
-    protected LinearLayout mBottomContainer, mTopContainer;
+    protected LinearLayout mBottomContainer;
     protected SeekBar mVideoProgress;
-    protected ImageView mBackButton;
     protected ImageView mLockButton;
-    protected MarqueeTextView mTitle;
     private boolean mIsLive;
     private boolean mIsDragging;
 
     private ProgressBar mBottomProgress;
     private ImageView mPlayButton;
     private ProgressBar mLoadingProgress;
-    private TextView mSysTime;//系统当前时间
-    private ImageView mBatteryLevel;//电量
     private Animation mShowAnim;
     private Animation mHideAnim;
-    private BatteryReceiver mBatteryReceiver;
     protected ImageView mRefreshButton;
 
     protected CenterView mCenterView;
@@ -83,23 +79,16 @@ public class StandardVideoController extends GestureVideoController
         mFullScreenButton = mControllerView.findViewById(R.id.fullscreen);
         mFullScreenButton.setOnClickListener(this);
         mBottomContainer = mControllerView.findViewById(R.id.bottom_container);
-        mTopContainer = mControllerView.findViewById(R.id.top_container);
         mVideoProgress = mControllerView.findViewById(R.id.seekBar);
         mVideoProgress.setOnSeekBarChangeListener(this);
         mTotalTime = mControllerView.findViewById(R.id.total_time);
         mCurrTime = mControllerView.findViewById(R.id.curr_time);
-        mBackButton = mControllerView.findViewById(R.id.back);
-        mBackButton.setOnClickListener(this);
         mLockButton = mControllerView.findViewById(R.id.lock);
         mLockButton.setOnClickListener(this);
         mPlayButton = mControllerView.findViewById(R.id.iv_play);
         mPlayButton.setOnClickListener(this);
         mLoadingProgress = mControllerView.findViewById(R.id.loading);
         mBottomProgress = mControllerView.findViewById(R.id.bottom_progress);
-        mTitle = mControllerView.findViewById(R.id.title);
-        mSysTime = mControllerView.findViewById(R.id.sys_time);
-        mBatteryLevel = mControllerView.findViewById(R.id.iv_battery);
-        mBatteryReceiver = new BatteryReceiver(mBatteryLevel);
         mRefreshButton = mControllerView.findViewById(R.id.iv_refresh);
         mRefreshButton.setOnClickListener(this);
 
@@ -121,23 +110,11 @@ public class StandardVideoController extends GestureVideoController
         PrepareView prepareView = new PrepareView(getContext());
         prepareView.setClickStart();
         addControlComponent(prepareView);
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        getContext().unregisterReceiver(mBatteryReceiver);
-    }
-
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        getContext().registerReceiver(mBatteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        addControlComponent(new TitleView(getContext()));
     }
 
     @Override
     public void adjustPortrait(int space) {
-        mTopContainer.setPadding(0, 0, 0, 0);
         mBottomContainer.setPadding(0, 0, 0, 0);
         mBottomProgress.setPadding(0, 0, 0, 0);
         FrameLayout.LayoutParams lblp = (LayoutParams) mLockButton.getLayoutParams();
@@ -147,7 +124,6 @@ public class StandardVideoController extends GestureVideoController
 
     @Override
     public void adjustLandscape(int space) {
-        mTopContainer.setPadding(space, 0, 0, 0);
         mBottomContainer.setPadding(space, 0, 0, 0);
         mBottomProgress.setPadding(space, 0, 0, 0);
         FrameLayout.LayoutParams layoutParams = (LayoutParams) mLockButton.getLayoutParams();
@@ -157,7 +133,6 @@ public class StandardVideoController extends GestureVideoController
 
     @Override
     public void adjustReserveLandscape(int space) {
-        mTopContainer.setPadding(0, 0, space, 0);
         mBottomContainer.setPadding(0, 0, space, 0);
         mBottomProgress.setPadding(0, 0, space, 0);
         FrameLayout.LayoutParams layoutParams = (LayoutParams) mLockButton.getLayoutParams();
@@ -168,14 +143,10 @@ public class StandardVideoController extends GestureVideoController
     @Override
     public void onClick(View v) {
         int i = v.getId();
-        if (i == R.id.fullscreen || i == R.id.back || i == R.id.stop_fullscreen) {
+        if (i == R.id.fullscreen) {
             doStartStopFullScreen();
         } else if (i == R.id.lock) {
             doLockUnlock();
-        } else if (i == R.id.iv_play || i == R.id.thumb) {
-            doPauseResume();
-        } else if (i == R.id.iv_replay || i == R.id.iv_refresh) {
-            mMediaPlayer.replay(true);
         }
     }
 
@@ -183,7 +154,7 @@ public class StandardVideoController extends GestureVideoController
      * 设置标题
      */
     public void setTitle(String title) {
-        mTitle.setText(title);
+//        mTitle.setText(title);
     }
 
     @Override
@@ -198,27 +169,15 @@ public class StandardVideoController extends GestureVideoController
                         ViewGroup.LayoutParams.MATCH_PARENT));
                 mIsGestureEnabled = false;
                 mFullScreenButton.setSelected(false);
-                mBackButton.setVisibility(GONE);
                 mLockButton.setVisibility(GONE);
-                mTitle.setVisibility(INVISIBLE);
-                mTitle.setNeedFocus(false);
-                mSysTime.setVisibility(GONE);
-                mBatteryLevel.setVisibility(GONE);
-                mTopContainer.setVisibility(GONE);
                 break;
             case VideoView.PLAYER_FULL_SCREEN:
                 L.e("PLAYER_FULL_SCREEN");
                 if (mIsLocked) return;
                 mIsGestureEnabled = true;
                 mFullScreenButton.setSelected(true);
-                mBackButton.setVisibility(VISIBLE);
-                mTitle.setVisibility(VISIBLE);
-                mTitle.setNeedFocus(true);
-                mSysTime.setVisibility(VISIBLE);
-                mBatteryLevel.setVisibility(VISIBLE);
                 if (mShowing) {
                     mLockButton.setVisibility(VISIBLE);
-                    mTopContainer.setVisibility(VISIBLE);
                 } else {
                     mLockButton.setVisibility(GONE);
                 }
@@ -267,7 +226,6 @@ public class StandardVideoController extends GestureVideoController
                 removeCallbacks(mShowProgress);
                 mLoadingProgress.setVisibility(GONE);
                 mBottomProgress.setVisibility(GONE);
-                mTopContainer.setVisibility(GONE);
                 break;
             case VideoView.STATE_BUFFERING:
                 L.e("STATE_BUFFERING");
@@ -352,6 +310,7 @@ public class StandardVideoController extends GestureVideoController
 
     @Override
     public void hide() {
+        super.hide();
         if (mShowing) {
             if (mMediaPlayer.isFullScreen()) {
                 mLockButton.setVisibility(GONE);
@@ -372,15 +331,11 @@ public class StandardVideoController extends GestureVideoController
     }
 
     private void hideAllViews() {
-        mTopContainer.setVisibility(GONE);
-        mTopContainer.startAnimation(mHideAnim);
         mBottomContainer.setVisibility(GONE);
         mBottomContainer.startAnimation(mHideAnim);
     }
 
     private void show(int timeout) {
-        if (mSysTime != null)
-            mSysTime.setText(getCurrentSystemTime());
         if (!mShowing) {
             if (mMediaPlayer.isFullScreen()) {
                 if (mLockButton.getVisibility() != VISIBLE) {
@@ -409,24 +364,22 @@ public class StandardVideoController extends GestureVideoController
     private void showAllViews() {
         mBottomContainer.setVisibility(VISIBLE);
         mBottomContainer.startAnimation(mShowAnim);
-        mTopContainer.setVisibility(VISIBLE);
-        mTopContainer.startAnimation(mShowAnim);
     }
 
     @Override
     public void show() {
+        super.show();
         show(mDefaultTimeout);
     }
 
     @Override
-    protected int setProgress() {
+    protected void setProgress(int position) {
         if (mMediaPlayer == null || mIsDragging) {
-            return 0;
+            return;
         }
 
-        if (mIsLive) return 0;
+        if (mIsLive) return;
 
-        int position = (int) mMediaPlayer.getCurrentPosition();
         int duration = (int) mMediaPlayer.getDuration();
         if (mVideoProgress != null) {
             if (duration > 0) {
@@ -451,8 +404,6 @@ public class StandardVideoController extends GestureVideoController
             mTotalTime.setText(stringForTime(duration));
         if (mCurrTime != null)
             mCurrTime.setText(stringForTime(position));
-
-        return position;
     }
 
 

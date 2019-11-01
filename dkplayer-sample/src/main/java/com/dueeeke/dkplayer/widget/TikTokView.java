@@ -109,4 +109,24 @@ public class TikTokView extends FrameLayout implements IControlComponent {
     public View getView() {
         return this;
     }
+
+    @Override
+    public void setProgress(int position) {
+
+    }
+
+    @Override
+    public void adjustPortrait(int space) {
+
+    }
+
+    @Override
+    public void adjustLandscape(int space) {
+
+    }
+
+    @Override
+    public void adjustReserveLandscape(int space) {
+
+    }
 }

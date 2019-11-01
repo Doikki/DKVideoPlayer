@@ -101,7 +101,7 @@ public class PrepareView extends FrameLayout implements IControlComponent {
                 mStartPlay.setVisibility(View.VISIBLE);
                 mThumb.setVisibility(View.VISIBLE);
                 break;
-            case VideoView.STATE_START_FAIL:
+            case VideoView.STATE_START_ABORT:
                 setVisibility(VISIBLE);
                 mNetWarning.setVisibility(VISIBLE);
                 mNetWarning.bringToFront();
@@ -122,5 +122,25 @@ public class PrepareView extends FrameLayout implements IControlComponent {
     @Override
     public View getView() {
         return this;
+    }
+
+    @Override
+    public void setProgress(int position) {
+
+    }
+
+    @Override
+    public void adjustPortrait(int space) {
+
+    }
+
+    @Override
+    public void adjustLandscape(int space) {
+
+    }
+
+    @Override
+    public void adjustReserveLandscape(int space) {
+
     }
 }

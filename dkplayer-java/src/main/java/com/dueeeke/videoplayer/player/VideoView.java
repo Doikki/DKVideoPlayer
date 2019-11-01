@@ -94,7 +94,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
     public static final int STATE_PLAYBACK_COMPLETED = 5;
     public static final int STATE_BUFFERING = 6;
     public static final int STATE_BUFFERED = 7;
-    public static final int STATE_START_FAIL = 8;//开始播放失败
+    public static final int STATE_START_ABORT = 8;//开始播放中止
     protected int mCurrentPlayState = STATE_IDLE;//当前播放器的状态
 
     public static final int PLAYER_NORMAL = 10;        // 普通播放器
@@ -182,8 +182,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
             setKeepScreenOn(true);
             if (mAudioFocusHelper != null)
                 mAudioFocusHelper.requestFocus();
-        } else {
-            setPlayState(STATE_START_FAIL);
         }
     }
 
@@ -195,7 +193,11 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
         VideoViewManager.instance().addVideoView(this);
 
         //如果要显示移动网络提示则不继续播放
-        if (showNetWarning()) return false;
+        if (showNetWarning()) {
+            //中止播放
+            setPlayState(STATE_START_ABORT);
+            return false;
+        }
 
         //监听音频焦点改变
         if (mEnableAudioFocus) {
@@ -413,7 +415,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
                 && mCurrentPlayState != STATE_ERROR
                 && mCurrentPlayState != STATE_IDLE
                 && mCurrentPlayState != STATE_PREPARING
-                && mCurrentPlayState != STATE_START_FAIL
+                && mCurrentPlayState != STATE_START_ABORT
                 && mCurrentPlayState != STATE_PLAYBACK_COMPLETED;
     }
 

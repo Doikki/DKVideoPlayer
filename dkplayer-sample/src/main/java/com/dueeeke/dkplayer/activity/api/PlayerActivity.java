@@ -13,6 +13,7 @@ import com.dueeeke.videocontroller.component.CompleteView;
 import com.dueeeke.videocontroller.component.ErrorView;
 import com.dueeeke.videocontroller.component.PrepareView;
 import com.dueeeke.videocontroller.StandardVideoController;
+import com.dueeeke.videocontroller.component.TitleView;
 import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.L;
@@ -47,6 +48,9 @@ public class PlayerActivity extends DebugActivity {
             controller.addControlComponent(prepareView);
             controller.addControlComponent(new CompleteView(this));//自动完成播放界面
             controller.addControlComponent(new ErrorView(this));//错误界面
+            TitleView titleView = new TitleView(this);//标题栏
+            titleView.setTitle("这是一个标题");
+            controller.addControlComponent(titleView);
 
             boolean isLive = intent.getBooleanExtra("isLive", false);
             if (isLive) {

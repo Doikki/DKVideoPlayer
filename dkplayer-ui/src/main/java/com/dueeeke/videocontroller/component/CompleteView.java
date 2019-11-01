@@ -27,10 +27,6 @@ public class CompleteView extends FrameLayout implements IControlComponent {
 
     private ImageView mStopFullscreen;
 
-    private boolean mAdaptCutout;
-
-    private int mSpace;
-
     public CompleteView(@NonNull Context context) {
         super(context);
     }
@@ -108,32 +104,24 @@ public class CompleteView extends FrameLayout implements IControlComponent {
     }
 
     @Override
-    public int setProgress() {
-        return 0;
-    }
-
-    @Override
-    public void onOrientationChanged() {
+    public void setProgress(int position) {
 
     }
 
     @Override
-    public void setAdaptCutout(boolean adaptCutout, int space) {
-        mAdaptCutout = adaptCutout;
-        mSpace = space;
-    }
-
-    protected void adjustPortrait() {
+    public void adjustPortrait(int space) {
         FrameLayout.LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
         sflp.setMargins(0, 0, 0, 0);
     }
 
-    protected void adjustLandscape() {
+    @Override
+    public void adjustLandscape(int space) {
         FrameLayout.LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
-        sflp.setMargins(mSpace, 0, 0, 0);
+        sflp.setMargins(space, 0, 0, 0);
     }
 
-    protected void adjustReserveLandscape() {
+    @Override
+    public void adjustReserveLandscape(int space) {
         FrameLayout.LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
         sflp.setMargins(0, 0, 0, 0);
     }
