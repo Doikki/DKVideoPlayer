@@ -94,6 +94,7 @@ public abstract class BaseVideoController extends FrameLayout
         setFocusable(true);
         mOrientationHelper = new OrientationHelper(getContext().getApplicationContext());
         mEnableOrientation = VideoViewManager.getConfig().mEnableOrientation;
+        mAdaptCutout = VideoViewManager.getConfig().mAdaptCutout;
     }
 
     /**
@@ -107,12 +108,13 @@ public abstract class BaseVideoController extends FrameLayout
     @CallSuper
     public void setMediaPlayer(MediaPlayerControl mediaPlayer) {
         this.mMediaPlayer = new MediaPlayerControlWrapper(mediaPlayer, this);
-        //开始监听
-        mOrientationHelper.setOnOrientationChangeListener(this);
 
         for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
             next.getKey().attach(mMediaPlayer);
         }
+
+        //开始监听
+        mOrientationHelper.setOnOrientationChangeListener(this);
 
         if (mAdaptCutout) {
             Activity activity = PlayerUtils.scanForActivity(getContext());

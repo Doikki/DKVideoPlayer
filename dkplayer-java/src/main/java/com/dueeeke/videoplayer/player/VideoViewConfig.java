@@ -33,6 +33,8 @@ public class VideoViewConfig {
 
     public final RenderViewFactory mRenderViewFactory;
 
+    public final boolean mAdaptCutout;
+
     private VideoViewConfig(Builder builder) {
         mIsEnableLog = builder.mIsEnableLog;
         mEnableOrientation = builder.mEnableOrientation;
@@ -53,6 +55,7 @@ public class VideoViewConfig {
         } else {
             mRenderViewFactory = builder.mRenderViewFactory;
         }
+        mAdaptCutout = builder.mAdaptCutout;
     }
 
 
@@ -67,6 +70,7 @@ public class VideoViewConfig {
         private PlayerFactory mPlayerFactory;
         private int mScreenScaleType;
         private RenderViewFactory mRenderViewFactory;
+        private boolean mAdaptCutout = true;
 
         /**
          * 是否监听设备方向来切换全屏/半屏， 默认不开启
@@ -139,6 +143,14 @@ public class VideoViewConfig {
          */
         public Builder setRenderViewFactory(RenderViewFactory renderViewFactory) {
             mRenderViewFactory = renderViewFactory;
+            return this;
+        }
+
+        /**
+         * 是否适配刘海屏，默认适配
+         */
+        public Builder setAdaptCutout(boolean adaptCutout) {
+            mAdaptCutout = adaptCutout;
             return this;
         }
 
