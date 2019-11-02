@@ -4,19 +4,17 @@ import android.view.View;
 
 public interface IControlComponent {
 
+    void attach(MediaPlayerControlWrapper mediaPlayer);
+
+    View getView();
+
     void show();
 
     void hide();
 
-    void onPlayStateChange(int playState);
+    void onPlayStateChanged(int playState);
 
-    void onPlayerStateChange(int playerState);
-
-    void attach(MediaPlayerControl mediaPlayer);
-
-    View getView();
-
-    void setProgress(int position);
+    void onPlayerStateChanged(int playerState);
 
     void adjustPortrait(int space);
 

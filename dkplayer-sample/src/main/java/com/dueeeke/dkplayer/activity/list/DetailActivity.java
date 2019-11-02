@@ -2,11 +2,12 @@ package com.dueeeke.dkplayer.activity.list;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ViewParent;
+import android.widget.FrameLayout;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import android.view.ViewParent;
-import android.widget.FrameLayout;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.util.IntentKeys;
@@ -46,7 +47,7 @@ public class DetailActivity extends AppCompatActivity {
         } else {
             //不是无缝播放的情况
             String title = intent.getStringExtra(IntentKeys.TITLE);
-            standardVideoController.setTitle(title);
+//            standardVideoController.setTitle(title);
             String url = intent.getStringExtra(IntentKeys.URL);
             mVideoView.setUrl(url);
             mVideoView.start();

@@ -36,6 +36,7 @@ public class PIPActivity extends AppCompatActivity{
         mPIPManager = PIPManager.getInstance();
         VideoView videoView = mPIPManager.getVideoView();
         StandardVideoController controller = new StandardVideoController(this);
+        controller.addDefaultControlComponent(getString(R.string.str_pip), false);
         videoView.setVideoController(controller);
         if (mPIPManager.isStartFloatWindow()) {
             mPIPManager.stopFloatWindow();
@@ -53,7 +54,7 @@ public class PIPActivity extends AppCompatActivity{
                     .placeholder(android.R.color.darker_gray)
                     .into(thumb);
             videoView.setUrl(URL);
-            controller.setTitle("香港卫视");
+//            controller.setTitle("香港卫视");
         }
         playerContainer.addView(videoView);
     }

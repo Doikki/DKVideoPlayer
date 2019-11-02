@@ -3,7 +3,6 @@ package com.dueeeke.dkplayer.widget.controller;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,14 +20,9 @@ import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.interf.DefinitionMediaPlayerControl;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.player.VideoView;
-import com.dueeeke.videoplayer.util.L;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
 
 /**
  * 清晰度切换控制器
@@ -58,7 +52,7 @@ public class DefinitionController extends StandardVideoController {
     @Override
     protected void initView() {
         super.initView();
-        multiRate = mControllerView.findViewById(R.id.tv_multi_rate);
+//        multiRate = mControllerView.findViewById(R.id.tv_multi_rate);
         multiRate.setOnClickListener(this);
         mPopupWindow = new PopupWindow(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         mPopLayout = (LinearLayout) LayoutInflater.from(getContext()).inflate(R.layout.layout_rate_pop, this, false);
@@ -85,9 +79,9 @@ public class DefinitionController extends StandardVideoController {
     public void onClick(View v) {
         super.onClick(v);
         int i = v.getId();
-        if (i == R.id.tv_multi_rate) {
-            showRateMenu();
-        }
+//        if (i == R.id.tv_multi_rate) {
+//            showRateMenu();
+//        }
     }
 
     @Override
@@ -106,30 +100,30 @@ public class DefinitionController extends StandardVideoController {
 
     private int currentIndex;
 
-    @Override
-    protected void setProgress(int position) {
-        if (multiRate != null && TextUtils.isEmpty(multiRate.getText())) {
-            L.d("multiRate");
-            LinkedHashMap<String, String> multiRateData = ((DefinitionMediaPlayerControl)mMediaPlayer).getDefinitionData();
-            if (multiRateData == null) return;
-            mRateStr = new ArrayList<>();
-            int index = 0;
-            ListIterator<Map.Entry<String, String>> iterator = new ArrayList<>(multiRateData.entrySet()).listIterator(multiRateData.size());
-            while (iterator.hasPrevious()) {//反向遍历
-                Map.Entry<String, String> entry = iterator.previous();
-                mRateStr.add(entry.getKey());
-                TextView rateItem = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.layout_rate_item, null);
-                rateItem.setText(entry.getKey());
-                rateItem.setTag(index);
-                rateItem.setOnClickListener(rateOnClickListener);
-                mPopLayout.addView(rateItem);
-                index++;
-            }
-            ((TextView) mPopLayout.getChildAt(index - 1)).setTextColor(ContextCompat.getColor(getContext(), R.color.theme_color));
-            multiRate.setText(mRateStr.get(index - 1));
-            currentIndex = index - 1;
-        }
-    }
+//    @Override
+//    protected void setProgress(int position) {
+//        if (multiRate != null && TextUtils.isEmpty(multiRate.getText())) {
+//            L.d("multiRate");
+//            LinkedHashMap<String, String> multiRateData = ((DefinitionMediaPlayerControl)mMediaPlayer).getDefinitionData();
+//            if (multiRateData == null) return;
+//            mRateStr = new ArrayList<>();
+//            int index = 0;
+//            ListIterator<Map.Entry<String, String>> iterator = new ArrayList<>(multiRateData.entrySet()).listIterator(multiRateData.size());
+//            while (iterator.hasPrevious()) {//反向遍历
+//                Map.Entry<String, String> entry = iterator.previous();
+//                mRateStr.add(entry.getKey());
+//                TextView rateItem = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.layout_rate_item, null);
+//                rateItem.setText(entry.getKey());
+//                rateItem.setTag(index);
+//                rateItem.setOnClickListener(rateOnClickListener);
+//                mPopLayout.addView(rateItem);
+//                index++;
+//            }
+//            ((TextView) mPopLayout.getChildAt(index - 1)).setTextColor(ContextCompat.getColor(getContext(), R.color.theme_color));
+//            multiRate.setText(mRateStr.get(index - 1));
+//            currentIndex = index - 1;
+//        }
+//    }
 
     private OnClickListener rateOnClickListener = new OnClickListener() {
 

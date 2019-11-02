@@ -28,7 +28,9 @@ public class CacheActivity extends BaseActivity<VideoView> {
         HttpProxyCacheServer cacheServer = ProxyVideoCacheManager.getProxy(this);
         String proxyUrl = cacheServer.getProxyUrl(URL);
         mVideoView.setUrl(proxyUrl);
-        mVideoView.setVideoController(new StandardVideoController(this));
+        StandardVideoController controller = new StandardVideoController(this);
+        controller.addDefaultControlComponent(getString(R.string.str_cache), false);
+        mVideoView.setVideoController(controller);
         mVideoView.start();
 
         //删除url对应默认缓存文件

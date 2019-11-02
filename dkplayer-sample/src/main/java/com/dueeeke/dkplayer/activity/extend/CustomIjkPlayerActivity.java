@@ -34,7 +34,9 @@ public class CustomIjkPlayerActivity extends BaseActivity<IjkVideoView> implemen
         mVideoView = findViewById(R.id.video_view);
         findViewById(R.id.btn_ffconcat).setOnClickListener(this);
         findViewById(R.id.btn_rtsp).setOnClickListener(this);
-        mVideoView.setVideoController(new StandardVideoController(this));
+        StandardVideoController controller = new StandardVideoController(this);
+        controller.addDefaultControlComponent("custom ijk", false);
+        mVideoView.setVideoController(controller);
     }
 
     @Override

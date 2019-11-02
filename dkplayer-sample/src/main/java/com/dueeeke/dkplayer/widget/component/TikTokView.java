@@ -1,4 +1,4 @@
-package com.dueeeke.dkplayer.widget;
+package com.dueeeke.dkplayer.widget.component;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -13,7 +13,7 @@ import androidx.annotation.Nullable;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videoplayer.controller.IControlComponent;
-import com.dueeeke.videoplayer.controller.MediaPlayerControl;
+import com.dueeeke.videoplayer.controller.MediaPlayerControlWrapper;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.L;
 
@@ -22,7 +22,7 @@ public class TikTokView extends FrameLayout implements IControlComponent {
     private ImageView thumb;
     private ImageView mPlayBtn;
 
-    private MediaPlayerControl mMediaPlayer;
+    private MediaPlayerControlWrapper mMediaPlayer;
 
     public TikTokView(@NonNull Context context) {
         super(context);
@@ -43,20 +43,10 @@ public class TikTokView extends FrameLayout implements IControlComponent {
         setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                togglePlay();
+                mMediaPlayer.togglePlay();
             }
         });
     }
-
-
-    private void togglePlay() {
-        if (mMediaPlayer.isPlaying()) {
-            mMediaPlayer.pause();
-        } else {
-            mMediaPlayer.start();
-        }
-    }
-
 
     @Override
     public void show() {
@@ -69,7 +59,7 @@ public class TikTokView extends FrameLayout implements IControlComponent {
     }
 
     @Override
-    public void onPlayStateChange(int playState) {
+    public void onPlayStateChanged(int playState) {
         switch (playState) {
             case VideoView.STATE_IDLE:
                 L.e("STATE_IDLE " + hashCode());
@@ -96,23 +86,18 @@ public class TikTokView extends FrameLayout implements IControlComponent {
     }
 
     @Override
-    public void onPlayerStateChange(int playerState) {
+    public void onPlayerStateChanged(int playerState) {
 
     }
 
     @Override
-    public void attach(MediaPlayerControl mediaPlayer) {
+    public void attach(MediaPlayerControlWrapper mediaPlayer) {
         mMediaPlayer = mediaPlayer;
     }
 
     @Override
     public View getView() {
         return this;
-    }
-
-    @Override
-    public void setProgress(int position) {
-
     }
 
     @Override

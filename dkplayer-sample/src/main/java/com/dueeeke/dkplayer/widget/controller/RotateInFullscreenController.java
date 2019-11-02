@@ -40,16 +40,12 @@ public class RotateInFullscreenController extends StandardVideoController {
             mMediaPlayer.startFullScreen();
             return true;
         }
-        if (mShowing) {
-            hide();
-        } else {
-            show();
-        }
+        toggleShowState();
         return true;
     }
 
     @Override
-    protected void doStartStopFullScreen() {
+    protected void toggleFullScreen() {
         if (mActivity == null) return;
         int o = mActivity.getRequestedOrientation();
         if (o == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
@@ -57,7 +53,7 @@ public class RotateInFullscreenController extends StandardVideoController {
         } else {
             mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
-        mFullScreenButton.setSelected(o == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+//        mFullScreenButton.setSelected(o == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     }
 
     @Override
@@ -65,7 +61,7 @@ public class RotateInFullscreenController extends StandardVideoController {
         super.setPlayerState(playerState);
         switch (playerState) {
             case VideoView.PLAYER_FULL_SCREEN:
-                mFullScreenButton.setSelected(false);
+//                mFullScreenButton.setSelected(false);
 //                getThumb().setVisibility(GONE);
                 mOrientationHelper.disable();
                 break;
@@ -81,11 +77,11 @@ public class RotateInFullscreenController extends StandardVideoController {
 
         int i = v.getId();
         if (i == R.id.fullscreen) {
-            doStartStopFullScreen();
+            toggleFullScreen();
         } else if (i == R.id.lock) {
-            doLockUnlock();
+            toggleLockState();
         } else if (i == R.id.iv_play) {
-            doPauseResume();
+            togglePlay();
         } else if (i == R.id.back) {
             stopFullScreen();
         } else if (i == R.id.thumb) {
@@ -95,19 +91,5 @@ public class RotateInFullscreenController extends StandardVideoController {
             mMediaPlayer.replay(true);
             mMediaPlayer.startFullScreen();
         }
-    }
-
-    @Override
-    public boolean onBackPressed() {
-        if (mIsLocked) {
-            show();
-            Toast.makeText(getContext(), R.string.dkplayer_lock_tip, Toast.LENGTH_SHORT).show();
-            return true;
-        }
-        if (mMediaPlayer.isFullScreen()) {
-            stopFullScreen();
-            return true;
-        }
-        return super.onBackPressed();
     }
 }

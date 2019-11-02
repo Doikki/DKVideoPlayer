@@ -1,6 +1,7 @@
 package com.dueeeke.dkplayer.activity.api;
 
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,7 +35,7 @@ public class ParallelPlayActivity extends AppCompatActivity {
         //必须设置
         player1.setEnableAudioFocus(false);
         StandardVideoController controller1 = new StandardVideoController(this);
-        controller1.addDefaultControlComponent();
+        controller1.addDefaultControlComponent(getString(R.string.str_multi_player), false);
         player1.setVideoController(controller1);
 
         VideoView player2 = findViewById(R.id.player_2);
@@ -42,7 +43,7 @@ public class ParallelPlayActivity extends AppCompatActivity {
         //必须设置
         player2.setEnableAudioFocus(false);
         StandardVideoController controller2 = new StandardVideoController(this);
-        controller2.addDefaultControlComponent();
+        controller2.addDefaultControlComponent(getString(R.string.str_multi_player), false);
         player2.setVideoController(controller2);
     }
 

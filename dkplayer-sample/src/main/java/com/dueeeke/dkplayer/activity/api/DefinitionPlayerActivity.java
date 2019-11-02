@@ -34,8 +34,8 @@ public class DefinitionPlayerActivity extends BaseActivity<DefinitionVideoView<I
         mVideoView = findViewById(R.id.player);
 
         StandardVideoController controller = new StandardVideoController(this);
-        controller.addDefaultControlComponent();
-        controller.setTitle("韩雪：积极的悲观主义者");
+        controller.addDefaultControlComponent("韩雪：积极的悲观主义者", false);
+//        controller.setTitle("韩雪：积极的悲观主义者");
 //        mVideoView.setCustomMediaPlayer(new IjkPlayer(this) {
 //            @Override
 //            public void setInitOptions() {

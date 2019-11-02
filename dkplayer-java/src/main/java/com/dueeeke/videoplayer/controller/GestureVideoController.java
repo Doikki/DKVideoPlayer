@@ -13,29 +13,38 @@ import android.view.WindowManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 
 /**
  * 包含手势操作的VideoController
- * Created by xinyu on 2018/1/6.
+ * Created by dueeeke on 2018/1/6.
  */
 
 public abstract class GestureVideoController extends BaseVideoController implements
-        GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener, View.OnTouchListener {
+        GestureDetector.OnGestureListener,
+        GestureDetector.OnDoubleTapListener,
+        View.OnTouchListener {
 
-    protected GestureDetector mGestureDetector;
-    protected AudioManager mAudioManager;
-    protected boolean mIsGestureEnabled;
-    protected int mStreamVolume;
-    protected float mBrightness;
-    protected int mPosition;
-    protected boolean mNeedSeek;
-    protected boolean mFirstTouch;
-    protected boolean mChangePosition;
-    protected boolean mChangeBrightness;
-    protected boolean mChangeVolume;
+    private GestureDetector mGestureDetector;
+    private AudioManager mAudioManager;
+    private boolean mIsGestureEnabled = true;
+    private int mStreamVolume;
+    private float mBrightness;
+    private int mPosition;
+    private boolean mNeedSeek;
+    private boolean mFirstTouch;
+    private boolean mChangePosition;
+    private boolean mChangeBrightness;
+    private boolean mChangeVolume;
 
-    protected GestureListener mGestureListener;
+    private boolean mLiveMode;
+
+    private boolean mEnableInNormal;
+
+    private GestureListener mGestureListener;
+
+    private boolean mCanSlide;
 
     public GestureVideoController(@NonNull Context context) {
         super(context);
@@ -55,6 +64,34 @@ public abstract class GestureVideoController extends BaseVideoController impleme
         mAudioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
         mGestureDetector = new GestureDetector(getContext(), this);
         setOnTouchListener(this);
+    }
+
+    /**
+     * 设置是否为直播模式，此模式下不能滑动调节进度
+     */
+    public void setLiveMode(boolean liveMode) {
+        mLiveMode = liveMode;
+    }
+
+    /**
+     * 是否在竖屏模式下有效
+     */
+    public void setEnableInNormal(boolean enableInNormal) {
+        mEnableInNormal = enableInNormal;
+    }
+
+    public void setGestureEnabled(boolean gestureEnabled) {
+        mIsGestureEnabled = gestureEnabled;
+    }
+
+    @Override
+    public void setPlayerState(int playerState) {
+        super.setPlayerState(playerState);
+        if (playerState == VideoView.PLAYER_NORMAL) {
+            mCanSlide = mEnableInNormal;
+        } else if (playerState == VideoView.PLAYER_FULL_SCREEN) {
+            mCanSlide = true;
+        }
     }
 
     @Override
@@ -81,17 +118,13 @@ public abstract class GestureVideoController extends BaseVideoController impleme
 
     @Override
     public boolean onSingleTapConfirmed(MotionEvent e) {
-        if (mShowing) {
-            hide();
-        } else {
-            show();
-        }
+        toggleShowState();
         return true;
     }
 
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        if (!mIsGestureEnabled || PlayerUtils.isEdge(getContext(), e1))
+        if (!mIsGestureEnabled || !mCanSlide || PlayerUtils.isEdge(getContext(), e1))
             return false;
         float deltaX = e1.getX() - e2.getX();
         float deltaY = e1.getY() - e2.getY();
@@ -123,7 +156,7 @@ public abstract class GestureVideoController extends BaseVideoController impleme
 
     @Override
     public boolean onDoubleTap(MotionEvent e) {
-        if (!mIsLocked) doPauseResume();
+        if (!isLocked()) togglePlay();
         return true;
     }
 
@@ -169,6 +202,7 @@ public abstract class GestureVideoController extends BaseVideoController impleme
     }
 
     protected void slideToChangePosition(float deltaX) {
+        if (mLiveMode) return;
         deltaX = -deltaX;
         int width = getMeasuredWidth();
         int duration = (int) mMediaPlayer.getDuration();

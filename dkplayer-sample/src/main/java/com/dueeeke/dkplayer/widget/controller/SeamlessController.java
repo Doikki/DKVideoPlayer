@@ -38,7 +38,7 @@ public class SeamlessController extends BaseVideoController {
         super.initView();
         setClickable(false);
         setFocusable(false);
-        mMute = mControllerView.findViewById(R.id.iv_mute);
+        mMute = findViewById(R.id.iv_mute);
         mMute.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

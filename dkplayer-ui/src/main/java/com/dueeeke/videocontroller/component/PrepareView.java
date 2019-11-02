@@ -13,7 +13,7 @@ import androidx.annotation.Nullable;
 
 import com.dueeeke.videocontroller.R;
 import com.dueeeke.videoplayer.controller.IControlComponent;
-import com.dueeeke.videoplayer.controller.MediaPlayerControl;
+import com.dueeeke.videoplayer.controller.MediaPlayerControlWrapper;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.player.VideoViewManager;
 
@@ -22,7 +22,7 @@ import com.dueeeke.videoplayer.player.VideoViewManager;
  */
 public class PrepareView extends FrameLayout implements IControlComponent {
 
-    private MediaPlayerControl mMediaPlayer;
+    private MediaPlayerControlWrapper mMediaPlayer;
     
     private ImageView mThumb;
     private ImageView mStartPlay;
@@ -80,7 +80,7 @@ public class PrepareView extends FrameLayout implements IControlComponent {
     }
 
     @Override
-    public void onPlayStateChange(int playState) {
+    public void onPlayStateChanged(int playState) {
         switch (playState) {
             case VideoView.STATE_PREPARING:
                 bringToFront();
@@ -110,23 +110,18 @@ public class PrepareView extends FrameLayout implements IControlComponent {
     }
 
     @Override
-    public void onPlayerStateChange(int playerState) {
+    public void onPlayerStateChanged(int playerState) {
 
     }
 
     @Override
-    public void attach(MediaPlayerControl mediaPlayer) {
+    public void attach(MediaPlayerControlWrapper mediaPlayer) {
         mMediaPlayer = mediaPlayer;
     }
 
     @Override
     public View getView() {
         return this;
-    }
-
-    @Override
-    public void setProgress(int position) {
-
     }
 
     @Override

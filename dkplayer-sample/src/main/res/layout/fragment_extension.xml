@@ -23,18 +23,6 @@
         android:text="@string/str_ad" />
 
     <Button
-        android:id="@+id/btn_fullscreen_rotate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/str_extend_rotate_in_fullscreen" />
-
-    <Button
-        android:id="@+id/btn_switch_player"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/str_switch_player" />
-
-    <Button
         android:id="@+id/btn_proxy_cache"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

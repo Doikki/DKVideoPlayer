@@ -9,6 +9,11 @@ import com.dueeeke.dkplayer.activity.BaseActivity;
 import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.videocontroller.StandardVideoController;
+import com.dueeeke.videocontroller.component.CompleteView;
+import com.dueeeke.videocontroller.component.ErrorView;
+import com.dueeeke.videocontroller.component.PrepareView;
+import com.dueeeke.videocontroller.component.TitleView;
+import com.dueeeke.videocontroller.component.VodControlView;
 import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.PlayerUtils;
@@ -24,7 +29,8 @@ public class PlayListActivity extends BaseActivity {
 
     private List<VideoBean> data = DataUtil.getVideoList();
 
-    private StandardVideoController mStandardVideoController;
+    private StandardVideoController mController;
+    private TitleView mTitleView;
 
     @Override
     protected View getContentView() {
@@ -42,13 +48,14 @@ public class PlayListActivity extends BaseActivity {
     @Override
     protected void initView() {
         super.initView();
-        mStandardVideoController = new StandardVideoController(this);
+        mController = new StandardVideoController(this);
+        addControlComponents();
 
         //加载第一条数据
         VideoBean videoBean = data.get(0);
         mVideoView.setUrl(videoBean.getUrl());
-        mStandardVideoController.setTitle(videoBean.getTitle());
-        mVideoView.setVideoController(mStandardVideoController);
+        mTitleView.setTitle(videoBean.getTitle());
+        mVideoView.setVideoController(mController);
 
         //监听播放结束
         mVideoView.addOnVideoViewStateChangeListener(new OnVideoViewStateChangeListener() {
@@ -68,8 +75,8 @@ public class PlayListActivity extends BaseActivity {
                         //重新设置数据
                         VideoBean videoBean = data.get(mCurrentVideoPosition);
                         mVideoView.setUrl(videoBean.getUrl());
-                        mStandardVideoController.setTitle(videoBean.getTitle());
-                        mVideoView.setVideoController(mStandardVideoController);
+                        mTitleView.setTitle(videoBean.getTitle());
+                        mVideoView.setVideoController(mController);
                         //开始播放
                         mVideoView.start();
                     }
@@ -78,5 +85,15 @@ public class PlayListActivity extends BaseActivity {
         });
 
         mVideoView.start();
+    }
+
+    public void addControlComponents() {
+        CompleteView completeView = new CompleteView(this);
+        ErrorView errorView = new ErrorView(this);
+        PrepareView prepareView = new PrepareView(this);
+        prepareView.setClickStart();
+        mTitleView = new TitleView(this);
+        VodControlView vodControlView = new VodControlView(this);
+        mController.addControlComponent(completeView, errorView, prepareView, mTitleView, vodControlView);
     }
 }

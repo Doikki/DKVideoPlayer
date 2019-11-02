@@ -2,10 +2,11 @@ package com.dueeeke.dkplayer.widget.controller;
 
 import android.app.Activity;
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videocontroller.StandardVideoController;
@@ -25,7 +26,7 @@ public class PadController extends StandardVideoController {
     }
 
     @Override
-    protected void doStartStopFullScreen() {
+    protected void toggleFullScreen() {
         Activity activity = PlayerUtils.scanForActivity(getContext());
         if (activity == null) return;
         if (mMediaPlayer.isFullScreen()) {
@@ -37,7 +38,7 @@ public class PadController extends StandardVideoController {
 
     @Override
     public boolean onBackPressed() {
-        if (mIsLocked) {
+        if (isLocked()) {
             show();
             Toast.makeText(getContext(), R.string.dkplayer_lock_tip, Toast.LENGTH_SHORT).show();
             return true;

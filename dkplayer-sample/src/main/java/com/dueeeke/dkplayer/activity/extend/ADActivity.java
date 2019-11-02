@@ -7,7 +7,7 @@ import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.activity.BaseActivity;
 import com.dueeeke.dkplayer.interf.ControllerListener;
 import com.dueeeke.dkplayer.util.cache.ProxyVideoCacheManager;
-import com.dueeeke.dkplayer.widget.controller.AdController;
+import com.dueeeke.dkplayer.widget.component.AdControlView;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.VideoView;
@@ -24,7 +24,8 @@ public class ADActivity extends BaseActivity<VideoView> {
     //    private static final String URL_VOD = "http://uploads.cutv.com:8088/video/data/201703/10/encode_file/515b6a95601ba6b39620358f2677a17358c2472411d53.mp4";
     private static final String URL_AD = "https://gslb.miaopai.com/stream/IR3oMYDhrON5huCmf7sHCfnU5YKEkgO2.mp4";
 
-    private StandardVideoController mStandardVideoController;
+    private StandardVideoController mController;
+    private AdControlView mAdControlView;
 
     @Override
     protected int getLayoutResId() {
@@ -40,9 +41,9 @@ public class ADActivity extends BaseActivity<VideoView> {
     protected void initView() {
         super.initView();
         mVideoView = findViewById(R.id.player);
-
-        AdController adController = new AdController(this);
-        adController.setControllerListener(new ControllerListener() {
+        mController = new StandardVideoController(this);
+        mAdControlView = new AdControlView(this);
+        mAdControlView.setControllerListener(new ControllerListener() {
             @Override
             public void onAdClick() {
                 Toast.makeText(ADActivity.this, "广告点击跳转", Toast.LENGTH_SHORT).show();
@@ -53,11 +54,12 @@ public class ADActivity extends BaseActivity<VideoView> {
                 playVideo();
             }
         });
+        mController.addControlComponent(mAdControlView);
 
         HttpProxyCacheServer cacheServer = ProxyVideoCacheManager.getProxy(this);
         String proxyUrl = cacheServer.getProxyUrl(URL_AD);
         mVideoView.setUrl(proxyUrl);
-        mVideoView.setVideoController(adController);
+        mVideoView.setVideoController(mController);
 
         //监听播放结束
         mVideoView.addOnVideoViewStateChangeListener(new OnVideoViewStateChangeListener() {
@@ -82,14 +84,10 @@ public class ADActivity extends BaseActivity<VideoView> {
      */
     private void playVideo() {
         mVideoView.release();
+        mController.removeAllControlComponent();
+        mController.addDefaultControlComponent("正片", false);
         //重新设置数据
         mVideoView.setUrl(URL_VOD);
-        if (mStandardVideoController == null) {
-            mStandardVideoController = new StandardVideoController(ADActivity.this);
-        }
-        mStandardVideoController.setTitle("正片标题");
-        //更换控制器
-        mVideoView.setVideoController(mStandardVideoController);
         //开始播放
         mVideoView.start();
     }

@@ -12,7 +12,7 @@ import androidx.annotation.Nullable;
 
 import com.dueeeke.videocontroller.R;
 import com.dueeeke.videoplayer.controller.IControlComponent;
-import com.dueeeke.videoplayer.controller.MediaPlayerControl;
+import com.dueeeke.videoplayer.controller.MediaPlayerControlWrapper;
 import com.dueeeke.videoplayer.player.VideoView;
 
 /**
@@ -24,7 +24,7 @@ public class ErrorView extends LinearLayout implements IControlComponent {
     private float mDownX;
     private float mDownY;
 
-    private MediaPlayerControl mMediaPlayer;
+    private MediaPlayerControlWrapper mMediaPlayer;
 
     public ErrorView(Context context) {
         this(context, null);
@@ -85,7 +85,7 @@ public class ErrorView extends LinearLayout implements IControlComponent {
     }
 
     @Override
-    public void onPlayStateChange(int playState) {
+    public void onPlayStateChanged(int playState) {
         if (playState == VideoView.STATE_ERROR) {
             bringToFront();
             setVisibility(VISIBLE);
@@ -95,23 +95,18 @@ public class ErrorView extends LinearLayout implements IControlComponent {
     }
 
     @Override
-    public void onPlayerStateChange(int playerState) {
+    public void onPlayerStateChanged(int playerState) {
 
     }
 
     @Override
-    public void attach(MediaPlayerControl mediaPlayer) {
+    public void attach(MediaPlayerControlWrapper mediaPlayer) {
         mMediaPlayer = mediaPlayer;
     }
 
     @Override
     public View getView() {
         return this;
-    }
-
-    @Override
-    public void setProgress(int position) {
-
     }
 
     @Override

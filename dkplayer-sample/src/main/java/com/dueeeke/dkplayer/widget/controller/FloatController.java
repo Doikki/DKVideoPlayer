@@ -45,10 +45,10 @@ public class FloatController extends GestureVideoController implements View.OnCl
     protected void initView() {
         super.initView();
         this.setOnClickListener(this);
-        mControllerView.findViewById(R.id.btn_close).setOnClickListener(this);
-        mControllerView.findViewById(R.id.btn_skip).setOnClickListener(this);
-        proLoading = mControllerView.findViewById(R.id.loading);
-        playButton = mControllerView.findViewById(R.id.start_play);
+        findViewById(R.id.btn_close).setOnClickListener(this);
+        findViewById(R.id.btn_skip).setOnClickListener(this);
+        proLoading = findViewById(R.id.loading);
+        playButton = findViewById(R.id.start_play);
         playButton.setOnClickListener(this);
         addControlComponent(new ErrorView(getContext()));
     }
@@ -65,7 +65,7 @@ public class FloatController extends GestureVideoController implements View.OnCl
             PIPManager.getInstance().stopFloatWindow();
             PIPManager.getInstance().reset();
         } else if (id == R.id.start_play) {
-            doPauseResume();
+            togglePlay();
         } else if (id == R.id.btn_skip) {
             if (PIPManager.getInstance().getActClass() != null) {
                 Intent intent = new Intent(getContext(), PIPManager.getInstance().getActClass());
@@ -94,7 +94,7 @@ public class FloatController extends GestureVideoController implements View.OnCl
                 playButton.setSelected(false);
                 playButton.setVisibility(VISIBLE);
                 proLoading.setVisibility(GONE);
-                show(0);
+//                show(0);
                 break;
             case VideoView.STATE_PREPARING:
                 playButton.setVisibility(GONE);
@@ -118,37 +118,36 @@ public class FloatController extends GestureVideoController implements View.OnCl
                 playButton.setSelected(mMediaPlayer.isPlaying());
                 break;
             case VideoView.STATE_PLAYBACK_COMPLETED:
-                show(0);
-                removeCallbacks(mShowProgress);
+//                show(0);
                 break;
         }
     }
 
     @Override
     public void show() {
-        show(mDefaultTimeout);
+//        show(mDefaultTimeout);
     }
 
-    private void show(int timeout) {
-        if (mCurrentPlayState == VideoView.STATE_BUFFERING) return;
-        if (!mShowing) {
-            playButton.setVisibility(VISIBLE);
-        }
-        mShowing = true;
-
-        removeCallbacks(mFadeOut);
-        if (timeout != 0) {
-            postDelayed(mFadeOut, timeout);
-        }
-    }
-
-
-    @Override
-    public void hide() {
-        if (mCurrentPlayState == VideoView.STATE_BUFFERING) return;
-        if (mShowing) {
-            playButton.setVisibility(GONE);
-            mShowing = false;
-        }
-    }
+//    private void show(int timeout) {
+//        if (mCurrentPlayState == VideoView.STATE_BUFFERING) return;
+//        if (!mShowing) {
+//            playButton.setVisibility(VISIBLE);
+//        }
+//        mShowing = true;
+//
+//        removeCallbacks(mFadeOut);
+//        if (timeout != 0) {
+//            postDelayed(mFadeOut, timeout);
+//        }
+//    }
+//
+//
+//    @Override
+//    public void hide() {
+//        if (mCurrentPlayState == VideoView.STATE_BUFFERING) return;
+//        if (mShowing) {
+//            playButton.setVisibility(GONE);
+//            mShowing = false;
+//        }
+//    }
 }

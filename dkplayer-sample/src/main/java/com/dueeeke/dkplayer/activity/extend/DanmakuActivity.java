@@ -34,9 +34,9 @@ public class DanmakuActivity extends BaseActivity<DanmukuVideoView> {
     protected void initView() {
         super.initView();
         mVideoView = findViewById(R.id.player);
-        StandardVideoController standardVideoController = new StandardVideoController(this);
-        standardVideoController.setTitle("网易公开课-如何掌控你的自由时间");
-        mVideoView.setVideoController(standardVideoController);
+        StandardVideoController controller = new StandardVideoController(this);
+        controller.addDefaultControlComponent(getString(R.string.str_danmu), false);
+        mVideoView.setVideoController(controller);
         mVideoView.setUrl(URL_VOD);
         mVideoView.start();
 

@@ -17,6 +17,8 @@ import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.videocontroller.component.CompleteView;
 import com.dueeeke.videocontroller.component.ErrorView;
 import com.dueeeke.videocontroller.StandardVideoController;
+import com.dueeeke.videocontroller.component.TitleView;
+import com.dueeeke.videocontroller.component.VodControlView;
 import com.dueeeke.videoplayer.controller.IControlComponent;
 import com.dueeeke.videoplayer.player.VideoView;
 
@@ -44,6 +46,8 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
         mController = new StandardVideoController(getActivity());
         mController.addControlComponent(new ErrorView(getActivity()));
         mController.addControlComponent(new CompleteView(getActivity()));
+        mController.addControlComponent(new TitleView(getActivity()));
+        mController.addControlComponent(new VodControlView(getActivity()));
         mController.setEnableOrientation(true);
         mVideoView.setVideoController(mController);
 

@@ -1,13 +1,11 @@
 package com.dueeeke.videoplayer.controller;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.OrientationEventListener;
-import android.view.View;
 import android.widget.FrameLayout;
 
 import androidx.annotation.AttrRes;
@@ -19,36 +17,59 @@ import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.player.VideoViewManager;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 
-import java.util.Formatter;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.Locale;
 import java.util.Map;
 
 /**
  * 控制器基类
- * Created by Devlin_n on 2017/4/12.
+ * Created by dueeeke on 2017/4/12.
  */
-@SuppressLint("SourceLockedOrientationActivity")
 public abstract class BaseVideoController extends FrameLayout
-        implements OrientationHelper.OnOrientationChangeListener, CutoutAdaptHelper.Callback {
+        implements OrientationHelper.OnOrientationChangeListener,
+        CutoutAdaptHelper.Callback, VideoControllerCallback {
 
-    protected View mControllerView;//控制器视图
-    protected MediaPlayerControl mMediaPlayer;//播放器
-    protected boolean mShowing;//控制器是否处于显示状态
-    protected boolean mIsLocked;
+    /**
+     * 播放器包装类，里面扩展了MediaPlayerControl的功能
+     */
+    protected MediaPlayerControlWrapper mMediaPlayer;
+
+    private boolean mShowing;//控制器是否处于显示状态
+
+    /**
+     * 是否处于锁定状态
+     */
+    private boolean mIsLocked;
+
+    /**
+     * 播放视图隐藏超时
+     */
     protected int mDefaultTimeout = 4000;
-    private StringBuilder mFormatBuilder;
-    private Formatter mFormatter;
-    protected int mCurrentPlayState;
-    protected int mCurrentPlayerState;
 
-    protected OrientationHelper mOrientationHelper;
+    /**
+     * 是否开启根据屏幕方向进入/退出全屏
+     */
     private boolean mEnableOrientation;
 
+    /**
+     * 屏幕方向监听辅助类
+     */
+    protected OrientationHelper mOrientationHelper;
+
+    /**
+     * 是否适配刘海屏
+     */
+    private boolean mAdaptCutout;
+
+    /**
+     * 刘海屏适配辅助类
+     */
     @Nullable
     private CutoutAdaptHelper mCutoutAdaptHelper;
 
+    /**
+     * 保存了所有的控制组件
+     */
     private LinkedHashMap<IControlComponent, Boolean> mControlComponents = new LinkedHashMap<>();
 
     public BaseVideoController(@NonNull Context context) {
@@ -67,18 +88,12 @@ public abstract class BaseVideoController extends FrameLayout
 
     protected void initView() {
         if (getLayoutId() != 0) {
-            mControllerView = LayoutInflater.from(getContext()).inflate(getLayoutId(), this);
+            LayoutInflater.from(getContext()).inflate(getLayoutId(), this, true);
         }
-        mFormatBuilder = new StringBuilder();
-        mFormatter = new Formatter(mFormatBuilder, Locale.getDefault());
         setClickable(true);
         setFocusable(true);
         mOrientationHelper = new OrientationHelper(getContext().getApplicationContext());
         mEnableOrientation = VideoViewManager.getConfig().mEnableOrientation;
-        Activity activity = PlayerUtils.scanForActivity(getContext());
-        if (activity != null) {
-            mCutoutAdaptHelper = new CutoutAdaptHelper(activity, this);
-        }
     }
 
     /**
@@ -91,31 +106,137 @@ public abstract class BaseVideoController extends FrameLayout
      */
     @CallSuper
     public void setMediaPlayer(MediaPlayerControl mediaPlayer) {
-        this.mMediaPlayer = mediaPlayer;
+        this.mMediaPlayer = new MediaPlayerControlWrapper(mediaPlayer, this);
         //开始监听
         mOrientationHelper.setOnOrientationChangeListener(this);
 
         for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
-            next.getKey().attach(mediaPlayer);
+            next.getKey().attach(mMediaPlayer);
         }
+
+        if (mAdaptCutout) {
+            Activity activity = PlayerUtils.scanForActivity(getContext());
+            if (activity != null) {
+                mCutoutAdaptHelper = new CutoutAdaptHelper(activity, this);
+            }
+        }
+    }
+
+    /**
+     * 设置是否适配刘海屏
+     */
+    public void setAdaptCutout(boolean adaptCutout) {
+        mAdaptCutout = adaptCutout;
+    }
+
+    /**
+     * 设置播放视图自动隐藏超时
+     */
+    public void setDismissTimeout(int timeout) {
+        if (timeout > 0) {
+            mDefaultTimeout = timeout;
+        }
+    }
+
+    /**
+     * 切换显示状态
+     */
+    public void toggleShowState() {
+        if (mShowing) {
+            hideInner();
+        } else {
+            showInner(false);
+        }
+    }
+
+    /**
+     * 隐藏播放视图
+     */
+    protected void hideInner() {
+        if (mShowing) {
+            if (!mIsLocked) {//如果没有锁定屏幕，就向各个组件分发hide事件
+                for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
+                    next.getKey().hide();
+                }
+            }
+            //向子类分发hide事件
+            hide();
+            mShowing = false;
+        }
+    }
+
+
+    /**
+     * 显示播放视图
+     * @param force 是否强制显示
+     */
+    protected void showInner(boolean force) {
+        if (!mShowing || force) {
+            if (!mIsLocked) {//如果没有锁定屏幕，就向各个组件分发show事件
+                for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
+                    next.getKey().show();
+                }
+            }
+            //向子类分发show事件
+            show();
+            mShowing = true;
+        }
+
+        startFadeOut();
+    }
+
+    protected boolean isShowing() {
+        return mShowing;
     }
 
     /**
      * 显示
      */
     protected void show() {
-        for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
-            next.getKey().show();
-        }
+
     }
 
     /**
      * 隐藏
      */
     protected void hide() {
-        for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
-            next.getKey().hide();
+
+    }
+
+    /**
+     * 开始计时
+     */
+    @Override
+    public void startFadeOut() {
+        //重新开始计时
+        stopFadeOut();
+        postDelayed(mFadeOut, mDefaultTimeout);
+    }
+
+    /**
+     * 取消计时
+     */
+    @Override
+    public void stopFadeOut() {
+        removeCallbacks(mFadeOut);
+    }
+
+    /**
+     * 隐藏播放视图Runnable
+     */
+    public final Runnable mFadeOut = new Runnable() {
+        @Override
+        public void run() {
+            hideInner();
         }
+    };
+
+    public void setLocked(boolean locked) {
+        mIsLocked = locked;
+    }
+
+    public boolean isLocked() {
+        return mIsLocked;
     }
 
     /**
@@ -124,14 +245,30 @@ public abstract class BaseVideoController extends FrameLayout
      */
     @CallSuper
     public void setPlayState(int playState) {
-        mCurrentPlayState = playState;
         for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
-            next.getKey().onPlayStateChange(playState);
+            next.getKey().onPlayStateChanged(playState);
         }
         if (playState == VideoView.STATE_IDLE) {
-            mOrientationHelper.disable();
-            removeAllPrivateComponents();
+            reset();
+        } else if (playState == VideoView.STATE_PREPARING) {
+            hideInner();
+        } else if (playState == VideoView.STATE_PLAYBACK_COMPLETED) {
+            mIsLocked = false;
+            removeCallbacks(mFadeOut);
+            hideInner();
+        } else if (playState == VideoView.STATE_ERROR) {
+            removeCallbacks(mFadeOut);
+            hideInner();
         }
+    }
+
+    private void reset() {
+        mOrientationHelper.disable();
+        mOrientation = 0;
+        mIsLocked = false;
+        removeCallbacks(mFadeOut);
+        hideInner();
+        removeAllPrivateComponents();
     }
 
     /**
@@ -140,9 +277,8 @@ public abstract class BaseVideoController extends FrameLayout
      */
     @CallSuper
     public void setPlayerState(int playerState) {
-        mCurrentPlayerState = playerState;
         for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
-            next.getKey().onPlayerStateChange(playerState);
+            next.getKey().onPlayerStateChanged(playerState);
         }
         if (mCutoutAdaptHelper != null) {
             mCutoutAdaptHelper.onPlayerStateChanged(playerState);
@@ -179,8 +315,10 @@ public abstract class BaseVideoController extends FrameLayout
     /**
      * 添加控制组件
      */
-    public void addControlComponent(IControlComponent component) {
-        addControlComponent(component, false);
+    public void addControlComponent(IControlComponent... component) {
+        for (IControlComponent item : component) {
+            addControlComponent(item, false);
+        }
     }
 
     /**
@@ -194,7 +332,7 @@ public abstract class BaseVideoController extends FrameLayout
             component.attach(mMediaPlayer);
         }
         if (!isPrivate) {
-            addView(component.getView());
+            addView(component.getView(), 0);
         }
     }
 
@@ -226,8 +364,7 @@ public abstract class BaseVideoController extends FrameLayout
     /**
      * 播放和暂停
      */
-    protected void doPauseResume() {
-        if (mCurrentPlayState == VideoView.STATE_BUFFERING) return;
+    protected void togglePlay() {
         if (mMediaPlayer.isPlaying()) {
             mMediaPlayer.pause();
         } else {
@@ -238,90 +375,39 @@ public abstract class BaseVideoController extends FrameLayout
     /**
      * 横竖屏切换
      */
-    protected void doStartStopFullScreen() {
-        if (mMediaPlayer.isFullScreen()) {
-            stopFullScreen();
-        } else {
-            startFullScreen();
-        }
+    protected void toggleFullScreen() {
+        Activity activity = PlayerUtils.scanForActivity(getContext());
+        if (activity == null || activity.isFinishing()) return;
+        mMediaPlayer.toggleFullScreen(activity);
     }
 
     /**
      * 子类中请使用此方法来进入全屏
      */
-    protected void startFullScreen() {
+    protected boolean startFullScreen() {
         Activity activity = PlayerUtils.scanForActivity(getContext());
-        if (activity == null || activity.isFinishing()) return;
+        if (activity == null || activity.isFinishing()) return false;
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         mMediaPlayer.startFullScreen();
+        return true;
     }
 
     /**
      * 子类中请使用此方法来退出全屏
      */
-    protected void stopFullScreen() {
+    protected boolean stopFullScreen() {
         Activity activity = PlayerUtils.scanForActivity(getContext());
-        if (activity == null || activity.isFinishing()) return;
+        if (activity == null || activity.isFinishing()) return false;
         mMediaPlayer.stopFullScreen();
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        return true;
     }
 
     /**
-     * 刷新进度Runnable
+     * 改变返回键逻辑，用于activity
      */
-    protected Runnable mShowProgress = new Runnable() {
-        @Override
-        public void run() {
-            int pos = setProgress();
-            if (mMediaPlayer.isPlaying()) {
-                postDelayed(mShowProgress, 1000 - (pos % 1000));
-            }
-        }
-    };
-
-    /**
-     * 隐藏播放视图Runnable
-     */
-    protected final Runnable mFadeOut = new Runnable() {
-        @Override
-        public void run() {
-            hide();
-        }
-    };
-
-    /**
-     * 重写此方法实现刷新进度功能
-     */
-    private int setProgress() {
-        int position = (int) mMediaPlayer.getCurrentPosition();
-        for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
-            next.getKey().setProgress(position);
-        }
-        setProgress(position);
-        return position;
-    }
-
-    protected void setProgress(int position) {
-    }
-
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        post(mShowProgress);
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        removeCallbacks(mShowProgress);
-    }
-
-    @Override
-    protected void onWindowVisibilityChanged(int visibility) {
-        super.onWindowVisibilityChanged(visibility);
-        if (visibility == VISIBLE) {
-            post(mShowProgress);
-        }
+    public boolean onBackPressed() {
+        return false;
     }
 
     @Override
@@ -342,21 +428,15 @@ public abstract class BaseVideoController extends FrameLayout
     }
 
     /**
-     * 改变返回键逻辑，用于activity
-     */
-    public boolean onBackPressed() {
-        return false;
-    }
-
-    /**
      * 是否自动旋转， 默认不自动旋转
      */
     public void setEnableOrientation(boolean enableOrientation) {
         mEnableOrientation = enableOrientation;
     }
 
-    private int mOrientation = -1;
+    private int mOrientation = 0;
 
+    @CallSuper
     @Override
     public void onOrientationChanged(int orientation) {
         if (mCutoutAdaptHelper != null) {
@@ -371,7 +451,6 @@ public abstract class BaseVideoController extends FrameLayout
 
         if (orientation == OrientationEventListener.ORIENTATION_UNKNOWN) {
             //手机平放时，检测不到有效的角度
-
             //重置为原始位置 -1
             mOrientation = -1;
             return;
@@ -386,7 +465,6 @@ public abstract class BaseVideoController extends FrameLayout
             //0度，用户竖直拿着手机
             mOrientation = 0;
             onOrientationPortrait(activity);
-
         } else if (orientation > 80 && orientation < 100) {
 
             int o = activity.getRequestedOrientation();
@@ -438,6 +516,7 @@ public abstract class BaseVideoController extends FrameLayout
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
     }
 
+    @CallSuper
     @Override
     public void adjustReserveLandscape(int space) {
         for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
@@ -445,6 +524,7 @@ public abstract class BaseVideoController extends FrameLayout
         }
     }
 
+    @CallSuper
     @Override
     public void adjustLandscape(int space) {
         for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
@@ -452,6 +532,7 @@ public abstract class BaseVideoController extends FrameLayout
         }
     }
 
+    @CallSuper
     @Override
     public void adjustPortrait(int space) {
         for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {

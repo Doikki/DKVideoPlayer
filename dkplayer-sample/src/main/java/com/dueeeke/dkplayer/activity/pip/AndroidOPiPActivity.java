@@ -88,7 +88,7 @@ public class AndroidOPiPActivity extends AppCompatActivity {
     private BroadcastReceiver mReceiver;
 
     private VideoView mVideoView;
-    private StandardVideoController mStandardVideoController;
+    private StandardVideoController mController;
     private int mWidthPixels;
 
     @Override
@@ -100,8 +100,9 @@ public class AndroidOPiPActivity extends AppCompatActivity {
         mVideoView.setLayoutParams(new LinearLayout.LayoutParams(mWidthPixels, mWidthPixels * 9 / 16 + 1));
 
         mVideoView.setUrl("http://vfx.mtime.cn/Video/2019/03/12/mp4/190312143927981075.mp4");
-        mStandardVideoController = new StandardVideoController(this);
-        mVideoView.setVideoController(mStandardVideoController);
+        mController = new StandardVideoController(this);
+        mController.addDefaultControlComponent(getString(R.string.str_pip_android_o), false);
+        mVideoView.setVideoController(mController);
         mVideoView.start();
         mVideoView.addOnVideoViewStateChangeListener(new OnVideoViewStateChangeListener() {
             @Override
@@ -230,7 +231,7 @@ public class AndroidOPiPActivity extends AppCompatActivity {
             mVideoView.setLayoutParams(new LinearLayout.LayoutParams(
                     mWidthPixels,
                     mWidthPixels * 9 / 16 + 1));
-            mVideoView.setVideoController(mStandardVideoController);
+            mVideoView.setVideoController(mController);
             mVideoView.requestLayout();
         }
     }

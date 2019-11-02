@@ -5,6 +5,8 @@ import android.view.View;
 import com.dueeeke.dkplayer.widget.controller.RotateInFullscreenController;
 import com.dueeeke.videocontroller.component.CompleteView;
 import com.dueeeke.videocontroller.component.ErrorView;
+import com.dueeeke.videocontroller.component.TitleView;
+import com.dueeeke.videocontroller.component.VodControlView;
 import com.dueeeke.videoplayer.player.VideoView;
 
 public class RecyclerViewRotateFragment extends RecyclerViewAutoPlayFragment {
@@ -17,6 +19,8 @@ public class RecyclerViewRotateFragment extends RecyclerViewAutoPlayFragment {
         mController.addControlComponent(mErrorView);
         mCompleteView = new CompleteView(getActivity());
         mController.addControlComponent(mCompleteView);
+        mController.addControlComponent(new TitleView(getActivity()));
+        mController.addControlComponent(new VodControlView(getActivity()));
         mController.setEnableOrientation(true);
         mVideoView.setVideoController(mController);
     }

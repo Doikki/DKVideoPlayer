@@ -18,7 +18,10 @@ public class PadActivity extends BaseActivity {
 
         mVideoView.setUrl("http://vfx.mtime.cn/Video/2019/03/12/mp4/190312143927981075.mp4");
 
-        mVideoView.setVideoController(new PadController(this));
+        PadController controller = new PadController(this);
+        controller.addDefaultControlComponent("pad", false);
+
+        mVideoView.setVideoController(controller);
 
         mVideoView.start();
     }

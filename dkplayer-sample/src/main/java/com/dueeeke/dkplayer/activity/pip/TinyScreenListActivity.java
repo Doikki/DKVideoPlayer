@@ -31,7 +31,7 @@ import java.util.List;
 public class TinyScreenListActivity extends AppCompatActivity implements FloatRecyclerViewAdapter.OnChildViewClickListener {
 
     private VideoView mVideoView;
-    private StandardVideoController mStandardVideoController;
+    private StandardVideoController mController;
     private FloatController mFloatController;
     private List<VideoBean> mVideoList;
 
@@ -50,8 +50,9 @@ public class TinyScreenListActivity extends AppCompatActivity implements FloatRe
         initView();
 
         mVideoView = new VideoView(this);
-        mStandardVideoController = new StandardVideoController(this);
-        mVideoView.setVideoController(mStandardVideoController);
+        mController = new StandardVideoController(this);
+        mController.addDefaultControlComponent("", false);
+        mVideoView.setVideoController(mController);
         mFloatController = new FloatController(this);
     }
 
@@ -80,9 +81,9 @@ public class TinyScreenListActivity extends AppCompatActivity implements FloatRe
                 if (position == mCurrentPlayingPosition) {
                     mVideoView.stopTinyScreen();
                     thumb.setVisibility(View.GONE);
-                    mStandardVideoController.setPlayState(mVideoView.getCurrentPlayState());
-                    mStandardVideoController.setPlayerState(mVideoView.getCurrentPlayerState());
-                    mVideoView.setVideoController(mStandardVideoController);
+                    mController.setPlayState(mVideoView.getCurrentPlayState());
+                    mController.setPlayerState(mVideoView.getCurrentPlayerState());
+                    mVideoView.setVideoController(mController);
                     if (mVideoView.getParent() instanceof ViewGroup) {
                         ((ViewGroup) mVideoView.getParent()).removeView(mVideoView);
                     }
@@ -145,9 +146,9 @@ public class TinyScreenListActivity extends AppCompatActivity implements FloatRe
         VideoBean videoBean = mVideoList.get(position);
         mVideoView.release();
         mVideoView.setUrl(videoBean.getUrl());
-        ImageView iv = mStandardVideoController.findViewById(R.id.thumb);
+        ImageView iv = mController.findViewById(R.id.thumb);
         Glide.with(this).load(videoBean.getThumb()).into(iv);
-        mVideoView.setVideoController(mStandardVideoController);
+        mVideoView.setVideoController(mController);
         mVideoView.start();
         player.addView(mVideoView);
         thumb.setVisibility(View.GONE);
