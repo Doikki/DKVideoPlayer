@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -85,8 +86,8 @@ public class DefinitionController extends StandardVideoController {
     }
 
     @Override
-    public void hide() {
-        super.hide();
+    public void hide(Animation hideAnim) {
+        super.hide(hideAnim);
         if (mPopupWindow.isShowing()) {
             mPopupWindow.dismiss();
         }
@@ -136,7 +137,7 @@ public class DefinitionController extends StandardVideoController {
             multiRate.setText(mRateStr.get(index));
             ((DefinitionMediaPlayerControl)mMediaPlayer).switchDefinition(mRateStr.get(index));
             mPopupWindow.dismiss();
-            hide();
+            hide(null);
             currentIndex = index;
         }
     };

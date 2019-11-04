@@ -1,25 +1,30 @@
 package com.dueeeke.videoplayer.controller;
 
 import android.view.View;
+import android.view.animation.Animation;
+
+import androidx.annotation.NonNull;
 
 public interface IControlComponent {
 
-    void attach(MediaPlayerControlWrapper mediaPlayer);
+    void attach(@NonNull MediaPlayerControlWrapper mediaPlayer);
 
     View getView();
 
-    void show();
+    void show(Animation showAnim);
 
-    void hide();
+    void hide(Animation hideAnim);
 
     void onPlayStateChanged(int playState);
 
     void onPlayerStateChanged(int playerState);
 
-    void adjustPortrait(int space);
+    void adjustView(int orientation, int space);
 
-    void adjustLandscape(int space);
+    void setProgress(int duration, int position);
 
-    void adjustReserveLandscape(int space);
+    void onLock();
+
+    void onUnlock();
 
 }

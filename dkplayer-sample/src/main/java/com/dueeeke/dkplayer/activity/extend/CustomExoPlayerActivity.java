@@ -38,6 +38,7 @@ public class CustomExoPlayerActivity extends BaseActivity<ExoVideoView> {
 
     public void onButtonClick(View view) {
         mVideoView.release();
+        mVideoView.setCacheEnabled(false);
         switch (view.getId()) {
             case R.id.cache: {
                 mVideoView.setCacheEnabled(true);
@@ -45,7 +46,6 @@ public class CustomExoPlayerActivity extends BaseActivity<ExoVideoView> {
                 break;
             }
             case R.id.concat: {
-                mVideoView.setCacheEnabled(false);
                 //将多个视频拼接在一起播放
                 ConcatenatingMediaSource concatenatingMediaSource = new ConcatenatingMediaSource();
                 ExoMediaSourceHelper helper = new ExoMediaSourceHelper(this);

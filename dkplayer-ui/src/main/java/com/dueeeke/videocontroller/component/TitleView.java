@@ -1,8 +1,5 @@
 package com.dueeeke.videocontroller.component;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -13,6 +10,7 @@ import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -40,11 +38,6 @@ public class TitleView extends FrameLayout implements IControlComponent {
     private TextView mSysTime;//系统当前时间
 
     private BatteryReceiver mBatteryReceiver;
-
-    private ObjectAnimator mShowAnimator;
-    private ObjectAnimator mHideAnimator;
-
-    private boolean mIsShowing;
 
     public TitleView(@NonNull Context context) {
         super(context);
@@ -78,18 +71,6 @@ public class TitleView extends FrameLayout implements IControlComponent {
         //电量
         ImageView batteryLevel = findViewById(R.id.iv_battery);
         mBatteryReceiver = new BatteryReceiver(batteryLevel);
-
-        mShowAnimator = ObjectAnimator.ofFloat(this, "alpha", 0, 1);
-        mShowAnimator.setDuration(300);
-        mHideAnimator = ObjectAnimator.ofFloat(this, "alpha", 1, 0);
-        mHideAnimator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                setVisibility(GONE);
-            }
-        });
-        mHideAnimator.setDuration(300);
     }
 
     public void setTitle(String title) {
@@ -109,40 +90,59 @@ public class TitleView extends FrameLayout implements IControlComponent {
     }
 
     @Override
-    public void show() {
-        mIsShowing = true;
-        if (getVisibility() != VISIBLE) {
-            mSysTime.setText(PlayerUtils.getCurrentSystemTime());
-            if (mMediaPlayer.isFullScreen()) {
+    public void attach(@NonNull MediaPlayerControlWrapper mediaPlayer) {
+        mMediaPlayer = mediaPlayer;
+    }
+
+    @Override
+    public View getView() {
+        return this;
+    }
+
+    @Override
+    public void show(Animation showAnim) {
+        //只在全屏时才显示
+        if (mMediaPlayer.isFullScreen()) {
+            if (getVisibility() == GONE) {
+                mSysTime.setText(PlayerUtils.getCurrentSystemTime());
                 setVisibility(VISIBLE);
-                mHideAnimator.cancel();
-                mShowAnimator.start();
+                if (showAnim != null) {
+                    startAnimation(showAnim);
+                }
             }
         }
     }
 
     @Override
-    public void hide() {
-        mIsShowing = false;
-        if (getVisibility() == VISIBLE) {
-            if (mMediaPlayer.isFullScreen()) {
-                mShowAnimator.cancel();
-                mHideAnimator.start();
+    public void hide(Animation hideAnim) {
+        if (mMediaPlayer.isFullScreen()) {
+            if (getVisibility() == VISIBLE) {
+                if (hideAnim != null) {
+                    setVisibility(GONE);
+                    startAnimation(hideAnim);
+                }
             }
         }
     }
 
     @Override
     public void onPlayStateChanged(int playState) {
-        if (playState == VideoView.STATE_PLAYBACK_COMPLETED) {
-            setVisibility(GONE);
+        switch (playState) {
+            case VideoView.STATE_IDLE:
+            case VideoView.STATE_START_ABORT:
+            case VideoView.STATE_PREPARING:
+            case VideoView.STATE_PREPARED:
+            case VideoView.STATE_ERROR:
+            case VideoView.STATE_PLAYBACK_COMPLETED:
+                setVisibility(GONE);
+                break;
         }
     }
 
     @Override
     public void onPlayerStateChanged(int playerState) {
         if (playerState == VideoView.PLAYER_FULL_SCREEN) {
-            if (mIsShowing) {
+            if (mMediaPlayer.isShowing()) {
                 setVisibility(VISIBLE);
             }
             mTitle.setNeedFocus(true);
@@ -153,30 +153,30 @@ public class TitleView extends FrameLayout implements IControlComponent {
     }
 
     @Override
-    public void attach(MediaPlayerControlWrapper mediaPlayer) {
-        mMediaPlayer = mediaPlayer;
+    public void adjustView(int orientation, int space) {
+        if (orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+            mTitleContainer.setPadding(0, 0, 0, 0);
+        } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+            mTitleContainer.setPadding(space, 0, 0, 0);
+        } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
+            mTitleContainer.setPadding(0, 0, space, 0);
+        }
     }
 
     @Override
-    public View getView() {
-        return this;
+    public void setProgress(int duration, int position) {
+
     }
 
     @Override
-    public void adjustPortrait(int space) {
-        mTitleContainer.setPadding(0, 0, 0, 0);
+    public void onLock() {
+        setVisibility(GONE);
     }
 
     @Override
-    public void adjustLandscape(int space) {
-        mTitleContainer.setPadding(space, 0, 0, 0);
+    public void onUnlock() {
+        setVisibility(VISIBLE);
     }
-
-    @Override
-    public void adjustReserveLandscape(int space) {
-        mTitleContainer.setPadding(0, 0, space, 0);
-    }
-
 
     private static class BatteryReceiver extends BroadcastReceiver {
         private ImageView pow;

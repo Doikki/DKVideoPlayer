@@ -1,10 +1,10 @@
 package com.dueeeke.videocontroller;
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 
 import com.dueeeke.videocontroller.component.CompleteView;
 import com.dueeeke.videocontroller.component.ErrorView;
+import com.dueeeke.videocontroller.component.GestureView;
 import com.dueeeke.videocontroller.component.LiveControlView;
 import com.dueeeke.videocontroller.component.PrepareView;
 import com.dueeeke.videocontroller.component.TitleView;
@@ -26,24 +27,16 @@ import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.L;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 
-import static com.dueeeke.videoplayer.util.PlayerUtils.stringForTime;
-
 /**
  * 直播/点播控制器
  * Created by Devlin_n on 2017/4/7.
  */
 
-public class StandardVideoController extends GestureVideoController
-        implements View.OnClickListener, GestureVideoController.GestureListener {
+public class StandardVideoController extends GestureVideoController implements View.OnClickListener {
 
     protected ImageView mLockButton;
 
-    private ProgressBar mLoadingProgress;
-    private Animation mShowAnim;
-    private Animation mHideAnim;
-
-    protected CenterView mCenterView;
-
+    protected ProgressBar mLoadingProgress;
 
     public StandardVideoController(@NonNull Context context) {
         this(context, null);
@@ -68,17 +61,6 @@ public class StandardVideoController extends GestureVideoController
         mLockButton = findViewById(R.id.lock);
         mLockButton.setOnClickListener(this);
         mLoadingProgress = findViewById(R.id.loading);
-
-        setGestureListener(this);
-
-        mCenterView = new CenterView(getContext());
-        mCenterView.setVisibility(GONE);
-        addView(mCenterView);
-
-        mHideAnim = new AlphaAnimation(1f, 0f);
-        mHideAnim.setDuration(300);
-        mShowAnim = new AlphaAnimation(0f, 1f);
-        mShowAnim.setDuration(300);
     }
 
     /**
@@ -99,81 +81,71 @@ public class StandardVideoController extends GestureVideoController
         } else {
             addControlComponent(new VodControlView(getContext()));
         }
-        setLiveMode(isLive);
+        addControlComponent(new GestureView(getContext()));
+        setCanChangePosition(!isLive);
     }
 
     @Override
-    public void adjustPortrait(int space) {
-        super.adjustPortrait(space);
-        FrameLayout.LayoutParams lblp = (LayoutParams) mLockButton.getLayoutParams();
+    public void adjustView(int orientation, int space) {
+        super.adjustView(orientation, space);
         int dp24 = PlayerUtils.dp2px(getContext(), 24);
-        lblp.setMargins(dp24, 0, dp24, 0);
-    }
-
-    @Override
-    public void adjustLandscape(int space) {
-        super.adjustLandscape(space);
-        FrameLayout.LayoutParams layoutParams = (LayoutParams) mLockButton.getLayoutParams();
-        int dp24 = PlayerUtils.dp2px(getContext(), 24);
-        layoutParams.setMargins(dp24 + space, 0, dp24 + space, 0);
-    }
-
-    @Override
-    public void adjustReserveLandscape(int space) {
-        super.adjustReserveLandscape(space);
-        FrameLayout.LayoutParams layoutParams = (LayoutParams) mLockButton.getLayoutParams();
-        int dp24 = PlayerUtils.dp2px(getContext(), 24);
-        layoutParams.setMargins(dp24, 0, dp24, 0);
+        if (orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+            FrameLayout.LayoutParams lblp = (LayoutParams) mLockButton.getLayoutParams();
+            lblp.setMargins(dp24, 0, dp24, 0);
+        } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+            FrameLayout.LayoutParams layoutParams = (LayoutParams) mLockButton.getLayoutParams();
+            layoutParams.setMargins(dp24 + space, 0, dp24 + space, 0);
+        } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
+            FrameLayout.LayoutParams layoutParams = (LayoutParams) mLockButton.getLayoutParams();
+            layoutParams.setMargins(dp24, 0, dp24, 0);
+        }
     }
 
     @Override
     public void onClick(View v) {
         int i = v.getId();
         if (i == R.id.lock) {
-            toggleLockState();
-        }
-    }
-
-    /**
-     * 切换锁定状态
-     */
-    public void toggleLockState() {
-        if (isLocked()) {
-            //这两行顺序不能换
-            setLocked(false);
-            showInner(true);
-
-            setGestureEnabled(true);
-            mLockButton.setSelected(false);
-            Toast.makeText(getContext(), R.string.dkplayer_unlocked, Toast.LENGTH_SHORT).show();
-        } else {
-            //这两行顺序不能换
-            hideInner();
-            setLocked(true);
-
-            setGestureEnabled(false);
-            mLockButton.setSelected(true);
-            Toast.makeText(getContext(), R.string.dkplayer_locked, Toast.LENGTH_SHORT).show();
+            mMediaPlayer.toggleLockState();
         }
     }
 
     @Override
-    protected void show() {
-        super.show();
+    public void onLock() {
+        super.onLock();
+        setGestureEnabled(false);
+        mLockButton.setSelected(true);
+        Toast.makeText(getContext(), R.string.dkplayer_locked, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onUnlock() {
+        super.onUnlock();
+        setGestureEnabled(true);
+        mLockButton.setSelected(false);
+        Toast.makeText(getContext(), R.string.dkplayer_unlocked, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void show(Animation showAnim) {
+        super.show(showAnim);
         if (mMediaPlayer.isFullScreen()) {
-            if (mLockButton.getVisibility() != VISIBLE) {
+            if (mLockButton.getVisibility() == GONE) {
                 mLockButton.setVisibility(VISIBLE);
-                mLockButton.setAnimation(mShowAnim);
+                if (showAnim != null) {
+                    mLockButton.startAnimation(showAnim);
+                }
             }
         }
     }
 
     @Override
-    protected void hide() {
-        super.hide();
+    protected void hide(Animation hideAnim) {
+        super.hide(hideAnim);
         if (mMediaPlayer.isFullScreen()) {
             mLockButton.setVisibility(GONE);
-            mLockButton.setAnimation(mHideAnim);
+            if (hideAnim != null) {
+                mLockButton.startAnimation(hideAnim);
+            }
         }
     }
 
@@ -206,7 +178,6 @@ public class StandardVideoController extends GestureVideoController
             //调用release方法会回到此状态
             case VideoView.STATE_IDLE:
                 L.e("STATE_IDLE");
-                hide();
                 mLockButton.setSelected(false);
                 mLoadingProgress.setVisibility(GONE);
                 break;
@@ -226,7 +197,6 @@ public class StandardVideoController extends GestureVideoController
                 break;
             case VideoView.STATE_ERROR:
                 L.e("STATE_ERROR");
-                hide();
                 mLoadingProgress.setVisibility(GONE);
                 break;
             case VideoView.STATE_BUFFERING:
@@ -239,8 +209,8 @@ public class StandardVideoController extends GestureVideoController
                 break;
             case VideoView.STATE_PLAYBACK_COMPLETED:
                 L.e("STATE_PLAYBACK_COMPLETED");
-                hide();
                 mLoadingProgress.setVisibility(GONE);
+                mLockButton.setVisibility(GONE);
                 mLockButton.setSelected(false);
                 break;
         }
@@ -249,7 +219,7 @@ public class StandardVideoController extends GestureVideoController
     @Override
     public boolean onBackPressed() {
         if (isLocked()) {
-            showInner(false);
+            showInner();
             Toast.makeText(getContext(), R.string.dkplayer_lock_tip, Toast.LENGTH_SHORT).show();
             return true;
         }
@@ -257,49 +227,5 @@ public class StandardVideoController extends GestureVideoController
             return stopFullScreen();
         }
         return super.onBackPressed();
-    }
-
-    @Override
-    public void onPositionChange(int slidePosition, int currentPosition, int duration) {
-        mCenterView.setProVisibility(View.GONE);
-        if (slidePosition > currentPosition) {
-            mCenterView.setIcon(R.drawable.dkplayer_ic_action_fast_forward);
-        } else {
-            mCenterView.setIcon(R.drawable.dkplayer_ic_action_fast_rewind);
-        }
-        mCenterView.setTextView(stringForTime(slidePosition) + "/" + stringForTime(duration));
-    }
-
-    @Override
-    public void onBrightnessChange(int percent) {
-        mCenterView.setProVisibility(View.VISIBLE);
-        mCenterView.setIcon(R.drawable.dkplayer_ic_action_brightness);
-        mCenterView.setTextView(percent + "%");
-        mCenterView.setProPercent(percent);
-    }
-
-    @Override
-    public void onVolumeChange(int percent) {
-        mCenterView.setProVisibility(View.VISIBLE);
-        if (percent <= 0) {
-            mCenterView.setIcon(R.drawable.dkplayer_ic_action_volume_off);
-        } else {
-            mCenterView.setIcon(R.drawable.dkplayer_ic_action_volume_up);
-        }
-        mCenterView.setTextView(percent + "%");
-        mCenterView.setProPercent(percent);
-    }
-
-    @Override
-    public void onStartSlide() {
-        hide();
-        mCenterView.setVisibility(VISIBLE);
-    }
-
-    @Override
-    public void onStopSlide() {
-        if (mCenterView.getVisibility() == VISIBLE) {
-            mCenterView.setVisibility(GONE);
-        }
     }
 }

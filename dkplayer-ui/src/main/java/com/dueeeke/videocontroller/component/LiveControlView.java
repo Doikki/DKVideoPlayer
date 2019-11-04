@@ -5,9 +5,11 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -74,19 +76,32 @@ public class LiveControlView extends FrameLayout implements IControlComponent, V
     }
 
     @Override
-    public void show() {
-        if (getVisibility() != VISIBLE) {
+    public void attach(@NonNull MediaPlayerControlWrapper mediaPlayer) {
+        mMediaPlayer = mediaPlayer;
+    }
+
+    @Override
+    public View getView() {
+        return this;
+    }
+
+    @Override
+    public void show(Animation showAnim) {
+        if (getVisibility() == GONE) {
             setVisibility(VISIBLE);
-            mHideAnimator.cancel();
-            mShowAnimator.start();
+            if (showAnim != null) {
+                startAnimation(showAnim);
+            }
         }
     }
 
     @Override
-    public void hide() {
+    public void hide(Animation hideAnim) {
         if (getVisibility() == VISIBLE) {
-            mShowAnimator.cancel();
-            mHideAnimator.start();
+            setVisibility(GONE);
+            if (hideAnim != null) {
+                startAnimation(hideAnim);
+            }
         }
     }
 
@@ -102,10 +117,7 @@ public class LiveControlView extends FrameLayout implements IControlComponent, V
                 setVisibility(GONE);
                 break;
             case VideoView.STATE_PLAYING:
-                mPlayButton.setSelected(true);
-                break;
             case VideoView.STATE_PAUSED:
-                mPlayButton.setSelected(false);
             case VideoView.STATE_BUFFERING:
             case VideoView.STATE_BUFFERED:
                 mPlayButton.setSelected(mMediaPlayer.isPlaying());
@@ -126,28 +138,29 @@ public class LiveControlView extends FrameLayout implements IControlComponent, V
     }
 
     @Override
-    public void attach(MediaPlayerControlWrapper mediaPlayer) {
-        mMediaPlayer = mediaPlayer;
+    public void adjustView(int orientation, int space) {
+        if (orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+            mBottomContainer.setPadding(0, 0, 0, 0);
+        } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+            mBottomContainer.setPadding(space, 0, 0, 0);
+        } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
+            mBottomContainer.setPadding(0, 0, space, 0);
+        }
     }
 
     @Override
-    public View getView() {
-        return this;
+    public void setProgress(int duration, int position) {
+
     }
 
     @Override
-    public void adjustPortrait(int space) {
-        mBottomContainer.setPadding(0, 0, 0, 0);
+    public void onLock() {
+        hide(null);
     }
 
     @Override
-    public void adjustLandscape(int space) {
-        mBottomContainer.setPadding(space, 0, 0, 0);
-    }
-
-    @Override
-    public void adjustReserveLandscape(int space) {
-        mBottomContainer.setPadding(0, 0, space, 0);
+    public void onUnlock() {
+        show(null);
     }
 
     @Override
@@ -167,7 +180,6 @@ public class LiveControlView extends FrameLayout implements IControlComponent, V
      */
     private void toggleFullScreen() {
         Activity activity = PlayerUtils.scanForActivity(getContext());
-        if (activity == null || activity.isFinishing()) return;
         mMediaPlayer.toggleFullScreen(activity);
     }
 }

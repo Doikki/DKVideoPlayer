@@ -9,11 +9,12 @@ import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.activity.DebugActivity;
 import com.dueeeke.dkplayer.util.IntentKeys;
+import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videocontroller.component.CompleteView;
 import com.dueeeke.videocontroller.component.ErrorView;
+import com.dueeeke.videocontroller.component.GestureView;
 import com.dueeeke.videocontroller.component.LiveControlView;
 import com.dueeeke.videocontroller.component.PrepareView;
-import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videocontroller.component.TitleView;
 import com.dueeeke.videocontroller.component.VodControlView;
 import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
@@ -61,15 +62,23 @@ public class PlayerActivity extends DebugActivity {
             boolean isLive = intent.getBooleanExtra("isLive", false);
             if (isLive) {
                 controller.addControlComponent(new LiveControlView(this));//直播控制条
-                controller.setLiveMode(true);
             } else {
-                controller.addControlComponent(new VodControlView(this));//点播控制条
-                controller.setLiveMode(false);
+                VodControlView vodControlView = new VodControlView(this);//点播控制条
+                vodControlView.showBottomProgress(false);
+                controller.addControlComponent(vodControlView);
             }
+
+            GestureView gestureControlView = new GestureView(this);//滑动控制视图
+            controller.addControlComponent(gestureControlView);
+            //根据是否为直播决定是否需要滑动调节进度
+            controller.setCanChangePosition(!isLive);
 
             //设置标题
             String title = intent.getStringExtra(IntentKeys.TITLE);
             titleView.setTitle(title);
+
+            //快速添加各个组件
+//            controller.addDefaultControlComponent("", isLive);
 
             mVideoView.setVideoController(controller);
 

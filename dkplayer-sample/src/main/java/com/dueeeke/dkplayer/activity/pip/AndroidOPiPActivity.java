@@ -206,7 +206,7 @@ public class AndroidOPiPActivity extends AppCompatActivity {
                                 return;
                             }
 
-                            // This is where we are called back from Picture-in-Picture action
+                            // This is where we are called mBack from Picture-in-Picture action
                             // items.
                             final int controlType = intent.getIntExtra(EXTRA_CONTROL_TYPE, 0);
                             switch (controlType) {

@@ -70,7 +70,9 @@ public class ExoVideoView extends VideoView<CustomExoMediaPlayer> {
      * 设置ExoPlayer的MediaSource
      */
     public void setMediaSource(MediaSource mediaSource) {
-        this.mMediaSource = mediaSource;
+        mUrl = null;
+        mAssetFileDescriptor = null;
+        mMediaSource = mediaSource;
     }
 
     /**

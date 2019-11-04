@@ -39,7 +39,7 @@ public class PadController extends StandardVideoController {
     @Override
     public boolean onBackPressed() {
         if (isLocked()) {
-            show();
+            show(null);
             Toast.makeText(getContext(), R.string.dkplayer_lock_tip, Toast.LENGTH_SHORT).show();
             return true;
         }

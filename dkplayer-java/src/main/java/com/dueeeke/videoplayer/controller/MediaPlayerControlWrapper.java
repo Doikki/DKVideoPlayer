@@ -4,15 +4,17 @@ import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 
+import androidx.annotation.NonNull;
+
 /**
- * MediaPlayerControl包装类，扩张了MediaPlayerControl部分功能
+ * 此类的目的是为了在ControlComponent中既能调用VideoView的api又能调用BaseVideoController的api.相当于一个中间人。
  */
 public class MediaPlayerControlWrapper implements MediaPlayerControl, VideoControllerCallback {
     
     private MediaPlayerControl mBase;
     private VideoControllerCallback mCallback;
     
-    public MediaPlayerControlWrapper(MediaPlayerControl base, VideoControllerCallback callback) {
+    public MediaPlayerControlWrapper(@NonNull MediaPlayerControl base, @NonNull VideoControllerCallback callback) {
         mBase = base;
         mCallback = callback;
     }
@@ -136,40 +138,60 @@ public class MediaPlayerControlWrapper implements MediaPlayerControl, VideoContr
      * 播放和暂停
      */
     public void togglePlay() {
-        if (mBase.isPlaying()) {
-            mBase.pause();
+        if (isPlaying()) {
+            pause();
         } else {
-            mBase.start();
+            start();
         }
     }
 
     /**
-     * 横竖屏切换
+     * 横竖屏切换，会旋转屏幕
      */
     public void toggleFullScreen(Activity activity) {
-        if (mBase.isFullScreen()) {
-            stopFullScreen(activity);
+        if (activity == null || activity.isFinishing())
+            return;
+        if (isFullScreen()) {
+            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            stopFullScreen();
         } else {
-            startFullScreen(activity);
+            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            startFullScreen();
         }
     }
 
     /**
-     * 子类中请使用此方法来进入全屏
+     * 横竖屏切换，不会旋转屏幕
      */
-    private void startFullScreen(Activity activity) {
-        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        mBase.startFullScreen();
+    public void toggleFullScreen() {
+        if (isFullScreen()) {
+            stopFullScreen();
+        } else {
+            startFullScreen();
+        }
     }
 
     /**
-     * 子类中请使用此方法来退出全屏
+     * 横竖屏切换，根据适配宽高决定是否旋转屏幕
      */
-    private void stopFullScreen(Activity activity) {
-        mBase.stopFullScreen();
-        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    public void toggleFullScreenByVideoSize(Activity activity) {
+        if (activity == null || activity.isFinishing())
+            return;
+        int[] size = getVideoSize();
+        int width = size[0];
+        int height = size[1];
+        if (isFullScreen()) {
+            stopFullScreen();
+            if (width > height) {
+               activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            }
+        } else {
+            startFullScreen();
+            if (width > height) {
+                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            }
+        }
     }
-
 
     @Override
     public void startFadeOut() {
@@ -179,5 +201,59 @@ public class MediaPlayerControlWrapper implements MediaPlayerControl, VideoContr
     @Override
     public void stopFadeOut() {
         mCallback.stopFadeOut();
+    }
+
+    @Override
+    public boolean isShowing() {
+        return mCallback.isShowing();
+    }
+
+    @Override
+    public void setLocked(boolean locked) {
+        mCallback.setLocked(locked);
+    }
+
+    @Override
+    public boolean isLocked() {
+        return mCallback.isLocked();
+    }
+
+    @Override
+    public void startProgress() {
+        mCallback.startProgress();
+    }
+
+    @Override
+    public void stopProgress() {
+        mCallback.stopProgress();
+    }
+
+    @Override
+    public void hideInner() {
+        mCallback.hideInner();
+    }
+
+    @Override
+    public void showInner() {
+        mCallback.showInner();
+    }
+
+    /**
+     * 切换锁定状态
+     */
+    public void toggleLockState() {
+        setLocked(!isLocked());
+    }
+
+
+    /**
+     * 切换显示/隐藏状态
+     */
+    public void toggleShowState() {
+        if (isShowing()) {
+            hideInner();
+        } else {
+            showInner();
+        }
     }
 }

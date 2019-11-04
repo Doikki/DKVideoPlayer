@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
@@ -13,7 +14,7 @@ import androidx.annotation.Nullable;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.util.PIPManager;
 import com.dueeeke.videocontroller.component.ErrorView;
-import com.dueeeke.videoplayer.controller.GestureVideoController;
+import com.dueeeke.videoplayer.controller.BaseVideoController;
 import com.dueeeke.videoplayer.controller.MediaPlayerControl;
 import com.dueeeke.videoplayer.player.VideoView;
 
@@ -22,7 +23,7 @@ import com.dueeeke.videoplayer.player.VideoView;
  * Created by Devlin_n on 2017/6/1.
  */
 
-public class FloatController extends GestureVideoController implements View.OnClickListener {
+public class FloatController extends BaseVideoController implements View.OnClickListener {
 
 
     private ProgressBar proLoading;
@@ -88,7 +89,7 @@ public class FloatController extends GestureVideoController implements View.OnCl
                 playButton.setSelected(true);
                 playButton.setVisibility(GONE);
                 proLoading.setVisibility(GONE);
-                hide();
+                hide(null);
                 break;
             case VideoView.STATE_PAUSED:
                 playButton.setSelected(false);
@@ -124,14 +125,14 @@ public class FloatController extends GestureVideoController implements View.OnCl
     }
 
     @Override
-    public void show() {
+    public void show(Animation showAnim) {
 //        show(mDefaultTimeout);
     }
 
 //    private void show(int timeout) {
 //        if (mCurrentPlayState == VideoView.STATE_BUFFERING) return;
 //        if (!mShowing) {
-//            playButton.setVisibility(VISIBLE);
+//            mPlayButton.setVisibility(VISIBLE);
 //        }
 //        mShowing = true;
 //
@@ -146,7 +147,7 @@ public class FloatController extends GestureVideoController implements View.OnCl
 //    public void hide() {
 //        if (mCurrentPlayState == VideoView.STATE_BUFFERING) return;
 //        if (mShowing) {
-//            playButton.setVisibility(GONE);
+//            mPlayButton.setVisibility(GONE);
 //            mShowing = false;
 //        }
 //    }

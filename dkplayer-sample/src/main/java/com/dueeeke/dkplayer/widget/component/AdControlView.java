@@ -1,12 +1,11 @@
 package com.dueeeke.dkplayer.widget.component;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,9 +22,9 @@ import com.dueeeke.videoplayer.util.PlayerUtils;
 
 public class AdControlView extends FrameLayout implements IControlComponent, View.OnClickListener {
 
-    protected TextView adTime, adDetail;
-    protected ImageView back, volume, fullScreen, playButton;
-    protected ControllerListener listener;
+    protected TextView mAdTime, mAdDetail;
+    protected ImageView mBack, mVolume, mFullScreen, mPlayButton;
+    protected ControllerListener mControllerListener;
 
     private MediaPlayerControlWrapper mMediaPlayer;
 
@@ -43,67 +42,30 @@ public class AdControlView extends FrameLayout implements IControlComponent, Vie
 
     {
         LayoutInflater.from(getContext()).inflate(R.layout.layout_ad_control_view, this, true);
-        adTime = findViewById(R.id.ad_time);
-        adDetail = findViewById(R.id.ad_detail);
-        adDetail.setText("了解详情>");
-        back = findViewById(R.id.back);
-        back.setVisibility(GONE);
-        volume = findViewById(R.id.iv_volume);
-        fullScreen = findViewById(R.id.fullscreen);
-        playButton = findViewById(R.id.iv_play);
-        playButton.setOnClickListener(this);
-        adTime.setOnClickListener(this);
-        adDetail.setOnClickListener(this);
-        back.setOnClickListener(this);
-        volume.setOnClickListener(this);
-        fullScreen.setOnClickListener(this);
+        mAdTime = findViewById(R.id.ad_time);
+        mAdDetail = findViewById(R.id.ad_detail);
+        mAdDetail.setText("了解详情>");
+        mBack = findViewById(R.id.back);
+        mBack.setVisibility(GONE);
+        mVolume = findViewById(R.id.iv_volume);
+        mFullScreen = findViewById(R.id.fullscreen);
+        mPlayButton = findViewById(R.id.iv_play);
+        mPlayButton.setOnClickListener(this);
+        mAdTime.setOnClickListener(this);
+        mAdDetail.setOnClickListener(this);
+        mBack.setOnClickListener(this);
+        mVolume.setOnClickListener(this);
+        mFullScreen.setOnClickListener(this);
         this.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (listener != null) listener.onAdClick();
+                if (mControllerListener != null) mControllerListener.onAdClick();
             }
         });
     }
 
     @Override
-    public void show() {
-
-    }
-
-    @Override
-    public void hide() {
-
-    }
-
-    @Override
-    public void onPlayStateChanged(int playState) {
-        switch (playState) {
-            case VideoView.STATE_PLAYING:
-                post(mShowProgress);
-                playButton.setSelected(true);
-                break;
-            case VideoView.STATE_PAUSED:
-                playButton.setSelected(false);
-                break;
-        }
-    }
-
-    @Override
-    public void onPlayerStateChanged(int playerState) {
-        switch (playerState) {
-            case VideoView.PLAYER_NORMAL:
-                back.setVisibility(GONE);
-                fullScreen.setSelected(false);
-                break;
-            case VideoView.PLAYER_FULL_SCREEN:
-                back.setVisibility(VISIBLE);
-                fullScreen.setSelected(true);
-                break;
-        }
-    }
-
-    @Override
-    public void attach(MediaPlayerControlWrapper mediaPlayer) {
+    public void attach(@NonNull MediaPlayerControlWrapper mediaPlayer) {
         mMediaPlayer = mediaPlayer;
     }
 
@@ -113,17 +75,60 @@ public class AdControlView extends FrameLayout implements IControlComponent, Vie
     }
 
     @Override
-    public void adjustPortrait(int space) {
+    public void show(Animation showAnim) {
 
     }
 
     @Override
-    public void adjustLandscape(int space) {
+    public void hide(Animation hideAnim) {
 
     }
 
     @Override
-    public void adjustReserveLandscape(int space) {
+    public void onPlayStateChanged(int playState) {
+        switch (playState) {
+            case VideoView.STATE_PLAYING:
+                mMediaPlayer.startProgress();
+                mPlayButton.setSelected(true);
+                break;
+            case VideoView.STATE_PAUSED:
+                mPlayButton.setSelected(false);
+                break;
+        }
+    }
+
+    @Override
+    public void onPlayerStateChanged(int playerState) {
+        switch (playerState) {
+            case VideoView.PLAYER_NORMAL:
+                mBack.setVisibility(GONE);
+                mFullScreen.setSelected(false);
+                break;
+            case VideoView.PLAYER_FULL_SCREEN:
+                mBack.setVisibility(VISIBLE);
+                mFullScreen.setSelected(true);
+                break;
+        }
+    }
+
+    @Override
+    public void adjustView(int orientation, int space) {
+        //暂未实现全面屏适配逻辑，需要你自己补全
+    }
+
+    @Override
+    public void setProgress(int duration, int position) {
+        if (mAdTime != null)
+            mAdTime.setText(String.format("%s | 跳过", (duration - position) / 1000));
+    }
+
+    @Override
+    public void onLock() {
+
+    }
+
+    @Override
+    public void onUnlock() {
 
     }
 
@@ -135,9 +140,9 @@ public class AdControlView extends FrameLayout implements IControlComponent, Vie
         } else if (id == R.id.iv_volume) {
             doMute();
         } else if (id == R.id.ad_detail) {
-            if (listener != null) listener.onAdClick();
+            if (mControllerListener != null) mControllerListener.onAdClick();
         } else if (id == R.id.ad_time) {
-            if (listener != null) listener.onSkipAd();
+            if (mControllerListener != null) mControllerListener.onSkipAd();
         } else if (id == R.id.iv_play) {
             mMediaPlayer.togglePlay();
         }
@@ -145,7 +150,7 @@ public class AdControlView extends FrameLayout implements IControlComponent, Vie
 
     private void doMute() {
         mMediaPlayer.setMute(!mMediaPlayer.isMute());
-        volume.setImageResource(mMediaPlayer.isMute() ? R.drawable.dkplayer_ic_action_volume_up : R.drawable.dkplayer_ic_action_volume_off);
+        mVolume.setImageResource(mMediaPlayer.isMute() ? R.drawable.dkplayer_ic_action_volume_up : R.drawable.dkplayer_ic_action_volume_off);
     }
 
     /**
@@ -153,66 +158,10 @@ public class AdControlView extends FrameLayout implements IControlComponent, Vie
      */
     private void toggleFullScreen() {
         Activity activity = PlayerUtils.scanForActivity(getContext());
-        if (activity != null) {
-            mMediaPlayer.toggleFullScreen(activity);
-        }
+        mMediaPlayer.toggleFullScreen(activity);
     }
-
-    @Override
-    protected void onWindowVisibilityChanged(int visibility) {
-        super.onWindowVisibilityChanged(visibility);
-        if (visibility == VISIBLE) {
-            post(mShowProgress);
-        }
-    }
-
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        post(mShowProgress);
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        removeCallbacks(mShowProgress);
-    }
-
-    /**
-     * 刷新进度Runnable
-     */
-    protected Runnable mShowProgress = new Runnable() {
-        @Override
-        public void run() {
-            int pos = setProgress();
-            if (mMediaPlayer.isPlaying()) {
-                postDelayed(mShowProgress, 1000 - (pos % 1000));
-            }
-        }
-    };
-
-    /**
-     * 重写此方法实现刷新进度功能
-     */
-    private int setProgress() {
-        int position = (int) mMediaPlayer.getCurrentPosition();
-        setProgress(position);
-        return position;
-    }
-
-    private void setProgress(int position) {
-        if (mMediaPlayer == null) {
-            return;
-        }
-        int duration = (int) mMediaPlayer.getDuration();
-        if (adTime != null)
-            adTime.setText(String.format("%s | 跳过", (duration - position) / 1000));
-    }
-
 
     public void setControllerListener(ControllerListener listener) {
-        this.listener = listener;
+        this.mControllerListener = listener;
     }
-
-
 }

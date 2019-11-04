@@ -85,15 +85,15 @@ public class CutoutAdaptHelper {
             }
             if (o == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
                 if (mCallback != null) {
-                    mCallback.adjustPortrait(mSpace);
+                    mCallback.adjustView(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT, mSpace);
                 }
             } else if (o == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
                 if (mCallback != null) {
-                    mCallback.adjustLandscape(mSpace);
+                    mCallback.adjustView(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE, mSpace);
                 }
             } else if (o == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
                 if (mCallback != null) {
-                    mCallback.adjustReserveLandscape(mSpace);
+                    mCallback.adjustView(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE, mSpace);
                 }
             }
             mCurrentOrientation = o;
@@ -194,13 +194,13 @@ public class CutoutAdaptHelper {
          * 是否是vivo刘海屏机型
          */
         @SuppressWarnings("unchecked")
+        @SuppressLint("PrivateApi")
         private boolean hasCutoutVIVO() {
             if (!Build.MANUFACTURER.equalsIgnoreCase("vivo")) {
                 return false;
             }
             try {
                 ClassLoader cl = mActivity.getClassLoader();
-                @SuppressLint("PrivateApi")
                 Class ftFeatureUtil = cl.loadClass("android.util.FtFeature");
                 if (ftFeatureUtil != null) {
                     Method get = ftFeatureUtil.getMethod("isFeatureSupport", int.class);
@@ -216,13 +216,13 @@ public class CutoutAdaptHelper {
          * 是否是小米刘海屏机型
          */
         @SuppressWarnings("unchecked")
+        @SuppressLint("PrivateApi")
         private boolean hasCutoutXIAOMI() {
             if (!Build.MANUFACTURER.equalsIgnoreCase("xiaomi")) {
                 return false;
             }
             try {
                 ClassLoader cl = mActivity.getClassLoader();
-                @SuppressLint("PrivateApi")
                 Class SystemProperties = cl.loadClass("android.os.SystemProperties");
                 Class[] paramTypes = new Class[2];
                 paramTypes[0] = String.class;
@@ -232,7 +232,8 @@ public class CutoutAdaptHelper {
                 Object[] params = new Object[2];
                 params[0] = "ro.miui.notch";
                 params[1] = 0;
-                return (Integer) getInt.invoke(SystemProperties, params) == 1;
+                int hasCutout = (int) getInt.invoke(SystemProperties, params);
+                return hasCutout == 1;
             } catch (Exception e) {
                 return false;
             }
@@ -242,18 +243,9 @@ public class CutoutAdaptHelper {
     public interface Callback {
 
         /**
-         * 调整竖屏时的ui
+         * 调整ui
          */
-        void adjustPortrait(int space);
+        void adjustView(int orientation, int space);
 
-        /**
-         * 调整横屏时的ui
-         */
-        void adjustLandscape(int space);
-
-        /**
-         * 调整反向横屏时的ui
-         */
-        void adjustReserveLandscape(int space);
     }
 }

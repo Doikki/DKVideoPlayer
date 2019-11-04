@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/black">
@@ -13,22 +12,23 @@
 
         <TextView
             android:id="@+id/message"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:padding="10dp"
             android:text="@string/dkplayer_error_message"
             android:textColor="@android:color/white" />
 
         <TextView
             android:id="@+id/status_btn"
             android:layout_width="wrap_content"
-            android:layout_height="26dp"
-            android:layout_marginTop="@dimen/dkplayer_default_spacing"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:background="@drawable/dkplayer_shape_status_view_btn"
             android:gravity="center"
-            android:paddingLeft="14dp"
-            android:paddingRight="14dp"
+            android:paddingLeft="18dp"
+            android:paddingTop="4dp"
+            android:paddingRight="18dp"
+            android:paddingBottom="4dp"
             android:text="@string/dkplayer_retry"
             android:textColor="@android:color/white" />
 

@@ -6,8 +6,10 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.animation.Animation;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.dueeeke.videocontroller.R;
@@ -51,6 +53,60 @@ public class ErrorView extends LinearLayout implements IControlComponent {
         setClickable(true);
     }
 
+    @Override
+    public void attach(@NonNull MediaPlayerControlWrapper mediaPlayer) {
+        mMediaPlayer = mediaPlayer;
+    }
+
+    @Override
+    public View getView() {
+        return this;
+    }
+
+    @Override
+    public void show(Animation showAnim) {
+
+    }
+
+    @Override
+    public void hide(Animation hideAnim) {
+
+    }
+
+    @Override
+    public void onPlayStateChanged(int playState) {
+        if (playState == VideoView.STATE_ERROR) {
+            bringToFront();
+            setVisibility(VISIBLE);
+        } else if (playState == VideoView.STATE_IDLE) {
+            setVisibility(GONE);
+        }
+    }
+
+    @Override
+    public void onPlayerStateChanged(int playerState) {
+
+    }
+
+    @Override
+    public void adjustView(int orientation, int space) {
+
+    }
+
+    @Override
+    public void setProgress(int duration, int position) {
+
+    }
+
+    @Override
+    public void onLock() {
+
+    }
+
+    @Override
+    public void onUnlock() {
+
+    }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -72,55 +128,5 @@ public class ErrorView extends LinearLayout implements IControlComponent {
                 break;
         }
         return super.dispatchTouchEvent(ev);
-    }
-
-    @Override
-    public void show() {
-
-    }
-
-    @Override
-    public void hide() {
-
-    }
-
-    @Override
-    public void onPlayStateChanged(int playState) {
-        if (playState == VideoView.STATE_ERROR) {
-            bringToFront();
-            setVisibility(VISIBLE);
-        } else if (playState == VideoView.STATE_IDLE) {
-            setVisibility(GONE);
-        }
-    }
-
-    @Override
-    public void onPlayerStateChanged(int playerState) {
-
-    }
-
-    @Override
-    public void attach(MediaPlayerControlWrapper mediaPlayer) {
-        mMediaPlayer = mediaPlayer;
-    }
-
-    @Override
-    public View getView() {
-        return this;
-    }
-
-    @Override
-    public void adjustPortrait(int space) {
-
-    }
-
-    @Override
-    public void adjustLandscape(int space) {
-
-    }
-
-    @Override
-    public void adjustReserveLandscape(int space) {
-
     }
 }

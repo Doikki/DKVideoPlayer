@@ -1,13 +1,12 @@
 package com.dueeeke.videocontroller.component;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -41,10 +40,6 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
     private ImageView mPlayButton;
 
     private boolean mIsDragging;
-    private boolean mIsShowing;
-
-    private ObjectAnimator mShowAnimator;
-    private ObjectAnimator mHideAnimator;
 
     private boolean mIsShowBottomProgress = true;
 
@@ -74,55 +69,52 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
         mPlayButton = findViewById(R.id.iv_play);
         mPlayButton.setOnClickListener(this);
         mBottomProgress = findViewById(R.id.bottom_progress);
-
-        mShowAnimator = ObjectAnimator.ofFloat(mBottomContainer, "alpha", 0, 1);
-        mShowAnimator.setDuration(300);
-        mHideAnimator = ObjectAnimator.ofFloat(mBottomContainer, "alpha", 1, 0);
-        mHideAnimator.setDuration(300);
-        mHideAnimator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                mBottomContainer.setVisibility(GONE);
-                if (mIsShowBottomProgress) {
-                    mBottomProgress.setVisibility(VISIBLE);
-                }
-            }
-        });
-
     }
 
     /**
-     * 是否显示底部进度条
+     * 是否显示底部进度条，默认显示
      */
     public void showBottomProgress(boolean isShow) {
         mIsShowBottomProgress = isShow;
     }
 
     @Override
-    public void show() {
-        mIsShowing = true;
-        setVisibility(VISIBLE);
-        mBottomContainer.setVisibility(VISIBLE);
-        if (mIsShowBottomProgress) {
-            mBottomProgress.setVisibility(GONE);
-        }
-        mHideAnimator.cancel();
-        mShowAnimator.start();
+    public void attach(@NonNull MediaPlayerControlWrapper mediaPlayer) {
+        mMediaPlayer = mediaPlayer;
     }
 
     @Override
-    public void hide() {
-        mIsShowing = false;
-        setVisibility(VISIBLE);
-        mShowAnimator.cancel();
-        mHideAnimator.start();
+    public View getView() {
+        return this;
+    }
+
+    @Override
+    public void show(Animation showAnim) {
+        mBottomContainer.setVisibility(VISIBLE);
+        if (showAnim != null) {
+            mBottomContainer.startAnimation(showAnim);
+        }
+        if (mIsShowBottomProgress) {
+            mBottomProgress.setVisibility(GONE);
+        }
+    }
+
+    @Override
+    public void hide(Animation hideAnim) {
+        mBottomContainer.setVisibility(GONE);
+        if (hideAnim != null) {
+            mBottomContainer.startAnimation(hideAnim);
+        }
+        if (mIsShowBottomProgress) {
+            mBottomProgress.setVisibility(VISIBLE);
+        }
     }
 
     @Override
     public void onPlayStateChanged(int playState) {
         switch (playState) {
             case VideoView.STATE_IDLE:
+            case VideoView.STATE_PLAYBACK_COMPLETED:
                 setVisibility(GONE);
                 mBottomProgress.setProgress(0);
                 mBottomProgress.setSecondaryProgress(0);
@@ -136,30 +128,26 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
                 setVisibility(GONE);
                 break;
             case VideoView.STATE_PLAYING:
-                post(mShowProgress);
-                mPlayButton.setSelected(true);
+                mPlayButton.setSelected(mMediaPlayer.isPlaying());
                 if (mIsShowBottomProgress) {
-                    if (mIsShowing) {
+                    if (mMediaPlayer.isShowing()) {
                         mBottomProgress.setVisibility(GONE);
                         mBottomContainer.setVisibility(VISIBLE);
                     } else {
-                        mBottomProgress.setVisibility(VISIBLE);
                         mBottomContainer.setVisibility(GONE);
+                        mBottomProgress.setVisibility(VISIBLE);
                     }
-                    setVisibility(VISIBLE);
+                } else {
+                    mBottomContainer.setVisibility(GONE);
                 }
+                setVisibility(VISIBLE);
+                //开始刷新进度
+                mMediaPlayer.startProgress();
                 break;
             case VideoView.STATE_PAUSED:
-                mPlayButton.setSelected(false);
-                break;
             case VideoView.STATE_BUFFERING:
             case VideoView.STATE_BUFFERED:
                 mPlayButton.setSelected(mMediaPlayer.isPlaying());
-                break;
-            case VideoView.STATE_PLAYBACK_COMPLETED:
-                setVisibility(GONE);
-                mBottomProgress.setProgress(0);
-                mBottomProgress.setSecondaryProgress(0);
                 break;
         }
     }
@@ -177,129 +165,25 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
     }
 
     @Override
-    public void attach(MediaPlayerControlWrapper mediaPlayer) {
-        mMediaPlayer = mediaPlayer;
-    }
-
-    @Override
-    public View getView() {
-        return this;
-    }
-
-    @Override
-    public void adjustPortrait(int space) {
-        mBottomContainer.setPadding(0, 0, 0, 0);
-        mBottomProgress.setPadding(0, 0, 0, 0);
-    }
-
-    @Override
-    public void adjustLandscape(int space) {
-        mBottomContainer.setPadding(space, 0, 0, 0);
-        mBottomProgress.setPadding(space, 0, 0, 0);
-    }
-
-    @Override
-    public void adjustReserveLandscape(int space) {
-        mBottomContainer.setPadding(0, 0, space, 0);
-        mBottomProgress.setPadding(0, 0, space, 0);
-    }
-
-    @Override
-    public void onClick(View v) {
-        int id = v.getId();
-        if (id == R.id.fullscreen) {
-            toggleFullScreen();
-        } else if (id == R.id.iv_play) {
-            mMediaPlayer.togglePlay();
+    public void adjustView(int orientation, int space) {
+        if (orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+            mBottomContainer.setPadding(0, 0, 0, 0);
+            mBottomProgress.setPadding(0, 0, 0, 0);
+        } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+            mBottomContainer.setPadding(space, 0, 0, 0);
+            mBottomProgress.setPadding(space, 0, 0, 0);
+        } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
+            mBottomContainer.setPadding(0, 0, space, 0);
+            mBottomProgress.setPadding(0, 0, space, 0);
         }
     }
 
-    /**
-     * 横竖屏切换
-     */
-    private void toggleFullScreen() {
-        Activity activity = PlayerUtils.scanForActivity(getContext());
-        if (activity == null || activity.isFinishing()) return;
-        mMediaPlayer.toggleFullScreen(activity);
-    }
-
     @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-        mIsDragging = true;
-        removeCallbacks(mShowProgress);
-        mMediaPlayer.stopFadeOut();
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-        long duration = mMediaPlayer.getDuration();
-        long newPosition = (duration * seekBar.getProgress()) / mVideoProgress.getMax();
-        mMediaPlayer.seekTo((int) newPosition);
-        mIsDragging = false;
-        post(mShowProgress);
-        mMediaPlayer.startFadeOut();
-    }
-
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if (!fromUser) {
+    public void setProgress(int duration, int position) {
+        if (mIsDragging) {
             return;
         }
 
-        long duration = mMediaPlayer.getDuration();
-        long newPosition = (duration * progress) / mVideoProgress.getMax();
-        if (mCurrTime != null)
-            mCurrTime.setText(stringForTime((int) newPosition));
-    }
-
-    @Override
-    protected void onWindowVisibilityChanged(int visibility) {
-        super.onWindowVisibilityChanged(visibility);
-        if (visibility == VISIBLE) {
-            post(mShowProgress);
-        }
-    }
-
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        post(mShowProgress);
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        removeCallbacks(mShowProgress);
-    }
-
-    /**
-     * 刷新进度Runnable
-     */
-    protected Runnable mShowProgress = new Runnable() {
-        @Override
-        public void run() {
-            int pos = setProgress();
-            if (mMediaPlayer.isPlaying()) {
-                postDelayed(mShowProgress, 1000 - (pos % 1000));
-            }
-        }
-    };
-
-    /**
-     * 重写此方法实现刷新进度功能
-     */
-    private int setProgress() {
-        int position = (int) mMediaPlayer.getCurrentPosition();
-        setProgress(position);
-        return position;
-    }
-
-    private void setProgress(int position) {
-        if (mMediaPlayer == null || mIsDragging) {
-            return;
-        }
-
-        int duration = (int) mMediaPlayer.getDuration();
         if (mVideoProgress != null) {
             if (duration > 0) {
                 mVideoProgress.setEnabled(true);
@@ -323,5 +207,62 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
             mTotalTime.setText(stringForTime(duration));
         if (mCurrTime != null)
             mCurrTime.setText(stringForTime(position));
+    }
+
+    @Override
+    public void onLock() {
+        hide(null);
+    }
+
+    @Override
+    public void onUnlock() {
+        show(null);
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        if (id == R.id.fullscreen) {
+            toggleFullScreen();
+        } else if (id == R.id.iv_play) {
+            mMediaPlayer.togglePlay();
+        }
+    }
+
+    /**
+     * 横竖屏切换
+     */
+    private void toggleFullScreen() {
+        Activity activity = PlayerUtils.scanForActivity(getContext());
+        mMediaPlayer.toggleFullScreen(activity);
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+        mIsDragging = true;
+        mMediaPlayer.stopProgress();
+        mMediaPlayer.stopFadeOut();
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        long duration = mMediaPlayer.getDuration();
+        long newPosition = (duration * seekBar.getProgress()) / mVideoProgress.getMax();
+        mMediaPlayer.seekTo((int) newPosition);
+        mIsDragging = false;
+        mMediaPlayer.startProgress();
+        mMediaPlayer.startFadeOut();
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        if (!fromUser) {
+            return;
+        }
+
+        long duration = mMediaPlayer.getDuration();
+        long newPosition = (duration * progress) / mVideoProgress.getMax();
+        if (mCurrTime != null)
+            mCurrTime.setText(stringForTime((int) newPosition));
     }
 }

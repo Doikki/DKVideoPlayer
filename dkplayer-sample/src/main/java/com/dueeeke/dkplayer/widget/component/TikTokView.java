@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -49,12 +50,22 @@ public class TikTokView extends FrameLayout implements IControlComponent {
     }
 
     @Override
-    public void show() {
+    public void attach(@NonNull MediaPlayerControlWrapper mediaPlayer) {
+        mMediaPlayer = mediaPlayer;
+    }
+
+    @Override
+    public View getView() {
+        return this;
+    }
+
+    @Override
+    public void show(Animation showAnim) {
 
     }
 
     @Override
-    public void hide() {
+    public void hide(Animation hideAnim) {
 
     }
 
@@ -91,27 +102,22 @@ public class TikTokView extends FrameLayout implements IControlComponent {
     }
 
     @Override
-    public void attach(MediaPlayerControlWrapper mediaPlayer) {
-        mMediaPlayer = mediaPlayer;
-    }
-
-    @Override
-    public View getView() {
-        return this;
-    }
-
-    @Override
-    public void adjustPortrait(int space) {
+    public void adjustView(int orientation, int space) {
 
     }
 
     @Override
-    public void adjustLandscape(int space) {
+    public void setProgress(int duration, int position) {
 
     }
 
     @Override
-    public void adjustReserveLandscape(int space) {
+    public void onLock() {
+
+    }
+
+    @Override
+    public void onUnlock() {
 
     }
 }

@@ -172,7 +172,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
     @Override
     public void start() {
         boolean isStarted = false;
-        if (isInIdleState()) {
+        if (isInIdleState() || isInStartAbortState()) {
             isStarted = startPlay();
         } else if (isInPlaybackState()) {
             startInPlaybackState();
@@ -323,7 +323,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
      */
     @Override
     public void pause() {
-        if (isPlaying()) {
+        if (isInPlaybackState() && isPlaying()) {
             mMediaPlayer.pause();
             setPlayState(STATE_PAUSED);
             setKeepScreenOn(false);
@@ -337,7 +337,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
      */
     public void resume() {
         if (isInPlaybackState()
-                && !mMediaPlayer.isPlaying()) {
+                && !isPlaying()) {
             mMediaPlayer.start();
             setPlayState(STATE_PLAYING);
             if (mAudioFocusHelper != null)
@@ -427,6 +427,13 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
     }
 
     /**
+     * 播放中止状态
+     */
+    private boolean isInStartAbortState() {
+        return mCurrentPlayState == STATE_START_ABORT;
+    }
+
+    /**
      * 重新播放
      *
      * @param resetPosition 是否从头开始播放
@@ -477,7 +484,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
      */
     @Override
     public boolean isPlaying() {
-        return isInPlaybackState() && mMediaPlayer.isPlaying();
+        return mMediaPlayer != null && mMediaPlayer.isPlaying();
     }
 
     /**
@@ -608,6 +615,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
      * @param headers 请求头
      */
     public void setUrl(String url, Map<String, String> headers) {
+        mAssetFileDescriptor = null;
         mUrl = url;
         mHeaders = headers;
     }
@@ -616,6 +624,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
      * 用于播放assets里面的视频文件
      */
     public void setAssetFileDescriptor(AssetFileDescriptor fd) {
+        mUrl = null;
         this.mAssetFileDescriptor = fd;
     }
 

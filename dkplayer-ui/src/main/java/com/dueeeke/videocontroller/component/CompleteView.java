@@ -6,6 +6,7 @@ import android.content.pm.ActivityInfo;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
@@ -65,12 +66,22 @@ public class CompleteView extends FrameLayout implements IControlComponent {
     }
 
     @Override
-    public void show() {
+    public void attach(@NonNull MediaPlayerControlWrapper mediaPlayer) {
+        mMediaPlayer = mediaPlayer;
+    }
+
+    @Override
+    public View getView() {
+        return this;
+    }
+
+    @Override
+    public void show(Animation showAnim) {
 
     }
 
     @Override
-    public void hide() {
+    public void hide(Animation hideAnim) {
 
     }
 
@@ -79,6 +90,7 @@ public class CompleteView extends FrameLayout implements IControlComponent {
         if (playState == VideoView.STATE_PLAYBACK_COMPLETED) {
             setVisibility(VISIBLE);
             mStopFullscreen.setVisibility(mMediaPlayer.isFullScreen() ? VISIBLE : GONE);
+            bringToFront();
         } else {
             setVisibility(GONE);
         }
@@ -94,30 +106,31 @@ public class CompleteView extends FrameLayout implements IControlComponent {
     }
 
     @Override
-    public void attach(MediaPlayerControlWrapper mediaPlayer) {
-        mMediaPlayer = mediaPlayer;
+    public void adjustView(int orientation, int space) {
+        if (orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+            LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
+            sflp.setMargins(0, 0, 0, 0);
+        } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+            LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
+            sflp.setMargins(space, 0, 0, 0);
+        } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
+            LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
+            sflp.setMargins(0, 0, 0, 0);
+        }
     }
 
     @Override
-    public View getView() {
-        return this;
+    public void setProgress(int duration, int position) {
+
     }
 
     @Override
-    public void adjustPortrait(int space) {
-        FrameLayout.LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
-        sflp.setMargins(0, 0, 0, 0);
+    public void onLock() {
+
     }
 
     @Override
-    public void adjustLandscape(int space) {
-        FrameLayout.LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
-        sflp.setMargins(space, 0, 0, 0);
-    }
+    public void onUnlock() {
 
-    @Override
-    public void adjustReserveLandscape(int space) {
-        FrameLayout.LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
-        sflp.setMargins(0, 0, 0, 0);
     }
 }
