@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
@@ -125,30 +124,19 @@ public class FloatController extends BaseVideoController implements View.OnClick
     }
 
     @Override
-    public void show(Animation showAnim) {
-//        show(mDefaultTimeout);
+    public void showInner() {
+        if (!isShowing()) {
+            playButton.setVisibility(VISIBLE);
+        }
+
+        startFadeOut();
     }
 
-//    private void show(int timeout) {
-//        if (mCurrentPlayState == VideoView.STATE_BUFFERING) return;
-//        if (!mShowing) {
-//            mPlayButton.setVisibility(VISIBLE);
-//        }
-//        mShowing = true;
-//
-//        removeCallbacks(mFadeOut);
-//        if (timeout != 0) {
-//            postDelayed(mFadeOut, timeout);
-//        }
-//    }
-//
-//
-//    @Override
-//    public void hide() {
-//        if (mCurrentPlayState == VideoView.STATE_BUFFERING) return;
-//        if (mShowing) {
-//            mPlayButton.setVisibility(GONE);
-//            mShowing = false;
-//        }
-//    }
+    @Override
+    public void hideInner() {
+        if (mShowing) {
+            playButton.setVisibility(GONE);
+            mShowing = false;
+        }
+    }
 }

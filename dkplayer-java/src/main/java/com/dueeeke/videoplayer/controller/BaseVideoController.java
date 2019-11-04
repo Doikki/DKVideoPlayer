@@ -36,12 +36,15 @@ public abstract class BaseVideoController extends FrameLayout
      */
     protected MediaPlayerControlWrapper mMediaPlayer;
 
-    private boolean mShowing;//控制器是否处于显示状态
+    /**
+     * 控制器是否处于显示状态
+     */
+    protected boolean mShowing;
 
     /**
      * 是否处于锁定状态
      */
-    private boolean mIsLocked;
+    protected boolean mIsLocked;
 
     /**
      * 播放视图隐藏超时

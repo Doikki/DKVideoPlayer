@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -32,15 +33,15 @@ public class RotateInFullscreenController extends StandardVideoController {
         mActivity = PlayerUtils.scanForActivity(context);
     }
 
-//    @Override
-//    public boolean onSingleTapConfirmed(MotionEvent e) {
-//        if (!mMediaPlayer.isFullScreen()) {
-//            mMediaPlayer.startFullScreen();
-//            return true;
-//        }
-//        toggleShowState();
-//        return true;
-//    }
+    @Override
+    public boolean onSingleTapConfirmed(MotionEvent e) {
+        if (!mMediaPlayer.isFullScreen()) {
+            mMediaPlayer.startFullScreen();
+            return true;
+        }
+        mMediaPlayer.toggleShowState();
+        return true;
+    }
 
     @Override
     protected void toggleFullScreen() {
