@@ -38,8 +38,8 @@ public class ApiFragment extends BaseFragment implements View.OnClickListener {
 
 
     @Override
-    protected void initViews() {
-        super.initViews();
+    protected void initView() {
+        super.initView();
         findViewById(R.id.btn_vod).setOnClickListener(this);
         findViewById(R.id.btn_live).setOnClickListener(this);
         findViewById(R.id.btn_definition).setOnClickListener(this);

@@ -1,5 +1,7 @@
-package com.dueeeke.dkplayer.fragment.list;
+package com.dueeeke.dkplayer.activity.list.tiktok;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -7,9 +9,9 @@ import android.view.ViewParent;
 import androidx.viewpager.widget.ViewPager;
 
 import com.dueeeke.dkplayer.R;
+import com.dueeeke.dkplayer.activity.BaseActivity;
 import com.dueeeke.dkplayer.adapter.Tiktok2Adapter;
 import com.dueeeke.dkplayer.bean.TiktokBean;
-import com.dueeeke.dkplayer.fragment.BaseFragment;
 import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.dkplayer.util.cache.PreloadManager;
 import com.dueeeke.dkplayer.util.cache.ProxyVideoCacheManager;
@@ -21,7 +23,13 @@ import com.dueeeke.videoplayer.util.L;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TikTokFragment extends BaseFragment {
+
+/**
+ * 模仿抖音短视频，使用VerticalViewPager实现，实现了预加载功能
+ * Created by dueeeke on 2019/10/13.
+ */
+
+public class TikTok2Activity extends BaseActivity<VideoView> {
 
     private int mCurrentPosition;
     private int mPlayingPosition;
@@ -37,7 +45,16 @@ public class TikTokFragment extends BaseFragment {
     private boolean mIsReverseScroll;
 
     private VideoView mVideoView;
+
     private TikTokController mController;
+
+    private static final String KEY_INDEX = "index";
+
+    public static void start(Context context, int index) {
+        Intent i = new Intent(context, TikTok2Activity.class);
+        i.putExtra(KEY_INDEX, index);
+        context.startActivity(i);
+    }
 
     @Override
     protected int getLayoutResId() {
@@ -45,19 +62,37 @@ public class TikTokFragment extends BaseFragment {
     }
 
     @Override
-    protected void initViews() {
-        super.initViews();
+    protected int getTitleResId() {
+        return R.string.str_tiktok_2;
+    }
+
+    @Override
+    protected void initView() {
+        super.initView();
+        setStatusBarTransparent();
         initViewPager();
         initVideoView();
-        mPreloadManager = PreloadManager.getInstance(getContext());
+        mPreloadManager = PreloadManager.getInstance(this);
+
+        addData(null);
+        Intent extras = getIntent();
+        int index = extras.getIntExtra(KEY_INDEX, 0);
+        mViewPager.setCurrentItem(index);
+
+        mViewPager.post(new Runnable() {
+            @Override
+            public void run() {
+                startPlay(index);
+            }
+        });
     }
 
     private void initVideoView() {
-        mVideoView = new VideoView(getActivity());
+        mVideoView = new VideoView(this);
         mVideoView.setLooping(true);
         mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_CENTER_CROP);
 
-        mController = new TikTokController(getActivity());
+        mController = new TikTokController(this);
         mVideoView.setVideoController(mController);
     }
 
@@ -129,53 +164,16 @@ public class TikTokFragment extends BaseFragment {
         }
     }
 
-    @Override
-    protected void initData() {
-        super.initData();
-        //模拟请求数据
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                List<TiktokBean> tiktokBeans = DataUtil.getTiktokDataFromAssets(getActivity());
-                mVideoList.addAll(tiktokBeans);
-
-                mViewPager.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mTiktok2Adapter.notifyDataSetChanged();
-                        startPlay(0);
-                    }
-                });
-            }
-        }).start();
-
+    public void addData(View view) {
+        mVideoList.addAll(DataUtil.getTiktokDataFromAssets(this));
+        mTiktok2Adapter.notifyDataSetChanged();
     }
 
     @Override
-    protected boolean isLazyLoad() {
-        return true;
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        mVideoView.pause();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        mVideoView.resume();
-    }
-
-    @Override
-    public void onDestroy() {
+    protected void onDestroy() {
         super.onDestroy();
-        mVideoView.release();
         mPreloadManager.removeAllPreloadTask();
-
         //清除缓存，实际使用可以不需要清除，这里为了方便测试
-        ProxyVideoCacheManager.clearAllCache(getActivity());
+        ProxyVideoCacheManager.clearAllCache(this);
     }
-
 }

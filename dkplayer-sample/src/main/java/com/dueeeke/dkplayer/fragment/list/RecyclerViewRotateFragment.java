@@ -19,7 +19,8 @@ public class RecyclerViewRotateFragment extends RecyclerViewAutoPlayFragment {
         mController.addControlComponent(mErrorView);
         mCompleteView = new CompleteView(getActivity());
         mController.addControlComponent(mCompleteView);
-        mController.addControlComponent(new TitleView(getActivity()));
+        mTitleView = new TitleView(getActivity());
+        mController.addControlComponent(mTitleView);
         mController.addControlComponent(new VodControlView(getActivity()));
         mController.setEnableOrientation(true);
         mVideoView.setVideoController(mController);

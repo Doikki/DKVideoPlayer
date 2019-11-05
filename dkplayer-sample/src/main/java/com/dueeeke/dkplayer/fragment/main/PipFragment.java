@@ -18,8 +18,8 @@ public class PipFragment extends BaseFragment implements View.OnClickListener {
     }
 
     @Override
-    protected void initViews() {
-        super.initViews();
+    protected void initView() {
+        super.initView();
         findViewById(R.id.btn_pip).setOnClickListener(this);
         findViewById(R.id.btn_pip_in_list).setOnClickListener(this);
         findViewById(R.id.btn_pip_android_o).setOnClickListener(this);

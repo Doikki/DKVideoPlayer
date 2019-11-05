@@ -12,17 +12,14 @@ import java.util.List;
 
 public class ListFragment extends BaseFragment {
 
-    private int mCurrentPosition;
-    private boolean mNeedRelease;
-
     @Override
     protected int getLayoutResId() {
         return R.layout.fragment_list;
     }
 
     @Override
-    protected void initViews() {
-        super.initViews();
+    protected void initView() {
+        super.initView();
 
         ViewPager viewPager = findViewById(R.id.view_pager);
 

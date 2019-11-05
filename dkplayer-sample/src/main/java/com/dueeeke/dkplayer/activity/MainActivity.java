@@ -150,11 +150,11 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
             }
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             Fragment fragment = mFragments.get(index);
-            Fragment currFragment = mFragments.get(mCurrentIndex);
+            Fragment curFragment = mFragments.get(mCurrentIndex);
             if (fragment.isAdded()) {
-                transaction.hide(currFragment).show(fragment);
+                transaction.hide(curFragment).show(fragment);
             } else {
-                transaction.add(R.id.layout_content, fragment).hide(currFragment);
+                transaction.add(R.id.layout_content, fragment).hide(curFragment);
             }
             transaction.commitAllowingStateLoss();
             mCurrentIndex = index;

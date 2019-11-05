@@ -44,7 +44,7 @@ public class SeamlessPlayFragment extends BaseFragment {
     }
 
     @Override
-    protected void initViews() {
+    protected void initView() {
 
         mVideoView = SeamlessPlayHelper.getInstance().getVideoView();
         mSeamlessController = new SeamlessController(getActivity());

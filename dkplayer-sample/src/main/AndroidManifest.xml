@@ -115,6 +115,11 @@
             android:name=".activity.extend.CustomIjkPlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.list.tiktok.TikTok2Activity"
+            android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

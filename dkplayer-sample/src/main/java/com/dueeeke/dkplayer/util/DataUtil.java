@@ -174,16 +174,20 @@ public class DataUtil {
         return videoList;
     }
 
+    public static List<TiktokBean> tiktokData;
 
     public static List<TiktokBean> getTiktokDataFromAssets(Context context) {
         try {
-            InputStream is = context.getAssets().open("tiktok_data");
-            int length = is.available();
-            byte[] buffer = new byte[length];
-            is.read(buffer);
-            is.close();
-            String result = new String(buffer, Charset.forName("UTF-8"));
-            return TiktokBean.arrayTiktokBeanFromData(result);
+            if (tiktokData == null) {
+                InputStream is = context.getAssets().open("tiktok_data");
+                int length = is.available();
+                byte[] buffer = new byte[length];
+                is.read(buffer);
+                is.close();
+                String result = new String(buffer, Charset.forName("UTF-8"));
+                tiktokData = TiktokBean.arrayTiktokBeanFromData(result);
+            }
+            return tiktokData;
         } catch (IOException e) {
             e.printStackTrace();
         }

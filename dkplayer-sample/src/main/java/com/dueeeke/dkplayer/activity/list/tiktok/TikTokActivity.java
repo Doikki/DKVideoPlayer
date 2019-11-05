@@ -1,28 +1,24 @@
 package com.dueeeke.dkplayer.activity.list.tiktok;
 
-import android.os.Build;
-import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.ViewCompat;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
+import android.content.Context;
+import android.content.Intent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
+
 import androidx.recyclerview.widget.OrientationHelper;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.View;
-import android.view.ViewParent;
-import android.view.WindowInsets;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
+import com.dueeeke.dkplayer.activity.BaseActivity;
 import com.dueeeke.dkplayer.adapter.TikTokAdapter;
-import com.dueeeke.dkplayer.bean.VideoBean;
+import com.dueeeke.dkplayer.bean.TiktokBean;
 import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.dkplayer.widget.controller.TikTokController;
 import com.dueeeke.videoplayer.player.VideoView;
+import com.dueeeke.videoplayer.util.L;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,44 +27,66 @@ import java.util.List;
  * @deprecated 推荐 {@link TikTok2Activity}
  */
 @Deprecated
-public class TikTokActivity extends AppCompatActivity {
+public class TikTokActivity extends BaseActivity<VideoView> {
 
     private VideoView mVideoView;
-    private TikTokController mTikTokController;
+    private TikTokController mController;
     private int mCurrentPosition;
     private RecyclerView mRecyclerView;
-    private List<VideoBean> mVideoList;
+    private List<TiktokBean> mVideoList = new ArrayList<>();
+    private TikTokAdapter mTikTokAdapter;
+
+    private static final String KEY_INDEX = "index";
+    private int mIndex;
+
+    public static void start(Context context, int index) {
+        Intent i = new Intent(context, TikTokActivity.class);
+        i.putExtra(KEY_INDEX, index);
+        context.startActivity(i);
+    }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(R.string.str_tiktok_1);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+    protected int getTitleResId() {
+        return R.string.str_tiktok_1;
+    }
 
-        setContentView(R.layout.activity_tiktok);
+    @Override
+    protected int getLayoutResId() {
+        return R.layout.activity_tiktok;
+    }
 
+    @Override
+    protected void initView() {
+        super.initView();
         setStatusBarTransparent();
-
         mVideoView = new VideoView(this);
+        mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_CENTER_CROP);
         mVideoView.setLooping(true);
-        mTikTokController = new TikTokController(this);
-        mVideoView.setVideoController(mTikTokController);
+        mController = new TikTokController(this);
+        mVideoView.setVideoController(mController);
+
+        initRecyclerView();
+
+        addData(null);
+
+        Intent extras = getIntent();
+        mIndex = extras.getIntExtra(KEY_INDEX, 0);
+        mRecyclerView.scrollToPosition(mIndex);
+    }
+
+    private void initRecyclerView() {
         mRecyclerView = findViewById(R.id.rv);
 
-        mVideoList = DataUtil.getTikTokVideoList();
-        TikTokAdapter tikTokAdapter = new TikTokAdapter(mVideoList, this);
+        mTikTokAdapter = new TikTokAdapter(mVideoList);
         ViewPagerLayoutManager layoutManager = new ViewPagerLayoutManager(this, OrientationHelper.VERTICAL);
 
         mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setAdapter(tikTokAdapter);
+        mRecyclerView.setAdapter(mTikTokAdapter);
         layoutManager.setOnViewPagerListener(new OnViewPagerListener() {
             @Override
             public void onInitComplete() {
-                //自动播放第一条
-                startPlay(0);
+                //自动播放第index条
+                startPlay(mIndex);
             }
 
             @Override
@@ -89,56 +107,26 @@ public class TikTokActivity extends AppCompatActivity {
 
     private void startPlay(int position) {
         View itemView = mRecyclerView.getChildAt(0);
-        FrameLayout frameLayout = itemView.findViewById(R.id.container);
-        ImageView thumb = mTikTokController.findViewById(R.id.iv_thumb);
-        Glide.with(this)
-                .load(mVideoList.get(position).getThumb())
-                .placeholder(android.R.color.white)
-                .into(thumb);
-        ViewParent parent = mVideoView.getParent();
-        if (parent instanceof FrameLayout) {
-            ((FrameLayout) parent).removeView(mVideoView);
-        }
-        frameLayout.addView(mVideoView);
-        mVideoView.setUrl(mVideoList.get(position).getUrl());
-        mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_CENTER_CROP);
+        TikTokAdapter.VideoHolder viewHolder = (TikTokAdapter.VideoHolder) itemView.getTag();
+        mVideoView.release();
+        removeVideoViewFromParent();
+        TiktokBean item = mVideoList.get(position);
+        L.i("startPlay: " + "position: " + position + "  url: " + item.videoDownloadUrl);
+        mVideoView.setUrl(item.videoDownloadUrl);
+        mController.addControlComponent(viewHolder.mTikTokView, true);
+        viewHolder.mPlayerContainer.addView(mVideoView, 0);
         mVideoView.start();
     }
 
-    /**
-     * 把状态栏设成透明
-     */
-    private void setStatusBarTransparent() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            View decorView = TikTokActivity.this.getWindow().getDecorView();
-            decorView.setOnApplyWindowInsetsListener((v, insets) -> {
-                WindowInsets defaultInsets = v.onApplyWindowInsets(insets);
-                return defaultInsets.replaceSystemWindowInsets(
-                        defaultInsets.getSystemWindowInsetLeft(),
-                        0,
-                        defaultInsets.getSystemWindowInsetRight(),
-                        defaultInsets.getSystemWindowInsetBottom());
-            });
-            ViewCompat.requestApplyInsets(decorView);
-            getWindow().setStatusBarColor(ContextCompat.getColor(this, android.R.color.transparent));
+    private void removeVideoViewFromParent() {
+        ViewParent parent = mVideoView.getParent();
+        if (parent instanceof ViewGroup) {
+            ((ViewGroup) parent).removeView(mVideoView);
         }
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mVideoView.pause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mVideoView.resume();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mVideoView.release();
+    public void addData(View view) {
+        mVideoList.addAll(DataUtil.getTiktokDataFromAssets(this));
+        mTikTokAdapter.notifyDataSetChanged();
     }
 }

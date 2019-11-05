@@ -40,6 +40,7 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
     protected StandardVideoController mController;
     protected ErrorView mErrorView;
     protected CompleteView mCompleteView;
+    protected TitleView mTitleView;
 
     @Override
     protected int getLayoutResId() {
@@ -47,8 +48,8 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
     }
 
     @Override
-    protected void initViews() {
-        super.initViews();
+    protected void initView() {
+        super.initView();
 
         initVideoView();
 
@@ -91,7 +92,8 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
         mController.addControlComponent(mErrorView);
         mCompleteView = new CompleteView(getActivity());
         mController.addControlComponent(mCompleteView);
-        mController.addControlComponent(new TitleView(getActivity()));
+        mTitleView = new TitleView(getActivity());
+        mController.addControlComponent(mTitleView);
         mController.addControlComponent(new VodControlView(getActivity()));
         mController.setEnableOrientation(true);
         mVideoView.setVideoController(mController);
@@ -141,6 +143,7 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
 
         VideoBean videoBean = mVideos.get(position);
         mVideoView.setUrl(videoBean.getUrl());
+        mTitleView.setTitle(videoBean.getTitle());
 
         View itemView = mLinearLayoutManager.findViewByPosition(position);
         VideoRecyclerViewAdapter.VideoHolder viewHolder = (VideoRecyclerViewAdapter.VideoHolder) itemView.getTag();

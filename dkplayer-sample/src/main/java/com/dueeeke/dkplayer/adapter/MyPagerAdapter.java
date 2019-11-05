@@ -11,7 +11,7 @@ import com.dueeeke.dkplayer.fragment.list.RecyclerViewAutoPlayFragment;
 import com.dueeeke.dkplayer.fragment.list.RecyclerViewFragment;
 import com.dueeeke.dkplayer.fragment.list.RecyclerViewRotateFragment;
 import com.dueeeke.dkplayer.fragment.list.SeamlessPlayFragment;
-import com.dueeeke.dkplayer.fragment.list.TikTokFragment;
+import com.dueeeke.dkplayer.fragment.list.TikTokListFragment;
 
 import java.util.List;
 
@@ -41,7 +41,7 @@ public class MyPagerAdapter extends FragmentStatePagerAdapter {
             case 2:
                 return new RecyclerViewAutoPlayFragment();
             case 3:
-                return new TikTokFragment();
+                return new TikTokListFragment();
             case 4:
                 return new RecyclerViewRotateFragment();
             case 5:

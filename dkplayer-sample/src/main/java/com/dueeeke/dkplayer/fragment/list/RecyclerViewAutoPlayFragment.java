@@ -14,8 +14,8 @@ import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
 public class RecyclerViewAutoPlayFragment extends RecyclerViewFragment {
 
     @Override
-    protected void initViews() {
-        super.initViews();
+    protected void initView() {
+        super.initView();
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             int firstVisibleItem, lastVisibleItem, visibleCount;

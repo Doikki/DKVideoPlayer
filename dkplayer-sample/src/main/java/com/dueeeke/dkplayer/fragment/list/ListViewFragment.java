@@ -33,6 +33,7 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
     private VideoView mVideoView;
     private StandardVideoController mController;
     private int mCurPosition = -1;
+    private TitleView mTitleView;
 
     @Override
     protected int getLayoutResId() {
@@ -40,13 +41,14 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
     }
 
     @Override
-    protected void initViews() {
-        super.initViews();
+    protected void initView() {
+        super.initView();
         mVideoView = new VideoView(getActivity());
         mController = new StandardVideoController(getActivity());
         mController.addControlComponent(new ErrorView(getActivity()));
         mController.addControlComponent(new CompleteView(getActivity()));
-        mController.addControlComponent(new TitleView(getActivity()));
+        mTitleView = new TitleView(getActivity());
+        mController.addControlComponent(mTitleView);
         mController.addControlComponent(new VodControlView(getActivity()));
         mController.setEnableOrientation(true);
         mVideoView.setVideoController(mController);
@@ -151,6 +153,7 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
 
         VideoBean videoBean = mVideos.get(position);
         mVideoView.setUrl(videoBean.getUrl());
+        mTitleView.setTitle(videoBean.getTitle());
         View itemView = mVideoListViewAdapter.getItemView(position);
         VideoListViewAdapter.ViewHolder viewHolder = (VideoListViewAdapter.ViewHolder) itemView.getTag();
         int count = viewHolder.mPlayerContainer.getChildCount();

@@ -169,6 +169,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
             mInternalPlayer.removeListener(this);
             mInternalPlayer.removeVideoListener(this);
             final SimpleExoPlayer player = mInternalPlayer;
+            mInternalPlayer = null;
             new Thread() {
                 @Override
                 public void run() {
@@ -176,7 +177,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
                     player.release();
                 }
             }.start();
-            mInternalPlayer = null;
         }
 
         mHandler.removeCallbacksAndMessages(null);

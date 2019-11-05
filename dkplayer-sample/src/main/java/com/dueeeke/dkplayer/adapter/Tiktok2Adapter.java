@@ -58,7 +58,7 @@ public class Tiktok2Adapter extends PagerAdapter {
 
         ViewHolder viewHolder;
         if (view == null) {
-            view = LayoutInflater.from(context).inflate(R.layout.item_tik_tok_2, container, false);
+            view = LayoutInflater.from(context).inflate(R.layout.item_tik_tok, container, false);
             viewHolder = new ViewHolder(view);
         } else {
             viewHolder = (ViewHolder) view.getTag();

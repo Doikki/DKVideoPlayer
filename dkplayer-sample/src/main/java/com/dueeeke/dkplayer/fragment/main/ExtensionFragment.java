@@ -21,8 +21,8 @@ public class ExtensionFragment extends BaseFragment implements View.OnClickListe
     }
 
     @Override
-    protected void initViews() {
-        super.initViews();
+    protected void initView() {
+        super.initView();
         findViewById(R.id.btn_fullscreen).setOnClickListener(this);
         findViewById(R.id.btn_danmu).setOnClickListener(this);
         findViewById(R.id.btn_ad).setOnClickListener(this);
