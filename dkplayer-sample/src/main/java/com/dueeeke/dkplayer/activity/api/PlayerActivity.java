@@ -64,7 +64,8 @@ public class PlayerActivity extends DebugActivity {
                 controller.addControlComponent(new LiveControlView(this));//直播控制条
             } else {
                 VodControlView vodControlView = new VodControlView(this);//点播控制条
-                vodControlView.showBottomProgress(false);
+                //是否显示底部进度条。默认显示
+//                vodControlView.showBottomProgress(false);
                 controller.addControlComponent(vodControlView);
             }
 
@@ -78,7 +79,12 @@ public class PlayerActivity extends DebugActivity {
             titleView.setTitle(title);
 
             //快速添加各个组件
-//            controller.addDefaultControlComponent("", isLive);
+//            controller.addDefaultControlComponent(title, isLive);
+
+            //竖屏也开启手势操作，默认关闭
+//            controller.setEnableInNormal(true);
+            //适配刘海屏，默认开启
+//            controller.setAdaptCutout(false);
 
             mVideoView.setVideoController(controller);
 

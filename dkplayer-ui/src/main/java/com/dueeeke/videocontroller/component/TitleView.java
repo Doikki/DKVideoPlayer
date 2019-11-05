@@ -144,6 +144,7 @@ public class TitleView extends FrameLayout implements IControlComponent {
         if (playerState == VideoView.PLAYER_FULL_SCREEN) {
             if (mMediaPlayer.isShowing()) {
                 setVisibility(VISIBLE);
+                mSysTime.setText(PlayerUtils.getCurrentSystemTime());
             }
             mTitle.setNeedFocus(true);
         } else {

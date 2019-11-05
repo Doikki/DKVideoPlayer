@@ -1,8 +1,5 @@
 package com.dueeeke.videocontroller.component;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -34,9 +31,6 @@ public class LiveControlView extends FrameLayout implements IControlComponent, V
     private LinearLayout mBottomContainer;
     private ImageView mPlayButton;
 
-    private ObjectAnimator mShowAnimator;
-    private ObjectAnimator mHideAnimator;
-
     public LiveControlView(@NonNull Context context) {
         super(context);
     }
@@ -60,19 +54,6 @@ public class LiveControlView extends FrameLayout implements IControlComponent, V
         mPlayButton.setOnClickListener(this);
         ImageView refresh = findViewById(R.id.iv_refresh);
         refresh.setOnClickListener(this);
-
-        mShowAnimator = ObjectAnimator.ofFloat(this, "alpha", 0, 1);
-        mShowAnimator.setDuration(300);
-        mHideAnimator = ObjectAnimator.ofFloat(this, "alpha", 1, 0);
-        mHideAnimator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                setVisibility(GONE);
-            }
-        });
-        mHideAnimator.setDuration(300);
-
     }
 
     @Override
