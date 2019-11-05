@@ -84,6 +84,9 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
                     Toast.makeText(this, "清除缓存成功", Toast.LENGTH_SHORT).show();
                 }
                 break;
+            case R.id.cpu_info:
+                CpuInfoActivity.start(this);
+                break;
         }
 
         if (itemId == R.id.ijk || itemId == R.id.exo || itemId == R.id.media) {
