@@ -65,8 +65,8 @@ public class AdControlView extends FrameLayout implements IControlComponent, Vie
     }
 
     @Override
-    public void attach(@NonNull MediaPlayerControlWrapper mediaPlayer) {
-        mMediaPlayer = mediaPlayer;
+    public void attach(@NonNull MediaPlayerControlWrapper mediaPlayerWrapper) {
+        mMediaPlayer = mediaPlayerWrapper;
     }
 
     @Override

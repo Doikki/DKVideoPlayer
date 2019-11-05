@@ -21,6 +21,7 @@
     <string name="str_auto_play_recycler_view">自动播放的RecyclerView</string>
     <string name="str_list_fragment_viewpager">列表、Fragment和ViewPager组合demo</string>
     <string name="str_rotate_in_fullscreen">全屏手动旋转demo</string>
+    <string name="str_tiktok">抖音</string>
     <string name="str_tiktok_1">抖音 (RecyclerView)</string>
     <string name="str_tiktok_2">抖音 (VerticalViewPager)</string>
     <string name="str_fullscreen_directly">直接进入全屏播放</string>

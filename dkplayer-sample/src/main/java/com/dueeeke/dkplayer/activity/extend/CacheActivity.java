@@ -13,7 +13,7 @@ public class CacheActivity extends BaseActivity<VideoView> {
 
     @Override
     protected int getLayoutResId() {
-        return R.layout.activity_cache;
+        return R.layout.activity_layout_common;
     }
 
     @Override
@@ -24,7 +24,7 @@ public class CacheActivity extends BaseActivity<VideoView> {
     @Override
     protected void initView() {
         super.initView();
-        mVideoView = findViewById(R.id.player);
+        mVideoView = findViewById(R.id.video_view);
         HttpProxyCacheServer cacheServer = ProxyVideoCacheManager.getProxy(this);
         String proxyUrl = cacheServer.getProxyUrl(URL);
         mVideoView.setUrl(proxyUrl);

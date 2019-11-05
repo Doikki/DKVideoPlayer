@@ -27,7 +27,7 @@ public class ListFragment extends BaseFragment {
         titles.add(getString(R.string.str_list_view));
         titles.add(getString(R.string.str_recycler_view));
         titles.add(getString(R.string.str_auto_play_recycler_view));
-        titles.add(getString(R.string.str_tiktok_2));
+        titles.add(getString(R.string.str_tiktok));
         titles.add(getString(R.string.str_rotate_in_fullscreen));
         titles.add(getString(R.string.str_seamless_play));
 

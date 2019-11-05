@@ -54,8 +54,8 @@ public class ErrorView extends LinearLayout implements IControlComponent {
     }
 
     @Override
-    public void attach(@NonNull MediaPlayerControlWrapper mediaPlayer) {
-        mMediaPlayerWrapper = mediaPlayer;
+    public void attach(@NonNull MediaPlayerControlWrapper mediaPlayerWrapper) {
+        mMediaPlayerWrapper = mediaPlayerWrapper;
     }
 
     @Override

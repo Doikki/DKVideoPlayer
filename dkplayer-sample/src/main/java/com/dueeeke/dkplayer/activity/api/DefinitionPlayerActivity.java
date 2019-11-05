@@ -2,25 +2,31 @@ package com.dueeeke.dkplayer.activity.api;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.activity.BaseActivity;
-import com.dueeeke.dkplayer.widget.videoview.DefinitionVideoView;
+import com.dueeeke.dkplayer.widget.component.DefinitionControlView;
 import com.dueeeke.videocontroller.StandardVideoController;
-import com.dueeeke.videoplayer.ijk.IjkPlayer;
-import com.dueeeke.videoplayer.player.PlayerFactory;
+import com.dueeeke.videocontroller.component.CompleteView;
+import com.dueeeke.videocontroller.component.ErrorView;
+import com.dueeeke.videocontroller.component.PrepareView;
+import com.dueeeke.videocontroller.component.TitleView;
+import com.dueeeke.videoplayer.player.AndroidMediaPlayer;
+import com.dueeeke.videoplayer.player.AndroidMediaPlayerFactory;
+import com.dueeeke.videoplayer.player.VideoView;
 
 import java.util.LinkedHashMap;
-
-import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 /**
  * 播放器演示
  * Created by Devlin_n on 2017/4/7.
  */
 
-public class DefinitionPlayerActivity extends BaseActivity<DefinitionVideoView<IjkPlayer>> {
+public class DefinitionPlayerActivity extends BaseActivity<VideoView<AndroidMediaPlayer>> implements DefinitionControlView.OnRateSwitchListener {
+
+    private StandardVideoController mController;
+    private DefinitionControlView mDefinitionControlView;
 
     @Override
     protected int getLayoutResId() {
-        return R.layout.activity_definition_player;
+        return R.layout.activity_layout_common;
     }
 
     @Override
@@ -31,38 +37,37 @@ public class DefinitionPlayerActivity extends BaseActivity<DefinitionVideoView<I
     @Override
     protected void initView() {
         super.initView();
-        mVideoView = findViewById(R.id.player);
+        mVideoView = findViewById(R.id.video_view);
 
-        StandardVideoController controller = new StandardVideoController(this);
-        controller.addDefaultControlComponent("韩雪：积极的悲观主义者", false);
-//        controller.setTitle("韩雪：积极的悲观主义者");
-//        mVideoView.setCustomMediaPlayer(new IjkPlayer(this) {
-//            @Override
-//            public void setInitOptions() {
-//                //精准seek
-//                mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "enable-accurate-seek", 1);
-//            }
-//        });
-
-        mVideoView.setPlayerFactory(new PlayerFactory<IjkPlayer>() {
-            @Override
-            public IjkPlayer createPlayer() {
-                return new IjkPlayer() {
-                    @Override
-                    public void setOptions() {
-                        //精准seek
-                        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "enable-accurate-seek", 1);
-                    }
-                };
-            }
-        });
+        mController = new StandardVideoController(this);
+        addControlComponents();
 
         LinkedHashMap<String, String> videos = new LinkedHashMap<>();
         videos.put("标清", "http://mov.bn.netease.com/open-movie/nos/flv/2017/07/24/SCP786QON_sd.flv");
         videos.put("高清", "http://mov.bn.netease.com/open-movie/nos/flv/2017/07/24/SCP786QON_hd.flv");
         videos.put("超清", "http://mov.bn.netease.com/open-movie/nos/flv/2017/07/24/SCP786QON_shd.flv");
-        mVideoView.setDefinitionVideos(videos);
-        mVideoView.setVideoController(controller);
+        //由于exoplayer不支持flv seek操作，现切换成MediaPlayer来演示功能
+        mVideoView.setPlayerFactory(AndroidMediaPlayerFactory.create());
+        mDefinitionControlView.setData(videos);
+        mVideoView.setVideoController(mController);
+        mVideoView.setUrl(videos.get("标清"));//默认播放标清
         mVideoView.start();
+    }
+
+    private void addControlComponents() {
+        CompleteView completeView = new CompleteView(this);
+        ErrorView errorView = new ErrorView(this);
+        PrepareView prepareView = new PrepareView(this);
+        prepareView.setClickStart();
+        TitleView titleView = new TitleView(this);
+        mDefinitionControlView = new DefinitionControlView(this);
+        mDefinitionControlView.setOnRateSwitchListener(this);
+        mController.addControlComponent(completeView, errorView, prepareView, titleView, mDefinitionControlView);
+    }
+
+    @Override
+    public void onRateChange(String url) {
+        mVideoView.setUrl(url);
+        mVideoView.replay(false);
     }
 }

@@ -1,9 +1,5 @@
 package com.dueeeke.dkplayer.activity.extend;
 
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
-
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.activity.BaseActivity;
 import com.dueeeke.dkplayer.bean.VideoBean;
@@ -16,13 +12,12 @@ import com.dueeeke.videocontroller.component.TitleView;
 import com.dueeeke.videocontroller.component.VodControlView;
 import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.VideoView;
-import com.dueeeke.videoplayer.util.PlayerUtils;
 
 import java.util.List;
 
 /**
  * 连续播放一个列表
- * Created by Devlin_n on 2017/4/7.
+ * Created by dueeeke on 2017/4/7.
  */
 
 public class PlayListActivity extends BaseActivity {
@@ -33,11 +28,8 @@ public class PlayListActivity extends BaseActivity {
     private TitleView mTitleView;
 
     @Override
-    protected View getContentView() {
-        mVideoView = new VideoView(this);
-        mVideoView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, PlayerUtils.dp2px(this, 240)));
-        setContentView(mVideoView);
-        return mVideoView;
+    protected int getLayoutResId() {
+        return R.layout.activity_layout_common;
     }
 
     @Override
@@ -48,6 +40,7 @@ public class PlayListActivity extends BaseActivity {
     @Override
     protected void initView() {
         super.initView();
+        mVideoView = findViewById(R.id.video_view);
         mController = new StandardVideoController(this);
         addControlComponents();
 
@@ -87,7 +80,7 @@ public class PlayListActivity extends BaseActivity {
         mVideoView.start();
     }
 
-    public void addControlComponents() {
+    private void addControlComponents() {
         CompleteView completeView = new CompleteView(this);
         ErrorView errorView = new ErrorView(this);
         PrepareView prepareView = new PrepareView(this);

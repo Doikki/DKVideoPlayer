@@ -30,7 +30,7 @@ import static com.dueeeke.videoplayer.util.PlayerUtils.stringForTime;
  */
 public class VodControlView extends FrameLayout implements IControlComponent, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
     
-    private MediaPlayerControlWrapper mMediaPlayerWrapper;
+    protected MediaPlayerControlWrapper mMediaPlayerWrapper;
 
     private TextView mTotalTime, mCurrTime;
     private ImageView mFullScreen;
@@ -58,7 +58,7 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
     
     {
         setVisibility(GONE);
-        LayoutInflater.from(getContext()).inflate(R.layout.dkplayer_layout_vod_control_view, this, true);
+        LayoutInflater.from(getContext()).inflate(getLayoutId(), this, true);
         mFullScreen = findViewById(R.id.fullscreen);
         mFullScreen.setOnClickListener(this);
         mBottomContainer = findViewById(R.id.bottom_container);
@@ -71,6 +71,10 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
         mBottomProgress = findViewById(R.id.bottom_progress);
     }
 
+    protected int getLayoutId() {
+        return R.layout.dkplayer_layout_vod_control_view;
+    }
+
     /**
      * 是否显示底部进度条，默认显示
      */
@@ -79,8 +83,8 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
     }
 
     @Override
-    public void attach(@NonNull MediaPlayerControlWrapper mediaPlayer) {
-        mMediaPlayerWrapper = mediaPlayer;
+    public void attach(@NonNull MediaPlayerControlWrapper mediaPlayerWrapper) {
+        mMediaPlayerWrapper = mediaPlayerWrapper;
     }
 
     @Override

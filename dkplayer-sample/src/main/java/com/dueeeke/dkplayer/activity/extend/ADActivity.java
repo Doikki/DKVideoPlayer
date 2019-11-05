@@ -25,11 +25,10 @@ public class ADActivity extends BaseActivity<VideoView> {
     private static final String URL_AD = "https://gslb.miaopai.com/stream/IR3oMYDhrON5huCmf7sHCfnU5YKEkgO2.mp4";
 
     private StandardVideoController mController;
-    private AdControlView mAdControlView;
 
     @Override
     protected int getLayoutResId() {
-        return R.layout.activity_ad;
+        return R.layout.activity_layout_common;
     }
 
     @Override
@@ -40,10 +39,10 @@ public class ADActivity extends BaseActivity<VideoView> {
     @Override
     protected void initView() {
         super.initView();
-        mVideoView = findViewById(R.id.player);
+        mVideoView = findViewById(R.id.video_view);
         mController = new StandardVideoController(this);
-        mAdControlView = new AdControlView(this);
-        mAdControlView.setControllerListener(new ControllerListener() {
+        AdControlView adControlView = new AdControlView(this);
+        adControlView.setControllerListener(new ControllerListener() {
             @Override
             public void onAdClick() {
                 Toast.makeText(ADActivity.this, "广告点击跳转", Toast.LENGTH_SHORT).show();
@@ -54,7 +53,7 @@ public class ADActivity extends BaseActivity<VideoView> {
                 playVideo();
             }
         });
-        mController.addControlComponent(mAdControlView);
+        mController.addControlComponent(adControlView);
 
         HttpProxyCacheServer cacheServer = ProxyVideoCacheManager.getProxy(this);
         String proxyUrl = cacheServer.getProxyUrl(URL_AD);

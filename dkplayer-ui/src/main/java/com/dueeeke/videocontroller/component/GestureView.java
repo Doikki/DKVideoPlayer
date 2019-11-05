@@ -59,8 +59,8 @@ public class GestureView extends FrameLayout implements IGestureComponent {
     }
 
     @Override
-    public void attach(@NonNull MediaPlayerControlWrapper mediaPlayer) {
-        mMediaPlayer = mediaPlayer;
+    public void attach(@NonNull MediaPlayerControlWrapper mediaPlayerWrapper) {
+        mMediaPlayer = mediaPlayerWrapper;
     }
 
     @Override
