@@ -35,11 +35,11 @@ public class RotateInFullscreenController extends StandardVideoController {
 
     @Override
     public boolean onSingleTapConfirmed(MotionEvent e) {
-        if (!mMediaPlayer.isFullScreen()) {
-            mMediaPlayer.startFullScreen();
+        if (!mMediaPlayerWrapper.isFullScreen()) {
+            mMediaPlayerWrapper.startFullScreen();
             return true;
         }
-        mMediaPlayer.toggleShowState();
+        mMediaPlayerWrapper.toggleShowState();
         return true;
     }
 
@@ -78,17 +78,17 @@ public class RotateInFullscreenController extends StandardVideoController {
         if (i == R.id.fullscreen) {
             toggleFullScreen();
         } else if (i == R.id.lock) {
-            mMediaPlayer.toggleLockState();
+            mMediaPlayerWrapper.toggleLockState();
         } else if (i == R.id.iv_play) {
             togglePlay();
         } else if (i == R.id.back) {
             stopFullScreen();
         } else if (i == R.id.thumb) {
-            mMediaPlayer.start();
-            mMediaPlayer.startFullScreen();
+            mMediaPlayerWrapper.start();
+            mMediaPlayerWrapper.startFullScreen();
         } else if (i == R.id.iv_replay) {
-            mMediaPlayer.replay(true);
-            mMediaPlayer.startFullScreen();
+            mMediaPlayerWrapper.replay(true);
+            mMediaPlayerWrapper.startFullScreen();
         }
     }
 }

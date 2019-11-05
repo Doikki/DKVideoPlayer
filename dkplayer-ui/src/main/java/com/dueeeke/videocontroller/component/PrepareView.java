@@ -23,7 +23,7 @@ import com.dueeeke.videoplayer.player.VideoViewManager;
  */
 public class PrepareView extends FrameLayout implements IControlComponent {
 
-    private MediaPlayerControlWrapper mMediaPlayer;
+    private MediaPlayerControlWrapper mMediaPlayerWrapper;
     
     private ImageView mThumb;
     private ImageView mStartPlay;
@@ -53,7 +53,7 @@ public class PrepareView extends FrameLayout implements IControlComponent {
             public void onClick(View v) {
                 mNetWarning.setVisibility(GONE);
                 VideoViewManager.instance().setPlayOnMobileNetwork(true);
-                mMediaPlayer.start();
+                mMediaPlayerWrapper.start();
             }
         });
     }
@@ -65,14 +65,14 @@ public class PrepareView extends FrameLayout implements IControlComponent {
         setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mMediaPlayer.start();
+                mMediaPlayerWrapper.start();
             }
         });
     }
 
     @Override
     public void attach(@NonNull MediaPlayerControlWrapper mediaPlayer) {
-        mMediaPlayer = mediaPlayer;
+        mMediaPlayerWrapper = mediaPlayer;
     }
 
     @Override

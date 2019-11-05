@@ -37,7 +37,7 @@ import java.util.Map;
 
 /**
  * 播放器
- * Created by Devlin_n on 2017/4/7.
+ * Created by dueeeke on 2017/4/7.
  */
 
 public class VideoView<P extends AbstractPlayer> extends FrameLayout implements MediaPlayerControl, PlayerEventListener {
@@ -323,7 +323,8 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
      */
     @Override
     public void pause() {
-        if (isInPlaybackState() && isPlaying()) {
+        if (isInPlaybackState()
+                && mMediaPlayer.isPlaying()) {
             mMediaPlayer.pause();
             setPlayState(STATE_PAUSED);
             setKeepScreenOn(false);
@@ -337,7 +338,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
      */
     public void resume() {
         if (isInPlaybackState()
-                && !isPlaying()) {
+                && !mMediaPlayer.isPlaying()) {
             mMediaPlayer.start();
             setPlayState(STATE_PLAYING);
             if (mAudioFocusHelper != null)
@@ -401,7 +402,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
      * 保存播放进度
      */
     protected void saveProgress() {
-        if (mCurrentPosition != 0 && mProgressManager != null) {
+        if (mProgressManager != null && mCurrentPosition > 0) {
             L.d("saveProgress: " + mCurrentPosition);
             mProgressManager.saveProgress(mUrl, mCurrentPosition);
         }
@@ -484,7 +485,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
      */
     @Override
     public boolean isPlaying() {
-        return mMediaPlayer != null && mMediaPlayer.isPlaying();
+        return isInPlaybackState() && mMediaPlayer.isPlaying();
     }
 
     /**

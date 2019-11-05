@@ -30,7 +30,7 @@ import static com.dueeeke.videoplayer.util.PlayerUtils.stringForTime;
  */
 public class VodControlView extends FrameLayout implements IControlComponent, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
     
-    private MediaPlayerControlWrapper mMediaPlayer;
+    private MediaPlayerControlWrapper mMediaPlayerWrapper;
 
     private TextView mTotalTime, mCurrTime;
     private ImageView mFullScreen;
@@ -80,7 +80,7 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
 
     @Override
     public void attach(@NonNull MediaPlayerControlWrapper mediaPlayer) {
-        mMediaPlayer = mediaPlayer;
+        mMediaPlayerWrapper = mediaPlayer;
     }
 
     @Override
@@ -128,9 +128,9 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
                 setVisibility(GONE);
                 break;
             case VideoView.STATE_PLAYING:
-                mPlayButton.setSelected(mMediaPlayer.isPlaying());
+                mPlayButton.setSelected(mMediaPlayerWrapper.isPlaying());
                 if (mIsShowBottomProgress) {
-                    if (mMediaPlayer.isShowing()) {
+                    if (mMediaPlayerWrapper.isShowing()) {
                         mBottomProgress.setVisibility(GONE);
                         mBottomContainer.setVisibility(VISIBLE);
                     } else {
@@ -142,12 +142,12 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
                 }
                 setVisibility(VISIBLE);
                 //开始刷新进度
-                mMediaPlayer.startProgress();
+                mMediaPlayerWrapper.startProgress();
                 break;
             case VideoView.STATE_PAUSED:
             case VideoView.STATE_BUFFERING:
             case VideoView.STATE_BUFFERED:
-                mPlayButton.setSelected(mMediaPlayer.isPlaying());
+                mPlayButton.setSelected(mMediaPlayerWrapper.isPlaying());
                 break;
         }
     }
@@ -193,7 +193,7 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
             } else {
                 mVideoProgress.setEnabled(false);
             }
-            int percent = mMediaPlayer.getBufferedPercentage();
+            int percent = mMediaPlayerWrapper.getBufferedPercentage();
             if (percent >= 95) { //解决缓冲进度不能100%问题
                 mVideoProgress.setSecondaryProgress(mVideoProgress.getMax());
                 mBottomProgress.setSecondaryProgress(mBottomProgress.getMax());
@@ -225,7 +225,7 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
         if (id == R.id.fullscreen) {
             toggleFullScreen();
         } else if (id == R.id.iv_play) {
-            mMediaPlayer.togglePlay();
+            mMediaPlayerWrapper.togglePlay();
         }
     }
 
@@ -234,24 +234,24 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
      */
     private void toggleFullScreen() {
         Activity activity = PlayerUtils.scanForActivity(getContext());
-        mMediaPlayer.toggleFullScreen(activity);
+        mMediaPlayerWrapper.toggleFullScreen(activity);
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
         mIsDragging = true;
-        mMediaPlayer.stopProgress();
-        mMediaPlayer.stopFadeOut();
+        mMediaPlayerWrapper.stopProgress();
+        mMediaPlayerWrapper.stopFadeOut();
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        long duration = mMediaPlayer.getDuration();
+        long duration = mMediaPlayerWrapper.getDuration();
         long newPosition = (duration * seekBar.getProgress()) / mVideoProgress.getMax();
-        mMediaPlayer.seekTo((int) newPosition);
+        mMediaPlayerWrapper.seekTo((int) newPosition);
         mIsDragging = false;
-        mMediaPlayer.startProgress();
-        mMediaPlayer.startFadeOut();
+        mMediaPlayerWrapper.startProgress();
+        mMediaPlayerWrapper.startFadeOut();
     }
 
     @Override
@@ -260,7 +260,7 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
             return;
         }
 
-        long duration = mMediaPlayer.getDuration();
+        long duration = mMediaPlayerWrapper.getDuration();
         long newPosition = (duration * progress) / mVideoProgress.getMax();
         if (mCurrTime != null)
             mCurrTime.setText(stringForTime((int) newPosition));

@@ -25,7 +25,7 @@ import com.dueeeke.videoplayer.util.PlayerUtils;
  */
 public class LiveControlView extends FrameLayout implements IControlComponent, View.OnClickListener {
 
-    private MediaPlayerControlWrapper mMediaPlayer;
+    private MediaPlayerControlWrapper mMediaPlayerWrapper;
 
     private ImageView mFullScreen;
     private LinearLayout mBottomContainer;
@@ -58,7 +58,7 @@ public class LiveControlView extends FrameLayout implements IControlComponent, V
 
     @Override
     public void attach(@NonNull MediaPlayerControlWrapper mediaPlayer) {
-        mMediaPlayer = mediaPlayer;
+        mMediaPlayerWrapper = mediaPlayer;
     }
 
     @Override
@@ -101,7 +101,7 @@ public class LiveControlView extends FrameLayout implements IControlComponent, V
             case VideoView.STATE_PAUSED:
             case VideoView.STATE_BUFFERING:
             case VideoView.STATE_BUFFERED:
-                mPlayButton.setSelected(mMediaPlayer.isPlaying());
+                mPlayButton.setSelected(mMediaPlayerWrapper.isPlaying());
                 break;
         }
     }
@@ -150,9 +150,9 @@ public class LiveControlView extends FrameLayout implements IControlComponent, V
         if (id == R.id.fullscreen) {
             toggleFullScreen();
         } else if (id == R.id.iv_play) {
-            mMediaPlayer.togglePlay();
+            mMediaPlayerWrapper.togglePlay();
         } else if (id == R.id.iv_refresh) {
-            mMediaPlayer.replay(true);
+            mMediaPlayerWrapper.replay(true);
         }
     }
 
@@ -161,6 +161,6 @@ public class LiveControlView extends FrameLayout implements IControlComponent, V
      */
     private void toggleFullScreen() {
         Activity activity = PlayerUtils.scanForActivity(getContext());
-        mMediaPlayer.toggleFullScreen(activity);
+        mMediaPlayerWrapper.toggleFullScreen(activity);
     }
 }

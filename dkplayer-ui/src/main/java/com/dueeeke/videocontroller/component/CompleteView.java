@@ -24,7 +24,7 @@ import com.dueeeke.videoplayer.util.PlayerUtils;
  */
 public class CompleteView extends FrameLayout implements IControlComponent {
 
-    private MediaPlayerControlWrapper mMediaPlayer;
+    private MediaPlayerControlWrapper mMediaPlayerWrapper;
 
     private ImageView mStopFullscreen;
 
@@ -46,18 +46,18 @@ public class CompleteView extends FrameLayout implements IControlComponent {
         findViewById(R.id.iv_replay).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mMediaPlayer.replay(true);
+                mMediaPlayerWrapper.replay(true);
             }
         });
         mStopFullscreen = findViewById(R.id.stop_fullscreen);
         mStopFullscreen.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mMediaPlayer.isFullScreen()) {
+                if (mMediaPlayerWrapper.isFullScreen()) {
                     Activity activity = PlayerUtils.scanForActivity(getContext());
                     if (activity != null && !activity.isFinishing()) {
                         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                        mMediaPlayer.stopFullScreen();
+                        mMediaPlayerWrapper.stopFullScreen();
                     }
                 }
             }
@@ -67,7 +67,7 @@ public class CompleteView extends FrameLayout implements IControlComponent {
 
     @Override
     public void attach(@NonNull MediaPlayerControlWrapper mediaPlayer) {
-        mMediaPlayer = mediaPlayer;
+        mMediaPlayerWrapper = mediaPlayer;
     }
 
     @Override
@@ -89,7 +89,7 @@ public class CompleteView extends FrameLayout implements IControlComponent {
     public void onPlayStateChanged(int playState) {
         if (playState == VideoView.STATE_PLAYBACK_COMPLETED) {
             setVisibility(VISIBLE);
-            mStopFullscreen.setVisibility(mMediaPlayer.isFullScreen() ? VISIBLE : GONE);
+            mStopFullscreen.setVisibility(mMediaPlayerWrapper.isFullScreen() ? VISIBLE : GONE);
             bringToFront();
         } else {
             setVisibility(GONE);

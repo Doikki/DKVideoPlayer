@@ -115,7 +115,7 @@ public class FloatController extends BaseVideoController implements View.OnClick
             case VideoView.STATE_BUFFERED:
                 playButton.setVisibility(GONE);
                 proLoading.setVisibility(GONE);
-                playButton.setSelected(mMediaPlayer.isPlaying());
+                playButton.setSelected(mMediaPlayerWrapper.isPlaying());
                 break;
             case VideoView.STATE_PLAYBACK_COMPLETED:
 //                show(0);

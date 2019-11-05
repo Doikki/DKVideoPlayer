@@ -46,6 +46,8 @@ public abstract class GestureVideoController extends BaseVideoController impleme
 
     private boolean mCanSlide;
 
+    private int mCurPlayState;
+
 
     public GestureVideoController(@NonNull Context context) {
         super(context);
@@ -99,6 +101,22 @@ public abstract class GestureVideoController extends BaseVideoController impleme
     }
 
     @Override
+    public void setPlayState(int playState) {
+        super.setPlayState(playState);
+        mCurPlayState = playState;
+    }
+
+    private boolean isInPlaybackState() {
+        return mMediaPlayerWrapper != null
+                && mCurPlayState != VideoView.STATE_ERROR
+                && mCurPlayState != VideoView.STATE_IDLE
+                && mCurPlayState != VideoView.STATE_PREPARING
+                && mCurPlayState != VideoView.STATE_PREPARED
+                && mCurPlayState != VideoView.STATE_START_ABORT
+                && mCurPlayState != VideoView.STATE_PLAYBACK_COMPLETED;
+    }
+
+    @Override
     public boolean onTouch(View v, MotionEvent event) {
         return mGestureDetector.onTouchEvent(event);
     }
@@ -108,7 +126,10 @@ public abstract class GestureVideoController extends BaseVideoController impleme
      */
     @Override
     public boolean onDown(MotionEvent e) {
-        if (!mIsGestureEnabled || PlayerUtils.isEdge(getContext(), e)) return false;
+        if (!isInPlaybackState() //不处于播放状态
+                || !mIsGestureEnabled //关闭了手势
+                || PlayerUtils.isEdge(getContext(), e)) //处于屏幕边沿
+            return false;
         mStreamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         Activity activity = PlayerUtils.scanForActivity(getContext());
         if (activity == null) {
@@ -128,7 +149,9 @@ public abstract class GestureVideoController extends BaseVideoController impleme
      */
     @Override
     public boolean onSingleTapConfirmed(MotionEvent e) {
-        mMediaPlayer.toggleShowState();
+        if (isInPlaybackState()) {
+            mMediaPlayerWrapper.toggleShowState();
+        }
         return true;
     }
 
@@ -137,7 +160,7 @@ public abstract class GestureVideoController extends BaseVideoController impleme
      */
     @Override
     public boolean onDoubleTap(MotionEvent e) {
-        if (!isLocked()) togglePlay();
+        if (!isLocked() && isInPlaybackState()) togglePlay();
         return true;
     }
 
@@ -146,7 +169,10 @@ public abstract class GestureVideoController extends BaseVideoController impleme
      */
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        if (!mIsGestureEnabled || !mCanSlide || PlayerUtils.isEdge(getContext(), e1))
+        if (!isInPlaybackState() //不处于播放状态
+                || !mIsGestureEnabled //关闭了手势
+                || !mCanSlide //关闭了滑动手势
+                || PlayerUtils.isEdge(getContext(), e1)) //处于屏幕边沿
             return false;
         float deltaX = e1.getX() - e2.getX();
         float deltaY = e1.getY() - e2.getY();
@@ -190,8 +216,8 @@ public abstract class GestureVideoController extends BaseVideoController impleme
     protected void slideToChangePosition(float deltaX) {
         deltaX = -deltaX;
         int width = getMeasuredWidth();
-        int duration = (int) mMediaPlayer.getDuration();
-        int currentPosition = (int) mMediaPlayer.getCurrentPosition();
+        int duration = (int) mMediaPlayerWrapper.getDuration();
+        int currentPosition = (int) mMediaPlayerWrapper.getCurrentPosition();
         int position = (int) (deltaX / width * 120000 + currentPosition);
         if (position > duration) position = duration;
         if (position < 0) position = 0;
@@ -256,7 +282,7 @@ public abstract class GestureVideoController extends BaseVideoController impleme
                 }
             }
             if (mNeedSeek) {
-                mMediaPlayer.seekTo(mPosition);
+                mMediaPlayerWrapper.seekTo(mPosition);
                 mNeedSeek = false;
             }
         }

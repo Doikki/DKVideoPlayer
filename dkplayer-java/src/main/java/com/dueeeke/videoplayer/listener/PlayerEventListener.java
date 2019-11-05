@@ -1,7 +1,7 @@
 package com.dueeeke.videoplayer.listener;
 
 /**
- * Created by xinyu on 2017/12/21.
+ * Created by dueeeke on 2017/12/21.
  */
 
 public interface PlayerEventListener {

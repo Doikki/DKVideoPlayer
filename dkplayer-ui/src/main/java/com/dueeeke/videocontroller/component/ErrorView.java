@@ -26,7 +26,7 @@ public class ErrorView extends LinearLayout implements IControlComponent {
     private float mDownX;
     private float mDownY;
 
-    private MediaPlayerControlWrapper mMediaPlayer;
+    private MediaPlayerControlWrapper mMediaPlayerWrapper;
 
     public ErrorView(Context context) {
         this(context, null);
@@ -47,7 +47,7 @@ public class ErrorView extends LinearLayout implements IControlComponent {
             @Override
             public void onClick(View v) {
                 setVisibility(GONE);
-                mMediaPlayer.replay(false);
+                mMediaPlayerWrapper.replay(false);
             }
         });
         setClickable(true);
@@ -55,7 +55,7 @@ public class ErrorView extends LinearLayout implements IControlComponent {
 
     @Override
     public void attach(@NonNull MediaPlayerControlWrapper mediaPlayer) {
-        mMediaPlayer = mediaPlayer;
+        mMediaPlayerWrapper = mediaPlayer;
     }
 
     @Override

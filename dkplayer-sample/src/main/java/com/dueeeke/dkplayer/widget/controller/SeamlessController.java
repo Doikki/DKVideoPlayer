@@ -50,11 +50,11 @@ public class SeamlessController extends BaseVideoController {
     }
 
     private void toggleMute() {
-        if (mMediaPlayer.isMute()) {
-            mMediaPlayer.setMute(false);
+        if (mMediaPlayerWrapper.isMute()) {
+            mMediaPlayerWrapper.setMute(false);
             mMute.setSelected(true);
         } else {
-            mMediaPlayer.setMute(true);
+            mMediaPlayerWrapper.setMute(true);
             mMute.setSelected(false);
         }
     }

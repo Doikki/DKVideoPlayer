@@ -140,8 +140,9 @@ public class GestureView extends FrameLayout implements IGestureComponent {
     @Override
     public void onPlayStateChanged(int playState) {
         if (playState == VideoView.STATE_IDLE
-                || playState == VideoView.STATE_PREPARING
                 || playState == VideoView.STATE_START_ABORT
+                || playState == VideoView.STATE_PREPARING
+                || playState == VideoView.STATE_PREPARED
                 || playState == VideoView.STATE_ERROR
                 || playState == VideoView.STATE_PLAYBACK_COMPLETED) {
             setVisibility(GONE);

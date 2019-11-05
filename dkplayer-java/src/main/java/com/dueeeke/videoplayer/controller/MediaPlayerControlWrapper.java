@@ -7,16 +7,17 @@ import android.graphics.Bitmap;
 import androidx.annotation.NonNull;
 
 /**
- * 此类的目的是为了在ControlComponent中既能调用VideoView的api又能调用BaseVideoController的api.相当于一个中间人。
+ * 此类的目的是为了在ControlComponent中既能调用VideoView的api又能调用BaseVideoController的api，
+ * 并对部分api做了封装，方便使用
  */
-public class MediaPlayerControlWrapper implements MediaPlayerControl, VideoControllerCallback {
+public class MediaPlayerControlWrapper implements MediaPlayerControl, IVideoController {
     
     private MediaPlayerControl mBase;
-    private VideoControllerCallback mCallback;
+    private IVideoController mController;
     
-    public MediaPlayerControlWrapper(@NonNull MediaPlayerControl base, @NonNull VideoControllerCallback callback) {
+    public MediaPlayerControlWrapper(@NonNull MediaPlayerControl base, @NonNull IVideoController controller) {
         mBase = base;
-        mCallback = callback;
+        mController = controller;
     }
     
     @Override
@@ -195,47 +196,47 @@ public class MediaPlayerControlWrapper implements MediaPlayerControl, VideoContr
 
     @Override
     public void startFadeOut() {
-        mCallback.startFadeOut();
+        mController.startFadeOut();
     }
 
     @Override
     public void stopFadeOut() {
-        mCallback.stopFadeOut();
+        mController.stopFadeOut();
     }
 
     @Override
     public boolean isShowing() {
-        return mCallback.isShowing();
+        return mController.isShowing();
     }
 
     @Override
     public void setLocked(boolean locked) {
-        mCallback.setLocked(locked);
+        mController.setLocked(locked);
     }
 
     @Override
     public boolean isLocked() {
-        return mCallback.isLocked();
+        return mController.isLocked();
     }
 
     @Override
     public void startProgress() {
-        mCallback.startProgress();
+        mController.startProgress();
     }
 
     @Override
     public void stopProgress() {
-        mCallback.stopProgress();
+        mController.stopProgress();
     }
 
     @Override
     public void hideInner() {
-        mCallback.hideInner();
+        mController.hideInner();
     }
 
     @Override
     public void showInner() {
-        mCallback.showInner();
+        mController.showInner();
     }
 
     /**

@@ -105,7 +105,7 @@ public class StandardVideoController extends GestureVideoController implements V
     public void onClick(View v) {
         int i = v.getId();
         if (i == R.id.lock) {
-            mMediaPlayer.toggleLockState();
+            mMediaPlayerWrapper.toggleLockState();
         }
     }
 
@@ -128,7 +128,7 @@ public class StandardVideoController extends GestureVideoController implements V
     @Override
     protected void show(Animation showAnim) {
         super.show(showAnim);
-        if (mMediaPlayer.isFullScreen()) {
+        if (mMediaPlayerWrapper.isFullScreen()) {
             if (mLockButton.getVisibility() == GONE) {
                 mLockButton.setVisibility(VISIBLE);
                 if (showAnim != null) {
@@ -141,7 +141,7 @@ public class StandardVideoController extends GestureVideoController implements V
     @Override
     protected void hide(Animation hideAnim) {
         super.hide(hideAnim);
-        if (mMediaPlayer.isFullScreen()) {
+        if (mMediaPlayerWrapper.isFullScreen()) {
             mLockButton.setVisibility(GONE);
             if (hideAnim != null) {
                 mLockButton.startAnimation(hideAnim);
@@ -223,7 +223,7 @@ public class StandardVideoController extends GestureVideoController implements V
             Toast.makeText(getContext(), R.string.dkplayer_lock_tip, Toast.LENGTH_SHORT).show();
             return true;
         }
-        if (mMediaPlayer.isFullScreen()) {
+        if (mMediaPlayerWrapper.isFullScreen()) {
             return stopFullScreen();
         }
         return super.onBackPressed();

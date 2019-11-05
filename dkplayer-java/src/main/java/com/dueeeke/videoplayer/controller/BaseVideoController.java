@@ -28,13 +28,14 @@ import java.util.Map;
  * Created by dueeeke on 2017/4/12.
  */
 public abstract class BaseVideoController extends FrameLayout
-        implements OrientationHelper.OnOrientationChangeListener,
-        CutoutAdaptHelper.Callback, VideoControllerCallback {
+        implements IVideoController,
+        OrientationHelper.OnOrientationChangeListener,
+        CutoutAdaptHelper.Callback {
 
     /**
-     * 播放器包装类，里面扩展了MediaPlayerControl的功能
+     * 播放器包装类，集合了MediaPlayerControl的api和IVideoController的api
      */
-    protected MediaPlayerControlWrapper mMediaPlayer;
+    protected MediaPlayerControlWrapper mMediaPlayerWrapper;
 
     /**
      * 控制器是否处于显示状态
@@ -125,10 +126,10 @@ public abstract class BaseVideoController extends FrameLayout
      */
     @CallSuper
     public void setMediaPlayer(MediaPlayerControl mediaPlayer) {
-        mMediaPlayer = new MediaPlayerControlWrapper(mediaPlayer, this);
+        mMediaPlayerWrapper = new MediaPlayerControlWrapper(mediaPlayer, this);
 
         for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
-            next.getKey().attach(mMediaPlayer);
+            next.getKey().attach(mMediaPlayerWrapper);
         }
 
         //开始监听
@@ -333,15 +334,15 @@ public abstract class BaseVideoController extends FrameLayout
         @Override
         public void run() {
             int pos = setProgress();
-            if (mMediaPlayer.isPlaying()) {
+            if (mMediaPlayerWrapper.isPlaying()) {
                 postDelayed(mShowProgress, 1000 - (pos % 1000));
             }
         }
     };
 
     private int setProgress() {
-        int position = (int) mMediaPlayer.getCurrentPosition();
-        int duration = (int) mMediaPlayer.getDuration();
+        int position = (int) mMediaPlayerWrapper.getCurrentPosition();
+        int duration = (int) mMediaPlayerWrapper.getDuration();
         setProgress(duration, position);
         return position;
     }
@@ -447,8 +448,8 @@ public abstract class BaseVideoController extends FrameLayout
      */
     public void addControlComponent(IControlComponent component, boolean isPrivate) {
         mControlComponents.put(component, isPrivate);
-        if (mMediaPlayer != null) {
-            component.attach(mMediaPlayer);
+        if (mMediaPlayerWrapper != null) {
+            component.attach(mMediaPlayerWrapper);
         }
         if (!isPrivate) {
             addView(component.getView(), 0);
@@ -484,7 +485,7 @@ public abstract class BaseVideoController extends FrameLayout
      * 播放和暂停
      */
     protected void togglePlay() {
-        mMediaPlayer.togglePlay();
+        mMediaPlayerWrapper.togglePlay();
     }
 
     /**
@@ -492,7 +493,7 @@ public abstract class BaseVideoController extends FrameLayout
      */
     protected void toggleFullScreen() {
         Activity activity = PlayerUtils.scanForActivity(getContext());
-        mMediaPlayer.toggleFullScreen(activity);
+        mMediaPlayerWrapper.toggleFullScreen(activity);
     }
 
     /**
@@ -503,7 +504,7 @@ public abstract class BaseVideoController extends FrameLayout
         Activity activity = PlayerUtils.scanForActivity(getContext());
         if (activity == null || activity.isFinishing()) return false;
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        mMediaPlayer.startFullScreen();
+        mMediaPlayerWrapper.startFullScreen();
         return true;
     }
 
@@ -514,7 +515,7 @@ public abstract class BaseVideoController extends FrameLayout
     protected boolean stopFullScreen() {
         Activity activity = PlayerUtils.scanForActivity(getContext());
         if (activity == null || activity.isFinishing()) return false;
-        mMediaPlayer.stopFullScreen();
+        mMediaPlayerWrapper.stopFullScreen();
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         return true;
     }
@@ -529,7 +530,7 @@ public abstract class BaseVideoController extends FrameLayout
     @Override
     public void onWindowFocusChanged(boolean hasWindowFocus) {
         super.onWindowFocusChanged(hasWindowFocus);
-        if (mMediaPlayer.isPlaying() && (mEnableOrientation || mMediaPlayer.isFullScreen())) {
+        if (mMediaPlayerWrapper.isPlaying() && (mEnableOrientation || mMediaPlayerWrapper.isFullScreen())) {
             if (hasWindowFocus) {
                 postDelayed(new Runnable() {
                     @Override
@@ -612,7 +613,7 @@ public abstract class BaseVideoController extends FrameLayout
         //没有开启设备方向监听的情况
         if (!mEnableOrientation) return;
 
-        mMediaPlayer.stopFullScreen();
+        mMediaPlayerWrapper.stopFullScreen();
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
@@ -620,7 +621,7 @@ public abstract class BaseVideoController extends FrameLayout
      * 横屏
      */
     protected void onOrientationLandscape(Activity activity) {
-        mMediaPlayer.startFullScreen();
+        mMediaPlayerWrapper.startFullScreen();
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     }
 
@@ -628,7 +629,7 @@ public abstract class BaseVideoController extends FrameLayout
      * 反向横屏
      */
     protected void onOrientationReverseLandscape(Activity activity) {
-        mMediaPlayer.startFullScreen();
+        mMediaPlayerWrapper.startFullScreen();
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
     }
 

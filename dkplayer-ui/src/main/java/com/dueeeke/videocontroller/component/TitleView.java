@@ -31,7 +31,7 @@ import com.dueeeke.videoplayer.util.PlayerUtils;
  */
 public class TitleView extends FrameLayout implements IControlComponent {
 
-    private MediaPlayerControlWrapper mMediaPlayer;
+    private MediaPlayerControlWrapper mMediaPlayerWrapper;
 
     private LinearLayout mTitleContainer;
     private MarqueeTextView mTitle;
@@ -60,9 +60,9 @@ public class TitleView extends FrameLayout implements IControlComponent {
             @Override
             public void onClick(View v) {
                 Activity activity = PlayerUtils.scanForActivity(getContext());
-                if (activity != null && mMediaPlayer.isFullScreen()) {
+                if (activity != null && mMediaPlayerWrapper.isFullScreen()) {
                     activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                    mMediaPlayer.stopFullScreen();
+                    mMediaPlayerWrapper.stopFullScreen();
                 }
             }
         });
@@ -91,7 +91,7 @@ public class TitleView extends FrameLayout implements IControlComponent {
 
     @Override
     public void attach(@NonNull MediaPlayerControlWrapper mediaPlayer) {
-        mMediaPlayer = mediaPlayer;
+        mMediaPlayerWrapper = mediaPlayer;
     }
 
     @Override
@@ -102,7 +102,7 @@ public class TitleView extends FrameLayout implements IControlComponent {
     @Override
     public void show(Animation showAnim) {
         //只在全屏时才显示
-        if (mMediaPlayer.isFullScreen()) {
+        if (mMediaPlayerWrapper.isFullScreen()) {
             if (getVisibility() == GONE) {
                 mSysTime.setText(PlayerUtils.getCurrentSystemTime());
                 setVisibility(VISIBLE);
@@ -115,7 +115,7 @@ public class TitleView extends FrameLayout implements IControlComponent {
 
     @Override
     public void hide(Animation hideAnim) {
-        if (mMediaPlayer.isFullScreen()) {
+        if (mMediaPlayerWrapper.isFullScreen()) {
             if (getVisibility() == VISIBLE) {
                 if (hideAnim != null) {
                     setVisibility(GONE);
@@ -142,7 +142,7 @@ public class TitleView extends FrameLayout implements IControlComponent {
     @Override
     public void onPlayerStateChanged(int playerState) {
         if (playerState == VideoView.PLAYER_FULL_SCREEN) {
-            if (mMediaPlayer.isShowing()) {
+            if (mMediaPlayerWrapper.isShowing()) {
                 setVisibility(VISIBLE);
                 mSysTime.setText(PlayerUtils.getCurrentSystemTime());
             }

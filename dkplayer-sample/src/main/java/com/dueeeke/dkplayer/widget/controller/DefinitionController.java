@@ -135,7 +135,7 @@ public class DefinitionController extends StandardVideoController {
             ((TextView) mPopLayout.getChildAt(currentIndex)).setTextColor(Color.BLACK);
             ((TextView) mPopLayout.getChildAt(index)).setTextColor(ContextCompat.getColor(getContext(), R.color.theme_color));
             multiRate.setText(mRateStr.get(index));
-            ((DefinitionMediaPlayerControl)mMediaPlayer).switchDefinition(mRateStr.get(index));
+            ((DefinitionMediaPlayerControl) mMediaPlayerWrapper).switchDefinition(mRateStr.get(index));
             mPopupWindow.dismiss();
             hide(null);
             currentIndex = index;
