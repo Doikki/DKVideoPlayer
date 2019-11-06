@@ -13,16 +13,15 @@ import androidx.annotation.Nullable;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.util.PIPManager;
 import com.dueeeke.videocontroller.component.ErrorView;
-import com.dueeeke.videoplayer.controller.BaseVideoController;
-import com.dueeeke.videoplayer.controller.MediaPlayerControl;
+import com.dueeeke.videoplayer.controller.GestureVideoController;
 import com.dueeeke.videoplayer.player.VideoView;
 
 /**
  * 悬浮播放控制器
- * Created by Devlin_n on 2017/6/1.
+ * Created by dueeeke on 2017/6/1.
  */
 
-public class FloatController extends BaseVideoController implements View.OnClickListener {
+public class FloatController extends GestureVideoController implements View.OnClickListener {
 
 
     private ProgressBar proLoading;
@@ -51,11 +50,6 @@ public class FloatController extends BaseVideoController implements View.OnClick
         playButton = findViewById(R.id.start_play);
         playButton.setOnClickListener(this);
         addControlComponent(new ErrorView(getContext()));
-    }
-
-    @Override
-    public void setMediaPlayer(MediaPlayerControl mediaPlayer) {
-        super.setMediaPlayer(mediaPlayer);
     }
 
     @Override
@@ -125,11 +119,11 @@ public class FloatController extends BaseVideoController implements View.OnClick
 
     @Override
     public void showInner() {
-        if (!isShowing()) {
+        if (!mShowing) {
             playButton.setVisibility(VISIBLE);
+            startFadeOut();
+            mShowing = true;
         }
-
-        startFadeOut();
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.dueeeke.videoplayer.exo;
 
 import android.content.Context;
 import android.net.Uri;
+import android.text.TextUtils;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ext.rtmp.RtmpDataSourceFactory;
@@ -17,6 +18,7 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
 
+import java.lang.reflect.Field;
 import java.util.Map;
 
 public final class ExoMediaSourceHelper {
@@ -32,6 +34,10 @@ public final class ExoMediaSourceHelper {
     }
 
     public MediaSource getMediaSource(String uri) {
+        return getMediaSource(uri, null);
+    }
+
+    public MediaSource getMediaSource(String uri, Map<String, String> headers) {
         Uri contentUri = Uri.parse(uri);
         if ("rtmp".equals(contentUri.getScheme())) {
             return new ProgressiveMediaSource.Factory(new RtmpDataSourceFactory(null))
@@ -40,6 +46,9 @@ public final class ExoMediaSourceHelper {
         int contentType = inferContentType(uri);
         if (mDataSourceFactory == null) {
             mDataSourceFactory = getDataSourceFactory();
+            if (mHttpDataSourceFactory != null) {
+                setHeaders(headers);
+            }
         }
         switch (contentType) {
             case C.TYPE_DASH:
@@ -94,10 +103,25 @@ public final class ExoMediaSourceHelper {
         return mHttpDataSourceFactory;
     }
 
-    public void setHeaders(Map<String, String> headers) {
+    private void setHeaders(Map<String, String> headers) {
         if (headers != null && headers.size() > 0) {
             for (Map.Entry<String, String> header : headers.entrySet()) {
-                mHttpDataSourceFactory.getDefaultRequestProperties().set(header.getKey(), header.getValue());
+                String key = header.getKey();
+                String value = header.getValue();
+                //如果发现用户通过header传递了UA，则强行将HttpDataSourceFactory里面的userAgent字段替换成用户的
+                if (TextUtils.equals(key, "User-Agent")) {
+                    if (!TextUtils.isEmpty(value)) {
+                        try {
+                            Field userAgentField = mHttpDataSourceFactory.getClass().getDeclaredField("userAgent");
+                            userAgentField.setAccessible(true);
+                            userAgentField.set(mHttpDataSourceFactory, value);
+                        } catch (Exception e) {
+                            //ignore
+                        }
+                    }
+                } else {
+                    mHttpDataSourceFactory.getDefaultRequestProperties().set(key, value);
+                }
             }
         }
     }

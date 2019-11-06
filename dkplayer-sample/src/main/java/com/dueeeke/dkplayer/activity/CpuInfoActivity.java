@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.dueeeke.videoplayer.util.PlayerUtils;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -29,7 +31,7 @@ public class CpuInfoActivity extends BaseActivity {
     @Override
     protected View getContentView() {
         ScrollView scrollView = new ScrollView(this);
-        scrollView.setPadding(100, 0, 0, 0);
+        scrollView.setPadding(PlayerUtils.dp2px(this, 20), 0, 0, 0);
         mCpuInfo = new TextView(this);
         mCpuInfo.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
         mCpuInfo.setTextColor(Color.BLACK);

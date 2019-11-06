@@ -10,7 +10,7 @@ import com.dueeeke.videoplayer.controller.BaseVideoController;
 
 /**
  * 抖音
- * Created by xinyu on 2018/1/6.
+ * Created by dueeeke on 2018/1/6.
  */
 
 public class TikTokController extends BaseVideoController {

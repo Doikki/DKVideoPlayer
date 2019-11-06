@@ -1,5 +1,6 @@
 package com.dueeeke.dkplayer.activity.api;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.view.View;
@@ -30,6 +31,14 @@ public class PlayerActivity extends DebugActivity {
 
     private static final String THUMB = "https://cms-bucket.nosdn.127.net/eb411c2810f04ffa8aaafc42052b233820180418095416.jpeg";
 
+    public static void start(Context context, String url, String title, boolean isLive) {
+        Intent intent = new Intent(context, PlayerActivity.class);
+        intent.putExtra(IntentKeys.URL, url);
+        intent.putExtra(IntentKeys.IS_LIVE, isLive);
+        intent.putExtra(IntentKeys.TITLE, title);
+        context.startActivity(intent);
+    }
+
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_player;
@@ -59,7 +68,7 @@ public class PlayerActivity extends DebugActivity {
             controller.addControlComponent(titleView);
 
             //根据是否为直播设置不同的底部控制条
-            boolean isLive = intent.getBooleanExtra("isLive", false);
+            boolean isLive = intent.getBooleanExtra(IntentKeys.IS_LIVE, false);
             if (isLive) {
                 controller.addControlComponent(new LiveControlView(this));//直播控制条
             } else {
@@ -78,7 +87,7 @@ public class PlayerActivity extends DebugActivity {
             String title = intent.getStringExtra(IntentKeys.TITLE);
             titleView.setTitle(title);
 
-            //快速添加各个组件
+            //如果你不需要单独配置各个组件，可以直接调用此方法快速添加以上组件
 //            controller.addDefaultControlComponent(title, isLive);
 
             //竖屏也开启手势操作，默认关闭
@@ -88,7 +97,7 @@ public class PlayerActivity extends DebugActivity {
 
             mVideoView.setVideoController(controller);
 
-            mVideoView.setUrl(intent.getStringExtra("url"));
+            mVideoView.setUrl(getIntent().getStringExtra(IntentKeys.URL));
 
             //保存播放进度
 //            mVideoView.setProgressManager(new ProgressManagerImpl());

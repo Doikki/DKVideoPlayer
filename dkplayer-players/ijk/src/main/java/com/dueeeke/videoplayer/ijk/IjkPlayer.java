@@ -6,6 +6,7 @@ import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
@@ -59,6 +60,13 @@ public class IjkPlayer extends AbstractPlayer {
                     RawDataSourceProvider rawDataSourceProvider = RawDataSourceProvider.create(application, uri);
                     mMediaPlayer.setDataSource(rawDataSourceProvider);
                 } else {
+                    //处理UA问题
+                    if (headers != null) {
+                        String userAgent = headers.get("User-Agent");
+                        if (!TextUtils.isEmpty(userAgent)) {
+                            mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "user_agent", userAgent);
+                        }
+                    }
                     mMediaPlayer.setDataSource(application, uri, headers);
                 }
             }

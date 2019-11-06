@@ -9,7 +9,6 @@ import com.dueeeke.dkplayer.activity.api.ParallelPlayActivity;
 import com.dueeeke.dkplayer.activity.api.PlayRawAssetsActivity;
 import com.dueeeke.dkplayer.activity.api.PlayerActivity;
 import com.dueeeke.dkplayer.fragment.BaseFragment;
-import com.dueeeke.dkplayer.util.IntentKeys;
 
 public class ApiFragment extends BaseFragment implements View.OnClickListener {
 
@@ -50,22 +49,12 @@ public class ApiFragment extends BaseFragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_vod: {
-                Intent intent = new Intent(getActivity(), PlayerActivity.class);
-                intent.putExtra(IntentKeys.URL, VOD_URL);
-                intent.putExtra(IntentKeys.IS_LIVE, false);
-                intent.putExtra(IntentKeys.TITLE, "点播");
-                startActivity(intent);
+            case R.id.btn_vod:
+                PlayerActivity.start(getActivity(), VOD_URL, "点播", false);
                 break;
-            }
-            case R.id.btn_live: {
-                Intent intent = new Intent(getActivity(), PlayerActivity.class);
-                intent.putExtra(IntentKeys.URL, LIVE_URL);
-                intent.putExtra(IntentKeys.IS_LIVE, true);
-                intent.putExtra(IntentKeys.TITLE, "直播");
-                startActivity(intent);
+            case R.id.btn_live:
+                PlayerActivity.start(getActivity(), LIVE_URL, "直播", true);
                 break;
-            }
             case R.id.btn_definition:
                 startActivity(new Intent(getActivity(), DefinitionPlayerActivity.class));
                 break;
