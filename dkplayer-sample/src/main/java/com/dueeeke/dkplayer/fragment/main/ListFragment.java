@@ -28,7 +28,7 @@ public class ListFragment extends BaseFragment {
         titles.add(getString(R.string.str_recycler_view));
         titles.add(getString(R.string.str_auto_play_recycler_view));
         titles.add(getString(R.string.str_tiktok));
-        titles.add(getString(R.string.str_rotate_in_fullscreen));
+        titles.add(getString(R.string.str_portrait_when_fullscreen));
         titles.add(getString(R.string.str_seamless_play));
 
         viewPager.setAdapter(new MyPagerAdapter(getChildFragmentManager(), titles));

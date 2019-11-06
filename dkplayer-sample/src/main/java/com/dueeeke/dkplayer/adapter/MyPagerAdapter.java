@@ -9,7 +9,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import com.dueeeke.dkplayer.fragment.list.ListViewFragment;
 import com.dueeeke.dkplayer.fragment.list.RecyclerViewAutoPlayFragment;
 import com.dueeeke.dkplayer.fragment.list.RecyclerViewFragment;
-import com.dueeeke.dkplayer.fragment.list.RecyclerViewRotateFragment;
+import com.dueeeke.dkplayer.fragment.list.RecyclerViewPortraitFragment;
 import com.dueeeke.dkplayer.fragment.list.SeamlessPlayFragment;
 import com.dueeeke.dkplayer.fragment.list.TikTokListFragment;
 
@@ -43,7 +43,7 @@ public class MyPagerAdapter extends FragmentStatePagerAdapter {
             case 3:
                 return new TikTokListFragment();
             case 4:
-                return new RecyclerViewRotateFragment();
+                return new RecyclerViewPortraitFragment();
             case 5:
                 return new SeamlessPlayFragment();
         }

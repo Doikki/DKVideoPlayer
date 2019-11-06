@@ -96,7 +96,6 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
                 Field mPlayerFactoryField = config.getClass().getDeclaredField("mPlayerFactory");
                 mPlayerFactoryField.setAccessible(true);
                 PlayerFactory playerFactory = null;
-                String msg = getString(R.string.str_current_player);
                 switch (itemId) {
                     case R.id.ijk:
                         playerFactory = IjkPlayerFactory.create();

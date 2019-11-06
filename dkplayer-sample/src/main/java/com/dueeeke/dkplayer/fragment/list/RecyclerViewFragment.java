@@ -19,6 +19,7 @@ import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.videocontroller.component.CompleteView;
 import com.dueeeke.videocontroller.component.ErrorView;
 import com.dueeeke.videocontroller.StandardVideoController;
+import com.dueeeke.videocontroller.component.GestureView;
 import com.dueeeke.videocontroller.component.TitleView;
 import com.dueeeke.videocontroller.component.VodControlView;
 import com.dueeeke.videoplayer.controller.IControlComponent;
@@ -95,6 +96,7 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
         mTitleView = new TitleView(getActivity());
         mController.addControlComponent(mTitleView);
         mController.addControlComponent(new VodControlView(getActivity()));
+        mController.addControlComponent(new GestureView(getActivity()));
         mController.setEnableOrientation(true);
         mVideoView.setVideoController(mController);
     }
