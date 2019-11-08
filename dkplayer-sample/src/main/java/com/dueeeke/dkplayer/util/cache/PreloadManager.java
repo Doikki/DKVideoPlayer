@@ -179,13 +179,17 @@ public class PreloadManager {
     }
 
     /**
-     * 获取代理地址
+     * 获取播放地址
      */
     public String getPlayUrl(String rawUrl) {
         PreloadTask task = mPreloadTasks.get(rawUrl);
         if (task != null) {
             task.cancel();
         }
-        return mHttpProxyCacheServer.getProxyUrl(rawUrl);
+        if (isPreloaded(rawUrl)) {
+            return mHttpProxyCacheServer.getProxyUrl(rawUrl);
+        } else {
+            return rawUrl;
+        }
     }
 }

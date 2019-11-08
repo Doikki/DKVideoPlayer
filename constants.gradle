@@ -10,7 +10,7 @@ project.ext {
     // App dependencies
     supportLibraryVersion = '28.0.0'
     ijkPlayerVersion = '0.8.8'
-    exoPlayerVersion = '2.10.5'
+    exoPlayerVersion = '2.10.6'
 
     annotation = 'androidx.annotation:annotation:1.1.0'
 }

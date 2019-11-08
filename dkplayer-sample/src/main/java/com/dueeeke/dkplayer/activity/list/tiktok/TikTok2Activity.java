@@ -44,8 +44,6 @@ public class TikTok2Activity extends BaseActivity<VideoView> {
      */
     private boolean mIsReverseScroll;
 
-    private VideoView mVideoView;
-
     private TikTokController mController;
 
     private static final String KEY_INDEX = "index";

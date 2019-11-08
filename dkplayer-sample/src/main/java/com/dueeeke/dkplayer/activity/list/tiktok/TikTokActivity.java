@@ -29,7 +29,6 @@ import java.util.List;
 @Deprecated
 public class TikTokActivity extends BaseActivity<VideoView> {
 
-    private VideoView mVideoView;
     private TikTokController mController;
     private int mCurrentPosition;
     private RecyclerView mRecyclerView;
