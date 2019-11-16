@@ -3,7 +3,9 @@ package com.dueeeke.dkplayer.widget.component;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.animation.Animation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -24,6 +26,8 @@ public class TikTokView extends FrameLayout implements IControlComponent {
     private ImageView mPlayBtn;
 
     private MediaPlayerControlWrapper mMediaPlayer;
+    private int mScaledTouchSlop;
+    private int mStartX, mStartY;
 
     public TikTokView(@NonNull Context context) {
         super(context);
@@ -47,6 +51,27 @@ public class TikTokView extends FrameLayout implements IControlComponent {
                 mMediaPlayer.togglePlay();
             }
         });
+        mScaledTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        int action = event.getAction();
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:
+                mStartX = (int) event.getX();
+                mStartY = (int) event.getY();
+                return true;
+            case MotionEvent.ACTION_UP:
+                int endX = (int) event.getX();
+                int endY = (int) event.getY();
+                if (Math.abs(endX - mStartX) < mScaledTouchSlop
+                        && Math.abs(endY - mStartY) < mScaledTouchSlop) {
+                    performClick();
+                }
+                break;
+        }
+        return false;
     }
 
     @Override
