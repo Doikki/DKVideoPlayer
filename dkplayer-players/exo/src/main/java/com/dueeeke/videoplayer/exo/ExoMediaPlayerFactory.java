@@ -1,5 +1,7 @@
 package com.dueeeke.videoplayer.exo;
 
+import android.content.Context;
+
 import com.dueeeke.videoplayer.player.PlayerFactory;
 
 public class ExoMediaPlayerFactory extends PlayerFactory<ExoMediaPlayer> {
@@ -9,7 +11,7 @@ public class ExoMediaPlayerFactory extends PlayerFactory<ExoMediaPlayer> {
     }
 
     @Override
-    public ExoMediaPlayer createPlayer() {
-        return new ExoMediaPlayer();
+    public ExoMediaPlayer createPlayer(Context context) {
+        return new ExoMediaPlayer(context);
     }
 }

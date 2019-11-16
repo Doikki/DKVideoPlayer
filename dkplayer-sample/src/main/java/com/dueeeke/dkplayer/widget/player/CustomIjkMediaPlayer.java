@@ -1,10 +1,16 @@
 package com.dueeeke.dkplayer.widget.player;
 
+import android.content.Context;
+
 import com.dueeeke.videoplayer.ijk.IjkPlayer;
 
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 public class CustomIjkMediaPlayer extends IjkPlayer {
+
+    public CustomIjkMediaPlayer(Context context) {
+        super(context);
+    }
 
     /**
      * 设置IjkMediaPlayer.OPT_CATEGORY_PLAYER相关配置

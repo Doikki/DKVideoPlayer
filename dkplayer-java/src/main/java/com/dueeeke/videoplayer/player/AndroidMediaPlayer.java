@@ -1,6 +1,6 @@
 package com.dueeeke.videoplayer.player;
 
-import android.app.Application;
+import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -8,14 +8,17 @@ import android.net.Uri;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
-import com.dueeeke.videoplayer.util.PlayerUtils;
-
 import java.util.Map;
 
 public class AndroidMediaPlayer extends AbstractPlayer {
 
     protected MediaPlayer mMediaPlayer;
     private int mBufferedPercent;
+    private Context mAppContext;
+
+    public AndroidMediaPlayer(Context context) {
+        mAppContext = context.getApplicationContext();
+    }
 
     @Override
     public void initPlayer() {
@@ -33,10 +36,7 @@ public class AndroidMediaPlayer extends AbstractPlayer {
     @Override
     public void setDataSource(String path, Map<String, String> headers) {
         try {
-            Application application = PlayerUtils.getApplication();
-            if (application != null) {
-                mMediaPlayer.setDataSource(application, Uri.parse(path), headers);
-            }
+            mMediaPlayer.setDataSource(mAppContext, Uri.parse(path), headers);
         } catch (Exception e) {
             mPlayerEventListener.onError();
         }

@@ -40,8 +40,8 @@ public class ExoVideoView extends VideoView<CustomExoMediaPlayer> {
         //由于传递了泛型，必须将CustomExoMediaPlayer设置进来，否者报错
         setPlayerFactory(new PlayerFactory<CustomExoMediaPlayer>() {
             @Override
-            public CustomExoMediaPlayer createPlayer() {
-                return new CustomExoMediaPlayer();
+            public CustomExoMediaPlayer createPlayer(Context context) {
+                return new CustomExoMediaPlayer(context);
             }
         });
     }

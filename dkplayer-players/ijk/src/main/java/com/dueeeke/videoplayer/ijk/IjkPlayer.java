@@ -1,7 +1,7 @@
 package com.dueeeke.videoplayer.ijk;
 
-import android.app.Application;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.net.Uri;
@@ -12,7 +12,6 @@ import android.view.SurfaceHolder;
 
 import com.dueeeke.videoplayer.player.AbstractPlayer;
 import com.dueeeke.videoplayer.player.VideoViewManager;
-import com.dueeeke.videoplayer.util.PlayerUtils;
 
 import java.util.Map;
 
@@ -23,6 +22,11 @@ public class IjkPlayer extends AbstractPlayer {
 
     protected IjkMediaPlayer mMediaPlayer;
     private int mBufferedPercent;
+    private Context mAppContext;
+
+    public IjkPlayer(Context context) {
+        mAppContext = context;
+    }
 
     @Override
     public void initPlayer() {
@@ -53,22 +57,19 @@ public class IjkPlayer extends AbstractPlayer {
     @Override
     public void setDataSource(String path, Map<String, String> headers) {
         try {
-            Application application = PlayerUtils.getApplication();
-            if (application != null) {
-                Uri uri = Uri.parse(path);
-                if (ContentResolver.SCHEME_ANDROID_RESOURCE.equals(uri.getScheme())) {
-                    RawDataSourceProvider rawDataSourceProvider = RawDataSourceProvider.create(application, uri);
-                    mMediaPlayer.setDataSource(rawDataSourceProvider);
-                } else {
-                    //处理UA问题
-                    if (headers != null) {
-                        String userAgent = headers.get("User-Agent");
-                        if (!TextUtils.isEmpty(userAgent)) {
-                            mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "user_agent", userAgent);
-                        }
+            Uri uri = Uri.parse(path);
+            if (ContentResolver.SCHEME_ANDROID_RESOURCE.equals(uri.getScheme())) {
+                RawDataSourceProvider rawDataSourceProvider = RawDataSourceProvider.create(mAppContext, uri);
+                mMediaPlayer.setDataSource(rawDataSourceProvider);
+            } else {
+                //处理UA问题
+                if (headers != null) {
+                    String userAgent = headers.get("User-Agent");
+                    if (!TextUtils.isEmpty(userAgent)) {
+                        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "user_agent", userAgent);
                     }
-                    mMediaPlayer.setDataSource(application, uri, headers);
                 }
+                mMediaPlayer.setDataSource(mAppContext, uri, headers);
             }
         } catch (Exception e) {
             mPlayerEventListener.onError();

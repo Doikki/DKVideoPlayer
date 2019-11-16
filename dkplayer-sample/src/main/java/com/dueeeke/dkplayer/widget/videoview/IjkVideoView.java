@@ -35,8 +35,8 @@ public class IjkVideoView extends VideoView<CustomIjkMediaPlayer> {
     {
         setPlayerFactory(new PlayerFactory<CustomIjkMediaPlayer>() {
             @Override
-            public CustomIjkMediaPlayer createPlayer() {
-                return new CustomIjkMediaPlayer();
+            public CustomIjkMediaPlayer createPlayer(Context context) {
+                return new CustomIjkMediaPlayer(context);
             }
         });
     }

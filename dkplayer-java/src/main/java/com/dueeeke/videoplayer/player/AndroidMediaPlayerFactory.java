@@ -1,5 +1,7 @@
 package com.dueeeke.videoplayer.player;
 
+import android.content.Context;
+
 public class AndroidMediaPlayerFactory extends PlayerFactory<AndroidMediaPlayer> {
 
     public static AndroidMediaPlayerFactory create() {
@@ -7,7 +9,7 @@ public class AndroidMediaPlayerFactory extends PlayerFactory<AndroidMediaPlayer>
     }
 
     @Override
-    public AndroidMediaPlayer createPlayer() {
-        return new AndroidMediaPlayer();
+    public AndroidMediaPlayer createPlayer(Context context) {
+        return new AndroidMediaPlayer(context);
     }
 }
