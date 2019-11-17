@@ -336,6 +336,8 @@ public abstract class BaseVideoController extends FrameLayout
             int pos = setProgress();
             if (mMediaPlayerWrapper.isPlaying()) {
                 postDelayed(mShowProgress, 1000 - (pos % 1000));
+            } else {
+                mIsStartProgress = false;
             }
         }
     };
