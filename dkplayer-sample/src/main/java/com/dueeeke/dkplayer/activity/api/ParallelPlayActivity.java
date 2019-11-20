@@ -9,7 +9,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.player.VideoView;
-import com.dueeeke.videoplayer.player.VideoViewManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 多开
@@ -17,6 +19,8 @@ import com.dueeeke.videoplayer.player.VideoViewManager;
 public class ParallelPlayActivity extends AppCompatActivity {
 
     private static final String VOD_URL = "http://vfx.mtime.cn/Video/2019/03/18/mp4/190318231014076505.mp4";
+
+    private List<VideoView> mVideoViews = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,6 +41,7 @@ public class ParallelPlayActivity extends AppCompatActivity {
         StandardVideoController controller1 = new StandardVideoController(this);
         controller1.addDefaultControlComponent(getString(R.string.str_multi_player), false);
         player1.setVideoController(controller1);
+        mVideoViews.add(player1);
 
         VideoView player2 = findViewById(R.id.player_2);
         player2.setUrl(VOD_URL);
@@ -45,30 +50,38 @@ public class ParallelPlayActivity extends AppCompatActivity {
         StandardVideoController controller2 = new StandardVideoController(this);
         controller2.addDefaultControlComponent(getString(R.string.str_multi_player), false);
         player2.setVideoController(controller2);
+        mVideoViews.add(player2);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        VideoViewManager.instance().pause();
+        for (VideoView vv : mVideoViews) {
+            vv.pause();
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        VideoViewManager.instance().resume();
+        for (VideoView vv : mVideoViews) {
+            vv.pause();
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        VideoViewManager.instance().release();
+        for (VideoView vv : mVideoViews) {
+            vv.release();
+        }
     }
 
     @Override
     public void onBackPressed() {
-        if (VideoViewManager.instance().onBackPressed()) {
-            return;
+        for (VideoView vv : mVideoViews) {
+            if (vv.onBackPressed())
+                return;
         }
         super.onBackPressed();
     }

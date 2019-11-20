@@ -1,8 +1,6 @@
 package com.dueeeke.dkplayer.util;
 
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
 
 import com.dueeeke.dkplayer.app.MyApplication;
 import com.dueeeke.dkplayer.widget.FloatView;
@@ -60,7 +58,7 @@ public class PIPManager {
 
     public void startFloatWindow() {
         if (isShowing) return;
-        removePlayerFormParent();
+        Utils.removeViewFormParent(mVideoView);
         mFloatController.setPlayState(mVideoView.getCurrentPlayState());
         mFloatController.setPlayerState(mVideoView.getCurrentPlayerState());
         mVideoView.setVideoController(mFloatController);
@@ -72,15 +70,8 @@ public class PIPManager {
     public void stopFloatWindow() {
         if (!isShowing) return;
         floatView.removeFromWindow();
-        removePlayerFormParent();
+        Utils.removeViewFormParent(mVideoView);
         isShowing = false;
-    }
-
-    private void removePlayerFormParent() {
-        ViewParent parent = mVideoView.getParent();
-        if (parent instanceof ViewGroup) {
-            ((ViewGroup) parent).removeView(mVideoView);
-        }
     }
 
     public void setPlayingPosition(int position) {
@@ -103,7 +94,7 @@ public class PIPManager {
 
     public void reset() {
         if (isShowing) return;
-        removePlayerFormParent();
+        Utils.removeViewFormParent(mVideoView);
         mVideoView.release();
         mVideoView.setVideoController(null);
         mPlayingPosition = -1;

@@ -34,9 +34,9 @@ public class L {
         }
     }
 
-    public static void w(Throwable e) {
+    public static void w(String msg) {
         if (isDebug) {
-            Log.w(TAG, e);
+            Log.w(TAG, msg);
         }
     }
 

@@ -1,7 +1,5 @@
 package com.dueeeke.dkplayer.fragment.list;
 
-import android.view.View;
-
 import com.dueeeke.dkplayer.widget.controller.PortraitWhenFullScreenController;
 import com.dueeeke.videocontroller.component.CompleteView;
 import com.dueeeke.videocontroller.component.ErrorView;
@@ -27,8 +25,8 @@ public class RecyclerViewPortraitFragment extends RecyclerViewAutoPlayFragment {
     }
 
     @Override
-    public void onItemChildClick(View view, int position) {
+    public void onItemChildClick(int position) {
         mVideoView.startFullScreen();
-        super.onItemChildClick(view, position);
+        super.onItemChildClick(position);
     }
 }

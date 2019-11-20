@@ -376,10 +376,8 @@ public abstract class BaseVideoController extends FrameLayout
         } else if (playState == VideoView.STATE_PLAYBACK_COMPLETED) {
             mIsLocked = false;
             mShowing = false;
-            stopProgress();
         } else if (playState == VideoView.STATE_ERROR) {
             mShowing = false;
-            stopProgress();
         }
     }
 
@@ -388,7 +386,6 @@ public abstract class BaseVideoController extends FrameLayout
         mOrientation = 0;
         mIsLocked = false;
         mShowing = false;
-        stopProgress();
         removeAllPrivateComponents();
     }
 

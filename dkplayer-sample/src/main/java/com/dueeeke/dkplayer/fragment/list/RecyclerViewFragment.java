@@ -2,8 +2,6 @@ package com.dueeeke.dkplayer.fragment.list;
 
 import android.content.pm.ActivityInfo;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -16,9 +14,11 @@ import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.dkplayer.fragment.BaseFragment;
 import com.dueeeke.dkplayer.interf.OnItemChildClickListener;
 import com.dueeeke.dkplayer.util.DataUtil;
+import com.dueeeke.dkplayer.util.Tag;
+import com.dueeeke.dkplayer.util.Utils;
+import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videocontroller.component.CompleteView;
 import com.dueeeke.videocontroller.component.ErrorView;
-import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videocontroller.component.GestureView;
 import com.dueeeke.videocontroller.component.TitleView;
 import com.dueeeke.videocontroller.component.VodControlView;
@@ -37,7 +37,7 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
     protected LinearLayoutManager mLinearLayoutManager;
     protected RecyclerView mRecyclerView;
 
-    private int mCurPosition = -1;
+    protected int mCurPosition = -1;
     protected StandardVideoController mController;
     protected ErrorView mErrorView;
     protected CompleteView mCompleteView;
@@ -117,12 +117,20 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
     @Override
     public void onPause() {
         super.onPause();
+        pause();
+    }
+
+    protected void pause() {
         resetVideoView();
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        resume();
+    }
+
+    protected void resume() {
         mVideoView.resume();
     }
 
@@ -133,7 +141,7 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
     }
 
     @Override
-    public void onItemChildClick(View view, int position) {
+    public void onItemChildClick(int position) {
         startPlay(position);
     }
 
@@ -157,22 +165,16 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
             }
         }
         viewHolder.mPlayerContainer.addView(mVideoView, 0);
+        getVideoViewManager().add(mVideoView, Tag.LIST);
         mVideoView.start();
         mCurPosition = position;
     }
 
-    private void resetVideoView() {
+    protected void resetVideoView() {
         mVideoView.release();
         mVideoView.stopFullScreen();
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        removeVideoViewFromParent();
-    }
-
-    private void removeVideoViewFromParent() {
-        ViewParent parent = mVideoView.getParent();
-        if (parent instanceof ViewGroup) {
-            ((ViewGroup) parent).removeView(mVideoView);
-            mCurPosition = -1;
-        }
+        Utils.removeViewFormParent(mVideoView);
+        mCurPosition = -1;
     }
 }

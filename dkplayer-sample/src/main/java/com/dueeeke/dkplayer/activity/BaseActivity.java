@@ -15,6 +15,7 @@ import androidx.core.view.ViewCompat;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videoplayer.player.VideoView;
+import com.dueeeke.videoplayer.player.VideoViewManager;
 
 /**
  * 页面以及播放器共有逻辑封装
@@ -39,6 +40,10 @@ public class BaseActivity<T extends VideoView> extends AppCompatActivity {
 
     protected boolean enableBack() {
         return true;
+    }
+
+    protected VideoViewManager getVideoViewManager() {
+        return VideoViewManager.instance();
     }
 
     @Override

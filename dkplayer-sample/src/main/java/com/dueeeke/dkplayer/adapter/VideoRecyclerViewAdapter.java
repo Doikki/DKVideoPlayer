@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.dkplayer.interf.OnItemChildClickListener;
+import com.dueeeke.dkplayer.interf.OnItemClickListener;
 import com.dueeeke.videocontroller.component.PrepareView;
 
 import java.util.List;
@@ -27,6 +28,8 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
 //    private PlayerFactory mPlayerFactory = IjkPlayerFactory.create();
 
     private OnItemChildClickListener mOnItemChildClickListener;
+
+    private OnItemClickListener mOnItemClickListener;
 
     public VideoRecyclerViewAdapter(List<VideoBean> videos) {
         this.videos = videos;
@@ -72,27 +75,44 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
         public FrameLayout mPlayerContainer;
         public TextView mTitle;
         public ImageView mThumb;
+        public PrepareView mPrepareView;
 
         VideoHolder(View itemView) {
             super(itemView);
             mPlayerContainer = itemView.findViewById(R.id.player_container);
             mTitle = itemView.findViewById(R.id.tv_title);
-            PrepareView prepareView = itemView.findViewById(R.id.prepare_view);
-            mThumb = prepareView.findViewById(R.id.thumb);
-            mPlayerContainer.setOnClickListener(this);
+            mPrepareView = itemView.findViewById(R.id.prepare_view);
+            mThumb = mPrepareView.findViewById(R.id.thumb);
+            if (mOnItemChildClickListener != null) {
+                mPlayerContainer.setOnClickListener(this);
+            }
+            if (mOnItemClickListener != null) {
+                itemView.setOnClickListener(this);
+            }
             itemView.setTag(this);
         }
 
         @Override
         public void onClick(View v) {
-            if (mOnItemChildClickListener != null) {
-                mOnItemChildClickListener.onItemChildClick(v, mPosition);
+            if (v.getId() == R.id.player_container) {
+                if (mOnItemChildClickListener != null) {
+                    mOnItemChildClickListener.onItemChildClick(mPosition);
+                }
+            } else {
+                if (mOnItemClickListener != null) {
+                    mOnItemClickListener.onItemClick(mPosition);
+                }
             }
+
         }
     }
 
 
     public void setOnItemChildClickListener(OnItemChildClickListener onItemChildClickListener) {
         mOnItemChildClickListener = onItemChildClickListener;
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        mOnItemClickListener = onItemClickListener;
     }
 }

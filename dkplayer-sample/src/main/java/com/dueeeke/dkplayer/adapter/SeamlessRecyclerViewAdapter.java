@@ -1,18 +1,18 @@
 package com.dueeeke.dkplayer.adapter;
 
 import android.content.Context;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.bean.VideoBean;
+import com.dueeeke.videocontroller.component.PrepareView;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ public class SeamlessRecyclerViewAdapter extends RecyclerView.Adapter<SeamlessRe
 
     @Override
     public VideoHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(context).inflate(R.layout.item_video_seamless_play, parent, false);
+        View itemView = LayoutInflater.from(context).inflate(R.layout.item_video, parent, false);
         return new VideoHolder(itemView);
 
     }
@@ -63,9 +63,12 @@ public class SeamlessRecyclerViewAdapter extends RecyclerView.Adapter<SeamlessRe
         private TextView title;
         private ImageView mThumb;
 
+        public PrepareView mPrepareView;
+
         VideoHolder(View itemView) {
             super(itemView);
-            mThumb = itemView.findViewById(R.id.thumb);
+            mPrepareView = itemView.findViewById(R.id.prepare_view);
+            mThumb = mPrepareView.findViewById(R.id.thumb);
             title = itemView.findViewById(R.id.tv_title);
         }
     }

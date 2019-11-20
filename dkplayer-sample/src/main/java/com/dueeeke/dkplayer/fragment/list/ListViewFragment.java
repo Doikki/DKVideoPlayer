@@ -2,8 +2,6 @@ package com.dueeeke.dkplayer.fragment.list;
 
 import android.content.pm.ActivityInfo;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.AbsListView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
@@ -14,6 +12,8 @@ import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.dkplayer.fragment.BaseFragment;
 import com.dueeeke.dkplayer.interf.OnItemChildClickListener;
 import com.dueeeke.dkplayer.util.DataUtil;
+import com.dueeeke.dkplayer.util.Tag;
+import com.dueeeke.dkplayer.util.Utils;
 import com.dueeeke.videocontroller.component.CompleteView;
 import com.dueeeke.videocontroller.component.ErrorView;
 import com.dueeeke.videocontroller.StandardVideoController;
@@ -145,7 +145,7 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
     }
 
     @Override
-    public void onItemChildClick(View view, int position) {
+    public void onItemChildClick(int position) {
         if (mCurPosition == position) return;
         if (mCurPosition != -1) {
             resetVideoView();
@@ -164,6 +164,7 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
             }
         }
         viewHolder.mPlayerContainer.addView(mVideoView, 0);
+        getVideoViewManager().add(mVideoView, Tag.LIST);
         mVideoView.start();
 
         mCurPosition = position;
@@ -177,14 +178,7 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
         if(getActivity().getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
-        removeVideoViewFromParent();
-    }
-
-    private void removeVideoViewFromParent() {
-        ViewParent parent = mVideoView.getParent();
-        if (parent instanceof ViewGroup) {
-            ((ViewGroup) parent).removeView(mVideoView);
-            mCurPosition = -1;
-        }
+        Utils.removeViewFormParent(mVideoView);
+        mCurPosition = -1;
     }
 }

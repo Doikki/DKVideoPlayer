@@ -190,25 +190,20 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
      * @return 是否成功开始播放
      */
     protected boolean startPlay() {
-        VideoViewManager.instance().addVideoView(this);
-
         //如果要显示移动网络提示则不继续播放
         if (showNetWarning()) {
             //中止播放
             setPlayState(STATE_START_ABORT);
             return false;
         }
-
         //监听音频焦点改变
         if (mEnableAudioFocus) {
             mAudioFocusHelper = new AudioFocusHelper(this);
         }
-
         //读取播放进度
         if (mProgressManager != null) {
             mCurrentPosition = mProgressManager.getSavedProgress(mUrl);
         }
-
         initPlayer();
         startPrepare(false);
         return true;
@@ -361,7 +356,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
      * 释放播放器
      */
     public void release() {
-        VideoViewManager.instance().removeVideoView(this);
         if (!isInIdleState()) {
             //释放播放器
             if (mMediaPlayer != null) {

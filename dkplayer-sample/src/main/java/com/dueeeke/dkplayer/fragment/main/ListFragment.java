@@ -35,6 +35,5 @@ public class ListFragment extends BaseFragment {
 
         TabLayout tabLayout = findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(viewPager);
-
     }
 }

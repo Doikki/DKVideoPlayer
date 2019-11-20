@@ -1,42 +1,33 @@
 package com.dueeeke.dkplayer.fragment.list;
 
 import android.content.Intent;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewParent;
-import android.widget.FrameLayout;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.ActivityOptionsCompat;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.activity.list.DetailActivity;
-import com.dueeeke.dkplayer.adapter.SeamlessRecyclerViewAdapter;
+import com.dueeeke.dkplayer.adapter.VideoRecyclerViewAdapter;
 import com.dueeeke.dkplayer.bean.VideoBean;
-import com.dueeeke.dkplayer.fragment.BaseFragment;
-import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.dkplayer.util.IntentKeys;
-import com.dueeeke.dkplayer.util.SeamlessPlayHelper;
-import com.dueeeke.dkplayer.widget.controller.SeamlessController;
-import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
+import com.dueeeke.dkplayer.util.Tag;
+import com.dueeeke.dkplayer.util.Utils;
+import com.dueeeke.videocontroller.StandardVideoController;
+import com.dueeeke.videocontroller.component.CompleteView;
+import com.dueeeke.videocontroller.component.ErrorView;
+import com.dueeeke.videocontroller.component.GestureView;
+import com.dueeeke.videocontroller.component.TitleView;
+import com.dueeeke.videocontroller.component.VodControlView;
 import com.dueeeke.videoplayer.player.VideoView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 无缝播放
  */
-public class SeamlessPlayFragment extends BaseFragment {
+public class SeamlessPlayFragment extends RecyclerViewAutoPlayFragment {
 
-    private VideoView mVideoView;
-    private List<VideoBean> mVideoList = new ArrayList<>();
     private boolean mSkipToDetail;
-    private SeamlessController mSeamlessController;
-    private int mCurrentPlayPosition = -1;
-    private SeamlessRecyclerViewAdapter mSeamlessRecyclerViewAdapter;
-    private RecyclerView mRecyclerView;
 
     @Override
     protected int getLayoutResId() {
@@ -45,191 +36,80 @@ public class SeamlessPlayFragment extends BaseFragment {
 
     @Override
     protected void initView() {
-
-        mVideoView = SeamlessPlayHelper.getInstance().getVideoView();
-        mSeamlessController = new SeamlessController(getActivity());
-        mVideoView.setVideoController(mSeamlessController);
-
-        mRecyclerView = findViewById(R.id.rv);
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(layoutManager);
-        mSeamlessRecyclerViewAdapter = new SeamlessRecyclerViewAdapter(mVideoList, getActivity());
-        mRecyclerView.setAdapter(mSeamlessRecyclerViewAdapter);
-        mSeamlessRecyclerViewAdapter.setOnItemClickListener(position -> {
-
+        super.initView();
+        mVideoRecyclerViewAdapter.setOnItemClickListener(position -> {
             mSkipToDetail = true;
-            //移除Controller
-            mVideoView.setVideoController(null);
-            //重置Controller
-            mSeamlessController.resetController();
             Intent intent = new Intent(getActivity(), DetailActivity.class);
             Bundle bundle = new Bundle();
-
-            if (mCurrentPlayPosition == position) {
+            VideoBean videoBean = mVideos.get(position);
+            if (mCurPosition == position) {
                 //需要无缝播放
                 bundle.putBoolean(IntentKeys.SEAMLESS_PLAY, true);
+                bundle.putString(IntentKeys.TITLE, videoBean.getTitle());
             } else {
                 //无需无缝播放，把相应数据传到详情页
                 mVideoView.release();
-                VideoBean videoBean = mVideoList.get(position);
+                //需要把控制器还原
+                mController.setPlayState(VideoView.STATE_IDLE);
                 bundle.putBoolean(IntentKeys.SEAMLESS_PLAY, false);
                 bundle.putString(IntentKeys.URL, videoBean.getUrl());
                 bundle.putString(IntentKeys.TITLE, videoBean.getTitle());
+                mCurPosition = position;
             }
             intent.putExtras(bundle);
-            startActivity(intent, bundle);
-            //重置当前播放位置
-            mCurrentPlayPosition = -1;
-        });
-
-        mRecyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
-            @Override
-            public void onChildViewAttachedToWindow(View view) {
-
-            }
-
-            @Override
-            public void onChildViewDetachedFromWindow(View view) {
-                FrameLayout playerContainer = view.findViewById(R.id.player_container);
-                VideoView videoView = view.findViewById(R.id.video_player);
-                if (videoView != null && !videoView.isFullScreen()) {
-//                    Log.d("@@@@@@", "onChildViewDetachedFromWindow: called");
-//                    int tag = (int) videoView.getTag();
-//                    Log.d("@@@@@@", "onChildViewDetachedFromWindow: position: " + tag);
-
-                    if (playerContainer != null) {
-                        playerContainer.removeView(videoView);
-                    }
-
-                    videoView.release();
-                }
-            }
-        });
-
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-
-            int firstVisibleItem, lastVisibleItem, visibleCount;
-
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-
-                switch (newState) {
-                    case RecyclerView.SCROLL_STATE_IDLE: //滚动停止
-                        autoPlayVideo(recyclerView);
-                        break;
-                }
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                firstVisibleItem = layoutManager.findFirstVisibleItemPosition();
-                lastVisibleItem = layoutManager.findLastVisibleItemPosition();
-                visibleCount = lastVisibleItem - firstVisibleItem;//记录可视区域item个数
-            }
-
-            private void autoPlayVideo(RecyclerView view) {
-                //循环遍历可视区域playerContainer,如果完全可见就把播放器添加到里面，并开始播放
-                for (int i = 0; i < visibleCount; i++) {
-                    View itemView = view.getChildAt(i);
-                    if (itemView == null) continue;
-                    FrameLayout playerContainer = itemView.findViewById(R.id.player_container);
-                    Rect rect = new Rect();
-                    playerContainer.getLocalVisibleRect(rect);
-                    int videoHeight = playerContainer.getHeight();
-                    if (rect.top == 0 && rect.bottom == videoHeight) {
-                        int position = (int) itemView.getTag();
-                        if (mCurrentPlayPosition == position) break;
-                        removePlayerFormParent();
-                        mVideoView.release();
-                        VideoBean videoBean = mVideoList.get(position);
-                        mVideoView.setUrl(videoBean.getUrl());
-                        mSeamlessController.resetController();
-                        mVideoView.setVideoController(mSeamlessController);
-                        mVideoView.start();
-                        playerContainer.addView(mVideoView);
-                        mCurrentPlayPosition = position;
-                        break;
-                    }
-                }
-            }
-        });
-
-    }
-
-    /**
-     * 将播放器从父控件中移除
-     */
-    private void removePlayerFormParent() {
-        ViewParent parent = mVideoView.getParent();
-        if (parent instanceof FrameLayout) {
-            ((FrameLayout) parent).removeView(mVideoView);
-        }
-    }
-
-    private OnVideoViewStateChangeListener mOnVideoViewStateChangeListener = new OnVideoViewStateChangeListener() {
-        @Override
-        public void onPlayerStateChanged(int playerState) {
-
-        }
-
-        @Override
-        public void onPlayStateChanged(int playState) {
-            //小屏状态下播放出来之后，把声音关闭
-            if (playState == VideoView.STATE_PREPARED && !mVideoView.isFullScreen()) {
-                mVideoView.setMute(true);
-            }
-        }
-    };
-
-    @Override
-    protected void initData() {
-        super.initData();
-        List<VideoBean> videoList = DataUtil.getVideoList();
-        mVideoList.addAll(videoList);
-        mSeamlessRecyclerViewAdapter.notifyDataSetChanged();
-
-        mRecyclerView.post(() -> {
-            //自动播放第一个
-            VideoBean videoBean = mVideoList.get(0);
-            mVideoView.setUrl(videoBean.getUrl());
-            mVideoView.start();
-            mCurrentPlayPosition = 0;
-
-            View view = mRecyclerView.getChildAt(0);
-            FrameLayout playerContainer = view.findViewById(R.id.player_container);
-            playerContainer.addView(mVideoView);
+            View sharedView = mLinearLayoutManager.findViewByPosition(position).findViewById(R.id.player_container);
+            ActivityOptionsCompat options = ActivityOptionsCompat
+                    .makeSceneTransitionAnimation(getActivity(), sharedView, "player_container");
+            ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
         });
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    protected void initVideoView() {
+        mVideoView = new VideoView(getActivity().getApplicationContext());
+        //立马添加到VideoViewManager供后续使用
+        getVideoViewManager().add(mVideoView, Tag.LIST);
+        mController = new StandardVideoController(getActivity());
+        mErrorView = new ErrorView(getActivity());
+        mController.addControlComponent(mErrorView);
+        mCompleteView = new CompleteView(getActivity());
+        mController.addControlComponent(mCompleteView);
+        mTitleView = new TitleView(getActivity());
+        mController.addControlComponent(mTitleView);
+        mController.addControlComponent(new VodControlView(getActivity()));
+        mController.addControlComponent(new GestureView(getActivity()));
+        mController.setEnableOrientation(true);
+        mVideoView.setVideoController(mController);
+    }
+
+    @Override
+    protected void startPlay(int position) {
+        mVideoView.setVideoController(mController);
+        super.startPlay(position);
+
+    }
+
+    @Override
+    protected void pause() {
         if (!mSkipToDetail) {
-            mVideoView.pause();
-        } else {
+            super.pause();
+        }
+    }
+
+    @Override
+    protected void resume() {
+        //还原播放器
+        if (mSkipToDetail) {
+            View itemView = mLinearLayoutManager.findViewByPosition(mCurPosition);
+            VideoRecyclerViewAdapter.VideoHolder viewHolder = (VideoRecyclerViewAdapter.VideoHolder) itemView.getTag();
+            mController.addControlComponent(viewHolder.mPrepareView, true);
+            mVideoView = getVideoViewManager().get(Tag.LIST);
+            mController.setPlayState(mVideoView.getCurrentPlayState());
+            mController.setPlayerState(mVideoView.getCurrentPlayerState());
+            mVideoView.setVideoController(mController);
+            Utils.removeViewFormParent(mVideoView);
+            viewHolder.mPlayerContainer.addView(mVideoView, 0);
             mSkipToDetail = false;
         }
-        mVideoView.removeOnVideoViewStateChangeListener(mOnVideoViewStateChangeListener);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (!mSkipToDetail) {
-            mVideoView.resume();
-        }
-        mVideoView.addOnVideoViewStateChangeListener(mOnVideoViewStateChangeListener);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        removePlayerFormParent();
-        mVideoView.setVideoController(null);
-        mVideoView.release();
-        SeamlessPlayHelper.getInstance().release();
-
     }
 }

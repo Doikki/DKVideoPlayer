@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.dueeeke.videoplayer.player.VideoViewManager;
 import com.dueeeke.videoplayer.util.L;
 
 /**
@@ -82,5 +83,9 @@ public abstract class BaseFragment extends Fragment {
 
     protected boolean isLazyLoad() {
         return false;
+    }
+
+    protected VideoViewManager getVideoViewManager() {
+        return VideoViewManager.instance();
     }
 }

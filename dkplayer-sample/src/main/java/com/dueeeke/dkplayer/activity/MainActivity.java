@@ -14,6 +14,7 @@ import com.dueeeke.dkplayer.fragment.main.ExtensionFragment;
 import com.dueeeke.dkplayer.fragment.main.ListFragment;
 import com.dueeeke.dkplayer.fragment.main.PipFragment;
 import com.dueeeke.dkplayer.util.PIPManager;
+import com.dueeeke.dkplayer.util.Tag;
 import com.dueeeke.dkplayer.util.Utils;
 import com.dueeeke.dkplayer.util.cache.ProxyVideoCacheManager;
 import com.dueeeke.videoplayer.exo.ExoMediaPlayerFactory;
@@ -148,7 +149,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
         if (mCurrentIndex != index) {
             //切换tab，释放正在播放的播放器
             if (mCurrentIndex == 1) {
-                VideoViewManager.instance().release();
+                getVideoViewManager().releaseByTag(Tag.LIST);
             }
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             Fragment fragment = mFragments.get(index);
@@ -166,8 +167,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
 
     @Override
     public void onBackPressed() {
-        if (VideoViewManager.instance().onBackPressed())
-            return;
+        if (getVideoViewManager().onBackPress(Tag.LIST)) return;
         super.onBackPressed();
     }
 }

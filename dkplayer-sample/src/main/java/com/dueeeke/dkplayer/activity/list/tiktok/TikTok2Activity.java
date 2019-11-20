@@ -3,8 +3,6 @@ package com.dueeeke.dkplayer.activity.list.tiktok;
 import android.content.Context;
 import android.content.Intent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
 
 import androidx.viewpager.widget.ViewPager;
 
@@ -13,6 +11,7 @@ import com.dueeeke.dkplayer.activity.BaseActivity;
 import com.dueeeke.dkplayer.adapter.Tiktok2Adapter;
 import com.dueeeke.dkplayer.bean.TiktokBean;
 import com.dueeeke.dkplayer.util.DataUtil;
+import com.dueeeke.dkplayer.util.Utils;
 import com.dueeeke.dkplayer.util.cache.PreloadManager;
 import com.dueeeke.dkplayer.util.cache.ProxyVideoCacheManager;
 import com.dueeeke.dkplayer.widget.VerticalViewPager;
@@ -140,7 +139,7 @@ public class TikTok2Activity extends BaseActivity<VideoView> {
             Tiktok2Adapter.ViewHolder viewHolder = (Tiktok2Adapter.ViewHolder) itemView.getTag();
             if (viewHolder.mPosition == position) {
                 mVideoView.release();
-                removeVideoViewFromParent();
+                Utils.removeViewFormParent(mVideoView);
 
                 TiktokBean tiktokBean = mVideoList.get(position);
                 String playUrl = mPreloadManager.getPlayUrl(tiktokBean.videoDownloadUrl);
@@ -152,13 +151,6 @@ public class TikTok2Activity extends BaseActivity<VideoView> {
                 mPlayingPosition = position;
                 break;
             }
-        }
-    }
-
-    private void removeVideoViewFromParent() {
-        ViewParent parent = mVideoView.getParent();
-        if (parent instanceof ViewGroup) {
-            ((ViewGroup) parent).removeView(mVideoView);
         }
     }
 

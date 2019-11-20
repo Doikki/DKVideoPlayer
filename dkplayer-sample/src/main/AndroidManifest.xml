@@ -14,8 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="LockedOrientationActivity"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        tools:ignore="LockedOrientationActivity">
 
         <!--允许绘制到oppo、vivo刘海屏机型的刘海区域 -->
         <meta-data
@@ -29,6 +29,7 @@
         <meta-data
             android:name="notch.config"
             android:value="landscape" />
+
         <activity
             android:name=".activity.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
@@ -78,7 +79,7 @@
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:excludeFromRecents="true"
             android:supportsPictureInPicture="true"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".activity.api.PlayRawAssetsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
@@ -118,13 +119,13 @@
         <activity
             android:name=".activity.list.tiktok.TikTok2Activity"
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".activity.CpuInfoActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
     </application>
 
 </manifest>

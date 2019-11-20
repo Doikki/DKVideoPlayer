@@ -1,17 +1,17 @@
 package com.dueeeke.videoplayer.player;
 
-import java.util.ArrayList;
-import java.util.List;
+import android.app.Application;
+
+import com.dueeeke.videoplayer.util.L;
+
+import java.util.LinkedHashMap;
 
 /**
  * 视频播放器管理器，管理当前正在播放的VideoView，以及播放器配置
  */
 public class VideoViewManager {
 
-    /**
-     * 当前正在播放的VideoView
-     */
-    private List<VideoView> mVideoViews = new ArrayList<>();
+    private LinkedHashMap<String, VideoView> mVideoViews = new LinkedHashMap<>();
 
     private boolean mPlayOnMobileNetwork;
 
@@ -57,67 +57,53 @@ public class VideoViewManager {
         return sInstance;
     }
 
-
-    public void addVideoView(VideoView videoView) {
-        mVideoViews.add(videoView);
-    }
-
-    public void removeVideoView(VideoView videoView) {
-        mVideoViews.remove(videoView);
-    }
-
-    public List<VideoView> getVideoViews() {
-        return mVideoViews;
-    }
-
     /**
-     * 获取最后一个添加到VideoViewManager的VideoView
-     * 一般来说此VideoView就是正在播放的那个
+     * 添加VideoView
+     * @param tag 传入相同的tag，以产生互斥效果
      */
-    public VideoView getLast() {
-        if (mVideoViews.size() > 0) {
-            return mVideoViews.get(mVideoViews.size() - 1);
-        } else {
-            return null;
+    public void add(VideoView videoView, String tag) {
+        if (!(videoView.getContext() instanceof Application)) {
+            L.w("The Context of this VideoView is not an Application Context," +
+                    "you must remove it after release,or it will lead to memory leek.");
         }
+        VideoView old = get(tag);
+        if (old != null) {
+            old.release();
+            remove(tag);
+        }
+        mVideoViews.put(tag, videoView);
     }
 
-    public void pause() {
-        for (int i = 0; i < mVideoViews.size(); i++) {
-            VideoView vv = mVideoViews.get(i);
-            if (vv != null) {
-                vv.pause();
+    public VideoView get(String tag) {
+        return mVideoViews.get(tag);
+    }
+
+    public void remove(String tag) {
+        mVideoViews.remove(tag);
+    }
+
+    public void removeAll() {
+        mVideoViews.clear();
+    }
+
+    public void releaseByTag(String tag) {
+        releaseByTag(tag, true);
+    }
+
+    public void releaseByTag(String tag, boolean isRemove) {
+        VideoView videoView = get(tag);
+        if (videoView != null) {
+            videoView.release();
+            if (isRemove) {
+                remove(tag);
             }
         }
     }
 
-    public void resume() {
-        for (int i = 0; i < mVideoViews.size(); i++) {
-            VideoView vv = mVideoViews.get(i);
-            if (vv != null) {
-                vv.resume();
-            }
-        }
+    public boolean onBackPress(String tag) {
+        VideoView videoView = get(tag);
+        if (videoView == null) return false;
+        return videoView.onBackPressed();
     }
 
-    public void release() {
-        for (int i = 0; i < mVideoViews.size(); i++) {
-            VideoView vv = mVideoViews.get(i);
-            if (vv != null) {
-                vv.release();
-                i--;
-            }
-        }
-    }
-
-    public boolean onBackPressed() {
-        for (int i = 0; i < mVideoViews.size(); i++) {
-            VideoView vv = mVideoViews.get(i);
-            if (vv != null) {
-                boolean b = vv.onBackPressed();
-                if (b) return true;
-            }
-        }
-        return false;
-    }
 }

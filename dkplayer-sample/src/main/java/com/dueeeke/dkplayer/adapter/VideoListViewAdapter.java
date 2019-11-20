@@ -88,7 +88,7 @@ public class VideoListViewAdapter extends BaseAdapter {
         @Override
         public void onClick(View v) {
             if (mOnItemChildClickListener != null) {
-                mOnItemChildClickListener.onItemChildClick(v, mPosition);
+                mOnItemChildClickListener.onItemChildClick(mPosition);
             }
         }
     }

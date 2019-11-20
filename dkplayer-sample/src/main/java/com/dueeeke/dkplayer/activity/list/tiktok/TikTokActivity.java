@@ -3,8 +3,6 @@ package com.dueeeke.dkplayer.activity.list.tiktok;
 import android.content.Context;
 import android.content.Intent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
 
 import androidx.recyclerview.widget.OrientationHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,6 +12,7 @@ import com.dueeeke.dkplayer.activity.BaseActivity;
 import com.dueeeke.dkplayer.adapter.TikTokAdapter;
 import com.dueeeke.dkplayer.bean.TiktokBean;
 import com.dueeeke.dkplayer.util.DataUtil;
+import com.dueeeke.dkplayer.util.Utils;
 import com.dueeeke.dkplayer.widget.controller.TikTokController;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.L;
@@ -108,20 +107,13 @@ public class TikTokActivity extends BaseActivity<VideoView> {
         View itemView = mRecyclerView.getChildAt(0);
         TikTokAdapter.VideoHolder viewHolder = (TikTokAdapter.VideoHolder) itemView.getTag();
         mVideoView.release();
-        removeVideoViewFromParent();
+        Utils.removeViewFormParent(mVideoView);
         TiktokBean item = mVideoList.get(position);
         L.i("startPlay: " + "position: " + position + "  url: " + item.videoDownloadUrl);
         mVideoView.setUrl(item.videoDownloadUrl);
         mController.addControlComponent(viewHolder.mTikTokView, true);
         viewHolder.mPlayerContainer.addView(mVideoView, 0);
         mVideoView.start();
-    }
-
-    private void removeVideoViewFromParent() {
-        ViewParent parent = mVideoView.getParent();
-        if (parent instanceof ViewGroup) {
-            ((ViewGroup) parent).removeView(mVideoView);
-        }
     }
 
     public void addData(View view) {

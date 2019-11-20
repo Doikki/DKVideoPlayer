@@ -101,7 +101,11 @@ public class PrepareView extends FrameLayout implements IControlComponent {
                 mLoading.setVisibility(View.VISIBLE);
                 break;
             case VideoView.STATE_PLAYING:
+            case VideoView.STATE_PAUSED:
             case VideoView.STATE_ERROR:
+            case VideoView.STATE_BUFFERING:
+            case VideoView.STATE_BUFFERED:
+            case VideoView.STATE_PLAYBACK_COMPLETED:
                 setVisibility(GONE);
                 break;
             case VideoView.STATE_IDLE:
