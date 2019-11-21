@@ -30,8 +30,10 @@ import java.util.List;
 
 public class TikTok2Activity extends BaseActivity<VideoView> {
 
-    private int mCurrentPosition;
-    private int mPlayingPosition;
+    /**
+     * 当前播放位置
+     */
+    private int mCurPos;
     private List<TiktokBean> mVideoList = new ArrayList<>();
     private Tiktok2Adapter mTiktok2Adapter;
     private VerticalViewPager mViewPager;
@@ -104,29 +106,23 @@ public class TikTok2Activity extends BaseActivity<VideoView> {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 super.onPageScrolled(position, positionOffset, positionOffsetPixels);
-                if (position > mPlayingPosition) {
-                    mIsReverseScroll = false;
-                } else if (position < mPlayingPosition) {
-                    mIsReverseScroll = true;
-                }
+                mIsReverseScroll = position < mCurPos;
             }
 
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
-                mCurrentPosition = position;
-                if (position == mPlayingPosition) return;
+                if (position == mCurPos) return;
                 startPlay(position);
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
                 super.onPageScrollStateChanged(state);
-                if (mCurrentPosition == mPlayingPosition) return;
                 if (state == VerticalViewPager.SCROLL_STATE_IDLE) {
-                    mPreloadManager.resumePreload(mCurrentPosition, mIsReverseScroll);
+                    mPreloadManager.resumePreload(mCurPos, mIsReverseScroll);
                 } else {
-                    mPreloadManager.pausePreload(mCurrentPosition, mIsReverseScroll);
+                    mPreloadManager.pausePreload(mCurPos, mIsReverseScroll);
                 }
             }
         });
@@ -148,7 +144,7 @@ public class TikTok2Activity extends BaseActivity<VideoView> {
                 mController.addControlComponent(viewHolder.mTikTokView, true);
                 viewHolder.mPlayerContainer.addView(mVideoView, 0);
                 mVideoView.start();
-                mPlayingPosition = position;
+                mCurPos = position;
                 break;
             }
         }

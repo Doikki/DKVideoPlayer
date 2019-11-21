@@ -23,6 +23,7 @@ import com.dueeeke.videocontroller.component.GestureView;
 import com.dueeeke.videocontroller.component.TitleView;
 import com.dueeeke.videocontroller.component.VodControlView;
 import com.dueeeke.videoplayer.controller.IControlComponent;
+import com.dueeeke.videoplayer.listener.SimpleOnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.VideoView;
 
 import java.util.ArrayList;
@@ -74,7 +75,7 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
                 FrameLayout playerContainer = view.findViewById(R.id.player_container);
                 View v = playerContainer.getChildAt(0);
                 if (v != null && v == mVideoView && !mVideoView.isFullScreen()) {
-                    resetVideoView();
+                    releaseVideoView();
                 }
             }
         });
@@ -91,6 +92,15 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
 
     protected void initVideoView() {
         mVideoView = new VideoView(getActivity());
+        mVideoView.setOnVideoViewStateChangeListener(new SimpleOnVideoViewStateChangeListener() {
+            @Override
+            public void onPlayStateChanged(int playState) {
+                if (playState == VideoView.STATE_IDLE) {
+                    Utils.removeViewFormParent(mVideoView);
+                    mCurPosition = -1;
+                }
+            }
+        });
         mController = new StandardVideoController(getActivity());
         mErrorView = new ErrorView(getActivity());
         mController.addControlComponent(mErrorView);
@@ -124,7 +134,7 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
     }
 
     protected void pause() {
-        resetVideoView();
+        releaseVideoView();
     }
 
     @Override
@@ -140,7 +150,7 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mVideoView.release();
+        getVideoViewManager().releaseByTag(Tag.LIST);
     }
 
     @Override
@@ -151,7 +161,7 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
     protected void startPlay(int position) {
         if (mCurPosition == position) return;
         if (mCurPosition != -1) {
-            resetVideoView();
+            releaseVideoView();
         }
 
         VideoBean videoBean = mVideos.get(position);
@@ -168,16 +178,15 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
             }
         }
         viewHolder.mPlayerContainer.addView(mVideoView, 0);
+        //播放之前添加到VideoViewManager以产生互斥效果
         getVideoViewManager().add(mVideoView, Tag.LIST);
         mVideoView.start();
         mCurPosition = position;
     }
 
-    protected void resetVideoView() {
+    private void releaseVideoView() {
         mVideoView.release();
         mVideoView.stopFullScreen();
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        Utils.removeViewFormParent(mVideoView);
-        mCurPosition = -1;
     }
 }

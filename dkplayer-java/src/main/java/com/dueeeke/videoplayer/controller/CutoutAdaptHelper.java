@@ -36,17 +36,20 @@ public class CutoutAdaptHelper {
 
     private Activity mActivity;
 
-    private Callback mCallback;
+    private BaseVideoController mController;
 
-    public CutoutAdaptHelper(@NonNull Activity activity, Callback callback) {
-        mActivity = activity;
-        mCallback = callback;
+    private boolean mIsChecked;
 
+    public CutoutAdaptHelper(@NonNull BaseVideoController controller) {
+        mController = controller;
+        mActivity = PlayerUtils.scanForActivity(controller.getContext());
+        if (mActivity == null) {
+            L.w("Activity can not be null!");
+            return;
+        }
         AdaptView adaptView = new AdaptView(mActivity);
-        ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        mActivity.addContentView(adaptView, lp);
+        ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(0, 0);
+        controller.addView(adaptView, lp);
     }
 
     public void onOrientationChanged() {
@@ -88,17 +91,11 @@ public class CutoutAdaptHelper {
                 return;
             }
             if (o == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-                if (mCallback != null) {
-                    mCallback.adjustView(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT, mSpace);
-                }
+                mController.adjustView(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT, mSpace);
             } else if (o == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-                if (mCallback != null) {
-                    mCallback.adjustView(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE, mSpace);
-                }
+                mController.adjustView(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE, mSpace);
             } else if (o == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
-                if (mCallback != null) {
-                    mCallback.adjustView(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE, mSpace);
-                }
+                mController.adjustView(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE, mSpace);
             }
             mCurrentOrientation = o;
         }
@@ -129,11 +126,13 @@ public class CutoutAdaptHelper {
          * 检查是否需要适配刘海
          */
         private void checkCutout() {
+            if (mIsChecked) return;
             mAdaptCutout = allowDisplayToCutout();
             if (mAdaptCutout) {
                 mSpace = (int) PlayerUtils.getStatusBarHeight(mActivity);
             }
             L.d("adaptCutout: " + mAdaptCutout + " space: " + mSpace);
+            mIsChecked = true;
         }
 
         /**
@@ -240,14 +239,5 @@ public class CutoutAdaptHelper {
                 return false;
             }
         }
-    }
-
-    public interface Callback {
-
-        /**
-         * 调整ui
-         */
-        void adjustView(int orientation, int space);
-
     }
 }

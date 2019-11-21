@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.dueeeke.dkplayer.widget.component.PipControlView;
+import com.dueeeke.videocontroller.component.CompleteView;
 import com.dueeeke.videocontroller.component.ErrorView;
 import com.dueeeke.videoplayer.controller.GestureVideoController;
 
@@ -32,6 +33,7 @@ public class FloatController extends GestureVideoController {
     @Override
     protected void initView() {
         super.initView();
+        addControlComponent(new CompleteView(getContext()));
         addControlComponent(new ErrorView(getContext()));
         addControlComponent(new PipControlView(getContext()));
     }

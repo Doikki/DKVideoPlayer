@@ -133,6 +133,7 @@ public class PipControlView extends FrameLayout implements IControlComponent, Vi
                 mPlay.setSelected(mMediaPlayerControlWrapper.isPlaying());
                 break;
             case VideoView.STATE_PLAYBACK_COMPLETED:
+                bringToFront();
                 break;
         }
     }

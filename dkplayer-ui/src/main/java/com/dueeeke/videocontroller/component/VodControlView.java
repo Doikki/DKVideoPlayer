@@ -6,6 +6,7 @@ import android.content.pm.ActivityInfo;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -111,6 +112,9 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
         }
         if (mIsShowBottomProgress) {
             mBottomProgress.setVisibility(VISIBLE);
+            AlphaAnimation animation = new AlphaAnimation(0f, 1f);
+            animation.setDuration(300);
+            mBottomProgress.startAnimation(animation);
         }
     }
 

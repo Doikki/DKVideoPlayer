@@ -8,20 +8,20 @@ import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
+import com.dueeeke.dkplayer.activity.BaseActivity;
 import com.dueeeke.dkplayer.util.PIPManager;
+import com.dueeeke.dkplayer.util.Tag;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.yanzhenjie.permission.AndPermission;
 
-public class PIPActivity extends AppCompatActivity{
+public class PIPActivity extends BaseActivity {
+
     private PIPManager mPIPManager;
-//    private static final String URL = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
     private static final String URL = "http://vfx.mtime.cn/Video/2019/03/12/mp4/190312143927981075.mp4";
-//    private static final String URL = "http://youku163.zuida-bofang.com/20190126/26805_c313a74d/index.m3u8";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,7 +34,7 @@ public class PIPActivity extends AppCompatActivity{
         }
         FrameLayout playerContainer = findViewById(R.id.player_container);
         mPIPManager = PIPManager.getInstance();
-        VideoView videoView = mPIPManager.getVideoView();
+        VideoView videoView = getVideoViewManager().get(Tag.PIP);
         StandardVideoController controller = new StandardVideoController(this);
         controller.addDefaultControlComponent(getString(R.string.str_pip), false);
         videoView.setVideoController(controller);

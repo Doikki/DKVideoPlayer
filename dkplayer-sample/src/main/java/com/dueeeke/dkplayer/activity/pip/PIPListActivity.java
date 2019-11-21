@@ -1,23 +1,20 @@
 package com.dueeeke.dkplayer.activity.pip;
 
-import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
+import com.dueeeke.dkplayer.activity.BaseActivity;
 import com.dueeeke.dkplayer.adapter.FloatRecyclerViewAdapter;
 import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.dkplayer.util.PIPManager;
+import com.dueeeke.dkplayer.util.Tag;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.yanzhenjie.permission.AndPermission;
@@ -29,7 +26,7 @@ import java.util.List;
  * Created by Devlin_n on 2017/5/31.
  */
 
-public class PIPListActivity extends AppCompatActivity implements FloatRecyclerViewAdapter.OnChildViewClickListener {
+public class PIPListActivity extends BaseActivity implements FloatRecyclerViewAdapter.OnChildViewClickListener {
 
     private FrameLayout mPlayer, mThumb;
     private PIPManager mPIPManager;
@@ -38,30 +35,27 @@ public class PIPListActivity extends AppCompatActivity implements FloatRecyclerV
     private List<VideoBean> mVideoList;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_recycler_view);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(R.string.str_pip_in_list);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-        mPIPManager = PIPManager.getInstance();
-        mVideoView = mPIPManager.getVideoView();
-        mController = new StandardVideoController(this);
-        mController.addDefaultControlComponent(getString(R.string.str_pip_in_list), false);
-        initView();
+    protected int getTitleResId() {
+        return R.string.str_pip_in_list;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-        }
-        return super.onOptionsItemSelected(item);
+    protected int getLayoutResId() {
+        return R.layout.fragment_recycler_view;
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
+
+        mPIPManager = PIPManager.getInstance();
+        mVideoView = getVideoViewManager().get(Tag.PIP);
+        mController = new StandardVideoController(this);
+        mController.addDefaultControlComponent(getString(R.string.str_pip_in_list), false);
+
+        initRecyclerView();
+    }
+
+    private void initRecyclerView() {
         RecyclerView recyclerView = findViewById(R.id.rv);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         mVideoList = DataUtil.getVideoList();

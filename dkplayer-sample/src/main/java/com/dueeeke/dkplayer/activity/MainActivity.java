@@ -1,5 +1,7 @@
 package com.dueeeke.dkplayer.activity;
 
+import android.annotation.SuppressLint;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -149,7 +151,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
         if (mCurrentIndex != index) {
             //切换tab，释放正在播放的播放器
             if (mCurrentIndex == 1) {
-                getVideoViewManager().releaseByTag(Tag.LIST);
+                getVideoViewManager().releaseByTag(Tag.LIST, false);
             }
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             Fragment fragment = mFragments.get(index);
@@ -169,5 +171,11 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
     public void onBackPressed() {
         if (getVideoViewManager().onBackPress(Tag.LIST)) return;
         super.onBackPressed();
+    }
+
+    @SuppressLint("MissingSuperCall")
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+
     }
 }

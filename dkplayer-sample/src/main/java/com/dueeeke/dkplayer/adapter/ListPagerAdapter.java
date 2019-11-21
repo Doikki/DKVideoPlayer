@@ -16,15 +16,14 @@ import com.dueeeke.dkplayer.fragment.list.TikTokListFragment;
 import java.util.List;
 
 /**
- * MyPagerAdapter
- * Created by xinyu on 2018/1/3.
+ * List主页适配器
+ * Created by dueeeke on 2018/1/3.
  */
-
-public class MyPagerAdapter extends FragmentStatePagerAdapter {
+public class ListPagerAdapter extends FragmentStatePagerAdapter {
 
     private List<String> mTitles;
 
-    public MyPagerAdapter(FragmentManager fm, List<String> titles) {
+    public ListPagerAdapter(FragmentManager fm, List<String> titles) {
         super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         mTitles = titles;
     }

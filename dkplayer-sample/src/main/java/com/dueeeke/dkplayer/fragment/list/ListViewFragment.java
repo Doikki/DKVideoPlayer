@@ -21,6 +21,7 @@ import com.dueeeke.videocontroller.component.GestureView;
 import com.dueeeke.videocontroller.component.TitleView;
 import com.dueeeke.videocontroller.component.VodControlView;
 import com.dueeeke.videoplayer.controller.IControlComponent;
+import com.dueeeke.videoplayer.listener.SimpleOnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.VideoView;
 
 import java.util.ArrayList;
@@ -48,6 +49,15 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
     protected void initView() {
         super.initView();
         mVideoView = new VideoView(getActivity());
+        mVideoView.setOnVideoViewStateChangeListener(new SimpleOnVideoViewStateChangeListener() {
+            @Override
+            public void onPlayStateChanged(int playState) {
+                if (playState == VideoView.STATE_IDLE) {
+                    Utils.removeViewFormParent(mVideoView);
+                    mCurPosition = -1;
+                }
+            }
+        });
         mController = new StandardVideoController(getActivity());
         mController.addControlComponent(new ErrorView(getActivity()));
         mController.addControlComponent(new CompleteView(getActivity()));
@@ -111,7 +121,7 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
                     FrameLayout playerContainer = gcView.findViewById(R.id.player_container);
                     View view = playerContainer.getChildAt(0);
                     if (view != null && view == mVideoView && !mVideoView.isFullScreen()) {
-                        resetVideoView();
+                        releaseVideoView();
                     }
                 }
             }
@@ -134,7 +144,7 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
     @Override
     public void onPause() {
         super.onPause();
-        resetVideoView();
+        releaseVideoView();
     }
 
     @Override
@@ -146,14 +156,14 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mVideoView.release();
+        getVideoViewManager().releaseByTag(Tag.LIST);
     }
 
     @Override
     public void onItemChildClick(int position) {
         if (mCurPosition == position) return;
         if (mCurPosition != -1) {
-            resetVideoView();
+            releaseVideoView();
         }
 
         VideoBean videoBean = mVideos.get(position);
@@ -169,13 +179,14 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
             }
         }
         viewHolder.mPlayerContainer.addView(mVideoView, 0);
+        //播放之前添加到VideoViewManager以产生互斥效果
         getVideoViewManager().add(mVideoView, Tag.LIST);
         mVideoView.start();
 
         mCurPosition = position;
     }
 
-    private void resetVideoView() {
+    private void releaseVideoView() {
         mVideoView.release();
         if (mVideoView.isFullScreen()) {
             mVideoView.stopFullScreen();
@@ -183,7 +194,5 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
         if(getActivity().getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
-        Utils.removeViewFormParent(mVideoView);
-        mCurPosition = -1;
     }
 }

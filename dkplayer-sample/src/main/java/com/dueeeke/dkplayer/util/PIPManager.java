@@ -6,6 +6,7 @@ import com.dueeeke.dkplayer.app.MyApplication;
 import com.dueeeke.dkplayer.widget.FloatView;
 import com.dueeeke.dkplayer.widget.controller.FloatController;
 import com.dueeeke.videoplayer.player.VideoView;
+import com.dueeeke.videoplayer.player.VideoViewManager;
 
 /**
  * 悬浮播放
@@ -25,6 +26,7 @@ public class PIPManager {
 
     private PIPManager() {
         mVideoView = new VideoView(MyApplication.getInstance());
+        VideoViewManager.instance().add(mVideoView, Tag.PIP);
         mFloatController = new FloatController(MyApplication.getInstance());
         mFloatView = new FloatView(MyApplication.getInstance(), 0, 0);
     }
@@ -40,16 +42,12 @@ public class PIPManager {
         return instance;
     }
 
-    public VideoView getVideoView() {
-        return mVideoView;
-    }
-
     public void startFloatWindow() {
         if (mIsShowing) return;
         Utils.removeViewFormParent(mVideoView);
+        mVideoView.setVideoController(mFloatController);
         mFloatController.setPlayState(mVideoView.getCurrentPlayState());
         mFloatController.setPlayerState(mVideoView.getCurrentPlayerState());
-        mVideoView.setVideoController(mFloatController);
         mFloatView.addView(mVideoView);
         mFloatView.addToWindow();
         mIsShowing = true;

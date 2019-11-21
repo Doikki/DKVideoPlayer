@@ -29,8 +29,7 @@ import java.util.Map;
  */
 public abstract class BaseVideoController extends FrameLayout
         implements IVideoController,
-        OrientationHelper.OnOrientationChangeListener,
-        CutoutAdaptHelper.Callback {
+        OrientationHelper.OnOrientationChangeListener {
 
     /**
      * 播放器包装类，集合了MediaPlayerControl的api和IVideoController的api
@@ -136,10 +135,7 @@ public abstract class BaseVideoController extends FrameLayout
         mOrientationHelper.setOnOrientationChangeListener(this);
 
         if (mAdaptCutout) {
-            Activity activity = PlayerUtils.scanForActivity(getContext());
-            if (activity != null) {
-                mCutoutAdaptHelper = new CutoutAdaptHelper(activity, this);
-            }
+            mCutoutAdaptHelper = new CutoutAdaptHelper(this);
         }
     }
 
@@ -202,7 +198,6 @@ public abstract class BaseVideoController extends FrameLayout
 
     /**
      * 显示
-     * @param showAnim
      */
     protected void show(Animation showAnim) {
 
@@ -210,7 +205,6 @@ public abstract class BaseVideoController extends FrameLayout
 
     /**
      * 隐藏
-     * @param hideAnim
      */
     protected void hide(Animation hideAnim) {
 
@@ -636,7 +630,6 @@ public abstract class BaseVideoController extends FrameLayout
      * 全面屏适配逻辑，根据屏幕方向调整ui
      */
     @CallSuper
-    @Override
     public void adjustView(int orientation, int space) {
         for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
             next.getKey().adjustView(orientation, space);
