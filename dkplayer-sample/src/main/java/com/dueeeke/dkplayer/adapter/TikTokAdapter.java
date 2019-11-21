@@ -7,11 +7,13 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.bean.TiktokBean;
+import com.dueeeke.dkplayer.util.cache.PreloadManager;
 import com.dueeeke.dkplayer.widget.component.TikTokView;
 
 import java.util.List;
@@ -43,6 +45,14 @@ public class TikTokAdapter extends RecyclerView.Adapter<TikTokAdapter.VideoHolde
                 .placeholder(android.R.color.white)
                 .into(holder.thumb);
         holder.mPosition = position;
+        PreloadManager.getInstance(holder.itemView.getContext()).addPreloadTask(item.videoDownloadUrl, position);
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(@NonNull VideoHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+        TiktokBean item = videos.get(holder.mPosition);
+        PreloadManager.getInstance(holder.itemView.getContext()).removePreloadTask(item.videoDownloadUrl);
     }
 
     @Override
@@ -50,7 +60,7 @@ public class TikTokAdapter extends RecyclerView.Adapter<TikTokAdapter.VideoHolde
         return videos.size();
     }
 
-    public class VideoHolder extends RecyclerView.ViewHolder {
+    public static class VideoHolder extends RecyclerView.ViewHolder {
 
         private ImageView thumb;
         public TikTokView mTikTokView;

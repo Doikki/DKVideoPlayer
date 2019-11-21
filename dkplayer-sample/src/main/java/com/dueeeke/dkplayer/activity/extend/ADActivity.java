@@ -14,7 +14,7 @@ import com.dueeeke.videoplayer.player.VideoView;
 
 /**
  * 广告
- * Created by Devlin_n on 2017/4/7.
+ * Created by dueeeke on 2017/4/7.
  */
 
 public class ADActivity extends BaseActivity<VideoView> {

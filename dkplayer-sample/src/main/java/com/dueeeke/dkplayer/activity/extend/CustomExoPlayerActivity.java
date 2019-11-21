@@ -16,7 +16,7 @@ import com.google.android.exoplayer2.source.MediaSource;
 
 /**
  * 自定义MediaPlayer，有多种情形：
- * 第一：集成某个现成的MediaPlayer，对其功能进行扩张，此demo就演示了通过继承{@link ExoMediaPlayer}
+ * 第一：继承某个现成的MediaPlayer，对其功能进行扩展，此demo就演示了通过继承{@link ExoMediaPlayer}
  * 对其功能进行扩展。
  * 第二：通过继承{@link AbstractPlayer}扩展一些其他的播放器。
  */

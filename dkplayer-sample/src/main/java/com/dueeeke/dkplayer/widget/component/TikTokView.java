@@ -54,6 +54,9 @@ public class TikTokView extends FrameLayout implements IControlComponent {
         mScaledTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
     }
 
+    /**
+     * 解决点击和VerticalViewPager滑动冲突问题
+     */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int action = event.getAction();

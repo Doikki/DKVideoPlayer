@@ -78,6 +78,7 @@ public class PIPListActivity extends AppCompatActivity implements FloatRecyclerV
                 if (position == mPIPManager.getPlayingPosition()) {
                     mPIPManager.stopFloatWindow();
                     thumb.setVisibility(View.GONE);
+                    mVideoView.setVideoController(mController);
                     mController.setPlayState(mVideoView.getCurrentPlayState());
                     mController.setPlayerState(mVideoView.getCurrentPlayerState());
                     mVideoView.setVideoController(mController);
