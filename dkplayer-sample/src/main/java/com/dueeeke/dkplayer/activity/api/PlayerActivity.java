@@ -100,6 +100,7 @@ public class PlayerActivity extends DebugActivity {
             //适配刘海屏，默认开启
 //            controller.setAdaptCutout(false);
 
+            //如果你不想要UI，不要设置控制器即可
             mVideoView.setVideoController(controller);
 
             mVideoView.setUrl(getIntent().getStringExtra(IntentKeys.URL));
@@ -109,6 +110,7 @@ public class PlayerActivity extends DebugActivity {
             //播放状态监听
 //            mVideoView.addOnVideoViewStateChangeListener(mOnVideoViewStateChangeListener);
 
+            //临时切换播放核心，如需全局请通过VideoConfig配置，详见MyApplication
             //使用IjkPlayer解码
 //            mVideoView.setPlayerFactory(IjkPlayerFactory.create());
             //使用ExoPlayer解码

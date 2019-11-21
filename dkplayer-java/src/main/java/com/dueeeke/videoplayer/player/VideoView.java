@@ -769,13 +769,17 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
     }
 
     /**
-     * 获取Activity
+     * 获取Activity，优先通过Controller去获取Activity
      */
     protected Activity getActivity() {
-        Activity activity = PlayerUtils.scanForActivity(getContext());
-        if (activity == null) {
-            if (mVideoController == null) return null;
+        Activity activity;
+        if (mVideoController != null) {
             activity = PlayerUtils.scanForActivity(mVideoController.getContext());
+            if (activity == null) {
+                activity = PlayerUtils.scanForActivity(getContext());
+            }
+        } else {
+            activity = PlayerUtils.scanForActivity(getContext());
         }
         return activity;
     }

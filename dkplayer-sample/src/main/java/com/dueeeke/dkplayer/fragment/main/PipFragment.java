@@ -1,7 +1,9 @@
 package com.dueeeke.dkplayer.fragment.main;
 
 import android.content.Intent;
+import android.os.Build;
 import android.view.View;
+import android.widget.Toast;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.activity.pip.AndroidOPiPActivity;
@@ -36,7 +38,11 @@ public class PipFragment extends BaseFragment implements View.OnClickListener {
                 startActivity(new Intent(getActivity(), PIPListActivity.class));
                 break;
             case R.id.btn_pip_android_o:
-                startActivity(new Intent(getActivity(), AndroidOPiPActivity.class));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startActivity(new Intent(getActivity(), AndroidOPiPActivity.class));
+                } else {
+                    Toast.makeText(getActivity(), "Android O required.", Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.btn_tiny_screen:
                 startActivity(new Intent(getActivity(), TinyScreenListActivity.class));

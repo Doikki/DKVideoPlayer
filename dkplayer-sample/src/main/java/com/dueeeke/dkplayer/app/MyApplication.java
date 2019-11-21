@@ -20,20 +20,18 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
-//        if (LeakCanary.isInAnalyzerProcess(this)) {
-//            return;
-//        }
-//        LeakCanary.install(this);
         //播放器配置，注意：此为全局配置，按需开启
         VideoViewManager.setConfig(VideoViewConfig.newBuilder()
-                .setLogEnabled(BuildConfig.DEBUG)
+                .setLogEnabled(BuildConfig.DEBUG)//调试的时候请打开日志，方便排错
 //                .setPlayerFactory(IjkPlayerFactory.create())
                 .setPlayerFactory(ExoMediaPlayerFactory.create())
 //                .setRenderViewFactory(SurfaceRenderViewFactory.create())
 //                .setEnableOrientation(true)
-//                .setEnableParallelPlay(true)
 //                .setEnableAudioFocus(false)
 //                .setScreenScaleType(VideoView.SCREEN_SCALE_MATCH_PARENT)
+//                .setAdaptCutout(false)
+//                .setPlayOnMobileNetwork(true)
+//                .setProgressManager(new ProgressManagerImpl())
                 .build());
 
 //        if (BuildConfig.DEBUG) {

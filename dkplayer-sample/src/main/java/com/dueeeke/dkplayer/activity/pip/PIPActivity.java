@@ -44,8 +44,6 @@ public class PIPActivity extends AppCompatActivity{
             controller.setPlayState(videoView.getCurrentPlayState());
         } else {
             mPIPManager.setActClass(PIPActivity.class);
-//        int widthPixels = getResources().getDisplayMetrics().widthPixels;
-//        videoView.setLayoutParams(new LinearLayout.LayoutParams(widthPixels, widthPixels / 4 * 3));
             ImageView thumb = controller.findViewById(R.id.thumb);
             Glide.with(this)
                     .load("http://sh.people.com.cn/NMediaFile/2016/0112/LOCAL201601121344000138197365721.jpg")
@@ -54,7 +52,6 @@ public class PIPActivity extends AppCompatActivity{
                     .placeholder(android.R.color.darker_gray)
                     .into(thumb);
             videoView.setUrl(URL);
-//            controller.setTitle("香港卫视");
         }
         playerContainer.addView(videoView);
     }

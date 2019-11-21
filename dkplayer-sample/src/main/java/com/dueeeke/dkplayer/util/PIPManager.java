@@ -16,29 +16,17 @@ public class PIPManager {
 
     private static PIPManager instance;
     private VideoView mVideoView;
-    private FloatView floatView;
+    private FloatView mFloatView;
     private FloatController mFloatController;
-    private boolean isShowing;
-//    private KeyReceiver mKeyReceiver;
+    private boolean mIsShowing;
     private int mPlayingPosition = -1;
     private Class mActClass;
-//    private MyVideoListener mMyVideoListener = new MyVideoListener() {
-//        @Override
-//        public void onComplete() {
-//            super.onComplete();
-//            reset();
-//        }
-//    };
 
 
     private PIPManager() {
         mVideoView = new VideoView(MyApplication.getInstance());
-//        mVideoView.setVideoListener(mMyVideoListener);
-//        mKeyReceiver = new KeyReceiver();
         mFloatController = new FloatController(MyApplication.getInstance());
-//        IntentFilter homeFilter = new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
-//        MyApplication.getInstance().registerReceiver(mKeyReceiver, homeFilter);
-        floatView = new FloatView(MyApplication.getInstance(), 0, 0);
+        mFloatView = new FloatView(MyApplication.getInstance(), 0, 0);
     }
 
     public static PIPManager getInstance() {
@@ -57,21 +45,21 @@ public class PIPManager {
     }
 
     public void startFloatWindow() {
-        if (isShowing) return;
+        if (mIsShowing) return;
         Utils.removeViewFormParent(mVideoView);
         mFloatController.setPlayState(mVideoView.getCurrentPlayState());
         mFloatController.setPlayerState(mVideoView.getCurrentPlayerState());
         mVideoView.setVideoController(mFloatController);
-        floatView.addView(mVideoView);
-        floatView.addToWindow();
-        isShowing = true;
+        mFloatView.addView(mVideoView);
+        mFloatView.addToWindow();
+        mIsShowing = true;
     }
 
     public void stopFloatWindow() {
-        if (!isShowing) return;
-        floatView.removeFromWindow();
+        if (!mIsShowing) return;
+        mFloatView.removeFromWindow();
         Utils.removeViewFormParent(mVideoView);
-        isShowing = false;
+        mIsShowing = false;
     }
 
     public void setPlayingPosition(int position) {
@@ -83,17 +71,17 @@ public class PIPManager {
     }
 
     public void pause() {
-        if (isShowing) return;
+        if (mIsShowing) return;
         mVideoView.pause();
     }
 
     public void resume() {
-        if (isShowing) return;
+        if (mIsShowing) return;
         mVideoView.resume();
     }
 
     public void reset() {
-        if (isShowing) return;
+        if (mIsShowing) return;
         Utils.removeViewFormParent(mVideoView);
         mVideoView.release();
         mVideoView.setVideoController(null);
@@ -102,20 +90,20 @@ public class PIPManager {
     }
 
     public boolean onBackPress() {
-        return !isShowing && mVideoView.onBackPressed();
+        return !mIsShowing && mVideoView.onBackPressed();
     }
 
     public boolean isStartFloatWindow() {
-        return isShowing;
+        return mIsShowing;
     }
 
     /**
      * 显示悬浮窗
      */
     public void setFloatViewVisible() {
-        if (isShowing) {
+        if (mIsShowing) {
             mVideoView.resume();
-            floatView.setVisibility(View.VISIBLE);
+            mFloatView.setVisibility(View.VISIBLE);
         }
     }
 

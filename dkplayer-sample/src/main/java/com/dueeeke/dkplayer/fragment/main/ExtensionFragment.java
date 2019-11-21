@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.view.View;
 
 import com.dueeeke.dkplayer.R;
+import com.dueeeke.dkplayer.activity.api.DefinitionPlayerActivity;
 import com.dueeeke.dkplayer.activity.extend.ADActivity;
 import com.dueeeke.dkplayer.activity.extend.CacheActivity;
 import com.dueeeke.dkplayer.activity.extend.CustomExoPlayerActivity;
@@ -31,6 +32,7 @@ public class ExtensionFragment extends BaseFragment implements View.OnClickListe
         findViewById(R.id.btn_pad).setOnClickListener(this);
         findViewById(R.id.btn_custom_exo_player).setOnClickListener(this);
         findViewById(R.id.btn_custom_ijk_player).setOnClickListener(this);
+        findViewById(R.id.btn_definition).setOnClickListener(this);
     }
 
     @Override
@@ -59,6 +61,9 @@ public class ExtensionFragment extends BaseFragment implements View.OnClickListe
                 break;
             case R.id.btn_custom_ijk_player:
                 startActivity(new Intent(getActivity(), CustomIjkPlayerActivity.class));
+                break;
+            case R.id.btn_definition:
+                startActivity(new Intent(getActivity(), DefinitionPlayerActivity.class));
                 break;
         }
     }

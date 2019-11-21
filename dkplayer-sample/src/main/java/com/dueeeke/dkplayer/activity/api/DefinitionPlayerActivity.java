@@ -16,8 +16,8 @@ import com.dueeeke.videoplayer.player.VideoView;
 import java.util.LinkedHashMap;
 
 /**
- * 播放器演示
- * Created by Devlin_n on 2017/4/7.
+ * 清晰度切换
+ * Created by dueeeke on 2017/4/7.
  */
 
 public class DefinitionPlayerActivity extends BaseActivity<VideoView<AndroidMediaPlayer>> implements DefinitionControlView.OnRateSwitchListener {
