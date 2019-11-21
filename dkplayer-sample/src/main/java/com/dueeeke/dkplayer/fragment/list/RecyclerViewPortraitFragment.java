@@ -7,6 +7,9 @@ import com.dueeeke.videocontroller.component.GestureView;
 import com.dueeeke.videocontroller.component.TitleView;
 import com.dueeeke.videoplayer.player.VideoView;
 
+/**
+ * 全屏后手动横屏
+ */
 public class RecyclerViewPortraitFragment extends RecyclerViewAutoPlayFragment {
 
     @Override

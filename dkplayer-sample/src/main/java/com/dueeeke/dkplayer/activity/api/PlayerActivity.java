@@ -87,6 +87,11 @@ public class PlayerActivity extends DebugActivity {
             String title = intent.getStringExtra(IntentKeys.TITLE);
             titleView.setTitle(title);
 
+            //注意：以上组件如果你想单独定制，我推荐你把源码复制一份出来，然后改成你想要的样子。
+            //改完之后再通过addControlComponent添加上去
+            //你也可以通过addControlComponent添加一些你自己的组件，具体实现方式参考现有组件的实现。
+            //这个组件不一定是View，请发挥你的想象力😃
+
             //如果你不需要单独配置各个组件，可以直接调用此方法快速添加以上组件
 //            controller.addDefaultControlComponent(title, isLive);
 
@@ -134,12 +139,12 @@ public class PlayerActivity extends DebugActivity {
                 case VideoView.STATE_PREPARING:
                     break;
                 case VideoView.STATE_PREPARED:
+                    break;
+                case VideoView.STATE_PLAYING:
                     //需在此时获取视频宽高
                     int[] videoSize = mVideoView.getVideoSize();
                     L.d("视频宽：" + videoSize[0]);
                     L.d("视频高：" + videoSize[1]);
-                    break;
-                case VideoView.STATE_PLAYING:
                     break;
                 case VideoView.STATE_PAUSED:
                     break;

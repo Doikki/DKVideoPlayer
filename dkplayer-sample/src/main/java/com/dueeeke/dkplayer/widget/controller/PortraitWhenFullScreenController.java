@@ -81,7 +81,8 @@ public class PortraitWhenFullScreenController extends StandardVideoController {
                 if (mActivity != null) {
                     int o = mActivity.getRequestedOrientation();
                     mFullScreen.setSelected(o == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                    adjustView(o, (int) PlayerUtils.getStatusBarHeight(getContext()));
+                    int space = getAdaptCutout() ? (int) PlayerUtils.getStatusBarHeight(getContext()) : 0;
+                    adjustView(o, space);
                 }
                 break;
             case VideoView.PLAYER_NORMAL:

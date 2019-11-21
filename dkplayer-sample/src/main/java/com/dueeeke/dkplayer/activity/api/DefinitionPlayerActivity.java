@@ -6,6 +6,7 @@ import com.dueeeke.dkplayer.widget.component.DefinitionControlView;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videocontroller.component.CompleteView;
 import com.dueeeke.videocontroller.component.ErrorView;
+import com.dueeeke.videocontroller.component.GestureView;
 import com.dueeeke.videocontroller.component.PrepareView;
 import com.dueeeke.videocontroller.component.TitleView;
 import com.dueeeke.videoplayer.player.AndroidMediaPlayer;
@@ -62,7 +63,8 @@ public class DefinitionPlayerActivity extends BaseActivity<VideoView<AndroidMedi
         TitleView titleView = new TitleView(this);
         mDefinitionControlView = new DefinitionControlView(this);
         mDefinitionControlView.setOnRateSwitchListener(this);
-        mController.addControlComponent(completeView, errorView, prepareView, titleView, mDefinitionControlView);
+        GestureView gestureView = new GestureView(this);
+        mController.addControlComponent(completeView, errorView, prepareView, titleView, mDefinitionControlView, gestureView);
     }
 
     @Override

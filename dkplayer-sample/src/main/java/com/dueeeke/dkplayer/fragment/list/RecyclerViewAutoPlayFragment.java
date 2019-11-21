@@ -11,6 +11,9 @@ import com.dueeeke.dkplayer.adapter.VideoRecyclerViewAdapter;
 
 import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
 
+/**
+ * 滑动列表自动播放
+ */
 public class RecyclerViewAutoPlayFragment extends RecyclerViewFragment {
 
     @Override

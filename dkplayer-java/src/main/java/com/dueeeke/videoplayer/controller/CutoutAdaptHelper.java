@@ -62,6 +62,10 @@ public class CutoutAdaptHelper {
         }
     }
 
+    public boolean getAdaptCutout() {
+        return mAdaptCutout;
+    }
+
     /**
      * 适配刘海屏，针对Android P以上系统
      */
@@ -99,8 +103,6 @@ public class CutoutAdaptHelper {
             mCurrentOrientation = o;
         }
     }
-
-
 
     /**
      * 将此View添加到ContentView中，用于监听系统回调事件

@@ -642,4 +642,11 @@ public abstract class BaseVideoController extends FrameLayout
             next.getKey().adjustView(orientation, space);
         }
     }
+
+    /**
+     * 是否需要适配刘海屏
+     */
+    public boolean getAdaptCutout() {
+        return mCutoutAdaptHelper != null && mCutoutAdaptHelper.getAdaptCutout();
+    }
 }

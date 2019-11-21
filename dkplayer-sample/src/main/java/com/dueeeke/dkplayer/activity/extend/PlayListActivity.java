@@ -7,6 +7,7 @@ import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videocontroller.component.CompleteView;
 import com.dueeeke.videocontroller.component.ErrorView;
+import com.dueeeke.videocontroller.component.GestureView;
 import com.dueeeke.videocontroller.component.PrepareView;
 import com.dueeeke.videocontroller.component.TitleView;
 import com.dueeeke.videocontroller.component.VodControlView;
@@ -87,6 +88,7 @@ public class PlayListActivity extends BaseActivity {
         prepareView.setClickStart();
         mTitleView = new TitleView(this);
         VodControlView vodControlView = new VodControlView(this);
-        mController.addControlComponent(completeView, errorView, prepareView, mTitleView, vodControlView);
+        GestureView gestureView = new GestureView(this);
+        mController.addControlComponent(completeView, errorView, prepareView, mTitleView, vodControlView, gestureView);
     }
 }

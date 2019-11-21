@@ -58,6 +58,7 @@ public class SeamlessPlayFragment extends RecyclerViewAutoPlayFragment {
             }
             intent.putExtras(bundle);
             View sharedView = mLinearLayoutManager.findViewByPosition(position).findViewById(R.id.player_container);
+            //使用共享元素动画
             ActivityOptionsCompat options = ActivityOptionsCompat
                     .makeSceneTransitionAnimation(getActivity(), sharedView, "player_container");
             ActivityCompat.startActivity(getActivity(), intent, options.toBundle());

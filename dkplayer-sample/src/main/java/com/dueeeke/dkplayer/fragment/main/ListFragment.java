@@ -10,6 +10,12 @@ import com.google.android.material.tabs.TabLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 注意：RecyclerView demo 我采用继承的方式实现，
+ * ${@link com.dueeeke.dkplayer.fragment.list.RecyclerViewPortraitFragment} 我甚至使用了三重继承😂，
+ * 实际开发中可以不需要这样。
+ * 我这样做仅仅只为代码复用，方便维护
+ */
 public class ListFragment extends BaseFragment {
 
     @Override

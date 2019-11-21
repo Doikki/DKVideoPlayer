@@ -28,6 +28,9 @@ import com.dueeeke.videoplayer.player.VideoView;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * RecyclerView demo
+ */
 public class RecyclerViewFragment extends BaseFragment implements OnItemChildClickListener {
 
     protected List<VideoBean> mVideos = new ArrayList<>();
