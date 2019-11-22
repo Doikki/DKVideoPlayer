@@ -125,12 +125,7 @@ public class CompleteView extends FrameLayout implements IControlComponent {
     }
 
     @Override
-    public void onLock() {
-
-    }
-
-    @Override
-    public void onUnlock() {
+    public void onLockStateChanged(boolean isLock) {
 
     }
 }

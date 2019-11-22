@@ -96,6 +96,7 @@ public class PIPActivity extends BaseActivity {
                 .overlay()
                 .onGranted(data -> {
                     mPIPManager.startFloatWindow();
+                    mPIPManager.resume();
                     finish();
                 })
                 .onDenied(data -> {

@@ -23,8 +23,6 @@ public interface IControlComponent {
 
     void setProgress(int duration, int position);
 
-    void onLock();
-
-    void onUnlock();
+    void onLockStateChanged(boolean isLocked);
 
 }

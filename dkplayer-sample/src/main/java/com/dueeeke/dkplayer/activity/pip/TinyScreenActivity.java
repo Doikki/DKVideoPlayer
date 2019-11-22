@@ -13,8 +13,6 @@ import com.dueeeke.dkplayer.adapter.VideoRecyclerViewAdapter;
 import com.dueeeke.dkplayer.adapter.listener.OnItemChildClickListener;
 import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.dkplayer.util.DataUtil;
-import com.dueeeke.dkplayer.util.PIPManager;
-import com.dueeeke.dkplayer.util.Tag;
 import com.dueeeke.dkplayer.util.Utils;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videocontroller.component.CompleteView;
@@ -22,28 +20,26 @@ import com.dueeeke.videocontroller.component.ErrorView;
 import com.dueeeke.videocontroller.component.GestureView;
 import com.dueeeke.videocontroller.component.TitleView;
 import com.dueeeke.videocontroller.component.VodControlView;
+import com.dueeeke.videoplayer.listener.SimpleOnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.VideoView;
-import com.yanzhenjie.permission.AndPermission;
 
 import java.util.List;
 
 /**
- * 悬浮播放终极版
+ * 小窗播放
  * Created by dueeeke on 2017/5/31.
  */
+public class TinyScreenActivity extends BaseActivity<VideoView> implements OnItemChildClickListener {
 
-public class PIPListActivity extends BaseActivity implements OnItemChildClickListener {
-
-    private PIPManager mPIPManager;
-    private VideoView mVideoView;
     private StandardVideoController mController;
     private List<VideoBean> mVideos;
     private LinearLayoutManager mLinearLayoutManager;
     private TitleView mTitleView;
+    private int mCurPos = -1;
 
     @Override
     protected int getTitleResId() {
-        return R.string.str_pip_in_list;
+        return R.string.str_tiny_screen;
     }
 
     @Override
@@ -53,8 +49,18 @@ public class PIPListActivity extends BaseActivity implements OnItemChildClickLis
 
     @Override
     protected void initView() {
-        mPIPManager = PIPManager.getInstance();
-        mVideoView = getVideoViewManager().get(Tag.PIP);
+        mVideoView = new VideoView(this);
+        mVideoView.setOnVideoViewStateChangeListener(new SimpleOnVideoViewStateChangeListener() {
+            @Override
+            public void onPlayStateChanged(int playState) {
+                if (playState == VideoView.STATE_PLAYBACK_COMPLETED) {
+                    if (mVideoView.isTinyScreen()) {
+                        mVideoView.stopTinyScreen();
+                        releaseVideoView();
+                    }
+                }
+            }
+        });
         mController = new StandardVideoController(this);
         addControlComponent();
 
@@ -83,7 +89,7 @@ public class PIPListActivity extends BaseActivity implements OnItemChildClickLis
             public void onChildViewAttachedToWindow(@NonNull View view) {
                 VideoRecyclerViewAdapter.VideoHolder holder = (VideoRecyclerViewAdapter.VideoHolder) view.getTag();
                 int position = holder.mPosition;
-                if (position == mPIPManager.getPlayingPosition()) {
+                if (position == mCurPos) {
                     startPlay(position, false);
                 }
             }
@@ -92,50 +98,13 @@ public class PIPListActivity extends BaseActivity implements OnItemChildClickLis
             public void onChildViewDetachedFromWindow(@NonNull View view) {
                 VideoRecyclerViewAdapter.VideoHolder holder = (VideoRecyclerViewAdapter.VideoHolder) view.getTag();
                 int position = holder.mPosition;
-                if (position == mPIPManager.getPlayingPosition()) {
-                    startFloatWindow();
+                if (position == mCurPos && !mVideoView.isFullScreen()) {
+                    mVideoView.startTinyScreen();
+                    mVideoView.setVideoController(null);
                     mController.setPlayState(VideoView.STATE_IDLE);
                 }
             }
         });
-    }
-
-    private void startFloatWindow() {
-        AndPermission
-                .with(this)
-                .overlay()
-                .onGranted(data -> {
-                    mPIPManager.startFloatWindow();
-                })
-                .onDenied(data -> {
-
-                })
-                .start();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mPIPManager.pause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mPIPManager.resume();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mPIPManager.reset();
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (mPIPManager.onBackPress()) return;
-        super.onBackPressed();
-
     }
 
     @Override
@@ -149,9 +118,9 @@ public class PIPListActivity extends BaseActivity implements OnItemChildClickLis
      * @param position 列表位置
      */
     protected void startPlay(int position, boolean isRelease) {
-        if (mPIPManager.isStartFloatWindow())
-            mPIPManager.stopFloatWindow();
-        if (mPIPManager.getPlayingPosition() != -1 && isRelease) {
+        if (mVideoView.isTinyScreen())
+            mVideoView.stopTinyScreen();
+        if (mCurPos != -1 && isRelease) {
             releaseVideoView();
         }
         VideoBean videoBean = mVideos.get(position);
@@ -169,7 +138,7 @@ public class PIPListActivity extends BaseActivity implements OnItemChildClickLis
         Utils.removeViewFormParent(mVideoView);
         viewHolder.mPlayerContainer.addView(mVideoView, 0);
         mVideoView.start();
-        mPIPManager.setPlayingPosition(position);
+        mCurPos = position;
     }
 
     private void releaseVideoView() {
@@ -180,6 +149,6 @@ public class PIPListActivity extends BaseActivity implements OnItemChildClickLis
         if (getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
-        mPIPManager.setPlayingPosition(-1);
+        mCurPos = -1;
     }
 }

@@ -99,12 +99,7 @@ public class ErrorView extends LinearLayout implements IControlComponent {
     }
 
     @Override
-    public void onLock() {
-
-    }
-
-    @Override
-    public void onUnlock() {
+    public void onLockStateChanged(boolean isLock) {
 
     }
 

@@ -170,13 +170,12 @@ public class TitleView extends FrameLayout implements IControlComponent {
     }
 
     @Override
-    public void onLock() {
-        setVisibility(GONE);
-    }
-
-    @Override
-    public void onUnlock() {
-        setVisibility(VISIBLE);
+    public void onLockStateChanged(boolean isLocked) {
+        if (isLocked) {
+            setVisibility(GONE);
+        } else {
+            setVisibility(VISIBLE);
+        }
     }
 
     private static class BatteryReceiver extends BroadcastReceiver {

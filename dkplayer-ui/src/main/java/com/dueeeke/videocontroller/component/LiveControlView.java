@@ -135,13 +135,12 @@ public class LiveControlView extends FrameLayout implements IControlComponent, V
     }
 
     @Override
-    public void onLock() {
-        hide(null);
-    }
-
-    @Override
-    public void onUnlock() {
-        show(null);
+    public void onLockStateChanged(boolean isLocked) {
+        if (isLocked) {
+            hide(null);
+        } else {
+            show(null);
+        }
     }
 
     @Override

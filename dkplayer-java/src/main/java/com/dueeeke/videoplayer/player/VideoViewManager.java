@@ -85,7 +85,7 @@ public class VideoViewManager {
 
     /**
      * 添加VideoView
-     * @param tag 传入相同的tag，以产生互斥效果
+     * @param tag 相同tag的VideoView只会保存一个，如果tag相同则会release并移除前一个
      */
     public void add(VideoView videoView, String tag) {
         if (!(videoView.getContext() instanceof Application)) {

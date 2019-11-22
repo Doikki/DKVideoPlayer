@@ -218,13 +218,12 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
     }
 
     @Override
-    public void onLock() {
-        hide(null);
-    }
-
-    @Override
-    public void onUnlock() {
-        show(null);
+    public void onLockStateChanged(boolean isLocked) {
+        if (isLocked) {
+            hide(null);
+        } else {
+            show(null);
+        }
     }
 
     @Override

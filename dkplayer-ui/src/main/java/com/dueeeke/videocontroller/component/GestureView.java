@@ -162,12 +162,7 @@ public class GestureView extends FrameLayout implements IGestureComponent {
     }
 
     @Override
-    public void onLock() {
-
-    }
-
-    @Override
-    public void onUnlock() {
+    public void onLockStateChanged(boolean isLock) {
 
     }
 

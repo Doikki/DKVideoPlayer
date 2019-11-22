@@ -5,7 +5,6 @@ import android.widget.Toast;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.activity.BaseActivity;
-import com.dueeeke.dkplayer.interf.ControllerListener;
 import com.dueeeke.dkplayer.util.cache.ProxyVideoCacheManager;
 import com.dueeeke.dkplayer.widget.component.AdControlView;
 import com.dueeeke.videocontroller.StandardVideoController;
@@ -42,7 +41,7 @@ public class ADActivity extends BaseActivity<VideoView> {
         mVideoView = findViewById(R.id.video_view);
         mController = new StandardVideoController(this);
         AdControlView adControlView = new AdControlView(this);
-        adControlView.setControllerListener(new ControllerListener() {
+        adControlView.setListener(new AdControlView.AdControlListener() {
             @Override
             public void onAdClick() {
                 Toast.makeText(ADActivity.this, "广告点击跳转", Toast.LENGTH_SHORT).show();

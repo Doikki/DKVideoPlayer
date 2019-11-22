@@ -9,7 +9,7 @@ import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.activity.pip.AndroidOPiPActivity;
 import com.dueeeke.dkplayer.activity.pip.PIPActivity;
 import com.dueeeke.dkplayer.activity.pip.PIPListActivity;
-import com.dueeeke.dkplayer.activity.pip.TinyScreenListActivity;
+import com.dueeeke.dkplayer.activity.pip.TinyScreenActivity;
 import com.dueeeke.dkplayer.fragment.BaseFragment;
 
 public class PipFragment extends BaseFragment implements View.OnClickListener {
@@ -45,7 +45,7 @@ public class PipFragment extends BaseFragment implements View.OnClickListener {
                 }
                 break;
             case R.id.btn_tiny_screen:
-                startActivity(new Intent(getActivity(), TinyScreenListActivity.class));
+                startActivity(new Intent(getActivity(), TinyScreenActivity.class));
                 break;
         }
     }

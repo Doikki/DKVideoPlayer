@@ -5,6 +5,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.adapter.ListPagerAdapter;
 import com.dueeeke.dkplayer.fragment.BaseFragment;
+import com.dueeeke.dkplayer.util.Tag;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -41,5 +42,11 @@ public class ListFragment extends BaseFragment {
 
         TabLayout tabLayout = findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(viewPager);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        getVideoViewManager().releaseByTag(Tag.LIST);
     }
 }

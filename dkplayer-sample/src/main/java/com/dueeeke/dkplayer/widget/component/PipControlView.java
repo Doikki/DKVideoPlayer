@@ -154,12 +154,7 @@ public class PipControlView extends FrameLayout implements IControlComponent, Vi
     }
 
     @Override
-    public void onLock() {
-
-    }
-
-    @Override
-    public void onUnlock() {
+    public void onLockStateChanged(boolean isLocked) {
 
     }
 

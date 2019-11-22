@@ -60,13 +60,6 @@ public class SeamlessPlayFragment extends RecyclerViewAutoPlayFragment {
     }
 
     @Override
-    protected void initVideoView() {
-        super.initVideoView();
-        //立马添加到VideoViewManager供后续使用
-        getVideoViewManager().add(mVideoView, Tag.SEAMLESS);
-    }
-
-    @Override
     protected void startPlay(int position) {
         mVideoView.setVideoController(mController);
         super.startPlay(position);
@@ -96,11 +89,5 @@ public class SeamlessPlayFragment extends RecyclerViewAutoPlayFragment {
         } else {
             super.resume();
         }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        getVideoViewManager().releaseByTag(Tag.SEAMLESS);
     }
 }

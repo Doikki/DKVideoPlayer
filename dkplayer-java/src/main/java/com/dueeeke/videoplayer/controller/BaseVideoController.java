@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.player.VideoViewManager;
+import com.dueeeke.videoplayer.util.L;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 
 import java.util.Iterator;
@@ -107,7 +108,11 @@ public abstract class BaseVideoController extends FrameLayout
         setFocusable(true);
         mOrientationHelper = new OrientationHelper(getContext().getApplicationContext());
         mEnableOrientation = VideoViewManager.getConfig().mEnableOrientation;
+        //刘海屏适配
         mAdaptCutout = VideoViewManager.getConfig().mAdaptCutout;
+        if (mAdaptCutout) {
+            mCutoutAdaptHelper = new CutoutAdaptHelper(this);
+        }
 
         mShowAnim = new AlphaAnimation(0f, 1f);
         mShowAnim.setDuration(300);
@@ -126,17 +131,13 @@ public abstract class BaseVideoController extends FrameLayout
     @CallSuper
     public void setMediaPlayer(MediaPlayerControl mediaPlayer) {
         mMediaPlayerWrapper = new MediaPlayerControlWrapper(mediaPlayer, this);
-
+        //绑定ControlComponent和Controller
+        L.d("ControlComponent size: " + mControlComponents.size());
         for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
             next.getKey().attach(mMediaPlayerWrapper);
         }
-
-        //开始监听
+        //开始监听设备方向
         mOrientationHelper.setOnOrientationChangeListener(this);
-
-        if (mAdaptCutout) {
-            mCutoutAdaptHelper = new CutoutAdaptHelper(this);
-        }
     }
 
     /**
@@ -242,11 +243,10 @@ public abstract class BaseVideoController extends FrameLayout
     public void setLocked(boolean locked) {
         stopFadeOut();
         mIsLocked = locked;
-        if (mIsLocked) {
-            onLock();
-        } else {
-            onUnlock();
+        for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
+            next.getKey().onLockStateChanged(mIsLocked);
         }
+        onLockStateChanged(mIsLocked);
         startFadeOut();
     }
 
@@ -255,24 +255,8 @@ public abstract class BaseVideoController extends FrameLayout
         return mIsLocked;
     }
 
-    /**
-     * 锁定之后
-     */
-    @CallSuper
-    protected void onLock() {
-        for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
-            next.getKey().onLock();
-        }
-    }
+    protected void onLockStateChanged(boolean isLocked) {
 
-    /**
-     * 解锁之后
-     */
-    @CallSuper
-    protected void onUnlock() {
-        for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
-            next.getKey().onUnlock();
-        }
     }
 
     /**

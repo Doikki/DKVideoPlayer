@@ -14,7 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.dueeeke.dkplayer.R;
-import com.dueeeke.dkplayer.interf.ControllerListener;
 import com.dueeeke.videoplayer.controller.IControlComponent;
 import com.dueeeke.videoplayer.controller.MediaPlayerControlWrapper;
 import com.dueeeke.videoplayer.player.VideoView;
@@ -24,7 +23,7 @@ public class AdControlView extends FrameLayout implements IControlComponent, Vie
 
     protected TextView mAdTime, mAdDetail;
     protected ImageView mBack, mVolume, mFullScreen, mPlayButton;
-    protected ControllerListener mControllerListener;
+    protected AdControlListener mListener;
 
     private MediaPlayerControlWrapper mMediaPlayer;
 
@@ -59,7 +58,7 @@ public class AdControlView extends FrameLayout implements IControlComponent, Vie
         this.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mControllerListener != null) mControllerListener.onAdClick();
+                if (mListener != null) mListener.onAdClick();
             }
         });
     }
@@ -123,12 +122,7 @@ public class AdControlView extends FrameLayout implements IControlComponent, Vie
     }
 
     @Override
-    public void onLock() {
-
-    }
-
-    @Override
-    public void onUnlock() {
+    public void onLockStateChanged(boolean isLocked) {
 
     }
 
@@ -140,9 +134,9 @@ public class AdControlView extends FrameLayout implements IControlComponent, Vie
         } else if (id == R.id.iv_volume) {
             doMute();
         } else if (id == R.id.ad_detail) {
-            if (mControllerListener != null) mControllerListener.onAdClick();
+            if (mListener != null) mListener.onAdClick();
         } else if (id == R.id.ad_time) {
-            if (mControllerListener != null) mControllerListener.onSkipAd();
+            if (mListener != null) mListener.onSkipAd();
         } else if (id == R.id.iv_play) {
             mMediaPlayer.togglePlay();
         }
@@ -161,7 +155,14 @@ public class AdControlView extends FrameLayout implements IControlComponent, Vie
         mMediaPlayer.toggleFullScreen(activity);
     }
 
-    public void setControllerListener(ControllerListener listener) {
-        this.mControllerListener = listener;
+    public void setListener(AdControlListener listener) {
+        this.mListener = listener;
+    }
+
+    public interface AdControlListener {
+
+        void onAdClick();
+
+        void onSkipAd();
     }
 }

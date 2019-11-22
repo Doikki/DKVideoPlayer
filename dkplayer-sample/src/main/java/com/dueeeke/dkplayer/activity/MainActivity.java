@@ -151,7 +151,6 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
             //切换tab，释放正在播放的播放器
             if (mCurrentIndex == 1) {
                 getVideoViewManager().releaseByTag(Tag.LIST);
-                getVideoViewManager().releaseByTag(Tag.SEAMLESS, false);//注意不能移除
             }
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             Fragment fragment = mFragments.get(index);
@@ -170,7 +169,6 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
     @Override
     public void onBackPressed() {
         if (getVideoViewManager().onBackPress(Tag.LIST)) return;
-        if (getVideoViewManager().onBackPress(Tag.SEAMLESS)) return;
         super.onBackPressed();
     }
 

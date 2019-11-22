@@ -13,7 +13,7 @@ import com.dueeeke.dkplayer.activity.MainActivity;
 import com.dueeeke.dkplayer.adapter.VideoRecyclerViewAdapter;
 import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.dkplayer.fragment.BaseFragment;
-import com.dueeeke.dkplayer.interf.OnItemChildClickListener;
+import com.dueeeke.dkplayer.adapter.listener.OnItemChildClickListener;
 import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.dkplayer.util.Tag;
 import com.dueeeke.dkplayer.util.Utils;
@@ -25,7 +25,6 @@ import com.dueeeke.videocontroller.component.TitleView;
 import com.dueeeke.videocontroller.component.VodControlView;
 import com.dueeeke.videoplayer.listener.SimpleOnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.VideoView;
-import com.dueeeke.videoplayer.util.L;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -170,12 +169,6 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
         startPlay(mLastPos);
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        getVideoViewManager().releaseByTag(Tag.LIST);
-    }
-
     /**
      * PrepareView被点击
      */
@@ -199,14 +192,15 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
         View itemView = mLinearLayoutManager.findViewByPosition(position);
         if (itemView == null) return;
         VideoRecyclerViewAdapter.VideoHolder viewHolder = (VideoRecyclerViewAdapter.VideoHolder) itemView.getTag();
-        //把列表中预置的PrepareView添加到控制器中，注意isPrivate只能为true。
+        //把列表中预置的PrepareView添加到控制器中，注意isPrivate此处只能为true。
         mController.addControlComponent(viewHolder.mPrepareView, true);
         Utils.removeViewFormParent(mVideoView);
         viewHolder.mPlayerContainer.addView(mVideoView, 0);
-        //播放之前添加到VideoViewManager以产生互斥效果
+        //播放之前将VideoView添加到VideoViewManager以便在别的页面也能操作它
         getVideoViewManager().add(mVideoView, Tag.LIST);
         mVideoView.start();
         mCurPos = position;
+
     }
 
     private void releaseVideoView() {

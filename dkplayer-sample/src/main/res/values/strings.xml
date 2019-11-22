@@ -24,6 +24,7 @@
     <string name="str_pip_in_list">列表滑动进入画中画</string>
     <string name="str_pip_android_o">Android 8.0 画中画demo</string>
     <string name="str_start_pip">悬浮窗</string>
+    <string name="str_tiny_screen">小窗播放</string>
     <string name="str_cache">缓存</string>
     <string name="str_play_list">连续播放一个列表</string>
     <string name="str_switch_player_btn">切换播放核心</string>

@@ -10,7 +10,7 @@ import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.adapter.VideoListViewAdapter;
 import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.dkplayer.fragment.BaseFragment;
-import com.dueeeke.dkplayer.interf.OnItemChildClickListener;
+import com.dueeeke.dkplayer.adapter.listener.OnItemChildClickListener;
 import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.dkplayer.util.Tag;
 import com.dueeeke.dkplayer.util.Utils;
@@ -153,12 +153,6 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        getVideoViewManager().releaseByTag(Tag.LIST);
-    }
-
-    @Override
     public void onItemChildClick(int position) {
         if (mCurPosition == position) return;
         if (mCurPosition != -1) {
@@ -172,7 +166,7 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
         mController.addControlComponent(viewHolder.mPrepareView, true);
         Utils.removeViewFormParent(mVideoView);
         viewHolder.mPlayerContainer.addView(mVideoView, 0);
-        //播放之前添加到VideoViewManager以产生互斥效果
+        //播放之前将VideoView添加到VideoViewManager以便在别的页面也能操作它
         getVideoViewManager().add(mVideoView, Tag.LIST);
         mVideoView.start();
         mCurPosition = position;
