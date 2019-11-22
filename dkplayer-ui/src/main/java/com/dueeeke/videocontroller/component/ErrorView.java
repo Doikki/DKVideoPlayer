@@ -14,7 +14,7 @@ import androidx.annotation.Nullable;
 
 import com.dueeeke.videocontroller.R;
 import com.dueeeke.videoplayer.controller.IControlComponent;
-import com.dueeeke.videoplayer.controller.MediaPlayerControlWrapper;
+import com.dueeeke.videoplayer.controller.ControlWrapper;
 import com.dueeeke.videoplayer.player.VideoView;
 
 /**
@@ -26,7 +26,7 @@ public class ErrorView extends LinearLayout implements IControlComponent {
     private float mDownX;
     private float mDownY;
 
-    private MediaPlayerControlWrapper mMediaPlayerWrapper;
+    private ControlWrapper mControlWrapper;
 
     public ErrorView(Context context) {
         this(context, null);
@@ -47,15 +47,15 @@ public class ErrorView extends LinearLayout implements IControlComponent {
             @Override
             public void onClick(View v) {
                 setVisibility(GONE);
-                mMediaPlayerWrapper.replay(false);
+                mControlWrapper.replay(false);
             }
         });
         setClickable(true);
     }
 
     @Override
-    public void attach(@NonNull MediaPlayerControlWrapper mediaPlayerWrapper) {
-        mMediaPlayerWrapper = mediaPlayerWrapper;
+    public void attach(@NonNull ControlWrapper controlWrapper) {
+        mControlWrapper = controlWrapper;
     }
 
     @Override

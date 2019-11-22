@@ -14,7 +14,7 @@ import androidx.annotation.Nullable;
 
 import com.dueeeke.videocontroller.R;
 import com.dueeeke.videoplayer.controller.IControlComponent;
-import com.dueeeke.videoplayer.controller.MediaPlayerControlWrapper;
+import com.dueeeke.videoplayer.controller.ControlWrapper;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.player.VideoViewManager;
 
@@ -23,7 +23,7 @@ import com.dueeeke.videoplayer.player.VideoViewManager;
  */
 public class PrepareView extends FrameLayout implements IControlComponent {
 
-    private MediaPlayerControlWrapper mMediaPlayerWrapper;
+    private ControlWrapper mControlWrapper;
     
     private ImageView mThumb;
     private ImageView mStartPlay;
@@ -53,7 +53,7 @@ public class PrepareView extends FrameLayout implements IControlComponent {
             public void onClick(View v) {
                 mNetWarning.setVisibility(GONE);
                 VideoViewManager.instance().setPlayOnMobileNetwork(true);
-                mMediaPlayerWrapper.start();
+                mControlWrapper.start();
             }
         });
     }
@@ -65,14 +65,14 @@ public class PrepareView extends FrameLayout implements IControlComponent {
         setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mMediaPlayerWrapper.start();
+                mControlWrapper.start();
             }
         });
     }
 
     @Override
-    public void attach(@NonNull MediaPlayerControlWrapper mediaPlayerWrapper) {
-        mMediaPlayerWrapper = mediaPlayerWrapper;
+    public void attach(@NonNull ControlWrapper controlWrapper) {
+        mControlWrapper = controlWrapper;
     }
 
     @Override

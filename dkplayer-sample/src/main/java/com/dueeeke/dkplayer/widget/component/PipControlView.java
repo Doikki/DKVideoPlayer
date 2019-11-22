@@ -16,12 +16,12 @@ import androidx.annotation.Nullable;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.util.PIPManager;
 import com.dueeeke.videoplayer.controller.IControlComponent;
-import com.dueeeke.videoplayer.controller.MediaPlayerControlWrapper;
+import com.dueeeke.videoplayer.controller.ControlWrapper;
 import com.dueeeke.videoplayer.player.VideoView;
 
 public class PipControlView extends FrameLayout implements IControlComponent, View.OnClickListener {
 
-    private MediaPlayerControlWrapper mMediaPlayerControlWrapper;
+    private ControlWrapper mControlWrapper;
 
     private ImageView mPlay;
     private ImageView mClose;
@@ -56,7 +56,7 @@ public class PipControlView extends FrameLayout implements IControlComponent, Vi
             PIPManager.getInstance().stopFloatWindow();
             PIPManager.getInstance().reset();
         } else if (id == R.id.start_play) {
-            mMediaPlayerControlWrapper.togglePlay();
+            mControlWrapper.togglePlay();
         } else if (id == R.id.btn_skip) {
             if (PIPManager.getInstance().getActClass() != null) {
                 Intent intent = new Intent(getContext(), PIPManager.getInstance().getActClass());
@@ -67,8 +67,8 @@ public class PipControlView extends FrameLayout implements IControlComponent, Vi
     }
 
     @Override
-    public void attach(@NonNull MediaPlayerControlWrapper mediaPlayerWrapper) {
-        mMediaPlayerControlWrapper = mediaPlayerWrapper;
+    public void attach(@NonNull ControlWrapper controlWrapper) {
+        mControlWrapper = controlWrapper;
     }
 
     @Override
@@ -130,7 +130,7 @@ public class PipControlView extends FrameLayout implements IControlComponent, Vi
             case VideoView.STATE_BUFFERED:
                 mPlay.setVisibility(GONE);
                 mLoading.setVisibility(GONE);
-                mPlay.setSelected(mMediaPlayerControlWrapper.isPlaying());
+                mPlay.setSelected(mControlWrapper.isPlaying());
                 break;
             case VideoView.STATE_PLAYBACK_COMPLETED:
                 bringToFront();

@@ -16,7 +16,7 @@ import androidx.annotation.Nullable;
 
 import com.dueeeke.videocontroller.R;
 import com.dueeeke.videoplayer.controller.IControlComponent;
-import com.dueeeke.videoplayer.controller.MediaPlayerControlWrapper;
+import com.dueeeke.videoplayer.controller.ControlWrapper;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 
@@ -25,7 +25,7 @@ import com.dueeeke.videoplayer.util.PlayerUtils;
  */
 public class LiveControlView extends FrameLayout implements IControlComponent, View.OnClickListener {
 
-    private MediaPlayerControlWrapper mMediaPlayerWrapper;
+    private ControlWrapper mControlWrapper;
 
     private ImageView mFullScreen;
     private LinearLayout mBottomContainer;
@@ -57,8 +57,8 @@ public class LiveControlView extends FrameLayout implements IControlComponent, V
     }
 
     @Override
-    public void attach(@NonNull MediaPlayerControlWrapper mediaPlayerWrapper) {
-        mMediaPlayerWrapper = mediaPlayerWrapper;
+    public void attach(@NonNull ControlWrapper controlWrapper) {
+        mControlWrapper = controlWrapper;
     }
 
     @Override
@@ -101,7 +101,7 @@ public class LiveControlView extends FrameLayout implements IControlComponent, V
             case VideoView.STATE_PAUSED:
             case VideoView.STATE_BUFFERING:
             case VideoView.STATE_BUFFERED:
-                mPlayButton.setSelected(mMediaPlayerWrapper.isPlaying());
+                mPlayButton.setSelected(mControlWrapper.isPlaying());
                 break;
         }
     }
@@ -149,9 +149,9 @@ public class LiveControlView extends FrameLayout implements IControlComponent, V
         if (id == R.id.fullscreen) {
             toggleFullScreen();
         } else if (id == R.id.iv_play) {
-            mMediaPlayerWrapper.togglePlay();
+            mControlWrapper.togglePlay();
         } else if (id == R.id.iv_refresh) {
-            mMediaPlayerWrapper.replay(true);
+            mControlWrapper.replay(true);
         }
     }
 
@@ -160,6 +160,6 @@ public class LiveControlView extends FrameLayout implements IControlComponent, V
      */
     private void toggleFullScreen() {
         Activity activity = PlayerUtils.scanForActivity(getContext());
-        mMediaPlayerWrapper.toggleFullScreen(activity);
+        mControlWrapper.toggleFullScreen(activity);
     }
 }

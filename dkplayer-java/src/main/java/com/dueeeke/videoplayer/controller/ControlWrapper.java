@@ -10,129 +10,129 @@ import androidx.annotation.NonNull;
  * 此类的目的是为了在ControlComponent中既能调用VideoView的api又能调用BaseVideoController的api，
  * 并对部分api做了封装，方便使用
  */
-public class MediaPlayerControlWrapper implements MediaPlayerControl, IVideoController {
+public class ControlWrapper implements MediaPlayerControl, IVideoController {
     
-    private MediaPlayerControl mBase;
+    private MediaPlayerControl mPlayerControl;
     private IVideoController mController;
     
-    public MediaPlayerControlWrapper(@NonNull MediaPlayerControl base, @NonNull IVideoController controller) {
-        mBase = base;
+    public ControlWrapper(@NonNull MediaPlayerControl playerControl, @NonNull IVideoController controller) {
+        mPlayerControl = playerControl;
         mController = controller;
     }
     
     @Override
     public void start() {
-        mBase.start();
+        mPlayerControl.start();
     }
 
     @Override
     public void pause() {
-        mBase.pause();
+        mPlayerControl.pause();
     }
 
     @Override
     public long getDuration() {
-        return mBase.getDuration();
+        return mPlayerControl.getDuration();
     }
 
     @Override
     public long getCurrentPosition() {
-        return mBase.getCurrentPosition();
+        return mPlayerControl.getCurrentPosition();
     }
 
     @Override
     public void seekTo(long pos) {
-        mBase.seekTo(pos);
+        mPlayerControl.seekTo(pos);
     }
 
     @Override
     public boolean isPlaying() {
-        return mBase.isPlaying();
+        return mPlayerControl.isPlaying();
     }
 
     @Override
     public int getBufferedPercentage() {
-        return mBase.getBufferedPercentage();
+        return mPlayerControl.getBufferedPercentage();
     }
 
     @Override
     public void startFullScreen() {
-        mBase.startFullScreen();
+        mPlayerControl.startFullScreen();
     }
 
     @Override
     public void stopFullScreen() {
-        mBase.stopFullScreen();
+        mPlayerControl.stopFullScreen();
     }
 
     @Override
     public boolean isFullScreen() {
-        return mBase.isFullScreen();
+        return mPlayerControl.isFullScreen();
     }
 
     @Override
     public void setMute(boolean isMute) {
-        mBase.setMute(isMute);
+        mPlayerControl.setMute(isMute);
     }
 
     @Override
     public boolean isMute() {
-        return mBase.isMute();
+        return mPlayerControl.isMute();
     }
 
     @Override
     public void setScreenScaleType(int screenScaleType) {
-        mBase.setScreenScaleType(screenScaleType);
+        mPlayerControl.setScreenScaleType(screenScaleType);
     }
 
     @Override
     public void setSpeed(float speed) {
-        mBase.setSpeed(speed);
+        mPlayerControl.setSpeed(speed);
     }
 
     @Override
     public long getTcpSpeed() {
-        return mBase.getTcpSpeed();
+        return mPlayerControl.getTcpSpeed();
     }
 
     @Override
     public void replay(boolean resetPosition) {
-        mBase.replay(resetPosition);
+        mPlayerControl.replay(resetPosition);
     }
 
     @Override
     public void setMirrorRotation(boolean enable) {
-        mBase.setMirrorRotation(enable);
+        mPlayerControl.setMirrorRotation(enable);
     }
 
     @Override
     public Bitmap doScreenShot() {
-        return mBase.doScreenShot();
+        return mPlayerControl.doScreenShot();
     }
 
     @Override
     public int[] getVideoSize() {
-        return mBase.getVideoSize();
+        return mPlayerControl.getVideoSize();
     }
 
     @Override
     public void setRotation(float rotation) {
-        mBase.setRotation(rotation);
+        mPlayerControl.setRotation(rotation);
     }
 
     @Override
     public void startTinyScreen() {
-        mBase.startTinyScreen();
+        mPlayerControl.startTinyScreen();
     }
 
     @Override
     public void stopTinyScreen() {
-        mBase.stopTinyScreen();
+        mPlayerControl.stopTinyScreen();
     }
 
     @Override
     public boolean isTinyScreen() {
-        return mBase.isTinyScreen();
+        return mPlayerControl.isTinyScreen();
     }
 
     /**

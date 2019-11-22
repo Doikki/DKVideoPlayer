@@ -107,7 +107,7 @@ public abstract class GestureVideoController extends BaseVideoController impleme
     }
 
     private boolean isInPlaybackState() {
-        return mMediaPlayerWrapper != null
+        return mControlWrapper != null
                 && mCurPlayState != VideoView.STATE_ERROR
                 && mCurPlayState != VideoView.STATE_IDLE
                 && mCurPlayState != VideoView.STATE_PREPARING
@@ -129,7 +129,7 @@ public abstract class GestureVideoController extends BaseVideoController impleme
         if (!isInPlaybackState() //不处于播放状态
                 || !mIsGestureEnabled //关闭了手势
                 || PlayerUtils.isEdge(getContext(), e)) //处于屏幕边沿
-            return false;
+            return true;
         mStreamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         Activity activity = PlayerUtils.scanForActivity(getContext());
         if (activity == null) {
@@ -150,7 +150,7 @@ public abstract class GestureVideoController extends BaseVideoController impleme
     @Override
     public boolean onSingleTapConfirmed(MotionEvent e) {
         if (isInPlaybackState()) {
-            mMediaPlayerWrapper.toggleShowState();
+            mControlWrapper.toggleShowState();
         }
         return true;
     }
@@ -173,7 +173,7 @@ public abstract class GestureVideoController extends BaseVideoController impleme
                 || !mIsGestureEnabled //关闭了手势
                 || !mCanSlide //关闭了滑动手势
                 || PlayerUtils.isEdge(getContext(), e1)) //处于屏幕边沿
-            return false;
+            return true;
         float deltaX = e1.getX() - e2.getX();
         float deltaY = e1.getY() - e2.getY();
         if (mFirstTouch) {
@@ -216,8 +216,8 @@ public abstract class GestureVideoController extends BaseVideoController impleme
     protected void slideToChangePosition(float deltaX) {
         deltaX = -deltaX;
         int width = getMeasuredWidth();
-        int duration = (int) mMediaPlayerWrapper.getDuration();
-        int currentPosition = (int) mMediaPlayerWrapper.getCurrentPosition();
+        int duration = (int) mControlWrapper.getDuration();
+        int currentPosition = (int) mControlWrapper.getCurrentPosition();
         int position = (int) (deltaX / width * 120000 + currentPosition);
         if (position > duration) position = duration;
         if (position < 0) position = 0;
@@ -282,7 +282,7 @@ public abstract class GestureVideoController extends BaseVideoController impleme
                 }
             }
             if (mNeedSeek) {
-                mMediaPlayerWrapper.seekTo(mPosition);
+                mControlWrapper.seekTo(mPosition);
                 mNeedSeek = false;
             }
         }

@@ -25,10 +25,13 @@ import java.util.Locale;
 
 /**
  * 播放器相关工具类
- * Created by Devlin_n on 2017/4/10.
+ * Created by dueeeke on 2017/4/10.
  */
 
-public class PlayerUtils {
+public final class PlayerUtils {
+
+    private PlayerUtils() {
+    }
 
     /**
      * 获取状态栏高度
@@ -102,7 +105,13 @@ public class PlayerUtils {
      * 获取Activity
      */
     public static Activity scanForActivity(Context context) {
-        return context == null ? null : (context instanceof Activity ? (Activity) context : (context instanceof ContextWrapper ? scanForActivity(((ContextWrapper) context).getBaseContext()) : null));
+        if (context == null) return null;
+        if (context instanceof Activity) {
+            return (Activity) context;
+        } else if (context instanceof ContextWrapper) {
+            return scanForActivity(((ContextWrapper) context).getBaseContext());
+        }
+        return null;
     }
 
     /**
@@ -175,7 +184,7 @@ public class PlayerUtils {
         } else if (networkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
             // 移动数据连接,不能与连接共存,如果wifi打开，则自动关闭
             switch (networkInfo.getSubtype()) {
-                    // 2G
+                // 2G
                 case TelephonyManager.NETWORK_TYPE_GPRS:
                 case TelephonyManager.NETWORK_TYPE_EDGE:
                 case TelephonyManager.NETWORK_TYPE_CDMA:
@@ -204,6 +213,7 @@ public class PlayerUtils {
 
     /**
      * 通过反射获取Application
+     *
      * @deprecated 不在使用，后期谷歌可能封掉改接口
      */
     @SuppressLint("PrivateApi")

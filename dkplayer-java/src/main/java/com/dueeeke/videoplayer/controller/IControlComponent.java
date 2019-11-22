@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 
 public interface IControlComponent {
 
-    void attach(@NonNull MediaPlayerControlWrapper mediaPlayerWrapper);
+    void attach(@NonNull ControlWrapper controlWrapper);
 
     View getView();
 

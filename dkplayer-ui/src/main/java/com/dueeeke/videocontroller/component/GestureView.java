@@ -18,7 +18,7 @@ import androidx.annotation.Nullable;
 
 import com.dueeeke.videocontroller.R;
 import com.dueeeke.videoplayer.controller.IGestureComponent;
-import com.dueeeke.videoplayer.controller.MediaPlayerControlWrapper;
+import com.dueeeke.videoplayer.controller.ControlWrapper;
 import com.dueeeke.videoplayer.player.VideoView;
 
 import static com.dueeeke.videoplayer.util.PlayerUtils.stringForTime;
@@ -40,7 +40,7 @@ public class GestureView extends FrameLayout implements IGestureComponent {
         super(context, attrs, defStyleAttr);
     }
 
-    private MediaPlayerControlWrapper mMediaPlayer;
+    private ControlWrapper mMediaPlayer;
 
     private ImageView mIcon;
     private ProgressBar mProgressPercent;
@@ -59,8 +59,8 @@ public class GestureView extends FrameLayout implements IGestureComponent {
     }
 
     @Override
-    public void attach(@NonNull MediaPlayerControlWrapper mediaPlayerWrapper) {
-        mMediaPlayer = mediaPlayerWrapper;
+    public void attach(@NonNull ControlWrapper controlWrapper) {
+        mMediaPlayer = controlWrapper;
     }
 
     @Override

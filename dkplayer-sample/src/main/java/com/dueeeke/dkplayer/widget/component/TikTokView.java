@@ -16,7 +16,7 @@ import androidx.annotation.Nullable;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videoplayer.controller.IControlComponent;
-import com.dueeeke.videoplayer.controller.MediaPlayerControlWrapper;
+import com.dueeeke.videoplayer.controller.ControlWrapper;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.L;
 
@@ -25,7 +25,7 @@ public class TikTokView extends FrameLayout implements IControlComponent {
     private ImageView thumb;
     private ImageView mPlayBtn;
 
-    private MediaPlayerControlWrapper mMediaPlayer;
+    private ControlWrapper mMediaPlayer;
     private int mScaledTouchSlop;
     private int mStartX, mStartY;
 
@@ -78,8 +78,8 @@ public class TikTokView extends FrameLayout implements IControlComponent {
     }
 
     @Override
-    public void attach(@NonNull MediaPlayerControlWrapper mediaPlayerWrapper) {
-        mMediaPlayer = mediaPlayerWrapper;
+    public void attach(@NonNull ControlWrapper controlWrapper) {
+        mMediaPlayer = controlWrapper;
     }
 
     @Override

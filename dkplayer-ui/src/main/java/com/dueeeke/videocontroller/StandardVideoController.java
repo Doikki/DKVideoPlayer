@@ -86,7 +86,7 @@ public class StandardVideoController extends GestureVideoController implements V
     }
 
     @Override
-    public void adjustView(int orientation, int space) {
+    protected void adjustView(int orientation, int space) {
         super.adjustView(orientation, space);
         int dp24 = PlayerUtils.dp2px(getContext(), 24);
         if (orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
@@ -105,7 +105,7 @@ public class StandardVideoController extends GestureVideoController implements V
     public void onClick(View v) {
         int i = v.getId();
         if (i == R.id.lock) {
-            mMediaPlayerWrapper.toggleLockState();
+            mControlWrapper.toggleLockState();
         }
     }
 
@@ -125,7 +125,7 @@ public class StandardVideoController extends GestureVideoController implements V
     @Override
     protected void show(Animation showAnim) {
         super.show(showAnim);
-        if (mMediaPlayerWrapper.isFullScreen()) {
+        if (mControlWrapper.isFullScreen()) {
             if (mLockButton.getVisibility() == GONE) {
                 mLockButton.setVisibility(VISIBLE);
                 if (showAnim != null) {
@@ -138,7 +138,7 @@ public class StandardVideoController extends GestureVideoController implements V
     @Override
     protected void hide(Animation hideAnim) {
         super.hide(hideAnim);
-        if (mMediaPlayerWrapper.isFullScreen()) {
+        if (mControlWrapper.isFullScreen()) {
             mLockButton.setVisibility(GONE);
             if (hideAnim != null) {
                 mLockButton.startAnimation(hideAnim);
@@ -220,7 +220,7 @@ public class StandardVideoController extends GestureVideoController implements V
             Toast.makeText(getContext(), R.string.dkplayer_lock_tip, Toast.LENGTH_SHORT).show();
             return true;
         }
-        if (mMediaPlayerWrapper.isFullScreen()) {
+        if (mControlWrapper.isFullScreen()) {
             return stopFullScreen();
         }
         return super.onBackPressed();

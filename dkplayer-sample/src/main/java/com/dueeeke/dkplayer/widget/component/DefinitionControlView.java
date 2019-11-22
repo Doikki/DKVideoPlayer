@@ -140,8 +140,8 @@ public class DefinitionControlView extends VodControlView {
     };
 
     private void switchDefinition(String s) {
-        mMediaPlayerWrapper.hideInner();
-        mMediaPlayerWrapper.stopProgress();
+        mControlWrapper.hideInner();
+        mControlWrapper.stopProgress();
         String url = mMultiRateData.get(s);
         if (mOnRateSwitchListener != null)
             mOnRateSwitchListener.onRateChange(url);

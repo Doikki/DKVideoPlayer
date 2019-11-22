@@ -3,6 +3,7 @@ package com.dueeeke.videoplayer.controller;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.OrientationEventListener;
@@ -17,6 +18,7 @@ import androidx.annotation.Nullable;
 
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.player.VideoViewManager;
+import com.dueeeke.videoplayer.util.CutoutUtil;
 import com.dueeeke.videoplayer.util.L;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 
@@ -35,7 +37,10 @@ public abstract class BaseVideoController extends FrameLayout
     /**
      * 播放器包装类，集合了MediaPlayerControl的api和IVideoController的api
      */
-    protected MediaPlayerControlWrapper mMediaPlayerWrapper;
+    protected ControlWrapper mControlWrapper;
+
+    @Nullable
+    protected Activity mActivity;
 
     /**
      * 控制器是否处于显示状态
@@ -65,13 +70,12 @@ public abstract class BaseVideoController extends FrameLayout
     /**
      * 是否适配刘海屏
      */
-    private boolean mAdaptCutout;
+    private Boolean mAdaptCutout;
 
     /**
-     * 刘海屏适配辅助类
+     * 刘海的高度
      */
-    @Nullable
-    private CutoutAdaptHelper mCutoutAdaptHelper;
+    private int mCutoutHeight;
 
     /**
      * 是否开始刷新进度
@@ -104,20 +108,15 @@ public abstract class BaseVideoController extends FrameLayout
         if (getLayoutId() != 0) {
             LayoutInflater.from(getContext()).inflate(getLayoutId(), this, true);
         }
-        setClickable(true);
-        setFocusable(true);
         mOrientationHelper = new OrientationHelper(getContext().getApplicationContext());
         mEnableOrientation = VideoViewManager.getConfig().mEnableOrientation;
-        //刘海屏适配
-        mAdaptCutout = VideoViewManager.getConfig().mAdaptCutout;
-        if (mAdaptCutout) {
-            mCutoutAdaptHelper = new CutoutAdaptHelper(this);
-        }
 
         mShowAnim = new AlphaAnimation(0f, 1f);
         mShowAnim.setDuration(300);
         mHideAnim = new AlphaAnimation(1f, 0f);
         mHideAnim.setDuration(300);
+
+        mActivity = PlayerUtils.scanForActivity(getContext());
     }
 
     /**
@@ -130,11 +129,11 @@ public abstract class BaseVideoController extends FrameLayout
      */
     @CallSuper
     public void setMediaPlayer(MediaPlayerControl mediaPlayer) {
-        mMediaPlayerWrapper = new MediaPlayerControlWrapper(mediaPlayer, this);
+        mControlWrapper = new ControlWrapper(mediaPlayer, this);
         //绑定ControlComponent和Controller
         L.d("ControlComponent size: " + mControlComponents.size());
         for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
-            next.getKey().attach(mMediaPlayerWrapper);
+            next.getKey().attach(mControlWrapper);
         }
         //开始监听设备方向
         mOrientationHelper.setOnOrientationChangeListener(this);
@@ -295,6 +294,22 @@ public abstract class BaseVideoController extends FrameLayout
         if (mIsStartProgress) {
             post(mShowProgress);
         }
+        checkCutout();
+    }
+
+    /**
+     * 检查是否需要适配刘海
+     */
+    private void checkCutout() {
+        if (mActivity != null
+                && mAdaptCutout == null
+                && VideoViewManager.getConfig().mAdaptCutout) {
+            mAdaptCutout = CutoutUtil.allowDisplayToCutout(mActivity);
+            if (mAdaptCutout) {
+                mCutoutHeight = (int) PlayerUtils.getStatusBarHeight(mActivity);
+            }
+        }
+        L.d("adaptCutout: " + mAdaptCutout + " cutout height: " + mCutoutHeight);
     }
 
     @Override
@@ -312,7 +327,7 @@ public abstract class BaseVideoController extends FrameLayout
         @Override
         public void run() {
             int pos = setProgress();
-            if (mMediaPlayerWrapper.isPlaying()) {
+            if (mControlWrapper.isPlaying()) {
                 postDelayed(mShowProgress, 1000 - (pos % 1000));
             } else {
                 mIsStartProgress = false;
@@ -321,14 +336,15 @@ public abstract class BaseVideoController extends FrameLayout
     };
 
     private int setProgress() {
-        int position = (int) mMediaPlayerWrapper.getCurrentPosition();
-        int duration = (int) mMediaPlayerWrapper.getDuration();
+        int position = (int) mControlWrapper.getCurrentPosition();
+        int duration = (int) mControlWrapper.getDuration();
         setProgress(duration, position);
         return position;
     }
 
     /**
      * 刷新进度回调，子类可在此方法监听进度刷新，然后更新ui
+     *
      * @param duration 视频总时长
      * @param position 视频当前时长
      */
@@ -377,9 +393,6 @@ public abstract class BaseVideoController extends FrameLayout
         for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
             next.getKey().onPlayerStateChanged(playerState);
         }
-        if (mCutoutAdaptHelper != null) {
-            mCutoutAdaptHelper.onPlayerStateChanged(playerState);
-        }
         switch (playerState) {
             case VideoView.PLAYER_NORMAL:
                 if (mEnableOrientation) {
@@ -387,10 +400,17 @@ public abstract class BaseVideoController extends FrameLayout
                 } else {
                     mOrientationHelper.disable();
                 }
+                if (getAdaptCutout()) {
+                    CutoutUtil.adaptCutoutAboveAndroidP(getContext(), false);
+                    adjustView(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT, mCutoutHeight);
+                }
                 break;
             case VideoView.PLAYER_FULL_SCREEN:
                 //在全屏时强制监听设备方向
                 mOrientationHelper.enable();
+                if (getAdaptCutout()) {
+                    CutoutUtil.adaptCutoutAboveAndroidP(getContext(), true);
+                }
                 break;
             case VideoView.PLAYER_TINY_SCREEN:
                 mOrientationHelper.disable();
@@ -425,8 +445,8 @@ public abstract class BaseVideoController extends FrameLayout
      */
     public void addControlComponent(IControlComponent component, boolean isPrivate) {
         mControlComponents.put(component, isPrivate);
-        if (mMediaPlayerWrapper != null) {
-            component.attach(mMediaPlayerWrapper);
+        if (mControlWrapper != null) {
+            component.attach(mControlWrapper);
         }
         if (!isPrivate) {
             addView(component.getView(), 0);
@@ -462,38 +482,37 @@ public abstract class BaseVideoController extends FrameLayout
      * 播放和暂停
      */
     protected void togglePlay() {
-        mMediaPlayerWrapper.togglePlay();
+        mControlWrapper.togglePlay();
     }
 
     /**
      * 横竖屏切换
      */
     protected void toggleFullScreen() {
-        Activity activity = PlayerUtils.scanForActivity(getContext());
-        mMediaPlayerWrapper.toggleFullScreen(activity);
+        mControlWrapper.toggleFullScreen(mActivity);
     }
 
     /**
      * 子类中请使用此方法来进入全屏
+     *
      * @return 是否成功进入全屏
      */
     protected boolean startFullScreen() {
-        Activity activity = PlayerUtils.scanForActivity(getContext());
-        if (activity == null || activity.isFinishing()) return false;
-        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        mMediaPlayerWrapper.startFullScreen();
+        if (mActivity == null || mActivity.isFinishing()) return false;
+        mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        mControlWrapper.startFullScreen();
         return true;
     }
 
     /**
      * 子类中请使用此方法来退出全屏
+     *
      * @return 是否成功退出全屏
      */
     protected boolean stopFullScreen() {
-        Activity activity = PlayerUtils.scanForActivity(getContext());
-        if (activity == null || activity.isFinishing()) return false;
-        mMediaPlayerWrapper.stopFullScreen();
-        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        if (mActivity == null || mActivity.isFinishing()) return false;
+        mControlWrapper.stopFullScreen();
+        mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         return true;
     }
 
@@ -507,7 +526,8 @@ public abstract class BaseVideoController extends FrameLayout
     @Override
     public void onWindowFocusChanged(boolean hasWindowFocus) {
         super.onWindowFocusChanged(hasWindowFocus);
-        if (mMediaPlayerWrapper.isPlaying() && (mEnableOrientation || mMediaPlayerWrapper.isFullScreen())) {
+        if (mControlWrapper.isPlaying()
+                && (mEnableOrientation || mControlWrapper.isFullScreen())) {
             if (hasWindowFocus) {
                 postDelayed(new Runnable() {
                     @Override
@@ -533,12 +553,7 @@ public abstract class BaseVideoController extends FrameLayout
     @CallSuper
     @Override
     public void onOrientationChanged(int orientation) {
-        if (mCutoutAdaptHelper != null) {
-            mCutoutAdaptHelper.onOrientationChanged();
-        }
-
-        Activity activity = PlayerUtils.scanForActivity(getContext());
-        if (activity == null || activity.isFinishing()) return;
+        if (mActivity == null || mActivity.isFinishing()) return;
 
         //记录用户手机上一次放置的位置
         int lastOrientation = mOrientation;
@@ -551,33 +566,33 @@ public abstract class BaseVideoController extends FrameLayout
         }
 
         if (orientation > 350 || orientation < 10) {
-            int o = activity.getRequestedOrientation();
+            int o = mActivity.getRequestedOrientation();
             //手动切换横竖屏
             if (o == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE && lastOrientation == 0) {
                 return;
             }
             //0度，用户竖直拿着手机
             mOrientation = 0;
-            onOrientationPortrait(activity);
+            onOrientationPortrait(mActivity);
         } else if (orientation > 80 && orientation < 100) {
 
-            int o = activity.getRequestedOrientation();
+            int o = mActivity.getRequestedOrientation();
             //手动切换横竖屏
             if (o == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT && lastOrientation == 90) {
                 return;
             }
             //90度，用户右侧横屏拿着手机
             mOrientation = 90;
-            onOrientationReverseLandscape(activity);
+            onOrientationReverseLandscape(mActivity);
         } else if (orientation > 260 && orientation < 280) {
-            int o = activity.getRequestedOrientation();
+            int o = mActivity.getRequestedOrientation();
             //手动切换横竖屏
             if (o == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT && lastOrientation == 270) {
                 return;
             }
             //270度，用户左侧横屏拿着手机
             mOrientation = 270;
-            onOrientationLandscape(activity);
+            onOrientationLandscape(mActivity);
         }
     }
 
@@ -590,31 +605,52 @@ public abstract class BaseVideoController extends FrameLayout
         //没有开启设备方向监听的情况
         if (!mEnableOrientation) return;
 
-        mMediaPlayerWrapper.stopFullScreen();
+        mControlWrapper.stopFullScreen();
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        if (getAdaptCutout()) {
+            adjustView(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT, mCutoutHeight);
+        }
     }
 
     /**
      * 横屏
      */
     protected void onOrientationLandscape(Activity activity) {
-        mMediaPlayerWrapper.startFullScreen();
+        mControlWrapper.startFullScreen();
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        if (getAdaptCutout()) {
+            adjustView(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE, mCutoutHeight);
+        }
     }
 
     /**
      * 反向横屏
      */
     protected void onOrientationReverseLandscape(Activity activity) {
-        mMediaPlayerWrapper.startFullScreen();
+        mControlWrapper.startFullScreen();
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+        if (getAdaptCutout()) {
+            adjustView(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE, mCutoutHeight);
+        }
+    }
+
+    @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+        L.d("Configuration: " + newConfig.orientation);
+        if (getAdaptCutout()) {
+            if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                adjustView(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT, mCutoutHeight);
+            } else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                adjustView(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE, mCutoutHeight);
+            }
+        }
     }
 
     /**
      * 全面屏适配逻辑，根据屏幕方向调整ui
      */
     @CallSuper
-    public void adjustView(int orientation, int space) {
+    protected void adjustView(int orientation, int space) {
         for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
             next.getKey().adjustView(orientation, space);
         }
@@ -624,6 +660,6 @@ public abstract class BaseVideoController extends FrameLayout
      * 是否需要适配刘海屏
      */
     public boolean getAdaptCutout() {
-        return mCutoutAdaptHelper != null && mCutoutAdaptHelper.getAdaptCutout();
+        return mAdaptCutout != null && mAdaptCutout;
     }
 }

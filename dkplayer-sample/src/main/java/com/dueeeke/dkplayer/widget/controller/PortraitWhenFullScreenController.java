@@ -64,11 +64,11 @@ public class PortraitWhenFullScreenController extends StandardVideoController {
 
     @Override
     public boolean onSingleTapConfirmed(MotionEvent e) {
-        if (!mMediaPlayerWrapper.isFullScreen()) {
-            mMediaPlayerWrapper.startFullScreen();
+        if (!mControlWrapper.isFullScreen()) {
+            mControlWrapper.startFullScreen();
             return true;
         }
-        mMediaPlayerWrapper.toggleShowState();
+        mControlWrapper.toggleShowState();
         return true;
     }
 
@@ -97,22 +97,22 @@ public class PortraitWhenFullScreenController extends StandardVideoController {
         if (i == R.id.fullscreen) {
             toggleFullScreen();
         } else if (i == R.id.lock) {
-            mMediaPlayerWrapper.toggleLockState();
+            mControlWrapper.toggleLockState();
         } else if (i == R.id.iv_play) {
             togglePlay();
         } else if (i == R.id.back) {
             stopFullScreen();
         } else if (i == R.id.thumb) {
-            mMediaPlayerWrapper.start();
-            mMediaPlayerWrapper.startFullScreen();
+            mControlWrapper.start();
+            mControlWrapper.startFullScreen();
         } else if (i == R.id.iv_replay) {
-            mMediaPlayerWrapper.replay(true);
-            mMediaPlayerWrapper.startFullScreen();
+            mControlWrapper.replay(true);
+            mControlWrapper.startFullScreen();
         }
     }
 
     @Override
-    public void adjustView(int orientation, int space) {
+    protected void adjustView(int orientation, int space) {
         super.adjustView(orientation, space);
         if (orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
             setPadding(0, space, 0, 0);

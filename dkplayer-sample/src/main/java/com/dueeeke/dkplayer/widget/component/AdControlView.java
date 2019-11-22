@@ -15,7 +15,7 @@ import androidx.annotation.Nullable;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videoplayer.controller.IControlComponent;
-import com.dueeeke.videoplayer.controller.MediaPlayerControlWrapper;
+import com.dueeeke.videoplayer.controller.ControlWrapper;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 
@@ -25,7 +25,7 @@ public class AdControlView extends FrameLayout implements IControlComponent, Vie
     protected ImageView mBack, mVolume, mFullScreen, mPlayButton;
     protected AdControlListener mListener;
 
-    private MediaPlayerControlWrapper mMediaPlayer;
+    private ControlWrapper mMediaPlayer;
 
     public AdControlView(@NonNull Context context) {
         super(context);
@@ -64,8 +64,8 @@ public class AdControlView extends FrameLayout implements IControlComponent, Vie
     }
 
     @Override
-    public void attach(@NonNull MediaPlayerControlWrapper mediaPlayerWrapper) {
-        mMediaPlayer = mediaPlayerWrapper;
+    public void attach(@NonNull ControlWrapper controlWrapper) {
+        mMediaPlayer = controlWrapper;
     }
 
     @Override
