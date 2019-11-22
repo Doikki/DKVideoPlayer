@@ -54,8 +54,8 @@ public class DetailActivity extends BaseActivity<VideoView> {
 
                 //注意以下过程需在共享元素动画结束后执行
 
-                //拿到VideoView单例实例
-                mVideoView = getVideoViewManager().get(Tag.LIST);
+                //拿到VideoView实例
+                mVideoView = getVideoViewManager().get(Tag.SEAMLESS);
                 //如果已经添加到某个父容器，就将其移除
                 Utils.removeViewFormParent(mVideoView);
                 //把播放器添加到页面的容器中

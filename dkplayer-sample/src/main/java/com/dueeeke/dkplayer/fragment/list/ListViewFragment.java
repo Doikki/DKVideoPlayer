@@ -20,7 +20,6 @@ import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videocontroller.component.GestureView;
 import com.dueeeke.videocontroller.component.TitleView;
 import com.dueeeke.videocontroller.component.VodControlView;
-import com.dueeeke.videoplayer.controller.IControlComponent;
 import com.dueeeke.videoplayer.listener.SimpleOnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.VideoView;
 
@@ -33,7 +32,7 @@ import java.util.List;
 public class ListViewFragment extends BaseFragment implements OnItemChildClickListener {
 
     private List<VideoBean> mVideos = new ArrayList<>();
-    private VideoListViewAdapter mVideoListViewAdapter;
+    private VideoListViewAdapter mAdapter;
 
     private VideoView mVideoView;
     private StandardVideoController mController;
@@ -69,9 +68,9 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
         mVideoView.setVideoController(mController);
 
         ListView listView = findViewById(R.id.lv);
-        mVideoListViewAdapter = new VideoListViewAdapter(mVideos);
-        mVideoListViewAdapter.setOnItemChildClickListener(this);
-        listView.setAdapter(mVideoListViewAdapter);
+        mAdapter = new VideoListViewAdapter(mVideos);
+        mAdapter.setOnItemChildClickListener(this);
+        listView.setAdapter(mAdapter);
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
 
             private View firstView; //记录当前屏幕中第一个可见的item对象
@@ -133,7 +132,7 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
         super.initData();
         List<VideoBean> videoList = DataUtil.getVideoList();
         mVideos.addAll(videoList);
-        mVideoListViewAdapter.notifyDataSetChanged();
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -154,8 +153,8 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onDetach() {
+        super.onDetach();
         getVideoViewManager().releaseByTag(Tag.LIST);
     }
 
@@ -165,24 +164,17 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
         if (mCurPosition != -1) {
             releaseVideoView();
         }
-
         VideoBean videoBean = mVideos.get(position);
         mVideoView.setUrl(videoBean.getUrl());
         mTitleView.setTitle(videoBean.getTitle());
-        View itemView = mVideoListViewAdapter.getItemView(position);
+        View itemView = mAdapter.getItemView(position);
         VideoListViewAdapter.ViewHolder viewHolder = (VideoListViewAdapter.ViewHolder) itemView.getTag();
-        int count = viewHolder.mPlayerContainer.getChildCount();
-        for (int i = 0; i < count; i++) {
-            View v = viewHolder.mPlayerContainer.getChildAt(i);
-            if (v instanceof IControlComponent) {
-                mController.addControlComponent((IControlComponent) v, true);
-            }
-        }
+        mController.addControlComponent(viewHolder.mPrepareView, true);
+        Utils.removeViewFormParent(mVideoView);
         viewHolder.mPlayerContainer.addView(mVideoView, 0);
         //播放之前添加到VideoViewManager以产生互斥效果
         getVideoViewManager().add(mVideoView, Tag.LIST);
         mVideoView.start();
-
         mCurPosition = position;
     }
 
@@ -194,5 +186,6 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
         if(getActivity().getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
+        mCurPosition = -1;
     }
 }

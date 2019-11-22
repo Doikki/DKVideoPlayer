@@ -25,10 +25,8 @@ public abstract class BaseFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (mRootView == null) {
-            mRootView = inflater.inflate(getLayoutResId(), container, false);
-            initView();
-        }
+        mRootView = inflater.inflate(getLayoutResId(), container, false);
+        initView();
         return mRootView;
     }
 
@@ -81,10 +79,16 @@ public abstract class BaseFragment extends Fragment {
     protected void initData() {
     }
 
+    /**
+     * 是否懒加载
+     */
     protected boolean isLazyLoad() {
         return false;
     }
 
+    /**
+     * 子类可通过此方法直接拿到VideoViewManager
+     */
     protected VideoViewManager getVideoViewManager() {
         return VideoViewManager.instance();
     }

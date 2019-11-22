@@ -76,12 +76,13 @@ public class VideoListViewAdapter extends BaseAdapter {
         public FrameLayout mPlayerContainer;
         public TextView mTitle;
         public ImageView mThumb;
+        public PrepareView mPrepareView;
 
         ViewHolder(View itemView) {
             mPlayerContainer = itemView.findViewById(R.id.player_container);
             mTitle = itemView.findViewById(R.id.tv_title);
-            PrepareView prepareView = itemView.findViewById(R.id.prepare_view);
-            mThumb = prepareView.findViewById(R.id.thumb);
+            mPrepareView = itemView.findViewById(R.id.prepare_view);
+            mThumb = mPrepareView.findViewById(R.id.thumb);
             mPlayerContainer.setOnClickListener(this);
         }
 

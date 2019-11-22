@@ -5,7 +5,6 @@ import androidx.viewpager.widget.ViewPager;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.adapter.ListPagerAdapter;
 import com.dueeeke.dkplayer.fragment.BaseFragment;
-import com.dueeeke.dkplayer.util.Tag;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -35,19 +34,12 @@ public class ListFragment extends BaseFragment {
         titles.add(getString(R.string.str_recycler_view));
         titles.add(getString(R.string.str_auto_play_recycler_view));
         titles.add(getString(R.string.str_tiktok));
-        titles.add(getString(R.string.str_portrait_when_fullscreen));
         titles.add(getString(R.string.str_seamless_play));
+        titles.add(getString(R.string.str_portrait_when_fullscreen));
 
         viewPager.setAdapter(new ListPagerAdapter(getChildFragmentManager(), titles));
 
         TabLayout tabLayout = findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(viewPager);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        //注意：在这里release的目的是为了在退出App时释放正在列表上播放的视频
-        getVideoViewManager().releaseByTag(Tag.LIST);
     }
 }

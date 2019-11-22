@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dueeeke.dkplayer.R;
+import com.dueeeke.dkplayer.activity.MainActivity;
 import com.dueeeke.dkplayer.adapter.VideoRecyclerViewAdapter;
 import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.dkplayer.fragment.BaseFragment;
@@ -22,9 +23,9 @@ import com.dueeeke.videocontroller.component.ErrorView;
 import com.dueeeke.videocontroller.component.GestureView;
 import com.dueeeke.videocontroller.component.TitleView;
 import com.dueeeke.videocontroller.component.VodControlView;
-import com.dueeeke.videoplayer.controller.IControlComponent;
 import com.dueeeke.videoplayer.listener.SimpleOnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.VideoView;
+import com.dueeeke.videoplayer.util.L;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,17 +36,24 @@ import java.util.List;
 public class RecyclerViewFragment extends BaseFragment implements OnItemChildClickListener {
 
     protected List<VideoBean> mVideos = new ArrayList<>();
-    protected VideoRecyclerViewAdapter mVideoRecyclerViewAdapter;
+    protected VideoRecyclerViewAdapter mAdapter;
+    protected RecyclerView mRecyclerView;
+    protected LinearLayoutManager mLinearLayoutManager;
 
     protected VideoView mVideoView;
-    protected LinearLayoutManager mLinearLayoutManager;
-    protected RecyclerView mRecyclerView;
-
-    protected int mCurPosition = -1;
     protected StandardVideoController mController;
     protected ErrorView mErrorView;
     protected CompleteView mCompleteView;
     protected TitleView mTitleView;
+
+    /**
+     * 当前播放的位置
+     */
+    protected int mCurPos = -1;
+    /**
+     * 上次播放的位置，用于页面切回来之后恢复播放
+     */
+    protected int mLastPos = mCurPos;
 
     @Override
     protected int getLayoutResId() {
@@ -61,9 +69,9 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
         mRecyclerView = findViewById(R.id.rv);
         mLinearLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
-        mVideoRecyclerViewAdapter = new VideoRecyclerViewAdapter(mVideos);
-        mVideoRecyclerViewAdapter.setOnItemChildClickListener(this);
-        mRecyclerView.setAdapter(mVideoRecyclerViewAdapter);
+        mAdapter = new VideoRecyclerViewAdapter(mVideos);
+        mAdapter.setOnItemChildClickListener(this);
+        mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
             @Override
             public void onChildViewAttachedToWindow(@NonNull View view) {
@@ -85,7 +93,7 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mVideoRecyclerViewAdapter.addData(DataUtil.getVideoList());
+                mAdapter.addData(DataUtil.getVideoList());
             }
         });
     }
@@ -95,9 +103,11 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
         mVideoView.setOnVideoViewStateChangeListener(new SimpleOnVideoViewStateChangeListener() {
             @Override
             public void onPlayStateChanged(int playState) {
+                //监听VideoViewManager释放，重置状态
                 if (playState == VideoView.STATE_IDLE) {
                     Utils.removeViewFormParent(mVideoView);
-                    mCurPosition = -1;
+                    mLastPos = mCurPos;
+                    mCurPos = -1;
                 }
             }
         });
@@ -119,7 +129,7 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
         super.initData();
         List<VideoBean> videoList = DataUtil.getVideoList();
         mVideos.addAll(videoList);
-        mVideoRecyclerViewAdapter.notifyDataSetChanged();
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -133,6 +143,10 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
         pause();
     }
 
+    /**
+     * 由于onPause必须调用super。故增加此方法，
+     * 子类将会重写此方法，改变onPause的逻辑
+     */
     protected void pause() {
         releaseVideoView();
     }
@@ -143,50 +157,66 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
         resume();
     }
 
+    /**
+     * 由于onResume必须调用super。故增加此方法，
+     * 子类将会重写此方法，改变onResume的逻辑
+     */
     protected void resume() {
-        mVideoView.resume();
+        if (mLastPos == -1)
+            return;
+        if (MainActivity.mCurrentIndex != 1)
+            return;
+        //恢复上次播放的位置
+        startPlay(mLastPos);
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onDetach() {
+        super.onDetach();
         getVideoViewManager().releaseByTag(Tag.LIST);
     }
 
+    /**
+     * PrepareView被点击
+     */
     @Override
     public void onItemChildClick(int position) {
         startPlay(position);
     }
 
+    /**
+     * 开始播放
+     * @param position 列表位置
+     */
     protected void startPlay(int position) {
-        if (mCurPosition == position) return;
-        if (mCurPosition != -1) {
+        if (mCurPos == position) return;
+        if (mCurPos != -1) {
             releaseVideoView();
         }
-
         VideoBean videoBean = mVideos.get(position);
         mVideoView.setUrl(videoBean.getUrl());
         mTitleView.setTitle(videoBean.getTitle());
-
         View itemView = mLinearLayoutManager.findViewByPosition(position);
+        if (itemView == null) return;
         VideoRecyclerViewAdapter.VideoHolder viewHolder = (VideoRecyclerViewAdapter.VideoHolder) itemView.getTag();
-        int count = viewHolder.mPlayerContainer.getChildCount();
-        for (int i = 0; i < count; i++) {
-            View v = viewHolder.mPlayerContainer.getChildAt(i);
-            if (v instanceof IControlComponent) {
-                mController.addControlComponent((IControlComponent) v, true);
-            }
-        }
+        //把列表中预置的PrepareView添加到控制器中，注意isPrivate只能为true。
+        mController.addControlComponent(viewHolder.mPrepareView, true);
+        Utils.removeViewFormParent(mVideoView);
         viewHolder.mPlayerContainer.addView(mVideoView, 0);
         //播放之前添加到VideoViewManager以产生互斥效果
         getVideoViewManager().add(mVideoView, Tag.LIST);
         mVideoView.start();
-        mCurPosition = position;
+        mCurPos = position;
     }
 
     private void releaseVideoView() {
         mVideoView.release();
-        mVideoView.stopFullScreen();
-        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        if (mVideoView.isFullScreen()) {
+            mVideoView.stopFullScreen();
+        }
+        if(getActivity().getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+        mCurPos = -1;
     }
 }

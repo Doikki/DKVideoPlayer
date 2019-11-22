@@ -33,8 +33,8 @@ import java.util.List;
 
 public class MainActivity extends BaseActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
-    private List<Fragment> mFragments;
-    private int mCurrentIndex;
+    private List<Fragment> mFragments = new ArrayList<>();
+    public static int mCurrentIndex;
 
     @Override
     protected int getLayoutResId() {
@@ -63,7 +63,6 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
         BottomNavigationView bottomNavigationView = findViewById(R.id.nav_view);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
 
-        mFragments = new ArrayList<>();
         mFragments.add(new ApiFragment());
         mFragments.add(new ListFragment());
         mFragments.add(new ExtensionFragment());
@@ -151,7 +150,8 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
         if (mCurrentIndex != index) {
             //切换tab，释放正在播放的播放器
             if (mCurrentIndex == 1) {
-                getVideoViewManager().releaseByTag(Tag.LIST, false);
+                getVideoViewManager().releaseByTag(Tag.LIST);
+                getVideoViewManager().releaseByTag(Tag.SEAMLESS, false);//注意不能移除
             }
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             Fragment fragment = mFragments.get(index);
@@ -170,6 +170,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
     @Override
     public void onBackPressed() {
         if (getVideoViewManager().onBackPress(Tag.LIST)) return;
+        if (getVideoViewManager().onBackPress(Tag.SEAMLESS)) return;
         super.onBackPressed();
     }
 

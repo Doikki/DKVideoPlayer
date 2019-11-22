@@ -89,6 +89,7 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
             if (mOnItemClickListener != null) {
                 itemView.setOnClickListener(this);
             }
+            //通过tag将ViewHolder和itemView绑定
             itemView.setTag(this);
         }
 

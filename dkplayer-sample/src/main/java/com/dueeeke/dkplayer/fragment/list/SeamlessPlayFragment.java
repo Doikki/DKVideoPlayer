@@ -31,12 +31,12 @@ public class SeamlessPlayFragment extends RecyclerViewAutoPlayFragment {
     @Override
     protected void initView() {
         super.initView();
-        mVideoRecyclerViewAdapter.setOnItemClickListener(position -> {
+        mAdapter.setOnItemClickListener(position -> {
             mSkipToDetail = true;
             Intent intent = new Intent(getActivity(), DetailActivity.class);
             Bundle bundle = new Bundle();
             VideoBean videoBean = mVideos.get(position);
-            if (mCurPosition == position) {
+            if (mCurPos == position) {
                 //需要无缝播放
                 bundle.putBoolean(IntentKeys.SEAMLESS_PLAY, true);
                 bundle.putString(IntentKeys.TITLE, videoBean.getTitle());
@@ -48,7 +48,7 @@ public class SeamlessPlayFragment extends RecyclerViewAutoPlayFragment {
                 bundle.putBoolean(IntentKeys.SEAMLESS_PLAY, false);
                 bundle.putString(IntentKeys.URL, videoBean.getUrl());
                 bundle.putString(IntentKeys.TITLE, videoBean.getTitle());
-                mCurPosition = position;
+                mCurPos = position;
             }
             intent.putExtras(bundle);
             View sharedView = mLinearLayoutManager.findViewByPosition(position).findViewById(R.id.player_container);
@@ -63,14 +63,13 @@ public class SeamlessPlayFragment extends RecyclerViewAutoPlayFragment {
     protected void initVideoView() {
         super.initVideoView();
         //立马添加到VideoViewManager供后续使用
-        getVideoViewManager().add(mVideoView, Tag.LIST);
+        getVideoViewManager().add(mVideoView, Tag.SEAMLESS);
     }
 
     @Override
     protected void startPlay(int position) {
         mVideoView.setVideoController(mController);
         super.startPlay(position);
-
     }
 
     @Override
@@ -82,9 +81,9 @@ public class SeamlessPlayFragment extends RecyclerViewAutoPlayFragment {
 
     @Override
     protected void resume() {
-        //还原播放器
         if (mSkipToDetail) {
-            View itemView = mLinearLayoutManager.findViewByPosition(mCurPosition);
+            //还原播放器
+            View itemView = mLinearLayoutManager.findViewByPosition(mCurPos);
             VideoRecyclerViewAdapter.VideoHolder viewHolder = (VideoRecyclerViewAdapter.VideoHolder) itemView.getTag();
             mController.addControlComponent(viewHolder.mPrepareView, true);
             mVideoView = getVideoViewManager().get(Tag.LIST);
@@ -94,6 +93,14 @@ public class SeamlessPlayFragment extends RecyclerViewAutoPlayFragment {
             Utils.removeViewFormParent(mVideoView);
             viewHolder.mPlayerContainer.addView(mVideoView, 0);
             mSkipToDetail = false;
+        } else {
+            super.resume();
         }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        getVideoViewManager().releaseByTag(Tag.SEAMLESS);
     }
 }
