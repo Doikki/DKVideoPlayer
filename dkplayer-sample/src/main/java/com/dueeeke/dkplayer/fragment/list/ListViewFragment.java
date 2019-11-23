@@ -8,19 +8,18 @@ import android.widget.ListView;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.adapter.VideoListViewAdapter;
+import com.dueeeke.dkplayer.adapter.listener.OnItemChildClickListener;
 import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.dkplayer.fragment.BaseFragment;
-import com.dueeeke.dkplayer.adapter.listener.OnItemChildClickListener;
 import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.dkplayer.util.Tag;
 import com.dueeeke.dkplayer.util.Utils;
+import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videocontroller.component.CompleteView;
 import com.dueeeke.videocontroller.component.ErrorView;
-import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videocontroller.component.GestureView;
 import com.dueeeke.videocontroller.component.TitleView;
 import com.dueeeke.videocontroller.component.VodControlView;
-import com.dueeeke.videoplayer.listener.SimpleOnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.VideoView;
 
 import java.util.ArrayList;
@@ -48,7 +47,7 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
     protected void initView() {
         super.initView();
         mVideoView = new VideoView(getActivity());
-        mVideoView.setOnVideoViewStateChangeListener(new SimpleOnVideoViewStateChangeListener() {
+        mVideoView.setOnStateChangeListener(new VideoView.SimpleOnStateChangeListener() {
             @Override
             public void onPlayStateChanged(int playState) {
                 if (playState == VideoView.STATE_IDLE) {

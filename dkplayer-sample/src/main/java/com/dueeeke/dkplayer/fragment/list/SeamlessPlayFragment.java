@@ -31,6 +31,10 @@ public class SeamlessPlayFragment extends RecyclerViewAutoPlayFragment {
     @Override
     protected void initView() {
         super.initView();
+
+        //提前添加到VideoViewManager，供详情使用
+        getVideoViewManager().add(mVideoView, Tag.SEAMLESS);
+
         mAdapter.setOnItemClickListener(position -> {
             mSkipToDetail = true;
             Intent intent = new Intent(getActivity(), DetailActivity.class);
@@ -79,7 +83,7 @@ public class SeamlessPlayFragment extends RecyclerViewAutoPlayFragment {
             View itemView = mLinearLayoutManager.findViewByPosition(mCurPos);
             VideoRecyclerViewAdapter.VideoHolder viewHolder = (VideoRecyclerViewAdapter.VideoHolder) itemView.getTag();
             mController.addControlComponent(viewHolder.mPrepareView, true);
-            mVideoView = getVideoViewManager().get(Tag.LIST);
+            mVideoView = getVideoViewManager().get(Tag.SEAMLESS);
             mController.setPlayState(mVideoView.getCurrentPlayState());
             mController.setPlayerState(mVideoView.getCurrentPlayerState());
             mVideoView.setVideoController(mController);

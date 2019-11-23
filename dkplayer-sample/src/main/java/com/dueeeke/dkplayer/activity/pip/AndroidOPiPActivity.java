@@ -24,7 +24,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videocontroller.StandardVideoController;
-import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.VideoView;
 
 import java.util.ArrayList;
@@ -104,12 +103,7 @@ public class AndroidOPiPActivity extends AppCompatActivity {
         mController.addDefaultControlComponent(getString(R.string.str_pip_android_o), false);
         mVideoView.setVideoController(mController);
         mVideoView.start();
-        mVideoView.addOnVideoViewStateChangeListener(new OnVideoViewStateChangeListener() {
-            @Override
-            public void onPlayerStateChanged(int playerState) {
-
-            }
-
+        mVideoView.addOnStateChangeListener(new VideoView.SimpleOnStateChangeListener() {
             @Override
             public void onPlayStateChanged(int playState) {
                 switch (playState) {

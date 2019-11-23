@@ -6,7 +6,6 @@ import com.dueeeke.videocontroller.component.CompleteView;
 import com.dueeeke.videocontroller.component.ErrorView;
 import com.dueeeke.videocontroller.component.GestureView;
 import com.dueeeke.videocontroller.component.TitleView;
-import com.dueeeke.videoplayer.listener.SimpleOnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.VideoView;
 
 /**
@@ -17,7 +16,7 @@ public class RecyclerViewPortraitFragment extends RecyclerViewAutoPlayFragment {
     @Override
     protected void initVideoView() {
         mVideoView = new VideoView(getActivity());
-        mVideoView.setOnVideoViewStateChangeListener(new SimpleOnVideoViewStateChangeListener() {
+        mVideoView.setOnStateChangeListener(new VideoView.SimpleOnStateChangeListener() {
             @Override
             public void onPlayStateChanged(int playState) {
                 if (playState == VideoView.STATE_IDLE) {

@@ -18,7 +18,6 @@ import com.dueeeke.videocontroller.component.LiveControlView;
 import com.dueeeke.videocontroller.component.PrepareView;
 import com.dueeeke.videocontroller.component.TitleView;
 import com.dueeeke.videocontroller.component.VodControlView;
-import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.L;
 
@@ -122,7 +121,7 @@ public class PlayerActivity extends DebugActivity {
         }
     }
 
-    private OnVideoViewStateChangeListener mOnVideoViewStateChangeListener = new OnVideoViewStateChangeListener() {
+    private VideoView.OnStateChangeListener mOnStateChangeListener = new VideoView.OnStateChangeListener() {
         @Override
         public void onPlayerStateChanged(int playerState) {
             switch (playerState) {

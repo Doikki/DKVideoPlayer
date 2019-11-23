@@ -48,5 +48,6 @@ public class ListFragment extends BaseFragment {
     public void onDetach() {
         super.onDetach();
         getVideoViewManager().releaseByTag(Tag.LIST);
+        getVideoViewManager().releaseByTag(Tag.SEAMLESS);
     }
 }

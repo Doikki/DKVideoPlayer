@@ -20,7 +20,6 @@ import com.dueeeke.videocontroller.component.ErrorView;
 import com.dueeeke.videocontroller.component.GestureView;
 import com.dueeeke.videocontroller.component.TitleView;
 import com.dueeeke.videocontroller.component.VodControlView;
-import com.dueeeke.videoplayer.listener.SimpleOnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.VideoView;
 
 import java.util.List;
@@ -50,7 +49,7 @@ public class TinyScreenActivity extends BaseActivity<VideoView> implements OnIte
     @Override
     protected void initView() {
         mVideoView = new VideoView(this);
-        mVideoView.setOnVideoViewStateChangeListener(new SimpleOnVideoViewStateChangeListener() {
+        mVideoView.setOnStateChangeListener(new VideoView.SimpleOnStateChangeListener() {
             @Override
             public void onPlayStateChanged(int playState) {
                 if (playState == VideoView.STATE_PLAYBACK_COMPLETED) {

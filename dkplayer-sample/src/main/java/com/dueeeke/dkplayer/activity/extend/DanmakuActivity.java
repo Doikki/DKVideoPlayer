@@ -7,7 +7,6 @@ import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.activity.BaseActivity;
 import com.dueeeke.dkplayer.widget.videoview.DanmukuVideoView;
 import com.dueeeke.videocontroller.StandardVideoController;
-import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.VideoView;
 
 /**
@@ -40,12 +39,7 @@ public class DanmakuActivity extends BaseActivity<DanmukuVideoView> {
         mVideoView.setUrl(URL_VOD);
         mVideoView.start();
 
-        mVideoView.addOnVideoViewStateChangeListener(new OnVideoViewStateChangeListener() {
-            @Override
-            public void onPlayerStateChanged(int playerState) {
-
-            }
-
+        mVideoView.addOnStateChangeListener(new VideoView.SimpleOnStateChangeListener() {
             @Override
             public void onPlayStateChanged(int playState) {
                 if (playState == VideoView.STATE_PREPARED) {

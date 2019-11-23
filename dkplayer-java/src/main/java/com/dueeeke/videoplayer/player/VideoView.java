@@ -23,8 +23,6 @@ import androidx.annotation.Nullable;
 import com.dueeeke.videoplayer.R;
 import com.dueeeke.videoplayer.controller.BaseVideoController;
 import com.dueeeke.videoplayer.controller.MediaPlayerControl;
-import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
-import com.dueeeke.videoplayer.listener.PlayerEventListener;
 import com.dueeeke.videoplayer.render.IRenderView;
 import com.dueeeke.videoplayer.render.RenderViewFactory;
 import com.dueeeke.videoplayer.util.L;
@@ -40,7 +38,8 @@ import java.util.Map;
  * Created by dueeeke on 2017/4/7.
  */
 
-public class VideoView<P extends AbstractPlayer> extends FrameLayout implements MediaPlayerControl, PlayerEventListener {
+public class VideoView<P extends AbstractPlayer> extends FrameLayout
+        implements MediaPlayerControl, AbstractPlayer.PlayerEventListener {
 
     protected P mMediaPlayer;//播放器
     protected PlayerFactory<P> mPlayerFactory;//工厂类，用于实例化播放核心
@@ -110,9 +109,9 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
     protected AudioFocusHelper mAudioFocusHelper;
 
     /**
-     * OnVideoViewStateChangeListener集合，保存了所有开发者设置的监听器
+     * OnStateChangeListener集合，保存了所有开发者设置的监听器
      */
-    protected List<OnVideoViewStateChangeListener> mOnVideoViewStateChangeListeners;
+    protected List<OnStateChangeListener> mOnStateChangeListeners;
 
     /**
      * 进度管理器，设置之后播放器会记录播放进度，以便下次播放恢复进度
@@ -715,7 +714,9 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
         }
         mHideNavBarView.setSystemUiVisibility(FULLSCREEN_FLAGS);
         mPlayerContainer.addView(mHideNavBarView);
-        getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getActivity().getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         //从当前FrameLayout中移除播放器视图
         this.removeView(mPlayerContainer);
@@ -944,9 +945,9 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
         mCurrentPlayState = playState;
         if (mVideoController != null)
             mVideoController.setPlayState(playState);
-        if (mOnVideoViewStateChangeListeners != null) {
-            for (int i = 0, z = mOnVideoViewStateChangeListeners.size(); i < z; i++) {
-                OnVideoViewStateChangeListener listener = mOnVideoViewStateChangeListeners.get(i);
+        if (mOnStateChangeListeners != null) {
+            for (int i = 0, z = mOnStateChangeListeners.size(); i < z; i++) {
+                OnStateChangeListener listener = mOnStateChangeListeners.get(i);
                 if (listener != null) {
                     listener.onPlayStateChanged(playState);
                 }
@@ -961,9 +962,9 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
         mCurrentPlayerState = playerState;
         if (mVideoController != null)
             mVideoController.setPlayerState(playerState);
-        if (mOnVideoViewStateChangeListeners != null) {
-            for (int i = 0, z = mOnVideoViewStateChangeListeners.size(); i < z; i++) {
-                OnVideoViewStateChangeListener listener = mOnVideoViewStateChangeListeners.get(i);
+        if (mOnStateChangeListeners != null) {
+            for (int i = 0, z = mOnStateChangeListeners.size(); i < z; i++) {
+                OnStateChangeListener listener = mOnStateChangeListeners.get(i);
                 if (listener != null) {
                     listener.onPlayerStateChanged(playerState);
                 }
@@ -972,42 +973,61 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout implements 
     }
 
     /**
-     * 监听播放状态变化
+     * 播放状态改变监听器
      */
-    public void addOnVideoViewStateChangeListener(@NonNull OnVideoViewStateChangeListener listener) {
-        if (mOnVideoViewStateChangeListeners == null) {
-            mOnVideoViewStateChangeListeners = new ArrayList<>();
-        }
-        mOnVideoViewStateChangeListeners.add(listener);
+    public interface OnStateChangeListener {
+        void onPlayerStateChanged(int playerState);
+        void onPlayStateChanged(int playState);
     }
 
     /**
-     * 移除播放状态监听
+     * OnStateChangeListener的空实现。用的时候只需要重写需要的方法
      */
-    public void removeOnVideoViewStateChangeListener(@NonNull OnVideoViewStateChangeListener listener) {
-        if (mOnVideoViewStateChangeListeners != null) {
-            mOnVideoViewStateChangeListeners.remove(listener);
+    public static class SimpleOnStateChangeListener implements OnStateChangeListener {
+        @Override
+        public void onPlayerStateChanged(int playerState) {}
+        @Override
+        public void onPlayStateChanged(int playState) {}
+    }
+
+    /**
+     * 添加一个播放状态监听器，播放状态发生变化时将会调用。
+     */
+    public void addOnStateChangeListener(@NonNull OnStateChangeListener listener) {
+        if (mOnStateChangeListeners == null) {
+            mOnStateChangeListeners = new ArrayList<>();
+        }
+        mOnStateChangeListeners.add(listener);
+    }
+
+    /**
+     * 移除某个播放状态监听
+     */
+    public void removeOnStateChangeListener(@NonNull OnStateChangeListener listener) {
+        if (mOnStateChangeListeners != null) {
+            mOnStateChangeListeners.remove(listener);
         }
     }
 
     /**
-     * 设置播放状态监听
+     * 设置一个播放状态监听器，播放状态发生变化时将会调用，
+     * 如果你想同时设置多个监听器，推荐 {@link #addOnStateChangeListener(OnStateChangeListener)}。
      */
-    public void setOnVideoViewStateChangeListener(@NonNull OnVideoViewStateChangeListener listener) {
-        if (mOnVideoViewStateChangeListeners == null) {
-            mOnVideoViewStateChangeListeners = new ArrayList<>();
+    public void setOnStateChangeListener(@NonNull OnStateChangeListener listener) {
+        if (mOnStateChangeListeners == null) {
+            mOnStateChangeListeners = new ArrayList<>();
         } else {
-            mOnVideoViewStateChangeListeners.clear();
+            mOnStateChangeListeners.clear();
         }
-        mOnVideoViewStateChangeListeners.add(listener);
+        mOnStateChangeListeners.add(listener);
     }
 
     /**
      * 移除所有播放状态监听
      */
-    public void clearOnVideoViewStateChangeListeners() {
-        if (mOnVideoViewStateChangeListeners != null) {
-            mOnVideoViewStateChangeListeners.clear();
+    public void clearOnStateChangeListeners() {
+        if (mOnStateChangeListeners != null) {
+            mOnStateChangeListeners.clear();
         }
     }
 

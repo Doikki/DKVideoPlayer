@@ -5,14 +5,13 @@ import android.widget.TextView;
 
 import com.dueeeke.videoplayer.exo.ExoMediaPlayerFactory;
 import com.dueeeke.videoplayer.ijk.IjkPlayerFactory;
-import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.VideoView;
 
 /**
  * A helper class for periodically updating a {@link TextView} with debug information obtained from
  * a {@link VideoView}.
  */
-public class DebugTextViewHelper implements OnVideoViewStateChangeListener, Runnable {
+public class DebugTextViewHelper implements VideoView.OnStateChangeListener, Runnable {
 
     private static final int REFRESH_INTERVAL_MS = 1000;
 
@@ -35,7 +34,7 @@ public class DebugTextViewHelper implements OnVideoViewStateChangeListener, Runn
             return;
         }
         started = true;
-        player.addOnVideoViewStateChangeListener(this);
+        player.addOnStateChangeListener(this);
         updateAndPost();
     }
 
@@ -48,7 +47,7 @@ public class DebugTextViewHelper implements OnVideoViewStateChangeListener, Runn
             return;
         }
         started = false;
-        player.removeOnVideoViewStateChangeListener(this);
+        player.removeOnStateChangeListener(this);
         textView.removeCallbacks(this);
     }
 

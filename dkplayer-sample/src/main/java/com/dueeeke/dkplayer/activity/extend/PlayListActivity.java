@@ -11,7 +11,6 @@ import com.dueeeke.videocontroller.component.GestureView;
 import com.dueeeke.videocontroller.component.PrepareView;
 import com.dueeeke.videocontroller.component.TitleView;
 import com.dueeeke.videocontroller.component.VodControlView;
-import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.VideoView;
 
 import java.util.List;
@@ -52,13 +51,8 @@ public class PlayListActivity extends BaseActivity {
         mVideoView.setVideoController(mController);
 
         //监听播放结束
-        mVideoView.addOnVideoViewStateChangeListener(new OnVideoViewStateChangeListener() {
+        mVideoView.addOnStateChangeListener(new VideoView.SimpleOnStateChangeListener() {
             private int mCurrentVideoPosition;
-            @Override
-            public void onPlayerStateChanged(int playerState) {
-
-            }
-
             @Override
             public void onPlayStateChanged(int playState) {
                 if (playState == VideoView.STATE_PLAYBACK_COMPLETED) {

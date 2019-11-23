@@ -4,8 +4,6 @@ import android.content.res.AssetFileDescriptor;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
-import com.dueeeke.videoplayer.listener.PlayerEventListener;
-
 import java.util.Map;
 
 /**
@@ -151,6 +149,20 @@ public abstract class AbstractPlayer {
      */
     public void setPlayerEventListener(PlayerEventListener playerEventListener) {
         this.mPlayerEventListener = playerEventListener;
+    }
+
+    public interface PlayerEventListener {
+
+        void onError();
+
+        void onCompletion();
+
+        void onInfo(int what, int extra);
+
+        void onPrepared();
+
+        void onVideoSizeChanged(int width, int height);
+
     }
 
 }

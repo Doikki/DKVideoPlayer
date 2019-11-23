@@ -8,7 +8,6 @@ import com.dueeeke.dkplayer.activity.BaseActivity;
 import com.dueeeke.dkplayer.util.cache.ProxyVideoCacheManager;
 import com.dueeeke.dkplayer.widget.component.AdControlView;
 import com.dueeeke.videocontroller.StandardVideoController;
-import com.dueeeke.videoplayer.listener.OnVideoViewStateChangeListener;
 import com.dueeeke.videoplayer.player.VideoView;
 
 /**
@@ -60,12 +59,7 @@ public class ADActivity extends BaseActivity<VideoView> {
         mVideoView.setVideoController(mController);
 
         //监听播放结束
-        mVideoView.addOnVideoViewStateChangeListener(new OnVideoViewStateChangeListener() {
-            @Override
-            public void onPlayerStateChanged(int playerState) {
-
-            }
-
+        mVideoView.addOnStateChangeListener(new VideoView.SimpleOnStateChangeListener() {
             @Override
             public void onPlayStateChanged(int playState) {
                 if (playState == VideoView.STATE_PLAYBACK_COMPLETED) {
