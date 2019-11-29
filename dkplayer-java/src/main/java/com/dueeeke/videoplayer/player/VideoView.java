@@ -124,6 +124,11 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      */
     protected boolean mIsLooping;
 
+    /**
+     * {@link #mPlayerContainer}背景色，默认黑色
+     */
+    private int mPlayerBackgroundColor;
+
     public VideoView(@NonNull Context context) {
         this(context, null);
     }
@@ -148,6 +153,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         mEnableAudioFocus = a.getBoolean(R.styleable.VideoView_enableAudioFocus, mEnableAudioFocus);
         mIsLooping = a.getBoolean(R.styleable.VideoView_looping, false);
         mCurrentScreenScaleType = a.getInt(R.styleable.VideoView_screenScaleType, mCurrentScreenScaleType);
+        mPlayerBackgroundColor = a.getColor(R.styleable.VideoView_playerBackgroundColor, Color.BLACK);
         a.recycle();
 
         initView();
@@ -158,11 +164,18 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      */
     protected void initView() {
         mPlayerContainer = new FrameLayout(getContext());
-        mPlayerContainer.setBackgroundColor(Color.BLACK);
+        mPlayerContainer.setBackgroundColor(mPlayerBackgroundColor);
         LayoutParams params = new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
         this.addView(mPlayerContainer, params);
+    }
+
+    /**
+     * 设置{@link #mPlayerContainer}的背景色
+     */
+    public void setPlayerBackgroundColor(int color) {
+        mPlayerContainer.setBackgroundColor(color);
     }
 
     /**
