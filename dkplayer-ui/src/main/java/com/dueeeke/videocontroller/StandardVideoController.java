@@ -112,11 +112,9 @@ public class StandardVideoController extends GestureVideoController implements V
     @Override
     protected void onLockStateChanged(boolean isLocked) {
         if (isLocked) {
-            setGestureEnabled(false);
             mLockButton.setSelected(true);
             Toast.makeText(getContext(), R.string.dkplayer_locked, Toast.LENGTH_SHORT).show();
         } else {
-            setGestureEnabled(true);
             mLockButton.setSelected(false);
             Toast.makeText(getContext(), R.string.dkplayer_unlocked, Toast.LENGTH_SHORT).show();
         }

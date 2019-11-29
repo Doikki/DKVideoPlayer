@@ -96,6 +96,8 @@ public class PlayerActivity extends DebugActivity {
 
             //竖屏也开启手势操作，默认关闭
 //            controller.setEnableInNormal(true);
+            //手势
+//            controller.setGestureEnabled(false);
             //适配刘海屏，默认开启
 //            controller.setAdaptCutout(false);
 

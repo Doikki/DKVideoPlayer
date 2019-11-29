@@ -172,6 +172,7 @@ public abstract class GestureVideoController extends BaseVideoController impleme
         if (!isInPlaybackState() //不处于播放状态
                 || !mIsGestureEnabled //关闭了手势
                 || !mCanSlide //关闭了滑动手势
+                || isLocked() //锁住了屏幕
                 || PlayerUtils.isEdge(getContext(), e1)) //处于屏幕边沿
             return true;
         float deltaX = e1.getX() - e2.getX();
