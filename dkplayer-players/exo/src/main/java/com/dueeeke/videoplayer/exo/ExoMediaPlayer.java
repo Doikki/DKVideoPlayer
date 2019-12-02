@@ -2,8 +2,6 @@ package com.dueeeke.videoplayer.exo;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
@@ -16,15 +14,11 @@ import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.Renderer;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.upstream.Allocator;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.video.VideoListener;
 
@@ -50,8 +44,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
     private RenderersFactory mRenderersFactory;
     private TrackSelector mTrackSelector;
 
-    private Handler mHandler = new Handler(Looper.getMainLooper());
-
     public ExoMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
         mMediaSourceHelper = new ExoMediaSourceHelper(mAppContext);
@@ -59,7 +51,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
 
     @Override
     public void initPlayer() {
-        mLoadControl = new LoadControlWrapper(mLoadControl == null ? new DefaultLoadControl() : mLoadControl);
+        mLoadControl = mLoadControl == null ? new DefaultLoadControl() : mLoadControl;
         mRenderersFactory = mRenderersFactory == null ? new DefaultRenderersFactory(mAppContext) : mRenderersFactory;
         mTrackSelector = mTrackSelector == null ? new DefaultTrackSelector() : mTrackSelector;
         mInternalPlayer = ExoPlayerFactory.newSimpleInstance(mAppContext, mRenderersFactory, mTrackSelector, mLoadControl);
@@ -130,9 +122,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
 
     @Override
     public void reset() {
-        if (mInternalPlayer != null) {
-            mInternalPlayer.stop(true);
-        }
+        release();
+        initPlayer();
     }
 
     @Override
@@ -173,8 +164,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
                 }
             }.start();
         }
-
-        mHandler.removeCallbacksAndMessages(null);
 
         mSurface = null;
         mIsPreparing = false;
@@ -255,14 +244,18 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
         if (mPlayerEventListener == null) return;
-        if (mIsPreparing) return;
         if (mLastReportedPlayWhenReady != playWhenReady || mLastReportedPlaybackState != playbackState) {
             switch (playbackState) {
                 case Player.STATE_BUFFERING:
-                    mPlayerEventListener.onInfo(MEDIA_INFO_BUFFERING_START, getBufferedPercentage());
-                    mIsBuffering = true;
+                    if (!mIsPreparing) {
+                        mPlayerEventListener.onInfo(MEDIA_INFO_BUFFERING_START, getBufferedPercentage());
+                        mIsBuffering = true;
+                    }
                     break;
                 case Player.STATE_READY:
+                    if (mIsPreparing) {
+                        mPlayerEventListener.onPrepared();
+                    }
                     if (mIsBuffering) {
                         mPlayerEventListener.onInfo(MEDIA_INFO_BUFFERING_END, getBufferedPercentage());
                         mIsBuffering = false;
@@ -299,72 +292,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
         if (mPlayerEventListener != null && mIsPreparing) {
             mPlayerEventListener.onInfo(MEDIA_INFO_VIDEO_RENDERING_START, 0);
             mIsPreparing = false;
-        }
-    }
-
-    /**
-     * LoadControl包装类。用来监听onPrepared状态
-     */
-    private class LoadControlWrapper implements LoadControl {
-
-        private LoadControl mLoadControl;
-
-        LoadControlWrapper(LoadControl loadControl) {
-            mLoadControl = loadControl;
-        }
-
-        @Override
-        public void onPrepared() {
-            mLoadControl.onPrepared();
-            //切换到主线程
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (mPlayerEventListener != null) {
-                        mPlayerEventListener.onPrepared();
-                    }
-                }
-            });
-        }
-
-        @Override
-        public void onTracksSelected(Renderer[] renderers, TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-            mLoadControl.onTracksSelected(renderers, trackGroups, trackSelections);
-        }
-
-        @Override
-        public void onStopped() {
-            mLoadControl.onStopped();
-        }
-
-        @Override
-        public void onReleased() {
-            mLoadControl.onReleased();
-        }
-
-        @Override
-        public Allocator getAllocator() {
-            return mLoadControl.getAllocator();
-        }
-
-        @Override
-        public long getBackBufferDurationUs() {
-            return mLoadControl.getBackBufferDurationUs();
-        }
-
-        @Override
-        public boolean retainBackBufferFromKeyframe() {
-            return mLoadControl.retainBackBufferFromKeyframe();
-        }
-
-        @Override
-        public boolean shouldContinueLoading(long bufferedDurationUs, float playbackSpeed) {
-            return mLoadControl.shouldContinueLoading(bufferedDurationUs, playbackSpeed);
-        }
-
-        @Override
-        public boolean shouldStartPlayback(long bufferedDurationUs, float playbackSpeed, boolean rebuffering) {
-            return mLoadControl.shouldStartPlayback(bufferedDurationUs, playbackSpeed, rebuffering);
         }
     }
 }

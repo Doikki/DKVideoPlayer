@@ -174,9 +174,11 @@ public class StandardVideoController extends GestureVideoController implements V
                 break;
             case VideoView.STATE_PLAYING:
                 L.e("STATE_PLAYING");
+                mLoadingProgress.setVisibility(GONE);
                 break;
             case VideoView.STATE_PAUSED:
                 L.e("STATE_PAUSED");
+                mLoadingProgress.setVisibility(GONE);
                 break;
             case VideoView.STATE_PREPARING:
                 L.e("STATE_PREPARING");
