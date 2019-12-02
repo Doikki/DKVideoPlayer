@@ -71,7 +71,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.api.DefinitionPlayerActivity"
+            android:name=".activity.extend.DefinitionPlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
             android:screenOrientation="portrait" />
         <activity

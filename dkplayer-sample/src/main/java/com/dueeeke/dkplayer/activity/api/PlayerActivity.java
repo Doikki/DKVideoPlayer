@@ -96,7 +96,7 @@ public class PlayerActivity extends DebugActivity {
 
             //竖屏也开启手势操作，默认关闭
 //            controller.setEnableInNormal(true);
-            //手势
+            //滑动调节亮度，音量，进度，默认开启
 //            controller.setGestureEnabled(false);
             //适配刘海屏，默认开启
 //            controller.setAdaptCutout(false);
@@ -123,7 +123,7 @@ public class PlayerActivity extends DebugActivity {
         }
     }
 
-    private VideoView.OnStateChangeListener mOnStateChangeListener = new VideoView.OnStateChangeListener() {
+    private VideoView.OnStateChangeListener mOnStateChangeListener = new VideoView.SimpleOnStateChangeListener() {
         @Override
         public void onPlayerStateChanged(int playerState) {
             switch (playerState) {

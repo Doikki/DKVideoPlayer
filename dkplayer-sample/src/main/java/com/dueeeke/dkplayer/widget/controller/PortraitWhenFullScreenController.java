@@ -1,6 +1,5 @@
 package com.dueeeke.dkplayer.widget.controller;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.util.AttributeSet;
@@ -13,13 +12,11 @@ import androidx.annotation.Nullable;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videocontroller.component.VodControlView;
+import com.dueeeke.videoplayer.controller.MediaPlayerControl;
 import com.dueeeke.videoplayer.player.VideoView;
-import com.dueeeke.videoplayer.util.PlayerUtils;
 
 public class PortraitWhenFullScreenController extends StandardVideoController {
 
-    @Nullable
-    private Activity mActivity;
     private View mFullScreen;
 
     public PortraitWhenFullScreenController(@NonNull Context context) {
@@ -32,7 +29,6 @@ public class PortraitWhenFullScreenController extends StandardVideoController {
 
     public PortraitWhenFullScreenController(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mActivity = PlayerUtils.scanForActivity(context);
     }
 
     @Override
@@ -51,6 +47,13 @@ public class PortraitWhenFullScreenController extends StandardVideoController {
     }
 
     @Override
+    public void setMediaPlayer(MediaPlayerControl mediaPlayer) {
+        super.setMediaPlayer(mediaPlayer);
+        //不监听设备方向
+        mOrientationHelper.setOnOrientationChangeListener(null);
+    }
+
+    @Override
     protected void toggleFullScreen() {
         if (mActivity == null) return;
         int o = mActivity.getRequestedOrientation();
@@ -60,6 +63,7 @@ public class PortraitWhenFullScreenController extends StandardVideoController {
             mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
         mFullScreen.setSelected(o != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        adjustView();
     }
 
     @Override
@@ -73,21 +77,27 @@ public class PortraitWhenFullScreenController extends StandardVideoController {
     }
 
     @Override
-    public void setPlayerState(int playerState) {
-        super.setPlayerState(playerState);
-        mOrientationHelper.disable();
-        switch (playerState) {
-            case VideoView.PLAYER_FULL_SCREEN:
-                if (mActivity != null) {
-                    int o = mActivity.getRequestedOrientation();
-                    mFullScreen.setSelected(o == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                    int space = getAdaptCutout() ? (int) PlayerUtils.getStatusBarHeight(getContext()) : 0;
-                    adjustView(o, space);
-                }
-                break;
-            case VideoView.PLAYER_NORMAL:
-                hideInner();
-                break;
+    protected void onPlayerStateChanged(int playerState) {
+        super.onPlayerStateChanged(playerState);
+        if (playerState == VideoView.PLAYER_FULL_SCREEN) {
+            mFullScreen.setSelected(false);
+        } else {
+            hideInner();
+        }
+
+        adjustView();
+
+    }
+
+    private void adjustView() {
+        if (mActivity != null && hasCutout()) {
+            int orientation = mActivity.getRequestedOrientation();
+            int cutoutHeight = getCutoutHeight();
+            if (orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+                setPadding(0, cutoutHeight, 0, 0);
+            } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+                setPadding(cutoutHeight, 0, 0, 0);
+            }
         }
     }
 
@@ -108,16 +118,6 @@ public class PortraitWhenFullScreenController extends StandardVideoController {
         } else if (i == R.id.iv_replay) {
             mControlWrapper.replay(true);
             mControlWrapper.startFullScreen();
-        }
-    }
-
-    @Override
-    protected void adjustView(int orientation, int space) {
-        super.adjustView(orientation, space);
-        if (orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-            setPadding(0, space, 0, 0);
-        } else {
-            setPadding(0, 0, 0, 0);
         }
     }
 }

@@ -100,26 +100,22 @@ public class TitleView extends FrameLayout implements IControlComponent {
     }
 
     @Override
-    public void show(Animation showAnim) {
-        //只在全屏时才显示
-        if (mControlWrapper.isFullScreen()) {
+    public void onVisibilityChanged(boolean isVisible, Animation anim) {
+        //只在全屏时才有效
+        if (!mControlWrapper.isFullScreen()) return;
+        if (isVisible) {
             if (getVisibility() == GONE) {
                 mSysTime.setText(PlayerUtils.getCurrentSystemTime());
                 setVisibility(VISIBLE);
-                if (showAnim != null) {
-                    startAnimation(showAnim);
+                if (anim != null) {
+                    startAnimation(anim);
                 }
             }
-        }
-    }
-
-    @Override
-    public void hide(Animation hideAnim) {
-        if (mControlWrapper.isFullScreen()) {
+        } else {
             if (getVisibility() == VISIBLE) {
-                if (hideAnim != null) {
+                if (anim != null) {
                     setVisibility(GONE);
-                    startAnimation(hideAnim);
+                    startAnimation(anim);
                 }
             }
         }
@@ -151,16 +147,18 @@ public class TitleView extends FrameLayout implements IControlComponent {
             setVisibility(GONE);
             mTitle.setNeedFocus(false);
         }
-    }
 
-    @Override
-    public void adjustView(int orientation, int space) {
-        if (orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-            mTitleContainer.setPadding(0, 0, 0, 0);
-        } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-            mTitleContainer.setPadding(space, 0, 0, 0);
-        } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
-            mTitleContainer.setPadding(0, 0, space, 0);
+        Activity activity = PlayerUtils.scanForActivity(getContext());
+        if (activity != null && mControlWrapper.hasCutout()) {
+            int orientation = activity.getRequestedOrientation();
+            int cutoutHeight = mControlWrapper.getCutoutHeight();
+            if (orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+                mTitleContainer.setPadding(0, 0, 0, 0);
+            } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+                mTitleContainer.setPadding(cutoutHeight, 0, 0, 0);
+            } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
+                mTitleContainer.setPadding(0, 0, cutoutHeight, 0);
+            }
         }
     }
 

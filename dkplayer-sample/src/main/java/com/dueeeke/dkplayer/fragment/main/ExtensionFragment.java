@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.view.View;
 
 import com.dueeeke.dkplayer.R;
-import com.dueeeke.dkplayer.activity.api.DefinitionPlayerActivity;
+import com.dueeeke.dkplayer.activity.extend.DefinitionPlayerActivity;
 import com.dueeeke.dkplayer.activity.extend.ADActivity;
 import com.dueeeke.dkplayer.activity.extend.CacheActivity;
 import com.dueeeke.dkplayer.activity.extend.CustomExoPlayerActivity;

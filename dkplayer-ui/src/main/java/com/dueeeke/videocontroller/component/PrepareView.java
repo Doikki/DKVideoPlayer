@@ -81,12 +81,7 @@ public class PrepareView extends FrameLayout implements IControlComponent {
     }
 
     @Override
-    public void show(Animation showAnim) {
-
-    }
-
-    @Override
-    public void hide(Animation hideAnim) {
+    public void onVisibilityChanged(boolean isVisible, Animation anim) {
 
     }
 
@@ -126,11 +121,6 @@ public class PrepareView extends FrameLayout implements IControlComponent {
 
     @Override
     public void onPlayerStateChanged(int playerState) {
-
-    }
-
-    @Override
-    public void adjustView(int orientation, int space) {
 
     }
 

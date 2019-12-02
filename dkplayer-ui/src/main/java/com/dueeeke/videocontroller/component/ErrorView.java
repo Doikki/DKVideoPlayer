@@ -64,12 +64,7 @@ public class ErrorView extends LinearLayout implements IControlComponent {
     }
 
     @Override
-    public void show(Animation showAnim) {
-
-    }
-
-    @Override
-    public void hide(Animation hideAnim) {
+    public void onVisibilityChanged(boolean isVisible, Animation anim) {
 
     }
 
@@ -85,11 +80,6 @@ public class ErrorView extends LinearLayout implements IControlComponent {
 
     @Override
     public void onPlayerStateChanged(int playerState) {
-
-    }
-
-    @Override
-    public void adjustView(int orientation, int space) {
 
     }
 

@@ -5,6 +5,7 @@ import android.widget.Toast;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.activity.BaseActivity;
+import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.videocontroller.StandardVideoController;
 
 public class PadActivity extends BaseActivity {
@@ -21,7 +22,7 @@ public class PadActivity extends BaseActivity {
         super.initView();
         mVideoView = findViewById(R.id.video_view);
 
-        mVideoView.setUrl("http://vfx.mtime.cn/Video/2019/03/12/mp4/190312143927981075.mp4");
+        mVideoView.setUrl(DataUtil.SAMPLE_URL);
 
         mController = new StandardVideoController(this);
         mController.addDefaultControlComponent("pad", false);

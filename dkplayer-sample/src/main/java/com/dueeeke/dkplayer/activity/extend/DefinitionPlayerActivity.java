@@ -1,4 +1,4 @@
-package com.dueeeke.dkplayer.activity.api;
+package com.dueeeke.dkplayer.activity.extend;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.activity.BaseActivity;
@@ -9,8 +9,6 @@ import com.dueeeke.videocontroller.component.ErrorView;
 import com.dueeeke.videocontroller.component.GestureView;
 import com.dueeeke.videocontroller.component.PrepareView;
 import com.dueeeke.videocontroller.component.TitleView;
-import com.dueeeke.videoplayer.player.AndroidMediaPlayer;
-import com.dueeeke.videoplayer.player.AndroidMediaPlayerFactory;
 import com.dueeeke.videoplayer.player.VideoView;
 
 import java.util.LinkedHashMap;
@@ -20,7 +18,7 @@ import java.util.LinkedHashMap;
  * Created by dueeeke on 2017/4/7.
  */
 
-public class DefinitionPlayerActivity extends BaseActivity<VideoView<AndroidMediaPlayer>> implements DefinitionControlView.OnRateSwitchListener {
+public class DefinitionPlayerActivity extends BaseActivity<VideoView> implements DefinitionControlView.OnRateSwitchListener {
 
     private StandardVideoController mController;
     private DefinitionControlView mDefinitionControlView;
@@ -44,11 +42,8 @@ public class DefinitionPlayerActivity extends BaseActivity<VideoView<AndroidMedi
         addControlComponents();
 
         LinkedHashMap<String, String> videos = new LinkedHashMap<>();
-        videos.put("标清", "http://mov.bn.netease.com/open-movie/nos/flv/2017/07/24/SCP786QON_sd.flv");
-        videos.put("高清", "http://mov.bn.netease.com/open-movie/nos/flv/2017/07/24/SCP786QON_hd.flv");
-        videos.put("超清", "http://mov.bn.netease.com/open-movie/nos/flv/2017/07/24/SCP786QON_shd.flv");
-        //由于exoplayer不支持flv seek操作，现切换成MediaPlayer来演示功能
-        mVideoView.setPlayerFactory(AndroidMediaPlayerFactory.create());
+        videos.put("标清", "http://34.92.158.191:8080/test-sd.mp4");
+        videos.put("高清", "http://34.92.158.191:8080/test-hd.mp4");
         mDefinitionControlView.setData(videos);
         mVideoView.setVideoController(mController);
         mVideoView.setUrl(videos.get("标清"));//默认播放标清

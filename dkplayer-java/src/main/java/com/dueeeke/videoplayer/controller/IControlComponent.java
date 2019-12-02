@@ -11,15 +11,11 @@ public interface IControlComponent {
 
     View getView();
 
-    void show(Animation showAnim);
-
-    void hide(Animation hideAnim);
+    void onVisibilityChanged(boolean isVisible, Animation anim);
 
     void onPlayStateChanged(int playState);
 
     void onPlayerStateChanged(int playerState);
-
-    void adjustView(int orientation, int space);
 
     void setProgress(int duration, int position);
 

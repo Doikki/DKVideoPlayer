@@ -83,9 +83,11 @@ public class DefinitionControlView extends VodControlView {
     }
 
     @Override
-    public void hide(Animation hideAnim) {
-        super.hide(hideAnim);
-        mPopupWindow.dismiss();
+    public void onVisibilityChanged(boolean isVisible, Animation anim) {
+        super.onVisibilityChanged(isVisible, anim);
+        if (!isVisible) {
+            mPopupWindow.dismiss();
+        }
     }
 
     @Override
@@ -134,7 +136,6 @@ public class DefinitionControlView extends VodControlView {
             mDefinition.setText(mRateStr.get(index));
             switchDefinition(mRateStr.get(index));
             mPopupWindow.dismiss();
-            hide(null);
             mCurIndex = index;
         }
     };

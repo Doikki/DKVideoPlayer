@@ -5,6 +5,7 @@ import android.view.View;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.activity.BaseActivity;
+import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.dkplayer.widget.videoview.DanmukuVideoView;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.player.VideoView;
@@ -15,9 +16,6 @@ import com.dueeeke.videoplayer.player.VideoView;
  */
 
 public class DanmakuActivity extends BaseActivity<DanmukuVideoView> {
-
-    private static final String URL_VOD = "http://vfx.mtime.cn/Video/2019/03/12/mp4/190312143927981075.mp4";
-    //    private static final String URL_VOD = "http://uploads.cutv.com:8088/video/data/201703/10/encode_file/515b6a95601ba6b39620358f2677a17358c2472411d53.mp4";
 
     @Override
     protected int getLayoutResId() {
@@ -36,7 +34,7 @@ public class DanmakuActivity extends BaseActivity<DanmukuVideoView> {
         StandardVideoController controller = new StandardVideoController(this);
         controller.addDefaultControlComponent(getString(R.string.str_danmu), false);
         mVideoView.setVideoController(controller);
-        mVideoView.setUrl(URL_VOD);
+        mVideoView.setUrl(DataUtil.SAMPLE_URL);
         mVideoView.start();
 
         mVideoView.addOnStateChangeListener(new VideoView.SimpleOnStateChangeListener() {

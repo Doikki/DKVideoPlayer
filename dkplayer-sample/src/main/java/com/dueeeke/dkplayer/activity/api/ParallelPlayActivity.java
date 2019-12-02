@@ -7,6 +7,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.dueeeke.dkplayer.R;
+import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.player.VideoView;
 
@@ -18,7 +19,8 @@ import java.util.List;
  */
 public class ParallelPlayActivity extends AppCompatActivity {
 
-    private static final String VOD_URL = "http://vfx.mtime.cn/Video/2019/03/18/mp4/190318231014076505.mp4";
+    private static final String VOD_URL_1 = "http://vfx.mtime.cn/Video/2019/03/18/mp4/190318231014076505.mp4";
+    private static final String VOD_URL_2 = DataUtil.SAMPLE_URL;
 
     private List<VideoView> mVideoViews = new ArrayList<>();
 
@@ -34,7 +36,7 @@ public class ParallelPlayActivity extends AppCompatActivity {
 
 
         VideoView player1 = findViewById(R.id.player_1);
-        player1.setUrl(VOD_URL);
+        player1.setUrl(VOD_URL_1);
 
         //必须设置
         player1.setEnableAudioFocus(false);
@@ -44,7 +46,7 @@ public class ParallelPlayActivity extends AppCompatActivity {
         mVideoViews.add(player1);
 
         VideoView player2 = findViewById(R.id.player_2);
-        player2.setUrl(VOD_URL);
+        player2.setUrl(VOD_URL_2);
         //必须设置
         player2.setEnableAudioFocus(false);
         StandardVideoController controller2 = new StandardVideoController(this);

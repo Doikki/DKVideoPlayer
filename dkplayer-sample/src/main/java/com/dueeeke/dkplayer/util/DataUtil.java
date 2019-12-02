@@ -13,6 +13,8 @@ import java.util.List;
 
 public class DataUtil {
 
+    public static final String SAMPLE_URL = "http://34.92.158.191:8080/test-hd.mp4";
+
 //    public static List<VideoBean> getVideoList() {
 //        List<VideoBean> videoList = new ArrayList<>();
 //        videoList.add(new VideoBean("七舅脑爷| 脑爷烧脑三重奏，谁动了我的蛋糕",

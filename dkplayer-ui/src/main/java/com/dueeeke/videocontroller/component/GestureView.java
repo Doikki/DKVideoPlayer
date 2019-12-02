@@ -69,6 +69,11 @@ public class GestureView extends FrameLayout implements IGestureComponent {
     }
 
     @Override
+    public void onVisibilityChanged(boolean isVisible, Animation anim) {
+
+    }
+
+    @Override
     public void onPlayerStateChanged(int playerState) {
 
     }
@@ -128,16 +133,6 @@ public class GestureView extends FrameLayout implements IGestureComponent {
     }
 
     @Override
-    public void show(Animation showAnim) {
-
-    }
-
-    @Override
-    public void hide(Animation hideAnim) {
-
-    }
-
-    @Override
     public void onPlayStateChanged(int playState) {
         if (playState == VideoView.STATE_IDLE
                 || playState == VideoView.STATE_START_ABORT
@@ -149,11 +144,6 @@ public class GestureView extends FrameLayout implements IGestureComponent {
         } else {
             setVisibility(VISIBLE);
         }
-    }
-
-    @Override
-    public void adjustView(int orientation, int space) {
-
     }
 
     @Override

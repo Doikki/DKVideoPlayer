@@ -23,6 +23,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.dueeeke.dkplayer.R;
+import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.player.VideoView;
 
@@ -98,7 +99,7 @@ public class AndroidOPiPActivity extends AppCompatActivity {
         mWidthPixels = getResources().getDisplayMetrics().widthPixels;
         mVideoView.setLayoutParams(new LinearLayout.LayoutParams(mWidthPixels, mWidthPixels * 9 / 16 + 1));
 
-        mVideoView.setUrl("http://vfx.mtime.cn/Video/2019/03/12/mp4/190312143927981075.mp4");
+        mVideoView.setUrl(DataUtil.SAMPLE_URL);
         mController = new StandardVideoController(this);
         mController.addDefaultControlComponent(getString(R.string.str_pip_android_o), false);
         mVideoView.setVideoController(mController);

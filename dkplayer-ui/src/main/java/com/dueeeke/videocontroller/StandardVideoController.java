@@ -29,7 +29,7 @@ import com.dueeeke.videoplayer.util.PlayerUtils;
 
 /**
  * 直播/点播控制器
- * Created by Devlin_n on 2017/4/7.
+ * Created by dueeeke on 2017/4/7.
  */
 
 public class StandardVideoController extends GestureVideoController implements View.OnClickListener {
@@ -65,7 +65,7 @@ public class StandardVideoController extends GestureVideoController implements V
 
     /**
      * 快速添加各个组件
-     * @param title 标题
+     * @param title  标题
      * @param isLive 是否为直播
      */
     public void addDefaultControlComponent(String title, boolean isLive) {
@@ -83,22 +83,6 @@ public class StandardVideoController extends GestureVideoController implements V
         }
         addControlComponent(new GestureView(getContext()));
         setCanChangePosition(!isLive);
-    }
-
-    @Override
-    protected void adjustView(int orientation, int space) {
-        super.adjustView(orientation, space);
-        int dp24 = PlayerUtils.dp2px(getContext(), 24);
-        if (orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-            FrameLayout.LayoutParams lblp = (LayoutParams) mLockButton.getLayoutParams();
-            lblp.setMargins(dp24, 0, dp24, 0);
-        } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-            FrameLayout.LayoutParams layoutParams = (LayoutParams) mLockButton.getLayoutParams();
-            layoutParams.setMargins(dp24 + space, 0, dp24 + space, 0);
-        } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
-            FrameLayout.LayoutParams layoutParams = (LayoutParams) mLockButton.getLayoutParams();
-            layoutParams.setMargins(dp24, 0, dp24, 0);
-        }
     }
 
     @Override
@@ -121,32 +105,27 @@ public class StandardVideoController extends GestureVideoController implements V
     }
 
     @Override
-    protected void show(Animation showAnim) {
-        super.show(showAnim);
+    protected void onVisibilityChanged(boolean isVisible, Animation anim) {
         if (mControlWrapper.isFullScreen()) {
-            if (mLockButton.getVisibility() == GONE) {
-                mLockButton.setVisibility(VISIBLE);
-                if (showAnim != null) {
-                    mLockButton.startAnimation(showAnim);
+            if (isVisible) {
+                if (mLockButton.getVisibility() == GONE) {
+                    mLockButton.setVisibility(VISIBLE);
+                    if (anim != null) {
+                        mLockButton.startAnimation(anim);
+                    }
+                }
+            } else {
+                mLockButton.setVisibility(GONE);
+                if (anim != null) {
+                    mLockButton.startAnimation(anim);
                 }
             }
         }
     }
 
     @Override
-    protected void hide(Animation hideAnim) {
-        super.hide(hideAnim);
-        if (mControlWrapper.isFullScreen()) {
-            mLockButton.setVisibility(GONE);
-            if (hideAnim != null) {
-                mLockButton.startAnimation(hideAnim);
-            }
-        }
-    }
-
-    @Override
-    public void setPlayerState(int playerState) {
-        super.setPlayerState(playerState);
+    protected void onPlayerStateChanged(int playerState) {
+        super.onPlayerStateChanged(playerState);
         switch (playerState) {
             case VideoView.PLAYER_NORMAL:
                 L.e("PLAYER_NORMAL");
@@ -164,11 +143,28 @@ public class StandardVideoController extends GestureVideoController implements V
                 }
                 break;
         }
+
+        if (mActivity != null && hasCutout()) {
+            int orientation = mActivity.getRequestedOrientation();
+            int dp24 = PlayerUtils.dp2px(getContext(), 24);
+            int cutoutHeight = getCutoutHeight();
+            if (orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+                FrameLayout.LayoutParams lblp = (LayoutParams) mLockButton.getLayoutParams();
+                lblp.setMargins(dp24, 0, dp24, 0);
+            } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+                FrameLayout.LayoutParams layoutParams = (LayoutParams) mLockButton.getLayoutParams();
+                layoutParams.setMargins(dp24 + cutoutHeight, 0, dp24 + cutoutHeight, 0);
+            } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
+                FrameLayout.LayoutParams layoutParams = (LayoutParams) mLockButton.getLayoutParams();
+                layoutParams.setMargins(dp24, 0, dp24, 0);
+            }
+        }
+
     }
 
     @Override
-    public void setPlayState(int playState) {
-        super.setPlayState(playState);
+    protected void onPlayStateChanged(int playState) {
+        super.onPlayStateChanged(playState);
         switch (playState) {
             //调用release方法会回到此状态
             case VideoView.STATE_IDLE:

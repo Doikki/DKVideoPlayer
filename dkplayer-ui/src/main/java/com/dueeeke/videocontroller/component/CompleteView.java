@@ -76,12 +76,7 @@ public class CompleteView extends FrameLayout implements IControlComponent {
     }
 
     @Override
-    public void show(Animation showAnim) {
-
-    }
-
-    @Override
-    public void hide(Animation hideAnim) {
+    public void onVisibilityChanged(boolean isVisible, Animation anim) {
 
     }
 
@@ -103,19 +98,21 @@ public class CompleteView extends FrameLayout implements IControlComponent {
         } else if (playerState == VideoView.PLAYER_NORMAL) {
             mStopFullscreen.setVisibility(GONE);
         }
-    }
 
-    @Override
-    public void adjustView(int orientation, int space) {
-        if (orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-            LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
-            sflp.setMargins(0, 0, 0, 0);
-        } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-            LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
-            sflp.setMargins(space, 0, 0, 0);
-        } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
-            LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
-            sflp.setMargins(0, 0, 0, 0);
+        Activity activity = PlayerUtils.scanForActivity(getContext());
+        if (activity != null && mControlWrapper.hasCutout()) {
+            int orientation = activity.getRequestedOrientation();
+            int cutoutHeight = mControlWrapper.getCutoutHeight();
+            if (orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+                LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
+                sflp.setMargins(0, 0, 0, 0);
+            } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+                LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
+                sflp.setMargins(cutoutHeight, 0, 0, 0);
+            } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
+                LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
+                sflp.setMargins(0, 0, 0, 0);
+            }
         }
     }
 

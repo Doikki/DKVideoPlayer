@@ -310,7 +310,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         if (mAssetFileDescriptor != null) {
             mMediaPlayer.setDataSource(mAssetFileDescriptor);
             return true;
-        } if (!TextUtils.isEmpty(mUrl)) {
+        } else if (!TextUtils.isEmpty(mUrl)) {
             mMediaPlayer.setDataSource(mUrl, mHeaders);
             return true;
         }
@@ -334,9 +334,10 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
                 && mMediaPlayer.isPlaying()) {
             mMediaPlayer.pause();
             setPlayState(STATE_PAUSED);
-            setKeepScreenOn(false);
-            if (mAudioFocusHelper != null)
+            if (mAudioFocusHelper != null) {
                 mAudioFocusHelper.abandonFocus();
+            }
+            setKeepScreenOn(false);
         }
     }
 
@@ -348,8 +349,9 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
                 && !mMediaPlayer.isPlaying()) {
             mMediaPlayer.start();
             setPlayState(STATE_PLAYING);
-            if (mAudioFocusHelper != null)
+            if (mAudioFocusHelper != null) {
                 mAudioFocusHelper.requestFocus();
+            }
             setKeepScreenOn(true);
         }
     }
@@ -535,13 +537,13 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      */
     @Override
     public void onCompletion() {
-        setPlayState(STATE_PLAYBACK_COMPLETED);
         setKeepScreenOn(false);
         mCurrentPosition = 0;
         if (mProgressManager != null) {
             //播放完成，清除进度
             mProgressManager.saveProgress(mUrl, 0);
         }
+        setPlayState(STATE_PLAYBACK_COMPLETED);
     }
 
     @Override

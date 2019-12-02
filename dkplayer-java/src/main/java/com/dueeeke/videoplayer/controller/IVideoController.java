@@ -47,4 +47,14 @@ public interface IVideoController {
      * 隐藏控制视图
      */
     void showInner();
+
+    /**
+     * 是否需要适配刘海
+     */
+    boolean hasCutout();
+
+    /**
+     * 获取刘海的高度
+     */
+    int getCutoutHeight();
 }

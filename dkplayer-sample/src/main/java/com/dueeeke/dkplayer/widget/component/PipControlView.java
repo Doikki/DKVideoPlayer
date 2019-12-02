@@ -77,19 +77,18 @@ public class PipControlView extends FrameLayout implements IControlComponent, Vi
     }
 
     @Override
-    public void show(Animation showAnim) {
-        if (mPlay.getVisibility() == VISIBLE)
-            return;
-        mPlay.setVisibility(VISIBLE);
-        mPlay.startAnimation(showAnim);
-    }
-
-    @Override
-    public void hide(Animation hideAnim) {
-        if (mPlay.getVisibility() == GONE)
-            return;
-        mPlay.setVisibility(GONE);
-        mPlay.startAnimation(hideAnim);
+    public void onVisibilityChanged(boolean isVisible, Animation anim) {
+        if (isVisible) {
+            if (mPlay.getVisibility() == VISIBLE)
+                return;
+            mPlay.setVisibility(VISIBLE);
+            mPlay.startAnimation(anim);
+        } else {
+            if (mPlay.getVisibility() == GONE)
+                return;
+            mPlay.setVisibility(GONE);
+            mPlay.startAnimation(anim);
+        }
     }
 
     @Override
@@ -140,11 +139,6 @@ public class PipControlView extends FrameLayout implements IControlComponent, Vi
 
     @Override
     public void onPlayerStateChanged(int playerState) {
-
-    }
-
-    @Override
-    public void adjustView(int orientation, int space) {
 
     }
 

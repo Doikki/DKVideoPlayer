@@ -5,6 +5,7 @@ import android.widget.Toast;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.activity.BaseActivity;
+import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.dkplayer.util.cache.ProxyVideoCacheManager;
 import com.dueeeke.dkplayer.widget.component.AdControlView;
 import com.dueeeke.videocontroller.StandardVideoController;
@@ -17,9 +18,6 @@ import com.dueeeke.videoplayer.player.VideoView;
 
 public class ADActivity extends BaseActivity<VideoView> {
 
-    private static final String URL_VOD = "http://vfx.mtime.cn/Video/2019/03/12/mp4/190312143927981075.mp4";
-//    private static final String URL_VOD = "http://baobab.wdjcdn.com/14564977406580.mp4";
-    //    private static final String URL_VOD = "http://uploads.cutv.com:8088/video/data/201703/10/encode_file/515b6a95601ba6b39620358f2677a17358c2472411d53.mp4";
     private static final String URL_AD = "https://gslb.miaopai.com/stream/IR3oMYDhrON5huCmf7sHCfnU5YKEkgO2.mp4";
 
     private StandardVideoController mController;
@@ -79,7 +77,7 @@ public class ADActivity extends BaseActivity<VideoView> {
         mController.removeAllControlComponent();
         mController.addDefaultControlComponent("正片", false);
         //重新设置数据
-        mVideoView.setUrl(URL_VOD);
+        mVideoView.setUrl(DataUtil.SAMPLE_URL);
         //开始播放
         mVideoView.start();
     }

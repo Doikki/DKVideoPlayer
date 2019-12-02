@@ -8,11 +8,13 @@ import com.dueeeke.dkplayer.activity.api.ParallelPlayActivity;
 import com.dueeeke.dkplayer.activity.api.PlayRawAssetsActivity;
 import com.dueeeke.dkplayer.activity.api.PlayerActivity;
 import com.dueeeke.dkplayer.fragment.BaseFragment;
+import com.dueeeke.dkplayer.util.DataUtil;
 
 public class ApiFragment extends BaseFragment implements View.OnClickListener {
 
     //    private static final String VOD_URL = "http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv";
-    private static final String VOD_URL = "http://vfx.mtime.cn/Video/2019/03/18/mp4/190318231014076505.mp4";
+//    private static final String VOD_URL = "http://vfx.mtime.cn/Video/2019/03/18/mp4/190318231014076505.mp4";
+    private static final String VOD_URL = DataUtil.SAMPLE_URL;
     //    private static final String VOD_URL = "http://155.138.214.164/test/1.mp4";
 //    private static final String VOD_URL = "http://youku163.zuida-bofang.com/20190113/24356_0cbc9d8f/index.m3u8";
 //    private static final String VOD_URL = "http://sohu.zuida-163sina.com/20190303/ZRkvZAiK/index.m3u8";

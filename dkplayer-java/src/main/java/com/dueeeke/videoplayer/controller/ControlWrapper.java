@@ -239,6 +239,16 @@ public class ControlWrapper implements MediaPlayerControl, IVideoController {
         mController.showInner();
     }
 
+    @Override
+    public boolean hasCutout() {
+        return mController.hasCutout();
+    }
+
+    @Override
+    public int getCutoutHeight() {
+        return mController.getCutoutHeight();
+    }
+
     /**
      * 切换锁定状态
      */

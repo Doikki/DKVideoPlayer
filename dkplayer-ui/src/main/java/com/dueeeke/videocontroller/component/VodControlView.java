@@ -94,27 +94,26 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
     }
 
     @Override
-    public void show(Animation showAnim) {
-        mBottomContainer.setVisibility(VISIBLE);
-        if (showAnim != null) {
-            mBottomContainer.startAnimation(showAnim);
-        }
-        if (mIsShowBottomProgress) {
-            mBottomProgress.setVisibility(GONE);
-        }
-    }
-
-    @Override
-    public void hide(Animation hideAnim) {
-        mBottomContainer.setVisibility(GONE);
-        if (hideAnim != null) {
-            mBottomContainer.startAnimation(hideAnim);
-        }
-        if (mIsShowBottomProgress) {
-            mBottomProgress.setVisibility(VISIBLE);
-            AlphaAnimation animation = new AlphaAnimation(0f, 1f);
-            animation.setDuration(300);
-            mBottomProgress.startAnimation(animation);
+    public void onVisibilityChanged(boolean isVisible, Animation anim) {
+        if (isVisible) {
+            mBottomContainer.setVisibility(VISIBLE);
+            if (anim != null) {
+                mBottomContainer.startAnimation(anim);
+            }
+            if (mIsShowBottomProgress) {
+                mBottomProgress.setVisibility(GONE);
+            }
+        } else {
+            mBottomContainer.setVisibility(GONE);
+            if (anim != null) {
+                mBottomContainer.startAnimation(anim);
+            }
+            if (mIsShowBottomProgress) {
+                mBottomProgress.setVisibility(VISIBLE);
+                AlphaAnimation animation = new AlphaAnimation(0f, 1f);
+                animation.setDuration(300);
+                mBottomProgress.startAnimation(animation);
+            }
         }
     }
 
@@ -170,19 +169,21 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
                 mFullScreen.setSelected(true);
                 break;
         }
-    }
 
-    @Override
-    public void adjustView(int orientation, int space) {
-        if (orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-            mBottomContainer.setPadding(0, 0, 0, 0);
-            mBottomProgress.setPadding(0, 0, 0, 0);
-        } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-            mBottomContainer.setPadding(space, 0, 0, 0);
-            mBottomProgress.setPadding(space, 0, 0, 0);
-        } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
-            mBottomContainer.setPadding(0, 0, space, 0);
-            mBottomProgress.setPadding(0, 0, space, 0);
+        Activity activity = PlayerUtils.scanForActivity(getContext());
+        if (activity != null && mControlWrapper.hasCutout()) {
+            int orientation = activity.getRequestedOrientation();
+            int cutoutHeight = mControlWrapper.getCutoutHeight();
+            if (orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+                mBottomContainer.setPadding(0, 0, 0, 0);
+                mBottomProgress.setPadding(0, 0, 0, 0);
+            } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+                mBottomContainer.setPadding(cutoutHeight, 0, 0, 0);
+                mBottomProgress.setPadding(cutoutHeight, 0, 0, 0);
+            } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
+                mBottomContainer.setPadding(0, 0, cutoutHeight, 0);
+                mBottomProgress.setPadding(0, 0, cutoutHeight, 0);
+            }
         }
     }
 
@@ -219,11 +220,7 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
 
     @Override
     public void onLockStateChanged(boolean isLocked) {
-        if (isLocked) {
-            hide(null);
-        } else {
-            show(null);
-        }
+        onVisibilityChanged(!isLocked, null);
     }
 
     @Override

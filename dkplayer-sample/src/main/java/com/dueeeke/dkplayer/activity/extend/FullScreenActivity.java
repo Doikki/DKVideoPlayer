@@ -7,6 +7,7 @@ import android.widget.LinearLayout;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.activity.BaseActivity;
+import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videocontroller.component.CompleteView;
 import com.dueeeke.videocontroller.component.ErrorView;
@@ -42,7 +43,7 @@ public class FullScreenActivity extends BaseActivity<VideoView> {
     protected void initView() {
         super.initView();
         mVideoView.startFullScreen();
-        mVideoView.setUrl("http://vfx.mtime.cn/Video/2019/03/12/mp4/190312143927981075.mp4");
+        mVideoView.setUrl(DataUtil.SAMPLE_URL);
         mController = new StandardVideoController(this);
         mController.addControlComponent(new CompleteView(this));
         mController.addControlComponent(new ErrorView(this));

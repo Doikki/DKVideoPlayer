@@ -67,21 +67,20 @@ public class LiveControlView extends FrameLayout implements IControlComponent, V
     }
 
     @Override
-    public void show(Animation showAnim) {
-        if (getVisibility() == GONE) {
-            setVisibility(VISIBLE);
-            if (showAnim != null) {
-                startAnimation(showAnim);
+    public void onVisibilityChanged(boolean isVisible, Animation anim) {
+        if (isVisible) {
+            if (getVisibility() == GONE) {
+                setVisibility(VISIBLE);
+                if (anim != null) {
+                    startAnimation(anim);
+                }
             }
-        }
-    }
-
-    @Override
-    public void hide(Animation hideAnim) {
-        if (getVisibility() == VISIBLE) {
-            setVisibility(GONE);
-            if (hideAnim != null) {
-                startAnimation(hideAnim);
+        } else {
+            if (getVisibility() == VISIBLE) {
+                setVisibility(GONE);
+                if (anim != null) {
+                    startAnimation(anim);
+                }
             }
         }
     }
@@ -116,16 +115,18 @@ public class LiveControlView extends FrameLayout implements IControlComponent, V
                 mFullScreen.setSelected(true);
                 break;
         }
-    }
 
-    @Override
-    public void adjustView(int orientation, int space) {
-        if (orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-            mBottomContainer.setPadding(0, 0, 0, 0);
-        } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-            mBottomContainer.setPadding(space, 0, 0, 0);
-        } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
-            mBottomContainer.setPadding(0, 0, space, 0);
+        Activity activity = PlayerUtils.scanForActivity(getContext());
+        if (activity != null && mControlWrapper.hasCutout()) {
+            int orientation = activity.getRequestedOrientation();
+            int cutoutHeight = mControlWrapper.getCutoutHeight();
+            if (orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+                mBottomContainer.setPadding(0, 0, 0, 0);
+            } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+                mBottomContainer.setPadding(cutoutHeight, 0, 0, 0);
+            } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
+                mBottomContainer.setPadding(0, 0, cutoutHeight, 0);
+            }
         }
     }
 
@@ -136,11 +137,7 @@ public class LiveControlView extends FrameLayout implements IControlComponent, V
 
     @Override
     public void onLockStateChanged(boolean isLocked) {
-        if (isLocked) {
-            hide(null);
-        } else {
-            show(null);
-        }
+        onVisibilityChanged(!isLocked, null);
     }
 
     @Override

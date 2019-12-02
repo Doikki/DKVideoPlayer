@@ -3,13 +3,12 @@ package com.dueeeke.dkplayer.activity.extend;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.activity.BaseActivity;
+import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.dkplayer.util.cache.ProxyVideoCacheManager;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.player.VideoView;
 
 public class CacheActivity extends BaseActivity<VideoView> {
-
-    private static final String URL = "https://vfx.mtime.cn/Video/2019/02/04/mp4/190204084208765161.mp4";
 
     @Override
     protected int getLayoutResId() {
@@ -26,7 +25,7 @@ public class CacheActivity extends BaseActivity<VideoView> {
         super.initView();
         mVideoView = findViewById(R.id.video_view);
         HttpProxyCacheServer cacheServer = ProxyVideoCacheManager.getProxy(this);
-        String proxyUrl = cacheServer.getProxyUrl(URL);
+        String proxyUrl = cacheServer.getProxyUrl(DataUtil.SAMPLE_URL);
         mVideoView.setUrl(proxyUrl);
         StandardVideoController controller = new StandardVideoController(this);
         controller.addDefaultControlComponent(getString(R.string.str_cache), false);

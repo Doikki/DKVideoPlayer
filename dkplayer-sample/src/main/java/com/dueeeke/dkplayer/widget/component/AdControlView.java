@@ -25,7 +25,7 @@ public class AdControlView extends FrameLayout implements IControlComponent, Vie
     protected ImageView mBack, mVolume, mFullScreen, mPlayButton;
     protected AdControlListener mListener;
 
-    private ControlWrapper mMediaPlayer;
+    private ControlWrapper mControlWrapper;
 
     public AdControlView(@NonNull Context context) {
         super(context);
@@ -65,7 +65,7 @@ public class AdControlView extends FrameLayout implements IControlComponent, Vie
 
     @Override
     public void attach(@NonNull ControlWrapper controlWrapper) {
-        mMediaPlayer = controlWrapper;
+        mControlWrapper = controlWrapper;
     }
 
     @Override
@@ -74,12 +74,7 @@ public class AdControlView extends FrameLayout implements IControlComponent, Vie
     }
 
     @Override
-    public void show(Animation showAnim) {
-
-    }
-
-    @Override
-    public void hide(Animation hideAnim) {
+    public void onVisibilityChanged(boolean isVisible, Animation anim) {
 
     }
 
@@ -87,7 +82,7 @@ public class AdControlView extends FrameLayout implements IControlComponent, Vie
     public void onPlayStateChanged(int playState) {
         switch (playState) {
             case VideoView.STATE_PLAYING:
-                mMediaPlayer.startProgress();
+                mControlWrapper.startProgress();
                 mPlayButton.setSelected(true);
                 break;
             case VideoView.STATE_PAUSED:
@@ -108,10 +103,7 @@ public class AdControlView extends FrameLayout implements IControlComponent, Vie
                 mFullScreen.setSelected(true);
                 break;
         }
-    }
 
-    @Override
-    public void adjustView(int orientation, int space) {
         //暂未实现全面屏适配逻辑，需要你自己补全
     }
 
@@ -138,13 +130,13 @@ public class AdControlView extends FrameLayout implements IControlComponent, Vie
         } else if (id == R.id.ad_time) {
             if (mListener != null) mListener.onSkipAd();
         } else if (id == R.id.iv_play) {
-            mMediaPlayer.togglePlay();
+            mControlWrapper.togglePlay();
         }
     }
 
     private void doMute() {
-        mMediaPlayer.setMute(!mMediaPlayer.isMute());
-        mVolume.setImageResource(mMediaPlayer.isMute() ? R.drawable.dkplayer_ic_action_volume_up : R.drawable.dkplayer_ic_action_volume_off);
+        mControlWrapper.setMute(!mControlWrapper.isMute());
+        mVolume.setImageResource(mControlWrapper.isMute() ? R.drawable.dkplayer_ic_action_volume_up : R.drawable.dkplayer_ic_action_volume_off);
     }
 
     /**
@@ -152,7 +144,7 @@ public class AdControlView extends FrameLayout implements IControlComponent, Vie
      */
     private void toggleFullScreen() {
         Activity activity = PlayerUtils.scanForActivity(getContext());
-        mMediaPlayer.toggleFullScreen(activity);
+        mControlWrapper.toggleFullScreen(activity);
     }
 
     public void setListener(AdControlListener listener) {
