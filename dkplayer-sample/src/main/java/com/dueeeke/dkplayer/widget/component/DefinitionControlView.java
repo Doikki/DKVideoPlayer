@@ -141,7 +141,7 @@ public class DefinitionControlView extends VodControlView {
     };
 
     private void switchDefinition(String s) {
-        mControlWrapper.hideInner();
+        mControlWrapper.hide();
         mControlWrapper.stopProgress();
         String url = mMultiRateData.get(s);
         if (mOnRateSwitchListener != null)

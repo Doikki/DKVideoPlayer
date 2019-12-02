@@ -40,7 +40,7 @@ public class GestureView extends FrameLayout implements IGestureComponent {
         super(context, attrs, defStyleAttr);
     }
 
-    private ControlWrapper mMediaPlayer;
+    private ControlWrapper mControlWrapper;
 
     private ImageView mIcon;
     private ProgressBar mProgressPercent;
@@ -60,7 +60,7 @@ public class GestureView extends FrameLayout implements IGestureComponent {
 
     @Override
     public void attach(@NonNull ControlWrapper controlWrapper) {
-        mMediaPlayer = controlWrapper;
+        mControlWrapper = controlWrapper;
     }
 
     @Override
@@ -80,7 +80,7 @@ public class GestureView extends FrameLayout implements IGestureComponent {
 
     @Override
     public void onStartSlide() {
-        mMediaPlayer.hideInner();
+        mControlWrapper.hide();
         mCenterContainer.setVisibility(VISIBLE);
         mCenterContainer.setAlpha(1f);
     }

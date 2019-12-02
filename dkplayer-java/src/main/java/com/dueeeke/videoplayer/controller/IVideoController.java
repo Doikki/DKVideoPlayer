@@ -41,12 +41,12 @@ public interface IVideoController {
     /**
      * 显示控制视图
      */
-    void hideInner();
+    void hide();
 
     /**
      * 隐藏控制视图
      */
-    void showInner();
+    void show();
 
     /**
      * 是否需要适配刘海

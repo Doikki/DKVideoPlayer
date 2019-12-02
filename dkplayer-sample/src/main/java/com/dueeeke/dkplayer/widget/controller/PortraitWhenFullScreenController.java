@@ -82,7 +82,7 @@ public class PortraitWhenFullScreenController extends StandardVideoController {
         if (playerState == VideoView.PLAYER_FULL_SCREEN) {
             mFullScreen.setSelected(false);
         } else {
-            hideInner();
+            hide();
         }
 
         adjustView();

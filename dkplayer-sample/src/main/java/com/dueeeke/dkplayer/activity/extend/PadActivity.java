@@ -54,7 +54,7 @@ public class PadActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         if (mController.isLocked()) {
-            mController.showInner();
+            mController.show();
             Toast.makeText(this, R.string.dkplayer_lock_tip, Toast.LENGTH_SHORT).show();
             return;
         }

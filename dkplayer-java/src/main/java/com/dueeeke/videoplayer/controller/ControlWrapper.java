@@ -230,13 +230,13 @@ public class ControlWrapper implements MediaPlayerControl, IVideoController {
     }
 
     @Override
-    public void hideInner() {
-        mController.hideInner();
+    public void hide() {
+        mController.hide();
     }
 
     @Override
-    public void showInner() {
-        mController.showInner();
+    public void show() {
+        mController.show();
     }
 
     @Override
@@ -262,9 +262,9 @@ public class ControlWrapper implements MediaPlayerControl, IVideoController {
      */
     public void toggleShowState() {
         if (isShowing()) {
-            hideInner();
+            hide();
         } else {
-            showInner();
+            show();
         }
     }
 }

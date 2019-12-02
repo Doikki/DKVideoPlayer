@@ -197,7 +197,7 @@ public abstract class BaseVideoController extends FrameLayout
      * 隐藏播放视图
      */
     @Override
-    public void hideInner() {
+    public void hide() {
         if (mShowing) {
             stopFadeOut();
             handleVisibilityChanged(false, mHideAnim);
@@ -209,7 +209,7 @@ public abstract class BaseVideoController extends FrameLayout
      * 显示播放视图
      */
     @Override
-    public void showInner() {
+    public void show() {
         if (!mShowing) {
             handleVisibilityChanged(true, mShowAnim);
             startFadeOut();
@@ -246,7 +246,7 @@ public abstract class BaseVideoController extends FrameLayout
     public final Runnable mFadeOut = new Runnable() {
         @Override
         public void run() {
-            hideInner();
+            hide();
         }
     };
 
