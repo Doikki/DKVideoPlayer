@@ -2,6 +2,7 @@ package com.dueeeke.videoplayer.exo;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
+import android.os.Handler;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
@@ -16,7 +17,9 @@ import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.source.DefaultMediaSourceEventListener;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.util.Log;
@@ -32,7 +35,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
     protected MediaSource mMediaSource;
     protected ExoMediaSourceHelper mMediaSourceHelper;
 
-    private Surface mSurface;
     private PlaybackParameters mSpeedPlaybackParameters;
 
     private int mLastReportedPlaybackState = Player.STATE_IDLE;
@@ -46,7 +48,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
 
     public ExoMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
-        mMediaSourceHelper = new ExoMediaSourceHelper(mAppContext);
+        mMediaSourceHelper = ExoMediaSourceHelper.getInstance(context);
     }
 
     @Override
@@ -76,7 +78,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
 
     @Override
     public void setDataSource(String path, Map<String, String> headers) {
-        mMediaSource = mMediaSourceHelper.getMediaSource(path, headers);
+        mMediaSource = mMediaSourceHelper.getMediaSource(path, headers, false);
     }
 
     @Override
@@ -113,17 +115,31 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
         if (mSpeedPlaybackParameters != null) {
             mInternalPlayer.setPlaybackParameters(mSpeedPlaybackParameters);
         }
-        if (mSurface != null) {
-            mInternalPlayer.setVideoSurface(mSurface);
-        }
         mIsPreparing = true;
+        mMediaSource.addEventListener(new Handler(), mMediaSourceEventListener);
         mInternalPlayer.prepare(mMediaSource);
     }
 
+    private MediaSourceEventListener mMediaSourceEventListener = new DefaultMediaSourceEventListener() {
+        @Override
+        public void onReadingStarted(int windowIndex, MediaSource.MediaPeriodId mediaPeriodId) {
+            super.onReadingStarted(windowIndex, mediaPeriodId);
+            if (mPlayerEventListener != null && mIsPreparing) {
+                mPlayerEventListener.onPrepared();
+            }
+        }
+    };
+
     @Override
     public void reset() {
-        release();
-        initPlayer();
+        if (mInternalPlayer != null) {
+            mInternalPlayer.stop(true);
+            mInternalPlayer.setVideoSurface(null);
+            mIsPreparing = false;
+            mIsBuffering = false;
+            mLastReportedPlaybackState = Player.STATE_IDLE;
+            mLastReportedPlayWhenReady = false;
+        }
     }
 
     @Override
@@ -165,7 +181,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
             }.start();
         }
 
-        mSurface = null;
         mIsPreparing = false;
         mIsBuffering = false;
         mLastReportedPlaybackState = Player.STATE_IDLE;
@@ -194,7 +209,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
 
     @Override
     public void setSurface(Surface surface) {
-        mSurface = surface;
         if (mInternalPlayer != null) {
             mInternalPlayer.setVideoSurface(surface);
         }
@@ -244,18 +258,14 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
         if (mPlayerEventListener == null) return;
+        if (mIsPreparing) return;
         if (mLastReportedPlayWhenReady != playWhenReady || mLastReportedPlaybackState != playbackState) {
             switch (playbackState) {
                 case Player.STATE_BUFFERING:
-                    if (!mIsPreparing) {
-                        mPlayerEventListener.onInfo(MEDIA_INFO_BUFFERING_START, getBufferedPercentage());
-                        mIsBuffering = true;
-                    }
+                    mPlayerEventListener.onInfo(MEDIA_INFO_BUFFERING_START, getBufferedPercentage());
+                    mIsBuffering = true;
                     break;
                 case Player.STATE_READY:
-                    if (mIsPreparing) {
-                        mPlayerEventListener.onPrepared();
-                    }
                     if (mIsBuffering) {
                         mPlayerEventListener.onInfo(MEDIA_INFO_BUFFERING_END, getBufferedPercentage());
                         mIsBuffering = false;
