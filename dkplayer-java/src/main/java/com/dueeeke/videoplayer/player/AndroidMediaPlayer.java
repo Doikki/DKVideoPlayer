@@ -5,6 +5,7 @@ import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
@@ -15,6 +16,7 @@ public class AndroidMediaPlayer extends AbstractPlayer {
     protected MediaPlayer mMediaPlayer;
     private int mBufferedPercent;
     private Context mAppContext;
+    private boolean mIsPreparing;
 
     public AndroidMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
@@ -81,6 +83,7 @@ public class AndroidMediaPlayer extends AbstractPlayer {
     @Override
     public void prepareAsync() {
         try {
+            mIsPreparing = true;
             mMediaPlayer.prepareAsync();
         } catch (IllegalStateException e) {
             mPlayerEventListener.onError();
@@ -89,8 +92,9 @@ public class AndroidMediaPlayer extends AbstractPlayer {
 
     @Override
     public void reset() {
-        mMediaPlayer.release();
-        initPlayer();
+        mMediaPlayer.reset();
+        mMediaPlayer.setSurface(null);
+        mMediaPlayer.setDisplay(null);
         mMediaPlayer.setVolume(1, 1);
     }
 
@@ -165,12 +169,14 @@ public class AndroidMediaPlayer extends AbstractPlayer {
 
     @Override
     public void setOptions() {
-        // no support
     }
 
     @Override
     public void setSpeed(float speed) {
-        // no support
+        // only support above Android M
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            mMediaPlayer.setPlaybackParams(mMediaPlayer.getPlaybackParams().setSpeed(speed));
+        }
     }
 
     @Override
@@ -197,7 +203,15 @@ public class AndroidMediaPlayer extends AbstractPlayer {
     private MediaPlayer.OnInfoListener onInfoListener = new MediaPlayer.OnInfoListener() {
         @Override
         public boolean onInfo(MediaPlayer mp, int what, int extra) {
-            mPlayerEventListener.onInfo(what, extra);
+            //解决MEDIA_INFO_VIDEO_RENDERING_START多次回调问题
+            if (what == AbstractPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
+                if (mIsPreparing) {
+                    mPlayerEventListener.onInfo(what, extra);
+                    mIsPreparing = false;
+                }
+            } else {
+                mPlayerEventListener.onInfo(what, extra);
+            }
             return true;
         }
     };

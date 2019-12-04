@@ -78,8 +78,8 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
 
     //--------- data sources ---------//
     protected String mUrl;//当前播放视频的地址
-    protected AssetFileDescriptor mAssetFileDescriptor;//assets文件
     protected Map<String, String> mHeaders;//当前视频地址的请求头
+    protected AssetFileDescriptor mAssetFileDescriptor;//assets文件
 
     protected long mCurrentPosition;//当前正在播放视频的位置
 
