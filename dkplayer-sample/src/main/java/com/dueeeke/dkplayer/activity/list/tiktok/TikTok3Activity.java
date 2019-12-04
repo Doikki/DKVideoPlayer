@@ -48,6 +48,7 @@ public class TikTok3Activity extends BaseActivity<VideoView> {
     private TikTokController mController;
 
     private static final String KEY_INDEX = "index";
+    private RecyclerView mViewPagerImpl;
 
     public static void start(Context context, int index) {
         Intent i = new Intent(context, TikTok3Activity.class);
@@ -115,7 +116,12 @@ public class TikTok3Activity extends BaseActivity<VideoView> {
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
                 if (position == mCurPos) return;
-                startPlay(position);
+                mViewPager.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        startPlay(position);
+                    }
+                });
             }
 
             @Override
@@ -128,23 +134,30 @@ public class TikTok3Activity extends BaseActivity<VideoView> {
                 }
             }
         });
+
+        //ViewPage2内部是通过RecyclerView去实现的，它位于ViewPager2的第0个位置
+        mViewPagerImpl = (RecyclerView) mViewPager.getChildAt(0);
     }
 
     private void startPlay(int position) {
-        //ViewPage2内部是通过RecyclerView去实现的，它位于ViewPager2的第0个位置
-        RecyclerView viewPagerImpl = (RecyclerView) mViewPager.getChildAt(0);
-        View itemView = viewPagerImpl.getChildAt(0);
-        Tiktok3Adapter.ViewHolder viewHolder = (Tiktok3Adapter.ViewHolder) itemView.getTag();
-        mVideoView.release();
-        Utils.removeViewFormParent(mVideoView);
-        TiktokBean tiktokBean = mVideoList.get(position);
-        String playUrl = mPreloadManager.getPlayUrl(tiktokBean.videoDownloadUrl);
-        L.i("startPlay: " + "position: " + position + "  url: " + playUrl);
-        mVideoView.setUrl(playUrl);
-        mController.addControlComponent(viewHolder.mTikTokView, true);
-        viewHolder.mPlayerContainer.addView(mVideoView, 0);
-        mVideoView.start();
-        mCurPos = position;
+        int count = mViewPagerImpl.getChildCount();
+        for (int i = 0; i < count; i++) {
+            View itemView = mViewPagerImpl.getChildAt(i);
+            Tiktok3Adapter.ViewHolder viewHolder = (Tiktok3Adapter.ViewHolder) itemView.getTag();
+            if (viewHolder.mPosition == position) {
+                mVideoView.release();
+                Utils.removeViewFormParent(mVideoView);
+                TiktokBean tiktokBean = mVideoList.get(position);
+                String playUrl = mPreloadManager.getPlayUrl(tiktokBean.videoDownloadUrl);
+                L.i("startPlay: " + "position: " + position + "  url: " + playUrl);
+                mVideoView.setUrl(playUrl);
+                mController.addControlComponent(viewHolder.mTikTokView, true);
+                viewHolder.mPlayerContainer.addView(mVideoView, 0);
+                mVideoView.start();
+                mCurPos = position;
+                break;
+            }
+        }
     }
 
     public void addData(View view) {
