@@ -161,8 +161,10 @@ public class TikTok3Activity extends BaseActivity<VideoView> {
     }
 
     public void addData(View view) {
+        int size = mVideoList.size();
         mVideoList.addAll(DataUtil.getTiktokDataFromAssets(this));
-        mTiktok3Adapter.notifyDataSetChanged();
+        //使用此方法添加数据，使用notifyDataSetChanged会导致正在播放的视频中断
+        mTiktok3Adapter.notifyItemRangeChanged(size, mVideoList.size());
     }
 
     @Override
