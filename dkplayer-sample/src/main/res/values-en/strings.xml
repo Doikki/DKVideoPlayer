@@ -18,6 +18,7 @@
     <string name="str_tiktok">Tik Tok</string>
     <string name="str_tiktok_1">Tik Tok (RecyclerView)</string>
     <string name="str_tiktok_2">Tik Tok (VerticalViewPager)</string>
+    <string name="str_tiktok_3">Tik Tok (ViewPager2)</string>
     <string name="str_fullscreen_directly">FULLSCREEN DIRECTLY</string>
     <string name="str_danmu">barrage</string>
     <string name="str_ad">AD</string>
@@ -25,6 +26,7 @@
     <string name="str_pip_in_list">PIP IN LIST</string>
     <string name="str_pip_android_o">PIP Android O</string>
     <string name="str_start_pip">PiP</string>
+    <string name="str_tiny_screen">tiny screen</string>
     <string name="str_cache">CACHE</string>
     <string name="str_play_list">PLAY LIST</string>
     <string name="str_switch_player_btn">SWITCH_PLAYER</string>

@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.activity.list.tiktok.TikTok2Activity;
+import com.dueeeke.dkplayer.activity.list.tiktok.TikTok3Activity;
+import com.dueeeke.dkplayer.activity.list.tiktok.TikTokActivity;
 import com.dueeeke.dkplayer.bean.TiktokBean;
 
 import java.util.List;
@@ -19,6 +21,8 @@ import java.util.List;
 public class TikTokListAdapter extends RecyclerView.Adapter<TikTokListAdapter.TikTokListViewHolder> {
 
     public List<TiktokBean> data;
+
+    private int mId;
 
     public TikTokListAdapter(List<TiktokBean> data) {
         this.data = data;
@@ -47,6 +51,10 @@ public class TikTokListAdapter extends RecyclerView.Adapter<TikTokListAdapter.Ti
         return data == null ? 0 : data.size();
     }
 
+    public void setImpl(int id) {
+        mId = id;
+    }
+
     public class TikTokListViewHolder extends RecyclerView.ViewHolder {
 
         public ImageView mThumb;
@@ -62,8 +70,17 @@ public class TikTokListAdapter extends RecyclerView.Adapter<TikTokListAdapter.Ti
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    TikTok2Activity.start(itemView.getContext(), mPosition);
-//                    TikTokActivity.start(itemView.getContext(), mPosition);
+                    switch (mId) {
+                        case R.id.impl_recycler_view: //RecyclerView
+                            TikTokActivity.start(itemView.getContext(), mPosition);
+                            break;
+                        case R.id.impl_vertical_view_pager: //VerticalViewPager
+                            TikTok2Activity.start(itemView.getContext(), mPosition);
+                            break;
+                        case R.id.impl_view_pager_2: //ViewPager2
+                            TikTok3Activity.start(itemView.getContext(), mPosition);
+                            break;
+                    }
                 }
             });
         }

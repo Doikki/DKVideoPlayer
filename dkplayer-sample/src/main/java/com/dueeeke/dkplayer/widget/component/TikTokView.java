@@ -25,7 +25,7 @@ public class TikTokView extends FrameLayout implements IControlComponent {
     private ImageView thumb;
     private ImageView mPlayBtn;
 
-    private ControlWrapper mMediaPlayer;
+    private ControlWrapper mControlWrapper;
     private int mScaledTouchSlop;
     private int mStartX, mStartY;
 
@@ -48,7 +48,7 @@ public class TikTokView extends FrameLayout implements IControlComponent {
         setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mMediaPlayer.togglePlay();
+                mControlWrapper.togglePlay();
             }
         });
         mScaledTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
@@ -79,7 +79,7 @@ public class TikTokView extends FrameLayout implements IControlComponent {
 
     @Override
     public void attach(@NonNull ControlWrapper controlWrapper) {
-        mMediaPlayer = controlWrapper;
+        mControlWrapper = controlWrapper;
     }
 
     @Override

@@ -15,8 +15,10 @@ import com.dueeeke.dkplayer.adapter.listener.OnItemChildClickListener;
 import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.dkplayer.fragment.BaseFragment;
 import com.dueeeke.dkplayer.util.DataUtil;
+import com.dueeeke.dkplayer.util.ProgressManagerImpl;
 import com.dueeeke.dkplayer.util.Tag;
 import com.dueeeke.dkplayer.util.Utils;
+import com.dueeeke.dkplayer.util.cache.ProxyVideoCacheManager;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videocontroller.component.CompleteView;
 import com.dueeeke.videocontroller.component.ErrorView;
@@ -63,6 +65,8 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
         super.initView();
 
         initVideoView();
+        //保存进度
+//        mVideoView.setProgressManager(new ProgressManagerImpl());
 
         mRecyclerView = findViewById(R.id.rv);
         mLinearLayoutManager = new LinearLayoutManager(getContext());
@@ -186,6 +190,10 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
             releaseVideoView();
         }
         VideoBean videoBean = mVideos.get(position);
+        //边播边存
+//        String proxyUrl = ProxyVideoCacheManager.getProxy(getActivity()).getProxyUrl(videoBean.getUrl());
+//        mVideoView.setUrl(proxyUrl);
+
         mVideoView.setUrl(videoBean.getUrl());
         mTitleView.setTitle(videoBean.getTitle());
         View itemView = mLinearLayoutManager.findViewByPosition(position);

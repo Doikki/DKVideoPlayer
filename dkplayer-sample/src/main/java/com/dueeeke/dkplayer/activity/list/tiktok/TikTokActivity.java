@@ -30,7 +30,7 @@ import java.util.List;
 public class TikTokActivity extends BaseActivity<VideoView> {
 
     private TikTokController mController;
-    private int mCurrentPosition;
+    private int mCurPos;
     private RecyclerView mRecyclerView;
     private List<TiktokBean> mVideoList = new ArrayList<>();
     private TikTokAdapter mTikTokAdapter;
@@ -90,16 +90,15 @@ public class TikTokActivity extends BaseActivity<VideoView> {
 
             @Override
             public void onPageRelease(boolean isNext, int position) {
-                if (mCurrentPosition == position) {
+                if (mCurPos == position) {
                     mVideoView.release();
                 }
             }
 
             @Override
             public void onPageSelected(int position, boolean isBottom) {
-                if (mCurrentPosition == position) return;
+                if (mCurPos == position) return;
                 startPlay(position);
-                mCurrentPosition = position;
             }
         });
     }
@@ -116,6 +115,7 @@ public class TikTokActivity extends BaseActivity<VideoView> {
         mController.addControlComponent(viewHolder.mTikTokView, true);
         viewHolder.mPlayerContainer.addView(mVideoView, 0);
         mVideoView.start();
+        mCurPos = position;
     }
 
     public void addData(View view) {

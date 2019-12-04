@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/impl_recycler_view"
+        android:title="RecyclerView"/>
+    <item android:id="@+id/impl_vertical_view_pager"
+        android:title="VerticalViewPager"/>
+    <item android:id="@+id/impl_view_pager_2"
+        android:title="ViewPager2"/>
+</menu>

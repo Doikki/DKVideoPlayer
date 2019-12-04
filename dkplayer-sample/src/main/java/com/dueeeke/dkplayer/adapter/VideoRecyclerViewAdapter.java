@@ -12,9 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
-import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.dkplayer.adapter.listener.OnItemChildClickListener;
 import com.dueeeke.dkplayer.adapter.listener.OnItemClickListener;
+import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.videocontroller.component.PrepareView;
 
 import java.util.List;
@@ -22,10 +22,6 @@ import java.util.List;
 public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecyclerViewAdapter.VideoHolder> {
 
     private List<VideoBean> videos;
-
-//    private ProgressManagerImpl mProgressManager;
-
-//    private PlayerFactory mPlayerFactory = IjkPlayerFactory.create();
 
     private OnItemChildClickListener mOnItemChildClickListener;
 
