@@ -37,6 +37,8 @@ public class CustomIjkPlayerActivity extends BaseActivity<IjkVideoView> implemen
         StandardVideoController controller = new StandardVideoController(this);
         controller.addDefaultControlComponent("custom ijk", false);
         mVideoView.setVideoController(controller);
+//        mVideoView.setEnableMediaCodec(true);
+//        mVideoView.setEnableAccurateSeek(true);
     }
 
     @Override
