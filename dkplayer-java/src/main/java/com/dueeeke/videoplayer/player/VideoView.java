@@ -8,6 +8,7 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -46,20 +47,13 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
     @Nullable
     protected BaseVideoController mVideoController;//控制器
 
-    protected IRenderView mRenderView;
-    protected RenderViewFactory mRenderViewFactory;
     /**
      * 真正承载播放器视图的容器
      */
     protected FrameLayout mPlayerContainer;
-    protected boolean mIsFullScreen;//是否处于全屏状态
-    /**
-     * 通过添加和移除这个view来实现隐藏和显示navigation bar，可以避免出现一些奇奇怪怪的问题
-     */
-    @Nullable
-    protected View mHideNavBarView;
-    protected static final int FULLSCREEN_FLAGS = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+
+    protected IRenderView mRenderView;
+    protected RenderViewFactory mRenderViewFactory;
 
     public static final int SCREEN_SCALE_DEFAULT = 0;
     public static final int SCREEN_SCALE_16_9 = 1;
@@ -70,9 +64,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
     protected int mCurrentScreenScaleType;
 
     protected int[] mVideoSize = {0, 0};
-
-    protected boolean mIsTinyScreen;//是否处于小屏状态
-    protected int[] mTinyScreenSize = {0, 0};
 
     protected boolean mIsMute;//是否静音
 
@@ -100,6 +91,11 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
     public static final int PLAYER_FULL_SCREEN = 11;   // 全屏播放器
     public static final int PLAYER_TINY_SCREEN = 12;   // 小屏播放器
     protected int mCurrentPlayerState = PLAYER_NORMAL;
+
+    protected boolean mIsFullScreen;//是否处于全屏状态
+
+    protected boolean mIsTinyScreen;//是否处于小屏状态
+    protected int[] mTinyScreenSize = {0, 0};
 
     /**
      * 监听系统中音频焦点改变，见{@link #setEnableAudioFocus(boolean)}
@@ -724,14 +720,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         mIsFullScreen = true;
 
         //隐藏NavigationBar和StatusBar
-        if (mHideNavBarView == null) {
-            mHideNavBarView = new View(getContext());
-        }
-        mHideNavBarView.setSystemUiVisibility(FULLSCREEN_FLAGS);
-        mPlayerContainer.addView(mHideNavBarView);
-        getActivity().getWindow().setFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        hideSysBar();
 
         //从当前FrameLayout中移除播放器视图
         this.removeView(mPlayerContainer);
@@ -739,6 +728,33 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         decorView.addView(mPlayerContainer);
 
         setPlayerState(PLAYER_FULL_SCREEN);
+    }
+
+    private void hideSysBar() {
+        ViewGroup decorView = getDecorView();
+        if (decorView == null) {
+            return;
+        }
+        int uiOptions = decorView.getSystemUiVisibility();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            uiOptions |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            uiOptions |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        }
+        decorView.setSystemUiVisibility(uiOptions);
+        getActivity().getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasWindowFocus) {
+        super.onWindowFocusChanged(hasWindowFocus);
+        if (hasWindowFocus && mIsFullScreen) {
+            //重新获得焦点时保持全屏状态
+            hideSysBar();
+        }
     }
 
     /**
@@ -756,14 +772,29 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         mIsFullScreen = false;
 
         //显示NavigationBar和StatusBar
-        mPlayerContainer.removeView(mHideNavBarView);
-        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        showSysBar();
 
         //把播放器视图从DecorView中移除并添加到当前FrameLayout中即退出了全屏
         decorView.removeView(mPlayerContainer);
         this.addView(mPlayerContainer);
 
         setPlayerState(PLAYER_NORMAL);
+    }
+
+    private void showSysBar() {
+        ViewGroup decorView = getDecorView();
+        if (decorView == null) {
+            return;
+        }
+        int uiOptions = decorView.getSystemUiVisibility();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            uiOptions &= ~View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            uiOptions &= ~View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        }
+        decorView.setSystemUiVisibility(uiOptions);
+        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
     /**
@@ -863,17 +894,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         if (mRenderView != null) {
             mRenderView.setScaleType(mCurrentScreenScaleType);
             mRenderView.setVideoSize(videoWidth, videoHeight);
-        }
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) {
-            //重新获得焦点时保持全屏状态
-            if (mHideNavBarView != null) {
-                mHideNavBarView.setSystemUiVisibility(FULLSCREEN_FLAGS);
-            }
         }
     }
 
