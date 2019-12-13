@@ -135,7 +135,7 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
                 setVisibility(GONE);
                 break;
             case VideoView.STATE_PLAYING:
-                mPlayButton.setSelected(mControlWrapper.isPlaying());
+                mPlayButton.setSelected(true);
                 if (mIsShowBottomProgress) {
                     if (mControlWrapper.isShowing()) {
                         mBottomProgress.setVisibility(GONE);
@@ -152,6 +152,8 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
                 mControlWrapper.startProgress();
                 break;
             case VideoView.STATE_PAUSED:
+                mPlayButton.setSelected(false);
+                break;
             case VideoView.STATE_BUFFERING:
             case VideoView.STATE_BUFFERED:
                 mPlayButton.setSelected(mControlWrapper.isPlaying());

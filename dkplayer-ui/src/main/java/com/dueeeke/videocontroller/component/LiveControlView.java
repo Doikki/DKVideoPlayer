@@ -97,7 +97,11 @@ public class LiveControlView extends FrameLayout implements IControlComponent, V
                 setVisibility(GONE);
                 break;
             case VideoView.STATE_PLAYING:
+                mPlayButton.setSelected(true);
+                break;
             case VideoView.STATE_PAUSED:
+                mPlayButton.setSelected(false);
+                break;
             case VideoView.STATE_BUFFERING:
             case VideoView.STATE_BUFFERED:
                 mPlayButton.setSelected(mControlWrapper.isPlaying());
