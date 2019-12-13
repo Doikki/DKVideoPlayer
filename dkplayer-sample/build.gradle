@@ -17,7 +17,7 @@ android {
         versionName project.ext.releaseVersion
 
         ndk {
-            //使用abiFilters过滤不需要的so，此处仅保留armeabi-v7a
+            //使用abiFilters筛选你需要的so
 //            abiFilters "armeabi-v7a"
         }
     }

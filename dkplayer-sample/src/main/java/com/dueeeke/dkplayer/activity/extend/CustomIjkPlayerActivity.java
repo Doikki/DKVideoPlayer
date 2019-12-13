@@ -82,8 +82,17 @@ public class CustomIjkPlayerActivity extends BaseActivity<IjkVideoView> implemen
                 break;
             case R.id.btn_rtsp:
                 //使用tcp方式拉取rtsp流，默认是通过udp方式
-                mVideoView.addFormatOption("rtsp_transport", "tcp");
-                String rtspUrl = "rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov";
+//                mVideoView.addFormatOption("rtsp_transport", "tcp");
+//                mVideoView.addFormatOption("protocol_whitelist",
+//                        "rtmp,concat,ffconcat,file,subfile,http,https,tls,rtp,tcp,udp,crypto,rtsp");
+
+//                mVideoView.addFormatOption("analyzemaxduration", 100L);
+//                mVideoView.addFormatOption("analyzeduration", 1);
+//                mVideoView.addFormatOption("probesize", 1024L);
+//                mVideoView.addFormatOption("flush_packets", 1L);
+//                mVideoView.addPlayerOption("packet-buffering", 0L);
+//                mVideoView.addPlayerOption("framedrop", 1L);
+                String rtspUrl = "rtsp://192.168.31.246:8554/test";
                 mVideoView.setUrl(rtspUrl);
                 break;
         }
