@@ -3,9 +3,11 @@ package com.dueeeke.videocontroller.component;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.FrameLayout;
@@ -19,8 +21,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.dueeeke.videocontroller.R;
-import com.dueeeke.videoplayer.controller.IControlComponent;
 import com.dueeeke.videoplayer.controller.ControlWrapper;
+import com.dueeeke.videoplayer.controller.IControlComponent;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 
@@ -70,6 +72,10 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
         mPlayButton = findViewById(R.id.iv_play);
         mPlayButton.setOnClickListener(this);
         mBottomProgress = findViewById(R.id.bottom_progress);
+
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
+            mVideoProgress.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        }
     }
 
     protected int getLayoutId() {

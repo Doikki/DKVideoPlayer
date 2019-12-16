@@ -39,6 +39,7 @@
             android:background="@null"
             android:max="1000"
             android:maxHeight="2dp"
+            android:minHeight="2dp"
             android:paddingEnd="0dp"
             android:paddingStart="0dp"
             android:progressDrawable="@drawable/dkplayer_layer_progress_bar"

@@ -3,14 +3,12 @@
     <item android:id="@android:id/background">
         <shape>
             <solid android:color="#7FFFFFFF"/>
-            <size android:height="1dp"/>
         </shape>
     </item>
     <item android:id="@android:id/secondaryProgress">
         <clip>
             <shape>
                 <solid android:color="@android:color/white"/>
-                <size android:height="1dp"/>
             </shape>
         </clip>
     </item>
@@ -18,7 +16,6 @@
         <clip>
             <shape>
                 <solid android:color="@color/dkplayer_theme_color"/>
-                <size android:height="1dp"/>
             </shape>
         </clip>
     </item>
