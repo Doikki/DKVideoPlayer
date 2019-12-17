@@ -10,7 +10,7 @@ import com.dueeeke.videoplayer.player.VideoViewManager;
 
 /**
  * 悬浮播放
- * Created by Devlin_n on 2018/3/30.
+ * Created by dueeeke on 2018/3/30.
  */
 
 public class PIPManager {

@@ -4,19 +4,20 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.os.Build;
-import androidx.annotation.NonNull;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
+import androidx.annotation.NonNull;
+
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 
 /**
  * 悬浮窗控件（解决滑动冲突）
- * Created by Devlin_n on 2017/6/8.
+ * Created by dueeeke on 2017/6/8.
  */
 
 @SuppressLint("ViewConstructor")

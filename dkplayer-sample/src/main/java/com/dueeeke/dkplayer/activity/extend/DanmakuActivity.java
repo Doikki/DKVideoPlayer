@@ -12,7 +12,7 @@ import com.dueeeke.videoplayer.player.VideoView;
 
 /**
  * 弹幕播放
- * Created by devlin on 17-6-11.
+ * Created by dueeeke on 17-6-11.
  */
 
 public class DanmakuActivity extends BaseActivity<DanmukuVideoView> {
@@ -81,7 +81,7 @@ public class DanmakuActivity extends BaseActivity<DanmukuVideoView> {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                mVideoView.addDanmaku("鸡你太美", false);
+                mVideoView.addDanmaku("awsl", false);
                 mHandler.postDelayed(this, 100);
             }
         });

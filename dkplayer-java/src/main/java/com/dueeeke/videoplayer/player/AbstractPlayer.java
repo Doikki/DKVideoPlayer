@@ -7,7 +7,7 @@ import android.view.SurfaceHolder;
 import java.util.Map;
 
 /**
- * Created by Devlin_n on 2017/12/21.
+ * Created by dueeeke on 2017/12/21.
  */
 
 public abstract class AbstractPlayer {

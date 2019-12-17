@@ -40,11 +40,6 @@ public class TikTok2Activity extends BaseActivity<VideoView> {
 
     private PreloadManager mPreloadManager;
 
-    /**
-     * VerticalViewPager是否反向滑动
-     */
-    private boolean mIsReverseScroll;
-
     private TikTokController mController;
 
     private static final String KEY_INDEX = "index";
@@ -103,10 +98,20 @@ public class TikTok2Activity extends BaseActivity<VideoView> {
         mViewPager.setOverScrollMode(View.OVER_SCROLL_NEVER);
         mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 
+            private int mCurItem;
+
+            /**
+             * VerticalViewPager是否反向滑动
+             */
+            private boolean mIsReverseScroll;
+
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 super.onPageScrolled(position, positionOffset, positionOffsetPixels);
-                mIsReverseScroll = position < mCurPos;
+                if (position == mCurItem) {
+                    return;
+                }
+                mIsReverseScroll = position < mCurItem;
             }
 
             @Override
@@ -119,6 +124,10 @@ public class TikTok2Activity extends BaseActivity<VideoView> {
             @Override
             public void onPageScrollStateChanged(int state) {
                 super.onPageScrollStateChanged(state);
+                if (state == VerticalViewPager.SCROLL_STATE_DRAGGING) {
+                    mCurItem = mViewPager.getCurrentItem();
+                }
+
                 if (state == VerticalViewPager.SCROLL_STATE_IDLE) {
                     mPreloadManager.resumePreload(mCurPos, mIsReverseScroll);
                 } else {

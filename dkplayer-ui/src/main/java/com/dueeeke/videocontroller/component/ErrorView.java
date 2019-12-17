@@ -19,7 +19,7 @@ import com.dueeeke.videoplayer.player.VideoView;
 
 /**
  * 播放出错提示界面
- * Created by Devlin_n on 2017/4/13.
+ * Created by dueeeke on 2017/4/13.
  */
 public class ErrorView extends LinearLayout implements IControlComponent {
 

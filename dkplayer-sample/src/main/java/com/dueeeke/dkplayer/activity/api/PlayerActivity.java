@@ -23,7 +23,7 @@ import com.dueeeke.videoplayer.util.L;
 
 /**
  * 播放器演示
- * Created by Devlin_n on 2017/4/7.
+ * Created by dueeeke on 2017/4/7.
  */
 
 public class PlayerActivity extends DebugActivity {

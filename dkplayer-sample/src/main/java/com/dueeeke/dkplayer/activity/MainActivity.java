@@ -71,6 +71,8 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.layout_content, mFragments.get(0))
                 .commitAllowingStateLoss();
+
+        mCurrentIndex = 0;
     }
 
     @Override

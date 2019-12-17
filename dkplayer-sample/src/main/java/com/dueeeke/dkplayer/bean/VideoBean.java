@@ -1,7 +1,7 @@
 package com.dueeeke.dkplayer.bean;
 
 /**
- * Created by Devlin_n on 2017/6/1.
+ * Created by dueeeke on 2017/6/1.
  */
 
 public class VideoBean {

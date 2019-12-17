@@ -31,7 +31,7 @@ import java.util.ArrayList;
 
 /**
  * Android O PiP demo
- * Created by Devlin_n on 2018/4/24.
+ * Created by dueeeke on 2018/4/24.
  */
 
 @RequiresApi(api = Build.VERSION_CODES.O)

@@ -15,6 +15,7 @@ import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.dkplayer.util.Utils;
 import com.dueeeke.dkplayer.util.cache.PreloadManager;
 import com.dueeeke.dkplayer.util.cache.ProxyVideoCacheManager;
+import com.dueeeke.dkplayer.widget.VerticalViewPager;
 import com.dueeeke.dkplayer.widget.controller.TikTokController;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.L;
@@ -39,11 +40,6 @@ public class TikTok3Activity extends BaseActivity<VideoView> {
     private ViewPager2 mViewPager;
 
     private PreloadManager mPreloadManager;
-
-    /**
-     * VerticalViewPager是否反向滑动
-     */
-    private boolean mIsReverseScroll;
 
     private TikTokController mController;
 
@@ -106,10 +102,21 @@ public class TikTok3Activity extends BaseActivity<VideoView> {
         mViewPager.setAdapter(mTiktok3Adapter);
         mViewPager.setOverScrollMode(View.OVER_SCROLL_NEVER);
         mViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+
+            private int mCurItem;
+
+            /**
+             * VerticalViewPager是否反向滑动
+             */
+            private boolean mIsReverseScroll;
+
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 super.onPageScrolled(position, positionOffset, positionOffsetPixels);
-                mIsReverseScroll = position < mCurPos;
+                if (position == mCurItem) {
+                    return;
+                }
+                mIsReverseScroll = position < mCurItem;
             }
 
             @Override
@@ -127,6 +134,9 @@ public class TikTok3Activity extends BaseActivity<VideoView> {
             @Override
             public void onPageScrollStateChanged(int state) {
                 super.onPageScrollStateChanged(state);
+                if (state == VerticalViewPager.SCROLL_STATE_DRAGGING) {
+                    mCurItem = mViewPager.getCurrentItem();
+                }
                 if (state == ViewPager2.SCROLL_STATE_IDLE) {
                     mPreloadManager.resumePreload(mCurPos, mIsReverseScroll);
                 } else {

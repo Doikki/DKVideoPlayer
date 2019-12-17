@@ -4,6 +4,7 @@ import com.danikula.videocache.HttpProxyCacheServer;
 import com.dueeeke.videoplayer.util.L;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -67,11 +68,16 @@ public class PreloadTask implements Runnable {
                 //预加载完成或者取消预加载
                 if (mIsCanceled || read >= PreloadManager.PRELOAD_LENGTH) {
                     L.i("结束预加载：" + mPosition);
-                    connection.disconnect();
                     break;
                 }
             }
-
+            if (read == -1) { //这种情况一般是预加载出错了，删掉缓存
+                L.i("预加载失败：" +  mPosition);
+                File cacheFile = mCacheServer.getCacheFile(mRawUrl);
+                if (cacheFile.exists()) {
+                    cacheFile.delete();
+                }
+            }
         } catch (Exception e) {
             L.i("异常结束预加载：" + mPosition);
         } finally {
