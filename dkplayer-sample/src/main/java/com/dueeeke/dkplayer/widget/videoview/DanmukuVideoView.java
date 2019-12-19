@@ -125,6 +125,14 @@ public class DanmukuVideoView extends VideoView {
         }
     }
 
+    @Override
+    public void onCompletion() {
+        super.onCompletion();
+        if (mDanmakuView != null) {
+            mDanmakuView.clearDanmakusOnScreen();
+        }
+    }
+
     private void initDanMuView() {
 // 设置最大显示行数
 //        HashMap<Integer, Integer> maxLinesPair = new HashMap<>();

@@ -13,7 +13,7 @@ import java.util.List;
 
 public class DataUtil {
 
-    public static final String SAMPLE_URL = "http://34.92.158.191:8080/test-hd.mp4";
+    public static final String SAMPLE_URL = "http://vfx.mtime.cn/Video/2019/03/14/mp4/190314223540373995.mp4";
 
 //    public static List<VideoBean> getVideoList() {
 //        List<VideoBean> videoList = new ArrayList<>();
