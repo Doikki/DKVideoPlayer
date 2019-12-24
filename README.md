@@ -8,7 +8,7 @@ A video player for Android.
 
 ### 特性
 #### 功能支持情况
-| 功能  | MediaPlayer  | IjkPlayer  | ExoPlayer  |
+| 功能  | MediaPlayer  | [IjkPlayer](https://github.com/bilibili/ijkplayer)  | [ExoPlayer](https://github.com/google/ExoPlayer)  |
 | :------------ | :------------ | :------------ | :------------ |
 |  调整显示比例 | 支持  | 支持  |  支持 |
 |  滑动调节播放进度、声音、亮度 | 支持  |  支持 | 支持  |
@@ -49,8 +49,14 @@ A video player for Android.
 |:---:|:---:|:---:|:---:|
 ![](https://github.com/dueeeke/dkplayer/blob/master/art/1.png)|![](https://github.com/dueeeke/dkplayer/blob/master/art/2.png)|![](https://github.com/dueeeke/dkplayer/blob/master/art/3.png)|![](https://github.com/dueeeke/dkplayer/blob/master/art/4.png)
    
-### 联系我
-在github上提交[issue](https://github.com/dueeeke/dkplayer/issues)或者邮箱：xinyunjian1995@gmail.com
+### 遇到问题
+1. 阅读 sample：[dkplayer-sample](https://github.com/dueeeke/DKVideoPlayer/tree/master/dkplayer-sample)
+2. 阅读 [wiki](https://github.com/dueeeke/DKVideoPlayer/wiki) 或者 [常见问题](https://github.com/dueeeke/DKVideoPlayer/wiki/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98)
+3. 阅读源码
+4. 提交 [issue](https://github.com/dueeeke/DKVideoPlayer/issues) 或者联系我：xinyunjian1995@gmail.com
+
+### 交流
+QQ群：758154597
 
 ### License
 ```
