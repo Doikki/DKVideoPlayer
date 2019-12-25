@@ -720,7 +720,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         mIsFullScreen = true;
 
         //隐藏NavigationBar和StatusBar
-        hideSysBar();
+        hideSysBar(decorView);
 
         //从当前FrameLayout中移除播放器视图
         this.removeView(mPlayerContainer);
@@ -730,11 +730,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         setPlayerState(PLAYER_FULL_SCREEN);
     }
 
-    private void hideSysBar() {
-        ViewGroup decorView = getDecorView();
-        if (decorView == null) {
-            return;
-        }
+    private void hideSysBar(ViewGroup decorView) {
         int uiOptions = decorView.getSystemUiVisibility();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             uiOptions |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
@@ -753,7 +749,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         super.onWindowFocusChanged(hasWindowFocus);
         if (hasWindowFocus && mIsFullScreen) {
             //重新获得焦点时保持全屏状态
-            hideSysBar();
+            hideSysBar(getDecorView());
         }
     }
 
@@ -772,7 +768,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         mIsFullScreen = false;
 
         //显示NavigationBar和StatusBar
-        showSysBar();
+        showSysBar(decorView);
 
         //把播放器视图从DecorView中移除并添加到当前FrameLayout中即退出了全屏
         decorView.removeView(mPlayerContainer);
@@ -781,11 +777,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         setPlayerState(PLAYER_NORMAL);
     }
 
-    private void showSysBar() {
-        ViewGroup decorView = getDecorView();
-        if (decorView == null) {
-            return;
-        }
+    private void showSysBar(ViewGroup decorView) {
         int uiOptions = decorView.getSystemUiVisibility();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             uiOptions &= ~View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
@@ -978,13 +970,13 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      */
     protected void setPlayState(int playState) {
         mCurrentPlayState = playState;
-        if (mVideoController != null)
+        if (mVideoController != null) {
             mVideoController.setPlayState(playState);
+        }
         if (mOnStateChangeListeners != null) {
-            for (int i = 0, z = mOnStateChangeListeners.size(); i < z; i++) {
-                OnStateChangeListener listener = mOnStateChangeListeners.get(i);
-                if (listener != null) {
-                    listener.onPlayStateChanged(playState);
+            for (OnStateChangeListener l : PlayerUtils.getSnapshot(mOnStateChangeListeners)) {
+                if (l != null) {
+                    l.onPlayStateChanged(playState);
                 }
             }
         }
@@ -995,13 +987,13 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      */
     protected void setPlayerState(int playerState) {
         mCurrentPlayerState = playerState;
-        if (mVideoController != null)
+        if (mVideoController != null) {
             mVideoController.setPlayerState(playerState);
+        }
         if (mOnStateChangeListeners != null) {
-            for (int i = 0, z = mOnStateChangeListeners.size(); i < z; i++) {
-                OnStateChangeListener listener = mOnStateChangeListeners.get(i);
-                if (listener != null) {
-                    listener.onPlayerStateChanged(playerState);
+            for (OnStateChangeListener l : PlayerUtils.getSnapshot(mOnStateChangeListeners)) {
+                if (l != null) {
+                    l.onPlayerStateChanged(playerState);
                 }
             }
         }

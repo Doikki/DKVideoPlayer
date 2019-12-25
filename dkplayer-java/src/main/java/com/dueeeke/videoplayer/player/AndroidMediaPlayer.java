@@ -149,12 +149,20 @@ public class AndroidMediaPlayer extends AbstractPlayer {
 
     @Override
     public void setSurface(Surface surface) {
-        mMediaPlayer.setSurface(surface);
+        try {
+            mMediaPlayer.setSurface(surface);
+        } catch (Exception e) {
+            mPlayerEventListener.onError();
+        }
     }
 
     @Override
     public void setDisplay(SurfaceHolder holder) {
-        mMediaPlayer.setDisplay(holder);
+        try {
+            mMediaPlayer.setDisplay(holder);
+        } catch (Exception e) {
+            mPlayerEventListener.onError();
+        }
     }
 
     @Override
@@ -175,7 +183,11 @@ public class AndroidMediaPlayer extends AbstractPlayer {
     public void setSpeed(float speed) {
         // only support above Android M
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            mMediaPlayer.setPlaybackParams(mMediaPlayer.getPlaybackParams().setSpeed(speed));
+            try {
+                mMediaPlayer.setPlaybackParams(mMediaPlayer.getPlaybackParams().setSpeed(speed));
+            } catch (Exception e) {
+                mPlayerEventListener.onError();
+            }
         }
     }
 

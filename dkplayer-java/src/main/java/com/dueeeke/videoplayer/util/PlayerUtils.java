@@ -19,8 +19,13 @@ import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 import android.view.WindowManager;
 
+import androidx.annotation.NonNull;
+
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -266,5 +271,19 @@ public final class PlayerUtils {
         } else {
             return String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
         }
+    }
+
+    /**
+     * 获取集合的快照
+     */
+    @NonNull
+    public static <T> List<T> getSnapshot(@NonNull Collection<T> other) {
+        List<T> result = new ArrayList<>(other.size());
+        for (T item : other) {
+            if (item != null) {
+                result.add(item);
+            }
+        }
+        return result;
     }
 }
