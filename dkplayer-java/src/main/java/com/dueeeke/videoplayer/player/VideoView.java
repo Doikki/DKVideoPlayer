@@ -214,6 +214,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         }
         initPlayer();
         startPrepare(false);
+        addDisplay();
         return true;
     }
 
@@ -449,6 +450,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
             mCurrentPosition = 0;
         }
         startPrepare(true);
+        addDisplay();
     }
 
     /**
@@ -568,7 +570,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
     @Override
     public void onPrepared() {
         setPlayState(STATE_PREPARED);
-        addDisplay();
         if (mCurrentPosition > 0) {
             seekTo(mCurrentPosition);
         }

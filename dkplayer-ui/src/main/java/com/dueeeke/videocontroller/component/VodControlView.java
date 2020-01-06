@@ -73,7 +73,8 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
         mPlayButton.setOnClickListener(this);
         mBottomProgress = findViewById(R.id.bottom_progress);
 
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
+        //5.1以下系统SeekBar高度需要设置成WRAP_CONTENT
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
             mVideoProgress.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
         }
     }

@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
@@ -72,6 +73,12 @@ public class Tiktok2Adapter extends PagerAdapter {
                 .placeholder(android.R.color.white)
                 .into(viewHolder.mThumb);
         viewHolder.mTitle.setText(item.title);
+        viewHolder.mTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, "点击了标题", Toast.LENGTH_SHORT).show();
+            }
+        });
         viewHolder.mPosition = position;
         container.addView(view);
         return view;
