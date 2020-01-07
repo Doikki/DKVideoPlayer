@@ -1,0 +1,32 @@
+apply plugin: 'com.android.library'
+apply from: '../../constants.gradle'
+
+android {
+    compileSdkVersion project.ext.compileSdkVersion
+    buildToolsVersion project.ext.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion project.ext.minSdkVersion
+        targetSdkVersion project.ext.targetSdkVersion
+    }
+
+
+}
+
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    compileOnly project(':dkplayer-java')
+    api(name: 'APlayerAndroid', ext: 'aar')
+}
+
+//ext {
+//    releaseArtifact = 'player-thunder'
+//}
+
+//apply from: '../../publish.gradle'

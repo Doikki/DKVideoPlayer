@@ -69,6 +69,12 @@ android {
     }
 }
 
+repositories {
+    flatDir {
+        dirs project(':dkplayer-players:thunder').file('libs')
+    }
+}
+
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0'
@@ -86,14 +92,14 @@ dependencies {
     implementation project(':dkplayer-ui')
     implementation project(path: ':dkplayer-players:ijk')
     implementation project(path: ':dkplayer-players:exo')
+    implementation project(path: ':dkplayer-players:thunder')
     //缓存
     implementation project(':dkplayer-videocache')
 
 
-//    implementation 'com.github.dueeeke.dkplayer:dkplayer-java:3.1.4'
-//    implementation 'com.github.dueeeke.dkplayer:dkplayer-ui:3.1.4'
-//
-//    implementation 'com.github.dueeeke.dkplayer:player-exo:3.1.4'
-//
-//    implementation 'com.github.dueeeke.dkplayer:player-ijk:3.1.4'
+//    implementation 'com.github.dueeeke.dkplayer:dkplayer-java:3.2.3'
+//    implementation 'com.github.dueeeke.dkplayer:dkplayer-ui:3.2.3'
+//    implementation 'com.github.dueeeke.dkplayer:player-exo:3.2.3'
+//    implementation 'com.github.dueeeke.dkplayer:player-ijk:3.2.3'
+//    implementation 'com.github.dueeeke.dkplayer:videocache:3.2.3'
 }
