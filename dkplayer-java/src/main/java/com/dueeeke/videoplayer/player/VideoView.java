@@ -213,8 +213,8 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
             mCurrentPosition = mProgressManager.getSavedProgress(mUrl);
         }
         initPlayer();
-        startPrepare(false);
         addDisplay();
+        startPrepare(false);
         return true;
     }
 
@@ -449,8 +449,9 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         if (resetPosition) {
             mCurrentPosition = 0;
         }
-        startPrepare(true);
         addDisplay();
+        startPrepare(true);
+        setKeepScreenOn(true);
     }
 
     /**
@@ -527,6 +528,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      */
     @Override
     public void onError() {
+        setKeepScreenOn(false);
         setPlayState(STATE_ERROR);
     }
 
