@@ -138,7 +138,7 @@ public class TitleView extends FrameLayout implements IControlComponent {
     @Override
     public void onPlayerStateChanged(int playerState) {
         if (playerState == VideoView.PLAYER_FULL_SCREEN) {
-            if (mControlWrapper.isShowing()) {
+            if (mControlWrapper.isShowing() && !mControlWrapper.isLocked()) {
                 setVisibility(VISIBLE);
                 mSysTime.setText(PlayerUtils.getCurrentSystemTime());
             }
@@ -173,6 +173,7 @@ public class TitleView extends FrameLayout implements IControlComponent {
             setVisibility(GONE);
         } else {
             setVisibility(VISIBLE);
+            mSysTime.setText(PlayerUtils.getCurrentSystemTime());
         }
     }
 
