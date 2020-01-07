@@ -8,8 +8,9 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.dueeeke.dkplayer.R;
-import com.dueeeke.dkplayer.activity.DebugActivity;
+import com.dueeeke.dkplayer.activity.BaseActivity;
 import com.dueeeke.dkplayer.util.IntentKeys;
+import com.dueeeke.dkplayer.widget.component.DebugInfoView;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videocontroller.component.CompleteView;
 import com.dueeeke.videocontroller.component.ErrorView;
@@ -26,7 +27,7 @@ import com.dueeeke.videoplayer.util.L;
  * Created by dueeeke on 2017/4/7.
  */
 
-public class PlayerActivity extends DebugActivity {
+public class PlayerActivity extends BaseActivity<VideoView> {
 
     private static final String THUMB = "https://cms-bucket.nosdn.127.net/eb411c2810f04ffa8aaafc42052b233820180418095416.jpeg";
 
@@ -100,6 +101,9 @@ public class PlayerActivity extends DebugActivity {
 //            controller.setGestureEnabled(false);
             //适配刘海屏，默认开启
 //            controller.setAdaptCutout(false);
+
+            //在控制器上显示调试信息
+            controller.addControlComponent(new DebugInfoView(this));
 
             //如果你不想要UI，不要设置控制器即可
             mVideoView.setVideoController(controller);

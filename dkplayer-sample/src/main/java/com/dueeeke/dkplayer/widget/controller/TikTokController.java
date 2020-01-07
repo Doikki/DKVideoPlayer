@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.dueeeke.dkplayer.widget.component.DebugInfoView;
 import com.dueeeke.videoplayer.controller.BaseVideoController;
 
 /**
@@ -25,6 +26,11 @@ public class TikTokController extends BaseVideoController {
 
     public TikTokController(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+    }
+
+    {
+        //显示调试信息
+        addControlComponent(new DebugInfoView(getContext()));
     }
 
     @Override

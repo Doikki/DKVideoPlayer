@@ -27,7 +27,10 @@ public class ApiFragment extends BaseFragment implements View.OnClickListener {
 //    private static final String LIVE_URL = "http://ivi.bupt.edu.cn/hls/sztv.m3u8";
 //    private static final String LIVE_URL = "http://220.161.87.62:8800/hls/0/index.m3u8";
 //    private static final String LIVE_URL = "http://ivi.bupt.edu.cn/hls/cctv6.m3u8";
-    private static final String LIVE_URL = "rtmp://media3.sinovision.net:1935/live/livestream";
+//    private static final String LIVE_URL = "rtmp://media3.sinovision.net:1935/live/livestream";
+    private static final String LIVE_URL = "http://media3.sinovision.net:1935/live/livestream/playlist.m3u8";
+//    private static final String LIVE_URL = "http://223.110.241.204:6610/cntv/live1/HD-2500k-1080P-shenzhenstv/HD-2500k-1080P-shenzhenstv";
+
     //断线自动重连,需加上ijklivehook:
 //    private static final String LIVE_URL = "ijklivehook:rtmp://live.hkstv.hk.lxdns.com/live/hks";
 
