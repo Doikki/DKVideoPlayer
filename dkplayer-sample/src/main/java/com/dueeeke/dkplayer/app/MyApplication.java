@@ -3,9 +3,9 @@ package com.dueeeke.dkplayer.app;
 import android.app.Application;
 
 import com.dueeeke.videoplayer.BuildConfig;
+import com.dueeeke.videoplayer.ijk.IjkPlayerFactory;
 import com.dueeeke.videoplayer.player.VideoViewConfig;
 import com.dueeeke.videoplayer.player.VideoViewManager;
-import com.dueeeke.videoplayer.thunder.ThunderMediaPlayerFactory;
 
 /**
  * app
@@ -23,8 +23,8 @@ public class MyApplication extends Application {
         //播放器配置，注意：此为全局配置，按需开启
         VideoViewManager.setConfig(VideoViewConfig.newBuilder()
                 .setLogEnabled(BuildConfig.DEBUG)//调试的时候请打开日志，方便排错
-//                .setPlayerFactory(IjkPlayerFactory.create())
-                .setPlayerFactory(ThunderMediaPlayerFactory.create())
+                .setPlayerFactory(IjkPlayerFactory.create())
+//                .setPlayerFactory(ThunderMediaPlayerFactory.create())
 //                .setPlayerFactory(ExoMediaPlayerFactory.create())
 //                .setRenderViewFactory(SurfaceRenderViewFactory.create())
 //                .setEnableOrientation(true)

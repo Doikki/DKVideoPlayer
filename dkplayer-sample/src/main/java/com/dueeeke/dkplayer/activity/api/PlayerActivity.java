@@ -11,6 +11,7 @@ import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.activity.BaseActivity;
 import com.dueeeke.dkplayer.util.IntentKeys;
 import com.dueeeke.dkplayer.widget.component.DebugInfoView;
+import com.dueeeke.dkplayer.widget.component.PlayerMonitor;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videocontroller.component.CompleteView;
 import com.dueeeke.videocontroller.component.ErrorView;
@@ -104,6 +105,7 @@ public class PlayerActivity extends BaseActivity<VideoView> {
 
             //在控制器上显示调试信息
             controller.addControlComponent(new DebugInfoView(this));
+            controller.addControlComponent(new PlayerMonitor(), true);
 
             //如果你不想要UI，不要设置控制器即可
             mVideoView.setVideoController(controller);

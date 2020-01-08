@@ -32,6 +32,8 @@
 -keep class com.google.android.exoplayer2.** { *; }
 -dontwarn com.google.android.exoplayer2.**
 
+-keep class com.aplayer.** { *; }
+-dontwarn com.aplayer.**
 
 -dontwarn com.yanzhenjie.permission.**
 

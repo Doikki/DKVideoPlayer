@@ -6,6 +6,7 @@ import android.content.pm.ActivityInfo;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.OrientationEventListener;
+import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.FrameLayout;
@@ -138,8 +139,9 @@ public abstract class BaseVideoController extends FrameLayout
         if (mControlWrapper != null) {
             component.attach(mControlWrapper);
         }
-        if (!isPrivate) {
-            addView(component.getView(), 0);
+        View view = component.getView();
+        if (view != null && !isPrivate) {
+            addView(view, 0);
         }
     }
 
