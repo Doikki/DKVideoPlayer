@@ -23,12 +23,13 @@ public class ApiFragment extends BaseFragment implements View.OnClickListener {
 //    private static final String VOD_URL = "http://videofile2.cutv.com/mg/010061_t/2019/07/23/G15/G15fgfflggklinnkggoez2_cug.mp4.m3u8";
     //断线自动重连,需加上ijkhttphook:
 //    private static final String VOD_URL = "ijkhttphook:http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv";
+
 //    private static final String LIVE_URL = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
 //    private static final String LIVE_URL = "http://ivi.bupt.edu.cn/hls/sztv.m3u8";
-//    private static final String LIVE_URL = "http://220.161.87.62:8800/hls/0/index.m3u8";
+    private static final String LIVE_URL = "http://220.161.87.62:8800/hls/0/index.m3u8";
 //    private static final String LIVE_URL = "http://ivi.bupt.edu.cn/hls/cctv6.m3u8";
 //    private static final String LIVE_URL = "rtmp://media3.sinovision.net:1935/live/livestream";
-    private static final String LIVE_URL = "http://media3.sinovision.net:1935/live/livestream/playlist.m3u8";
+//    private static final String LIVE_URL = "http://media3.sinovision.net:1935/live/livestream/playlist.m3u8";
 //    private static final String LIVE_URL = "http://223.110.241.204:6610/cntv/live1/HD-2500k-1080P-shenzhenstv/HD-2500k-1080P-shenzhenstv";
 
     //断线自动重连,需加上ijklivehook:

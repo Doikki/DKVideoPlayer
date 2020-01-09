@@ -6,7 +6,7 @@ import android.view.View;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.activity.BaseActivity;
 import com.dueeeke.dkplayer.util.DataUtil;
-import com.dueeeke.dkplayer.widget.videoview.DanmukuVideoView;
+import com.dueeeke.dkplayer.widget.component.MyDanmakuView;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.player.VideoView;
 
@@ -15,7 +15,9 @@ import com.dueeeke.videoplayer.player.VideoView;
  * Created by dueeeke on 17-6-11.
  */
 
-public class DanmakuActivity extends BaseActivity<DanmukuVideoView> {
+public class DanmakuActivity extends BaseActivity<VideoView> {
+
+    private MyDanmakuView mMyDanmakuView;
 
     @Override
     protected int getLayoutResId() {
@@ -33,6 +35,8 @@ public class DanmakuActivity extends BaseActivity<DanmukuVideoView> {
         mVideoView = findViewById(R.id.player);
         StandardVideoController controller = new StandardVideoController(this);
         controller.addDefaultControlComponent(getString(R.string.str_danmu), false);
+        mMyDanmakuView = new MyDanmakuView(this);
+        controller.addControlComponent(mMyDanmakuView);
         mVideoView.setVideoController(controller);
         mVideoView.setUrl(DataUtil.SAMPLE_URL);
         mVideoView.start();
@@ -56,19 +60,19 @@ public class DanmakuActivity extends BaseActivity<DanmukuVideoView> {
     }
 
     public void showDanMu(View view) {
-        mVideoView.showDanMu();
+        mMyDanmakuView.show();
     }
 
     public void hideDanMu(View view) {
-        mVideoView.hideDanMu();
+        mMyDanmakuView.hide();
     }
 
     public void addDanmakuWithDrawable(View view) {
-        mVideoView.addDanmakuWithDrawable();
+        mMyDanmakuView.addDanmakuWithDrawable();
     }
 
     public void addDanmaku(View view) {
-        mVideoView.addDanmaku("这是一条文字弹幕~", true);
+        mMyDanmakuView.addDanmaku("这是一条文字弹幕~", true);
     }
 
 
@@ -81,7 +85,7 @@ public class DanmakuActivity extends BaseActivity<DanmukuVideoView> {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                mVideoView.addDanmaku("awsl", false);
+                mMyDanmakuView.addDanmaku("awsl", false);
                 mHandler.postDelayed(this, 100);
             }
         });

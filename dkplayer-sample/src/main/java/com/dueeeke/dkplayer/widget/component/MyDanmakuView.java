@@ -1,4 +1,4 @@
-package com.dueeeke.dkplayer.widget.videoview;
+package com.dueeeke.dkplayer.widget.component;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -10,9 +10,8 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
+import android.view.View;
+import android.view.animation.Animation;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,10 +20,12 @@ import androidx.core.content.ContextCompat;
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.widget.CenteredImageSpan;
 import com.dueeeke.videoplayer.BuildConfig;
+import com.dueeeke.videoplayer.controller.ControlWrapper;
+import com.dueeeke.videoplayer.controller.IControlComponent;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 
-import master.flame.danmaku.controller.IDanmakuView;
+import master.flame.danmaku.controller.DrawHandler;
 import master.flame.danmaku.danmaku.model.BaseDanmaku;
 import master.flame.danmaku.danmaku.model.DanmakuTimer;
 import master.flame.danmaku.danmaku.model.IDanmakus;
@@ -35,108 +36,25 @@ import master.flame.danmaku.danmaku.model.android.SpannedCacheStuffer;
 import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
 import master.flame.danmaku.ui.widget.DanmakuView;
 
-/**
- * 包含弹幕的播放器
- * @deprecated 推荐 {@link com.dueeeke.dkplayer.widget.component.MyDanmakuView}
- */
-@Deprecated
-public class DanmukuVideoView extends VideoView {
-    private DanmakuView mDanmakuView;
+public class MyDanmakuView extends DanmakuView implements IControlComponent {
+
     private DanmakuContext mContext;
     private BaseDanmakuParser mParser;
 
-
-    public DanmukuVideoView(@NonNull Context context) {
+    public MyDanmakuView(@NonNull Context context) {
         super(context);
     }
 
-    public DanmukuVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public MyDanmakuView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public DanmukuVideoView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public MyDanmakuView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
-    @Override
-    protected void initPlayer() {
-        super.initPlayer();
-        if (mDanmakuView == null) {
-            initDanMuView();
-        }
-        mPlayerContainer.removeView(mDanmakuView);
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        layoutParams.topMargin = (int) PlayerUtils.getStatusBarHeight(getContext());
-        mPlayerContainer.addView(mDanmakuView, layoutParams);
-        //将控制器提到最顶层，如果有的话
-        if (mVideoController != null) {
-            mVideoController.bringToFront();
-        }
-    }
-
-    @Override
-    protected void startPrepare(boolean reset) {
-        super.startPrepare(reset);
-        if (mDanmakuView != null) {
-            if (reset) mDanmakuView.restart();
-            mDanmakuView.prepare(mParser, mContext);
-        }
-    }
-
-    @Override
-    protected void startInPlaybackState() {
-        super.startInPlaybackState();
-        if (mDanmakuView != null && mDanmakuView.isPrepared() && mDanmakuView.isPaused()) {
-            mDanmakuView.resume();
-        }
-    }
-
-    @Override
-    public void pause() {
-        super.pause();
-        if (isInPlaybackState()) {
-            if (mDanmakuView != null && mDanmakuView.isPrepared()) {
-                mDanmakuView.pause();
-            }
-        }
-    }
-
-    @Override
-    public void resume() {
-        super.resume();
-        if (mDanmakuView != null && mDanmakuView.isPrepared() && mDanmakuView.isPaused()) {
-            mDanmakuView.resume();
-        }
-    }
-
-    @Override
-    public void release() {
-        super.release();
-        if (mDanmakuView != null) {
-            // dont forget release!
-            mDanmakuView.release();
-            mDanmakuView = null;
-        }
-    }
-
-    @Override
-    public void seekTo(long pos) {
-        super.seekTo(pos);
-        if (isInPlaybackState()) {
-            if (mDanmakuView != null) mDanmakuView.seekTo(pos);
-        }
-    }
-
-    @Override
-    public void onCompletion() {
-        super.onCompletion();
-        if (mDanmakuView != null) {
-            mDanmakuView.clearDanmakusOnScreen();
-        }
-    }
-
-    private void initDanMuView() {
-// 设置最大显示行数
+    {
+        // 设置最大显示行数
 //        HashMap<Integer, Integer> maxLinesPair = new HashMap<>();
 //        maxLinesPair.put(BaseDanmaku.TYPE_SCROLL_RL, 5); // 滚动弹幕最大显示5行
         // 设置是否禁止重叠
@@ -144,7 +62,6 @@ public class DanmukuVideoView extends VideoView {
 //        overlappingEnablePair.put(BaseDanmaku.TYPE_SCROLL_RL, true);
 //        overlappingEnablePair.put(BaseDanmaku.TYPE_FIX_TOP, true);
 
-        mDanmakuView = new DanmakuView(getContext());
         mContext = DanmakuContext.create();
         mContext.setDanmakuStyle(IDisplayer.DANMAKU_STYLE_STROKEN, 3)
                 .setDuplicateMergingEnabled(false)
@@ -154,73 +71,93 @@ public class DanmukuVideoView extends VideoView {
 //                .setCacheStuffer(new BackgroundCacheStuffer(), null)  // 绘制背景使用BackgroundCacheStuffer
                 .setMaximumLines(null)
                 .preventOverlapping(null).setDanmakuMargin(40);
-        if (mDanmakuView != null) {
-            mParser = new BaseDanmakuParser() {
-                @Override
-                protected IDanmakus parse() {
-                    return new Danmakus();
-                }
-            };
-            mDanmakuView.setCallback(new master.flame.danmaku.controller.DrawHandler.Callback() {
-                @Override
-                public void updateTimer(DanmakuTimer timer) {
-                }
+        mParser = new BaseDanmakuParser() {
+            @Override
+            protected IDanmakus parse() {
+                return new Danmakus();
+            }
+        };
+        setCallback(new DrawHandler.Callback() {
+            @Override
+            public void prepared() {
+                start();
+            }
 
-                @Override
-                public void drawingFinished() {
+            @Override
+            public void updateTimer(DanmakuTimer timer) {
 
-                }
+            }
 
-                @Override
-                public void danmakuShown(BaseDanmaku danmaku) {
-//                    Log.d("DFM", "danmakuShown(): text=" + danmaku.text);
-                }
+            @Override
+            public void danmakuShown(BaseDanmaku danmaku) {
 
-                @Override
-                public void prepared() {
-                    mDanmakuView.start();
-                }
-            });
-            mDanmakuView.setOnDanmakuClickListener(new IDanmakuView.OnDanmakuClickListener() {
+            }
 
-                @Override
-                public boolean onDanmakuClick(IDanmakus danmakus) {
-                    Log.d("DFM", "onDanmakuClick: danmakus size:" + danmakus.size());
-                    BaseDanmaku latest = danmakus.last();
-                    if (null != latest) {
-                        Log.d("DFM", "onDanmakuClick: text of latest danmaku:" + latest.text);
-                        return true;
-                    }
-                    return false;
-                }
+            @Override
+            public void drawingFinished() {
 
-                @Override
-                public boolean onDanmakuLongClick(IDanmakus danmakus) {
-                    return false;
-                }
+            }
+        });
+        showFPS(BuildConfig.DEBUG);
+        enableDanmakuDrawingCache(true);
+    }
 
-                @Override
-                public boolean onViewClick(IDanmakuView view) {
-                    return false;
+    @Override
+    public void attach(@NonNull ControlWrapper controlWrapper) {
+    }
+
+    @Override
+    public View getView() {
+        return this;
+    }
+
+    @Override
+    public void onVisibilityChanged(boolean isVisible, Animation anim) {
+
+    }
+
+    @Override
+    public void onPlayStateChanged(int playState) {
+        switch (playState) {
+            case VideoView.STATE_IDLE:
+                release();
+                break;
+            case VideoView.STATE_PREPARING:
+                if (isPrepared()) {
+                    restart();
                 }
-            });
-            mDanmakuView.showFPS(BuildConfig.DEBUG);
-            mDanmakuView.enableDanmakuDrawingCache(true);
+                prepare(mParser, mContext);
+                break;
+            case VideoView.STATE_PLAYING:
+                if (isPrepared() && isPaused()) {
+                    resume();
+                }
+                break;
+            case VideoView.STATE_PAUSED:
+                if (isPrepared()) {
+                    pause();
+                }
+                break;
+            case VideoView.STATE_PLAYBACK_COMPLETED:
+                clear();
+                clearDanmakusOnScreen();
+                break;
         }
     }
 
-    /**
-     * 显示弹幕
-     */
-    public void showDanMu() {
-        if (mDanmakuView != null) mDanmakuView.show();
+    @Override
+    public void onPlayerStateChanged(int playerState) {
+
     }
 
-    /**
-     * 隐藏弹幕
-     */
-    public void hideDanMu() {
-        if (mDanmakuView != null) mDanmakuView.hide();
+    @Override
+    public void setProgress(int duration, int position) {
+
+    }
+
+    @Override
+    public void onLockStateChanged(boolean isLocked) {
+
     }
 
     /**
@@ -230,23 +167,22 @@ public class DanmukuVideoView extends VideoView {
      * @param isSelf 是不是自己发的
      */
     public void addDanmaku(String text, boolean isSelf) {
-        if (mDanmakuView == null) return;
         mContext.setCacheStuffer(new SpannedCacheStuffer(), null);
         BaseDanmaku danmaku = mContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
-        if (danmaku == null || mDanmakuView == null) {
+        if (danmaku == null) {
             return;
         }
 
         danmaku.text = text;
         danmaku.priority = 0;  // 可能会被各种过滤器过滤并隐藏显示
         danmaku.isLive = false;
-        danmaku.setTime(mDanmakuView.getCurrentTime() + 1200);
+        danmaku.setTime(getCurrentTime() + 1200);
         danmaku.textSize = PlayerUtils.sp2px(getContext(), 12);
         danmaku.textColor = Color.WHITE;
         danmaku.textShadowColor = Color.GRAY;
         // danmaku.underlineColor = Color.GREEN;
         danmaku.borderColor = isSelf ? Color.GREEN : Color.TRANSPARENT;
-        mDanmakuView.addDanmaku(danmaku);
+        addDanmaku(danmaku);
     }
 
     /**
@@ -255,7 +191,7 @@ public class DanmukuVideoView extends VideoView {
     public void addDanmakuWithDrawable() {
         mContext.setCacheStuffer(new BackgroundCacheStuffer(), null);
         BaseDanmaku danmaku = mContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
-        if (danmaku == null || mDanmakuView == null) {
+        if (danmaku == null) {
             return;
         }
         // for(int i=0;i<100;i++){
@@ -269,13 +205,13 @@ public class DanmukuVideoView extends VideoView {
 //        danmaku.padding = 5;
         danmaku.priority = 0;  // 可能会被各种过滤器过滤并隐藏显示
         danmaku.isLive = false;
-        danmaku.setTime(mDanmakuView.getCurrentTime() + 1200);
+        danmaku.setTime(getCurrentTime() + 1200);
         danmaku.textSize = PlayerUtils.sp2px(getContext(), 12);
         danmaku.textColor = Color.RED;
         danmaku.textShadowColor = Color.WHITE;
         // danmaku.underlineColor = Color.GREEN;
 //        danmaku.borderColor = Color.GREEN;
-        mDanmakuView.addDanmaku(danmaku);
+        addDanmaku(danmaku);
 
     }
 

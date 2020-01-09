@@ -121,7 +121,7 @@ public abstract class BaseVideoController extends FrameLayout
     }
 
     /**
-     * 添加控制组件
+     * 添加控制组件，最后面添加的在最下面，合理组织添加顺序，可让ControlComponent位于不同的层级
      */
     public void addControlComponent(IControlComponent... component) {
         for (IControlComponent item : component) {
@@ -130,7 +130,7 @@ public abstract class BaseVideoController extends FrameLayout
     }
 
     /**
-     * 添加控制组件
+     * 添加控制组件，最后面添加的在最下面，合理组织添加顺序，可让ControlComponent位于不同的层级
      *
      * @param isPrivate 是否为独有的组件，如果是就不添加到控制器中
      */

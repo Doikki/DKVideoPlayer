@@ -41,6 +41,7 @@ public class PlayerMonitor implements IControlComponent {
     @Override
     public void setProgress(int duration, int position) {
         L.d("setProgress: duration: " + duration + " position: " + position + " buffered percent: " + mControlWrapper.getBufferedPercentage());
+        L.d("network speed: " + mControlWrapper.getTcpSpeed());
     }
 
     @Override
