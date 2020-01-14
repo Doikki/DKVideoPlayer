@@ -5,6 +5,7 @@ import android.view.animation.Animation;
 
 import androidx.annotation.NonNull;
 
+import com.dueeeke.dkplayer.util.Utils;
 import com.dueeeke.videoplayer.controller.ControlWrapper;
 import com.dueeeke.videoplayer.controller.IControlComponent;
 import com.dueeeke.videoplayer.util.L;
@@ -30,12 +31,12 @@ public class PlayerMonitor implements IControlComponent {
 
     @Override
     public void onPlayStateChanged(int playState) {
-        L.d("onPlayStateChanged: " + playState);
+        L.d("onPlayStateChanged: " + Utils.playState2str(playState));
     }
 
     @Override
     public void onPlayerStateChanged(int playerState) {
-        L.d("onPlayerStateChanged: " + playerState);
+        L.d("onPlayerStateChanged: " + Utils.playerState2str(playerState));
     }
 
     @Override

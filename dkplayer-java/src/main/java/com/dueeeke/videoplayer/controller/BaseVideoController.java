@@ -264,7 +264,7 @@ public abstract class BaseVideoController extends FrameLayout
     }
 
     /**
-     * 开始刷新进度
+     * 开始刷新进度，注意：需在STATE_PLAYING时调用才会开始刷新进度
      */
     @Override
     public void startProgress() {
@@ -281,33 +281,6 @@ public abstract class BaseVideoController extends FrameLayout
         if (!mIsStartProgress) return;
         removeCallbacks(mShowProgress);
         mIsStartProgress = false;
-    }
-
-    @Override
-    protected void onWindowVisibilityChanged(int visibility) {
-        super.onWindowVisibilityChanged(visibility);
-        if (mIsStartProgress) {
-            if (visibility == VISIBLE) {
-                post(mShowProgress);
-            }
-        }
-    }
-
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        if (mIsStartProgress) {
-            post(mShowProgress);
-        }
-        checkCutout();
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        if (mIsStartProgress) {
-            removeCallbacks(mShowProgress);
-        }
     }
 
     /**
@@ -337,6 +310,12 @@ public abstract class BaseVideoController extends FrameLayout
      */
     public void setAdaptCutout(boolean adaptCutout) {
         mAdaptCutout = adaptCutout;
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        checkCutout();
     }
 
     /**

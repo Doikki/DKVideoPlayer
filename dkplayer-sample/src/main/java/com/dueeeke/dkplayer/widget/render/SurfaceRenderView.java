@@ -1,6 +1,5 @@
 package com.dueeeke.dkplayer.widget.render;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
@@ -15,7 +14,6 @@ import com.dueeeke.videoplayer.player.AbstractPlayer;
 import com.dueeeke.videoplayer.render.IRenderView;
 import com.dueeeke.videoplayer.render.MeasureHelper;
 
-@SuppressLint("ViewConstructor")
 public class SurfaceRenderView extends SurfaceView implements IRenderView, SurfaceHolder.Callback {
     private MeasureHelper mMeasureHelper;
 

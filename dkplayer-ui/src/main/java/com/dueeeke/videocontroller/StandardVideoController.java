@@ -24,7 +24,6 @@ import com.dueeeke.videocontroller.component.TitleView;
 import com.dueeeke.videocontroller.component.VodControlView;
 import com.dueeeke.videoplayer.controller.GestureVideoController;
 import com.dueeeke.videoplayer.player.VideoView;
-import com.dueeeke.videoplayer.util.L;
 import com.dueeeke.videoplayer.util.PlayerUtils;
 
 /**
@@ -128,14 +127,12 @@ public class StandardVideoController extends GestureVideoController implements V
         super.onPlayerStateChanged(playerState);
         switch (playerState) {
             case VideoView.PLAYER_NORMAL:
-                L.e("PLAYER_NORMAL");
                 setLayoutParams(new FrameLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT));
                 mLockButton.setVisibility(GONE);
                 break;
             case VideoView.PLAYER_FULL_SCREEN:
-                L.e("PLAYER_FULL_SCREEN");
                 if (isShowing()) {
                     mLockButton.setVisibility(VISIBLE);
                 } else {
@@ -168,40 +165,21 @@ public class StandardVideoController extends GestureVideoController implements V
         switch (playState) {
             //调用release方法会回到此状态
             case VideoView.STATE_IDLE:
-                L.e("STATE_IDLE");
                 mLockButton.setSelected(false);
                 mLoadingProgress.setVisibility(GONE);
                 break;
             case VideoView.STATE_PLAYING:
-                L.e("STATE_PLAYING");
-                mLoadingProgress.setVisibility(GONE);
-                break;
             case VideoView.STATE_PAUSED:
-                L.e("STATE_PAUSED");
+            case VideoView.STATE_PREPARED:
+            case VideoView.STATE_ERROR:
+            case VideoView.STATE_BUFFERED:
                 mLoadingProgress.setVisibility(GONE);
                 break;
             case VideoView.STATE_PREPARING:
-                L.e("STATE_PREPARING");
-                mLoadingProgress.setVisibility(VISIBLE);
-                break;
-            case VideoView.STATE_PREPARED:
-                L.e("STATE_PREPARED");
-                mLoadingProgress.setVisibility(GONE);
-                break;
-            case VideoView.STATE_ERROR:
-                L.e("STATE_ERROR");
-                mLoadingProgress.setVisibility(GONE);
-                break;
             case VideoView.STATE_BUFFERING:
-                L.e("STATE_BUFFERING");
                 mLoadingProgress.setVisibility(VISIBLE);
-                break;
-            case VideoView.STATE_BUFFERED:
-                L.e("STATE_BUFFERED");
-                mLoadingProgress.setVisibility(GONE);
                 break;
             case VideoView.STATE_PLAYBACK_COMPLETED:
-                L.e("STATE_PLAYBACK_COMPLETED");
                 mLoadingProgress.setVisibility(GONE);
                 mLockButton.setVisibility(GONE);
                 mLockButton.setSelected(false);

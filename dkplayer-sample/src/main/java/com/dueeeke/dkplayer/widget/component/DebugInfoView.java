@@ -19,7 +19,6 @@ import com.dueeeke.videoplayer.controller.IControlComponent;
 import com.dueeeke.videoplayer.exo.ExoMediaPlayerFactory;
 import com.dueeeke.videoplayer.ijk.IjkPlayerFactory;
 import com.dueeeke.videoplayer.player.AndroidMediaPlayerFactory;
-import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.thunder.ThunderMediaPlayerFactory;
 
 /**
@@ -76,46 +75,8 @@ public class DebugInfoView extends AppCompatTextView implements IControlComponen
      * Returns the debugging information string to be shown by the target {@link TextView}.
      */
     protected String getDebugString(int playState) {
-        return getCurrentPlayer() + getPlayStateString(playState) + "\n"
+        return getCurrentPlayer() + Utils.playState2str(playState) + "\n"
                 + "video width: " + mControlWrapper.getVideoSize()[0] + " , height: " + mControlWrapper.getVideoSize()[1];
-    }
-
-    /**
-     * Returns a string containing player state debugging information.
-     */
-    protected String getPlayStateString(int state) {
-        String playStateString;
-        switch (state) {
-            default:
-            case VideoView.STATE_IDLE:
-                playStateString = "idle";
-                break;
-            case VideoView.STATE_PREPARING:
-                playStateString = "preparing";
-                break;
-            case VideoView.STATE_PREPARED:
-                playStateString = "prepared";
-                break;
-            case VideoView.STATE_PLAYING:
-                playStateString = "playing";
-                break;
-            case VideoView.STATE_PAUSED:
-                playStateString = "pause";
-                break;
-            case VideoView.STATE_BUFFERING:
-                playStateString = "buffering";
-                break;
-            case VideoView.STATE_BUFFERED:
-                playStateString = "buffered";
-                break;
-            case VideoView.STATE_PLAYBACK_COMPLETED:
-                playStateString = "playback completed";
-                break;
-            case VideoView.STATE_ERROR:
-                playStateString = "error";
-                break;
-        }
-        return String.format("playState: %s", playStateString);
     }
 
     protected String getCurrentPlayer() {
