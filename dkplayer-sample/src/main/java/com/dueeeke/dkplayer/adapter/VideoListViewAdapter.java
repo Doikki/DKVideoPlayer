@@ -58,7 +58,6 @@ public class VideoListViewAdapter extends BaseAdapter {
 
         Glide.with(viewHolder.mThumb.getContext())
                 .load(videoBean.getThumb())
-                .crossFade()
                 .placeholder(android.R.color.darker_gray)
                 .into(viewHolder.mThumb);
 

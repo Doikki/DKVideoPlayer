@@ -45,8 +45,7 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
 
         Glide.with(holder.mThumb.getContext())
                 .load(videoBean.getThumb())
-                .crossFade()
-                .placeholder(android.R.color.white)
+                .placeholder(android.R.color.darker_gray)
                 .into(holder.mThumb);
         holder.mTitle.setText(videoBean.getTitle());
 
