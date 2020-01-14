@@ -11,18 +11,22 @@ import com.dueeeke.videoplayer.player.VideoViewManager;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.analytics.AnalyticsCollector;
 import com.google.android.exoplayer2.source.DefaultMediaSourceEventListener;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.util.Log;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.util.Clock;
+import com.google.android.exoplayer2.util.EventLogger;
+import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoListener;
 
 import java.util.Map;
@@ -53,13 +57,24 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
 
     @Override
     public void initPlayer() {
-        mLoadControl = mLoadControl == null ? new DefaultLoadControl() : mLoadControl;
-        mRenderersFactory = mRenderersFactory == null ? new DefaultRenderersFactory(mAppContext) : mRenderersFactory;
-        mTrackSelector = mTrackSelector == null ? new DefaultTrackSelector() : mTrackSelector;
-        mInternalPlayer = ExoPlayerFactory.newSimpleInstance(mAppContext, mRenderersFactory, mTrackSelector, mLoadControl);
+        mInternalPlayer = new SimpleExoPlayer.Builder(
+                mAppContext,
+                mRenderersFactory == null ? mRenderersFactory = new DefaultRenderersFactory(mAppContext) : mRenderersFactory,
+                mTrackSelector == null ? mTrackSelector = new DefaultTrackSelector(mAppContext) : mTrackSelector,
+                mLoadControl == null ? mLoadControl = new DefaultLoadControl() : mLoadControl,
+                DefaultBandwidthMeter.getSingletonInstance(mAppContext),
+                Util.getLooper(),
+                new AnalyticsCollector(Clock.DEFAULT),
+                /* useLazyPreparation= */ true,
+                Clock.DEFAULT)
+                .build();
         setOptions();
-        Log.setLogLevel(VideoViewManager.getConfig().mIsEnableLog ? Log.LOG_LEVEL_ALL : Log.LOG_LEVEL_OFF);
-        Log.setLogStackTraces(VideoViewManager.getConfig().mIsEnableLog);
+
+        //播放器日志
+        if (VideoViewManager.getConfig().mIsEnableLog && mTrackSelector instanceof MappingTrackSelector) {
+            mInternalPlayer.addAnalyticsListener(new EventLogger((MappingTrackSelector) mTrackSelector, "ExoPlayer"));
+        }
+
         mInternalPlayer.addListener(this);
         mInternalPlayer.addVideoListener(this);
     }
