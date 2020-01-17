@@ -4,6 +4,7 @@ import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.activity.BaseActivity;
 import com.dueeeke.dkplayer.bean.VideoBean;
 import com.dueeeke.dkplayer.util.DataUtil;
+import com.dueeeke.dkplayer.widget.component.PlayerMonitor;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videocontroller.component.CompleteView;
 import com.dueeeke.videocontroller.component.ErrorView;
@@ -43,6 +44,7 @@ public class PlayListActivity extends BaseActivity {
         mVideoView = findViewById(R.id.video_view);
         mController = new StandardVideoController(this);
         addControlComponents();
+        mController.addControlComponent(new PlayerMonitor());
 
         //加载第一条数据
         VideoBean videoBean = data.get(0);

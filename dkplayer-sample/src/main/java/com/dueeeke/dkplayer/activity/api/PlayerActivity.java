@@ -105,7 +105,7 @@ public class PlayerActivity extends BaseActivity<VideoView> {
 
             //在控制器上显示调试信息
             controller.addControlComponent(new DebugInfoView(this));
-            controller.addControlComponent(new PlayerMonitor(), true);
+            controller.addControlComponent(new PlayerMonitor());
 
             //如果你不想要UI，不要设置控制器即可
             mVideoView.setVideoController(controller);
