@@ -115,7 +115,7 @@ public class PlayerActivity extends BaseActivity<VideoView> {
             //保存播放进度
 //            mVideoView.setProgressManager(new ProgressManagerImpl());
             //播放状态监听
-//            mVideoView.addOnVideoViewStateChangeListener(mOnVideoViewStateChangeListener);
+            mVideoView.addOnStateChangeListener(mOnStateChangeListener);
 
             //临时切换播放核心，如需全局请通过VideoConfig配置，详见MyApplication
             //使用IjkPlayer解码
@@ -146,6 +146,8 @@ public class PlayerActivity extends BaseActivity<VideoView> {
                 case VideoView.STATE_IDLE:
                     break;
                 case VideoView.STATE_PREPARING:
+                    //在STATE_PREPARING时设置setMute(true)可实现静音播放
+//                    mVideoView.setMute(true);
                     break;
                 case VideoView.STATE_PREPARED:
                     break;
