@@ -187,7 +187,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
             isStarted = true;
         }
         if (isStarted) {
-            setKeepScreenOn(true);
+            mPlayerContainer.setKeepScreenOn(true);
             if (mAudioFocusHelper != null)
                 mAudioFocusHelper.requestFocus();
         }
@@ -334,7 +334,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
             if (mAudioFocusHelper != null) {
                 mAudioFocusHelper.abandonFocus();
             }
-            setKeepScreenOn(false);
+            mPlayerContainer.setKeepScreenOn(false);
         }
     }
 
@@ -349,7 +349,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
             if (mAudioFocusHelper != null) {
                 mAudioFocusHelper.requestFocus();
             }
-            setKeepScreenOn(true);
+            mPlayerContainer.setKeepScreenOn(true);
         }
     }
 
@@ -393,7 +393,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
                 mAudioFocusHelper = null;
             }
             //关闭屏幕常亮
-            setKeepScreenOn(false);
+            mPlayerContainer.setKeepScreenOn(false);
             //保存播放进度
             saveProgress();
             //重置播放进度
@@ -451,7 +451,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         }
         addDisplay();
         startPrepare(true);
-        setKeepScreenOn(true);
+        mPlayerContainer.setKeepScreenOn(true);
     }
 
     /**
@@ -528,7 +528,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      */
     @Override
     public void onError() {
-        setKeepScreenOn(false);
+        mPlayerContainer.setKeepScreenOn(false);
         setPlayState(STATE_ERROR);
     }
 
@@ -537,7 +537,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      */
     @Override
     public void onCompletion() {
-        setKeepScreenOn(false);
+        mPlayerContainer.setKeepScreenOn(false);
         mCurrentPosition = 0;
         if (mProgressManager != null) {
             //播放完成，清除进度
