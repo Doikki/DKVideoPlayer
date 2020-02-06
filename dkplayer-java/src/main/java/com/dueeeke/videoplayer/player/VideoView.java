@@ -557,7 +557,9 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
                 break;
             case AbstractPlayer.MEDIA_INFO_VIDEO_RENDERING_START: // 视频开始渲染
                 setPlayState(STATE_PLAYING);
-                if (getWindowVisibility() != VISIBLE) pause();
+                if (mPlayerContainer.getWindowVisibility() != VISIBLE) {
+                    pause();
+                }
                 break;
             case AbstractPlayer.MEDIA_INFO_VIDEO_ROTATION_CHANGED:
                 if (mRenderView != null)
