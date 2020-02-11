@@ -1,9 +1,12 @@
 package com.dueeeke.dkplayer.fragment.list;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.transition.Transition;
 import android.view.View;
 
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
 
@@ -58,7 +61,7 @@ public class SeamlessPlayFragment extends RecyclerViewAutoPlayFragment {
             View sharedView = mLinearLayoutManager.findViewByPosition(position).findViewById(R.id.player_container);
             //使用共享元素动画
             ActivityOptionsCompat options = ActivityOptionsCompat
-                    .makeSceneTransitionAnimation(getActivity(), sharedView, "player_container");
+                    .makeSceneTransitionAnimation(getActivity(), sharedView, DetailActivity.VIEW_NAME_PLAYER_CONTAINER);
             ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
         });
     }
@@ -79,19 +82,71 @@ public class SeamlessPlayFragment extends RecyclerViewAutoPlayFragment {
     @Override
     protected void resume() {
         if (mSkipToDetail) {
-            //还原播放器
-            View itemView = mLinearLayoutManager.findViewByPosition(mCurPos);
-            VideoRecyclerViewAdapter.VideoHolder viewHolder = (VideoRecyclerViewAdapter.VideoHolder) itemView.getTag();
-            mController.addControlComponent(viewHolder.mPrepareView, true);
-            mVideoView = getVideoViewManager().get(Tag.SEAMLESS);
-            mController.setPlayState(mVideoView.getCurrentPlayState());
-            mController.setPlayerState(mVideoView.getCurrentPlayerState());
-            mVideoView.setVideoController(mController);
-            Utils.removeViewFormParent(mVideoView);
-            viewHolder.mPlayerContainer.addView(mVideoView, 0);
             mSkipToDetail = false;
         } else {
             super.resume();
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP || !addTransitionListener()) {
+            restoreVideoView();
+        }
+    }
+
+    @RequiresApi(21)
+    private boolean addTransitionListener() {
+        final Transition transition = getActivity().getWindow().getSharedElementExitTransition();
+        if (transition != null) {
+            transition.addListener(new Transition.TransitionListener() {
+                @Override
+                public void onTransitionEnd(Transition transition) {
+                    restoreVideoView();
+                    transition.removeListener(this);
+                }
+
+                @Override
+                public void onTransitionStart(Transition transition) {
+
+                }
+
+                @Override
+                public void onTransitionCancel(Transition transition) {
+                    transition.removeListener(this);
+                }
+
+                @Override
+                public void onTransitionPause(Transition transition) {
+                }
+
+                @Override
+                public void onTransitionResume(Transition transition) {
+                }
+            });
+            return true;
+        }
+        return false;
+    }
+
+    private void restoreVideoView() {
+        //还原播放器
+        View itemView = mLinearLayoutManager.findViewByPosition(mCurPos);
+        VideoRecyclerViewAdapter.VideoHolder viewHolder = (VideoRecyclerViewAdapter.VideoHolder) itemView.getTag();
+        mVideoView = getVideoViewManager().get(Tag.SEAMLESS);
+        Utils.removeViewFormParent(mVideoView);
+        viewHolder.mPlayerContainer.addView(mVideoView, 0);
+
+        mController.addControlComponent(viewHolder.mPrepareView, true);
+        mController.setPlayState(mVideoView.getCurrentPlayState());
+        mController.setPlayerState(mVideoView.getCurrentPlayerState());
+
+        mRecyclerView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mVideoView.setVideoController(mController);
+            }
+        }, 100);
     }
 }

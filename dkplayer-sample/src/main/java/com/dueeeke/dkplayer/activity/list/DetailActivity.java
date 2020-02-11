@@ -1,12 +1,12 @@
 package com.dueeeke.dkplayer.activity.list;
 
 import android.content.Intent;
+import android.os.Build;
+import android.transition.Transition;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.FrameLayout;
 
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.SharedElementCallback;
+import androidx.annotation.RequiresApi;
 import androidx.core.view.ViewCompat;
 
 import com.dueeeke.dkplayer.R;
@@ -17,11 +17,12 @@ import com.dueeeke.dkplayer.util.Utils;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.player.VideoView;
 
-import java.util.List;
-
 public class DetailActivity extends BaseActivity<VideoView> {
 
-    private boolean isStartTransition;
+    private FrameLayout mPlayerContainer;
+
+    public static final String VIEW_NAME_PLAYER_CONTAINER = "player_container";
+
     @Override
     protected int getTitleResId() {
         return R.string.str_seamless_play;
@@ -35,8 +36,7 @@ public class DetailActivity extends BaseActivity<VideoView> {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            supportFinishAfterTransition();
-            isStartTransition = true;
+            onBackPressed();
         }
         return true;
     }
@@ -44,42 +44,75 @@ public class DetailActivity extends BaseActivity<VideoView> {
     @Override
     protected void initView() {
         super.initView();
-        FrameLayout playerContainer = findViewById(R.id.player_container);
-        ViewCompat.setTransitionName(playerContainer, "player_container");
-        ActivityCompat.setEnterSharedElementCallback(this, new SharedElementCallback() {
-            @Override
-            public void onSharedElementEnd(List<String> sharedElementNames, List<View> sharedElements, List<View> sharedElementSnapshots) {
-                super.onSharedElementEnd(sharedElementNames, sharedElements, sharedElementSnapshots);
-                if (isStartTransition) return;
+        mPlayerContainer = findViewById(R.id.player_container);
+        ViewCompat.setTransitionName(mPlayerContainer, VIEW_NAME_PLAYER_CONTAINER);
 
-                //注意以下过程需在共享元素动画结束后执行
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP || !addTransitionListener()) {
+            initVideoView();
+        }
+    }
 
-                //拿到VideoView实例
-                mVideoView = getVideoViewManager().get(Tag.SEAMLESS);
-                //如果已经添加到某个父容器，就将其移除
-                Utils.removeViewFormParent(mVideoView);
-                //把播放器添加到页面的容器中
-                playerContainer.addView(mVideoView);
-                //设置新的控制器
-                StandardVideoController controller = new StandardVideoController(DetailActivity.this);
-                mVideoView.setVideoController(controller);
+    private void initVideoView() {
+        //注意以下过程需在共享元素动画结束后执行
 
-                Intent intent = getIntent();
-                boolean seamlessPlay = intent.getBooleanExtra(IntentKeys.SEAMLESS_PLAY, false);
-                String title = intent.getStringExtra(IntentKeys.TITLE);
-                controller.addDefaultControlComponent(title, false);
-                if (seamlessPlay) {
-                    //无缝播放需还原Controller状态
-                    controller.setPlayState(mVideoView.getCurrentPlayState());
-                    controller.setPlayerState(mVideoView.getCurrentPlayerState());
-                } else {
-                    //不是无缝播放的情况
-                    String url = intent.getStringExtra(IntentKeys.URL);
-                    mVideoView.setUrl(url);
-                    mVideoView.start();
+        //拿到VideoView实例
+        mVideoView = getVideoViewManager().get(Tag.SEAMLESS);
+        //如果已经添加到某个父容器，就将其移除
+        Utils.removeViewFormParent(mVideoView);
+        //把播放器添加到页面的容器中
+        mPlayerContainer.addView(mVideoView);
+        //设置新的控制器
+        StandardVideoController controller = new StandardVideoController(DetailActivity.this);
+        mVideoView.setVideoController(controller);
+
+        Intent intent = getIntent();
+        boolean seamlessPlay = intent.getBooleanExtra(IntentKeys.SEAMLESS_PLAY, false);
+        String title = intent.getStringExtra(IntentKeys.TITLE);
+        controller.addDefaultControlComponent(title, false);
+        if (seamlessPlay) {
+            //无缝播放需还原Controller状态
+            controller.setPlayState(mVideoView.getCurrentPlayState());
+            controller.setPlayerState(mVideoView.getCurrentPlayerState());
+        } else {
+            //不是无缝播放的情况
+            String url = intent.getStringExtra(IntentKeys.URL);
+            mVideoView.setUrl(url);
+            mVideoView.start();
+        }
+    }
+
+    @RequiresApi(21)
+    private boolean addTransitionListener() {
+        final Transition transition = getWindow().getSharedElementEnterTransition();
+
+        if (transition != null) {
+            transition.addListener(new Transition.TransitionListener() {
+                @Override
+                public void onTransitionEnd(Transition transition) {
+                    transition.removeListener(this);
                 }
-            }
-        });
+
+                @Override
+                public void onTransitionStart(Transition transition) {
+                    initVideoView();
+                }
+
+                @Override
+                public void onTransitionCancel(Transition transition) {
+                    transition.removeListener(this);
+                }
+
+                @Override
+                public void onTransitionPause(Transition transition) {
+                }
+
+                @Override
+                public void onTransitionResume(Transition transition) {
+                }
+            });
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -87,16 +120,9 @@ public class DetailActivity extends BaseActivity<VideoView> {
         if (isFinishing()) {
             //移除Controller
             mVideoView.setVideoController(null);
+            //将VideoView置空，其目的是不执行 super.onPause(); 和 super.onDestroy(); 中的代码
             mVideoView = null;
         }
         super.onPause();
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (mVideoView == null || !mVideoView.onBackPressed()) {
-            supportFinishAfterTransition();
-            isStartTransition = true;
-        }
     }
 }
