@@ -27,6 +27,8 @@ import com.dueeeke.videoplayer.player.VideoViewConfig;
 import com.dueeeke.videoplayer.player.VideoViewManager;
 import com.dueeeke.videoplayer.thunder.ThunderMediaPlayerFactory;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.yanzhenjie.permission.AndPermission;
+import com.yanzhenjie.permission.runtime.Permission;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -50,6 +52,11 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
     @Override
     protected void initView() {
         super.initView();
+
+        AndPermission.with(this)
+                .runtime()
+                .permission(Permission.WRITE_EXTERNAL_STORAGE)
+                .start();
 
         //检测当前是用的哪个播放器
         Object factory = Utils.getCurrentPlayerFactory();

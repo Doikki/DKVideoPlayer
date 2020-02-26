@@ -87,10 +87,10 @@ public class IjkVideoView extends VideoView<CustomIjkMediaPlayer> {
      */
     public void setEnableMediaCodec(boolean isEnable) {
         int value = isEnable ? 1 : 0;
-        addPlayerOption("mediacodec", value);
+        addPlayerOption("mediacodec-all-videos", value);
+        addPlayerOption("mediacodec-sync", value);
         addPlayerOption("mediacodec-auto-rotate", value);
         addPlayerOption("mediacodec-handle-resolution-change", value);
-        addPlayerOption("mediacodec-hevc", value);//开启hevc硬解
     }
 
     /**
@@ -136,4 +136,22 @@ public class IjkVideoView extends VideoView<CustomIjkMediaPlayer> {
         mSwsOptions.put(name, value);
     }
 
+    @Override
+    protected void setInitOptions() {
+        super.setInitOptions();
+        if (mCurrentPosition > 0) {
+            addPlayerOption("seek-at-start", mCurrentPosition);
+        }
+    }
+
+    @Override
+    public void onPrepared() {
+        setPlayState(STATE_PREPARED);
+    }
+
+
+    @Override
+    public void skipPositionWhenPlay(int position) {
+        addPlayerOption("seek-at-start", position);
+    }
 }
