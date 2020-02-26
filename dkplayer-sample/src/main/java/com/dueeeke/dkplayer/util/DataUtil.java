@@ -14,6 +14,7 @@ import java.util.List;
 public class DataUtil {
 
     public static final String SAMPLE_URL = "http://vfx.mtime.cn/Video/2019/03/14/mp4/190314223540373995.mp4";
+//    public static final String SAMPLE_URL = "file:///mnt/sdcard/out.webm";
 
 //    public static List<VideoBean> getVideoList() {
 //        List<VideoBean> videoList = new ArrayList<>();
