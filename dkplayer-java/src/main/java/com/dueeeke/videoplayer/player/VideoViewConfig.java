@@ -21,8 +21,6 @@ public class VideoViewConfig {
 
     public final boolean mEnableAudioFocus;
 
-    public final boolean mEnableParallelPlay;
-
     public final boolean mIsEnableLog;
 
     public final ProgressManager mProgressManager;
@@ -41,7 +39,6 @@ public class VideoViewConfig {
         mPlayOnMobileNetwork = builder.mPlayOnMobileNetwork;
         mEnableAudioFocus = builder.mEnableAudioFocus;
         mProgressManager = builder.mProgressManager;
-        mEnableParallelPlay = builder.mEnableParallelPlay;
         mScreenScaleType = builder.mScreenScaleType;
         if (builder.mPlayerFactory == null) {
             //默认为AndroidMediaPlayer
@@ -65,7 +62,6 @@ public class VideoViewConfig {
         private boolean mPlayOnMobileNetwork;
         private boolean mEnableOrientation;
         private boolean mEnableAudioFocus = true;
-        private boolean mEnableParallelPlay;
         private ProgressManager mProgressManager;
         private PlayerFactory mPlayerFactory;
         private int mScreenScaleType;

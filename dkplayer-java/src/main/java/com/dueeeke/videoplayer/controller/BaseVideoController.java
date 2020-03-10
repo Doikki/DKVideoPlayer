@@ -28,6 +28,13 @@ import java.util.Map;
 
 /**
  * 控制器基类
+ * 此类集成各种事件的处理逻辑，包括
+ * 1.播放器状态改变: {@link #handlePlayerStateChanged(int)}
+ * 2.播放状态改变: {@link #handlePlayStateChanged(int)}
+ * 3.控制视图的显示和隐藏: {@link #handleVisibilityChanged(boolean, Animation)}
+ * 4.播放进度改变: {@link #handleSetProgress(int, int)}
+ * 5.锁定状态改变: {@link #handleLockStateChanged(boolean)}
+ * 6.设备方向监听: {@link #onOrientationChanged(int)}
  * Created by dueeeke on 2017/4/12.
  */
 public abstract class BaseVideoController extends FrameLayout
