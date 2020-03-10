@@ -19,7 +19,6 @@ import com.dueeeke.videoplayer.controller.IControlComponent;
 import com.dueeeke.videoplayer.exo.ExoMediaPlayerFactory;
 import com.dueeeke.videoplayer.ijk.IjkPlayerFactory;
 import com.dueeeke.videoplayer.player.AndroidMediaPlayerFactory;
-import com.dueeeke.videoplayer.thunder.ThunderMediaPlayerFactory;
 
 /**
  * 调试信息
@@ -88,8 +87,6 @@ public class DebugInfoView extends AppCompatTextView implements IControlComponen
             player = "IjkPlayer";
         } else if (playerFactory instanceof AndroidMediaPlayerFactory) {
             player = "MediaPlayer";
-        } else if (playerFactory instanceof ThunderMediaPlayerFactory) {
-            player = "APlayer";
         } else {
             player = "unknown";
         }

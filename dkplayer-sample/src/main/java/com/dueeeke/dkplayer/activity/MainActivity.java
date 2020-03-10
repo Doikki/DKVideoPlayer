@@ -25,7 +25,6 @@ import com.dueeeke.videoplayer.player.AndroidMediaPlayerFactory;
 import com.dueeeke.videoplayer.player.PlayerFactory;
 import com.dueeeke.videoplayer.player.VideoViewConfig;
 import com.dueeeke.videoplayer.player.VideoViewManager;
-import com.dueeeke.videoplayer.thunder.ThunderMediaPlayerFactory;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.runtime.Permission;
@@ -66,8 +65,6 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
             setTitle(getResources().getString(R.string.app_name) + " (IjkPlayer)");
         } else if (factory instanceof AndroidMediaPlayerFactory) {
             setTitle(getResources().getString(R.string.app_name) + " (MediaPlayer)");
-        } else if (factory instanceof ThunderMediaPlayerFactory) {
-            setTitle(getResources().getString(R.string.app_name) + " (APlayer)");
         } else {
             setTitle(getResources().getString(R.string.app_name) + " (unknown)");
         }
@@ -105,7 +102,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
                 break;
         }
 
-        if (itemId == R.id.ijk || itemId == R.id.exo || itemId == R.id.media || itemId == R.id.thunder) {
+        if (itemId == R.id.ijk || itemId == R.id.exo || itemId == R.id.media) {
             //切换播放核心，不推荐这么做，我这么写只是为了方便测试
             VideoViewConfig config = VideoViewManager.getConfig();
             try {
@@ -124,10 +121,6 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
                     case R.id.media:
                         playerFactory = AndroidMediaPlayerFactory.create();
                         setTitle(getResources().getString(R.string.app_name) + " (MediaPlayer)");
-                        break;
-                    case R.id.thunder:
-                        playerFactory = ThunderMediaPlayerFactory.create();
-                        setTitle(getResources().getString(R.string.app_name) + " (APlayer)");
                         break;
                 }
                 mPlayerFactoryField.set(config, playerFactory);

@@ -17,7 +17,6 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.analytics.AnalyticsCollector;
-import com.google.android.exoplayer2.source.DefaultMediaSourceEventListener;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
@@ -135,10 +134,9 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
         mInternalPlayer.prepare(mMediaSource);
     }
 
-    private MediaSourceEventListener mMediaSourceEventListener = new DefaultMediaSourceEventListener() {
+    private MediaSourceEventListener mMediaSourceEventListener = new MediaSourceEventListener() {
         @Override
         public void onReadingStarted(int windowIndex, MediaSource.MediaPeriodId mediaPeriodId) {
-            super.onReadingStarted(windowIndex, mediaPeriodId);
             if (mPlayerEventListener != null && mIsPreparing) {
                 mPlayerEventListener.onPrepared();
             }

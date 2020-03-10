@@ -15,8 +15,6 @@
                 android:title="ExoPlayer"/>
             <item android:id="@+id/media"
                 android:title="MediaPlayer"/>
-            <item android:id="@+id/thunder"
-                android:title="APlayer"/>
         </menu>
     </item>
 </menu>
