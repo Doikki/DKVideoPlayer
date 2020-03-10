@@ -103,14 +103,12 @@ public class CompleteView extends FrameLayout implements IControlComponent {
         if (activity != null && mControlWrapper.hasCutout()) {
             int orientation = activity.getRequestedOrientation();
             int cutoutHeight = mControlWrapper.getCutoutHeight();
+            LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
             if (orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-                LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
                 sflp.setMargins(0, 0, 0, 0);
             } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-                LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
                 sflp.setMargins(cutoutHeight, 0, 0, 0);
             } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
-                LayoutParams sflp = (LayoutParams) mStopFullscreen.getLayoutParams();
                 sflp.setMargins(0, 0, 0, 0);
             }
         }

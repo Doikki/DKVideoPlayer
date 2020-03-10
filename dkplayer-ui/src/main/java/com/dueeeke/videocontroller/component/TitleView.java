@@ -19,7 +19,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.dueeeke.videocontroller.MarqueeTextView;
 import com.dueeeke.videocontroller.R;
 import com.dueeeke.videoplayer.controller.IControlComponent;
 import com.dueeeke.videoplayer.controller.ControlWrapper;
@@ -34,7 +33,7 @@ public class TitleView extends FrameLayout implements IControlComponent {
     private ControlWrapper mControlWrapper;
 
     private LinearLayout mTitleContainer;
-    private MarqueeTextView mTitle;
+    private TextView mTitle;
     private TextView mSysTime;//系统当前时间
 
     private BatteryReceiver mBatteryReceiver;
@@ -120,8 +119,8 @@ public class TitleView extends FrameLayout implements IControlComponent {
             }
         } else {
             if (getVisibility() == VISIBLE) {
+                setVisibility(GONE);
                 if (anim != null) {
-                    setVisibility(GONE);
                     startAnimation(anim);
                 }
             }
@@ -149,10 +148,10 @@ public class TitleView extends FrameLayout implements IControlComponent {
                 setVisibility(VISIBLE);
                 mSysTime.setText(PlayerUtils.getCurrentSystemTime());
             }
-            mTitle.setNeedFocus(true);
+            mTitle.setSelected(true);
         } else {
             setVisibility(GONE);
-            mTitle.setNeedFocus(false);
+            mTitle.setSelected(false);
         }
 
         Activity activity = PlayerUtils.scanForActivity(getContext());
