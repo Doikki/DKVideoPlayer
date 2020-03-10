@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -105,6 +106,7 @@ public class PlayerActivity extends BaseActivity<VideoView> {
 
             //在控制器上显示调试信息
             controller.addControlComponent(new DebugInfoView(this));
+            //在LogCat显示调试信息
             controller.addControlComponent(new PlayerMonitor());
 
             //如果你不想要UI，不要设置控制器即可
@@ -127,6 +129,17 @@ public class PlayerActivity extends BaseActivity<VideoView> {
 
             mVideoView.start();
         }
+
+        //播放其他视频
+        EditText etOtherVideo = findViewById(R.id.et_other_video);
+        findViewById(R.id.btn_start_play).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mVideoView.release();
+                mVideoView.setUrl(etOtherVideo.getText().toString());
+                mVideoView.start();
+            }
+        });
     }
 
     private VideoView.OnStateChangeListener mOnStateChangeListener = new VideoView.SimpleOnStateChangeListener() {

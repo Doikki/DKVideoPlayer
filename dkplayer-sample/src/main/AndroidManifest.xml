@@ -35,8 +35,7 @@
         <activity
             android:name=".activity.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden">
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -50,7 +49,8 @@
         <activity
             android:name=".activity.api.PlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"/>
         <activity
             android:name=".activity.extend.DanmakuActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"

@@ -33,8 +33,7 @@ public abstract class GestureVideoController extends BaseVideoController impleme
     private boolean mIsGestureEnabled = true;
     private int mStreamVolume;
     private float mBrightness;
-    private int mPosition;
-    private boolean mNeedSeek;
+    private int mSeekPosition;
     private boolean mFirstTouch;
     private boolean mChangePosition;
     private boolean mChangeBrightness;
@@ -228,8 +227,7 @@ public abstract class GestureVideoController extends BaseVideoController impleme
                 ((IGestureComponent) component).onPositionChange(position, currentPosition, duration);
             }
         }
-        mPosition = position;
-        mNeedSeek = true;
+        mSeekPosition = position;
     }
 
     protected void slideToChangeBrightness(float deltaY) {
@@ -274,20 +272,33 @@ public abstract class GestureVideoController extends BaseVideoController impleme
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        boolean detectedUp = event.getAction() == MotionEvent.ACTION_UP;
-        if (!mGestureDetector.onTouchEvent(event) && detectedUp) {
-            for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
-                IControlComponent component = next.getKey();
-                if (component instanceof IGestureComponent) {
-                    ((IGestureComponent) component).onStopSlide();
-                }
-            }
-            if (mNeedSeek) {
-                mControlWrapper.seekTo(mPosition);
-                mNeedSeek = false;
+        //滑动结束时事件处理
+        if (!mGestureDetector.onTouchEvent(event)) {
+            int action = event.getAction();
+            switch (action) {
+                case MotionEvent.ACTION_UP:
+                    stopSlide();
+                    if (mSeekPosition > 0) {
+                        mControlWrapper.seekTo(mSeekPosition);
+                        mSeekPosition = 0;
+                    }
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                    stopSlide();
+                    mSeekPosition = 0;
+                    break;
             }
         }
         return super.onTouchEvent(event);
+    }
+
+    private void stopSlide() {
+        for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
+            IControlComponent component = next.getKey();
+            if (component instanceof IGestureComponent) {
+                ((IGestureComponent) component).onStopSlide();
+            }
+        }
     }
 
     @Override
