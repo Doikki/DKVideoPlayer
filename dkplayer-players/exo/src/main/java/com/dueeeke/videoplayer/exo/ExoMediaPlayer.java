@@ -265,6 +265,14 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
     }
 
     @Override
+    public float getSpeed() {
+        if (mSpeedPlaybackParameters != null) {
+            return mSpeedPlaybackParameters.speed;
+        }
+        return 1f;
+    }
+
+    @Override
     public long getTcpSpeed() {
         // no support
         return 0;

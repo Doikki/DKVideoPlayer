@@ -201,6 +201,18 @@ public class ThunderMediaPlayer extends AbstractPlayer {
     }
 
     @Override
+    public float getSpeed() {
+        String strSpeed = mAPlayer.getConfig(APlayerAndroid.CONFIGID.PLAY_SPEED);
+        float fSpeed;
+        try {
+            fSpeed = Float.parseFloat(strSpeed);
+        } catch (NumberFormatException e) {
+            fSpeed = 1f;
+        }
+        return fSpeed;
+    }
+
+    @Override
     public long getTcpSpeed() {
         return Long.parseLong(mAPlayer.getConfig(APlayerAndroid.CONFIGID.DOWN_SPEED));
     }

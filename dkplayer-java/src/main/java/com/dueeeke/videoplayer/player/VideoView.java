@@ -601,6 +601,14 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         }
     }
 
+    @Override
+    public float getSpeed() {
+        if (isInPlaybackState()) {
+            return mMediaPlayer.getSpeed();
+        }
+        return 1f;
+    }
+
     /**
      * 设置视频地址
      */

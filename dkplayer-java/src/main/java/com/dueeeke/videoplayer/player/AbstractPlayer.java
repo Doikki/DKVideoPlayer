@@ -141,6 +141,11 @@ public abstract class AbstractPlayer {
     public abstract void setSpeed(float speed);
 
     /**
+     * 获取播放速度
+     */
+    public abstract float getSpeed();
+
+    /**
      * 获取当前缓冲的网速
      */
     public abstract long getTcpSpeed();

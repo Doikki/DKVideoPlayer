@@ -32,6 +32,8 @@ public interface MediaPlayerControl {
 
     void setSpeed(float speed);
 
+    float getSpeed();
+
     long getTcpSpeed();
 
     void replay(boolean resetPosition);

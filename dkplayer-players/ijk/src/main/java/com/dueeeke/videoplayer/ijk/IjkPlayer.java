@@ -203,6 +203,11 @@ public class IjkPlayer extends AbstractPlayer {
     }
 
     @Override
+    public float getSpeed() {
+        return mMediaPlayer.getSpeed(0);
+    }
+
+    @Override
     public long getTcpSpeed() {
         return mMediaPlayer.getTcpSpeed();
     }

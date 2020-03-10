@@ -195,6 +195,19 @@ public class AndroidMediaPlayer extends AbstractPlayer {
     }
 
     @Override
+    public float getSpeed() {
+        // only support above Android M
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            try {
+                return mMediaPlayer.getPlaybackParams().getSpeed();
+            } catch (Exception e) {
+                mPlayerEventListener.onError();
+            }
+        }
+        return 1f;
+    }
+
+    @Override
     public long getTcpSpeed() {
         // no support
         return 0;

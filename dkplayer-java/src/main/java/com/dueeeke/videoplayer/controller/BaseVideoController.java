@@ -252,7 +252,7 @@ public abstract class BaseVideoController extends FrameLayout
     /**
      * 隐藏播放视图Runnable
      */
-    public final Runnable mFadeOut = new Runnable() {
+    protected final Runnable mFadeOut = new Runnable() {
         @Override
         public void run() {
             hide();
@@ -293,12 +293,12 @@ public abstract class BaseVideoController extends FrameLayout
     /**
      * 刷新进度Runnable
      */
-    private Runnable mShowProgress = new Runnable() {
+    protected Runnable mShowProgress = new Runnable() {
         @Override
         public void run() {
             int pos = setProgress();
             if (mControlWrapper.isPlaying()) {
-                postDelayed(mShowProgress, 1000 - (pos % 1000));
+                postDelayed(this, (long) ((1000  - pos % 1000) / mControlWrapper.getSpeed()));
             } else {
                 mIsStartProgress = false;
             }
@@ -534,8 +534,9 @@ public abstract class BaseVideoController extends FrameLayout
 
     /**
      * 子类重写此方法监听控制的显示和隐藏
+     *
      * @param isVisible 是否可见
-     * @param anim 显示/隐藏动画
+     * @param anim      显示/隐藏动画
      */
     protected void onVisibilityChanged(boolean isVisible, Animation anim) {
 
