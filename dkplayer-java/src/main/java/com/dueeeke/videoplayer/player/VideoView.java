@@ -354,16 +354,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
     }
 
     /**
-     * 停止播放
-     *
-     * @deprecated 使用 {@link #release()} 代替
-     */
-    @Deprecated
-    public void stopPlayback() {
-        release();
-    }
-
-    /**
      * 释放播放器
      */
     public void release() {
@@ -690,14 +680,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
             throw new IllegalArgumentException("PlayerFactory can not be null!");
         }
         mPlayerFactory = playerFactory;
-    }
-
-    /**
-     * 支持多开
-     * @deprecated 此api已经无效，你需要自己去控制同时只有一个播放器在播放的效果
-     */
-    @Deprecated
-    public void setEnableParallelPlay(boolean enableParallelPlay) {
     }
 
     /**
