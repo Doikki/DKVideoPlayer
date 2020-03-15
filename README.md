@@ -12,11 +12,6 @@ A video player for Android.
 
 ### [使用](https://github.com/dueeeke/DKVideoPlayer/wiki#%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8)
 
-### 截图
-|API演示|列表播放|扩展功能|画中画
-|:---:|:---:|:---:|:---:|
-![](https://github.com/dueeeke/DKVideoPlayer/blob/master/art/1.png)|![](https://github.com/dueeeke/DKVideoPlayer/blob/master/art/2.png)|![](https://github.com/dueeeke/DKVideoPlayer/blob/master/art/3.png)|![](https://github.com/dueeeke/DKVideoPlayer/blob/master/art/4.png)
-   
 ### 遇到问题
 1. 阅读 sample：[dkplayer-sample](https://github.com/dueeeke/DKVideoPlayer/tree/master/dkplayer-sample)
 2. 阅读 [wiki](https://github.com/dueeeke/DKVideoPlayer/wiki) 或者 [常见问题](https://github.com/dueeeke/DKVideoPlayer/wiki/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98)
