@@ -234,6 +234,9 @@ public class PlayerActivity extends BaseActivity<VideoView> {
                 mVideoView.setMirrorRotation(i % 2 == 0);
                 i++;
                 break;
+            case R.id.btn_mute:
+                mVideoView.setMute(true);
+                break;
         }
     }
 }

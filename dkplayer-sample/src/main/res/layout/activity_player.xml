@@ -147,6 +147,12 @@
                     android:layout_height="wrap_content"
                     android:onClick="onButtonClick"
                     android:text="@string/str_screen_shot" />
+                <Button
+                    android:id="@+id/btn_mute"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="onButtonClick"
+                    android:text="静音" />
             </LinearLayout>
 
             <ImageView
