@@ -15,6 +15,7 @@ import com.dueeeke.dkplayer.util.DataUtil;
 import com.dueeeke.dkplayer.util.Utils;
 import com.dueeeke.dkplayer.util.cache.PreloadManager;
 import com.dueeeke.dkplayer.widget.controller.TikTokController;
+import com.dueeeke.dkplayer.widget.render.TikTokRenderViewFactory;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.dueeeke.videoplayer.util.L;
 
@@ -59,7 +60,9 @@ public class TikTokActivity extends BaseActivity<VideoView> {
         super.initView();
         setStatusBarTransparent();
         mVideoView = new VideoView(this);
-        mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_CENTER_CROP);
+        //以下只能二选一，看你的需求
+        mVideoView.setRenderViewFactory(TikTokRenderViewFactory.create());
+//        mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_CENTER_CROP);
         mVideoView.setLooping(true);
         mController = new TikTokController(this);
         mVideoView.setVideoController(mController);

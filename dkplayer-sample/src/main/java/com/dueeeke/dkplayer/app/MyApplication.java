@@ -24,7 +24,6 @@ public class MyApplication extends Application {
         VideoViewManager.setConfig(VideoViewConfig.newBuilder()
                 .setLogEnabled(BuildConfig.DEBUG)//调试的时候请打开日志，方便排错
                 .setPlayerFactory(IjkPlayerFactory.create())
-//                .setPlayerFactory(ThunderMediaPlayerFactory.create())
 //                .setPlayerFactory(ExoMediaPlayerFactory.create())
 //                .setRenderViewFactory(SurfaceRenderViewFactory.create())
 //                .setEnableOrientation(true)

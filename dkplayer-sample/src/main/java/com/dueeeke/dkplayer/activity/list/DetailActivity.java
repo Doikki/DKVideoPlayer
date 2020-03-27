@@ -53,8 +53,6 @@ public class DetailActivity extends BaseActivity<VideoView> {
     }
 
     private void initVideoView() {
-        //注意以下过程需在共享元素动画结束后执行
-
         //拿到VideoView实例
         mVideoView = getVideoViewManager().get(Tag.SEAMLESS);
         //如果已经添加到某个父容器，就将其移除
