@@ -1343,7 +1343,7 @@ public class VerticalViewPager extends ViewGroup {
                         + ": " + mChildWidthMeasureSpec);
 
                 final LayoutParams lp = (LayoutParams) child.getLayoutParams();
-                if (lp == null || !lp.isDecor) {
+                if (lp != null || !lp.isDecor) {
                     final int heightSpec = MeasureSpec.makeMeasureSpec(
                             (int) (childHeightSize * lp.heightFactor), MeasureSpec.EXACTLY);
                     child.measure(mChildWidthMeasureSpec, heightSpec);
