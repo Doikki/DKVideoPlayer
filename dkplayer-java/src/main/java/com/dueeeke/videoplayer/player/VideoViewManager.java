@@ -72,14 +72,11 @@ public class VideoViewManager {
         mPlayOnMobileNetwork = playOnMobileNetwork;
     }
 
-    public static VideoViewManager instance() {
+    public static synchronized VideoViewManager instance() {
         if (sInstance == null) {
-            synchronized (VideoViewManager.class) {
-                if (sInstance == null) {
-                    sInstance = new VideoViewManager();
-                }
-            }
+            sInstance = new VideoViewManager();
         }
+
         return sInstance;
     }
 
