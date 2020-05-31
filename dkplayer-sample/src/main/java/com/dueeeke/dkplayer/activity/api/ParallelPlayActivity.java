@@ -67,7 +67,7 @@ public class ParallelPlayActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         for (VideoView vv : mVideoViews) {
-            vv.pause();
+            vv.resume();
         }
     }
 
