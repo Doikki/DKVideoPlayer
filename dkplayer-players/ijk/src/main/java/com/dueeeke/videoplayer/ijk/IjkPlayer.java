@@ -26,11 +26,12 @@ public class IjkPlayer extends AbstractPlayer {
 
     public IjkPlayer(Context context) {
         mAppContext = context;
+        mMediaPlayer = new IjkMediaPlayer();
     }
 
     @Override
     public void initPlayer() {
-        mMediaPlayer = new IjkMediaPlayer();
+
         //native日志
         IjkMediaPlayer.native_setLogLevel(VideoViewManager.getConfig().mIsEnableLog ? IjkMediaPlayer.IJK_LOG_INFO : IjkMediaPlayer.IJK_LOG_SILENT);
         setOptions();
@@ -47,12 +48,18 @@ public class IjkPlayer extends AbstractPlayer {
                 return true;
             }
         });
+
+    }
+
+    public IjkMediaPlayer getMediaPlayer() {
+        return mMediaPlayer;
     }
 
 
     @Override
     public void setOptions() {
     }
+
 
     @Override
     public void setDataSource(String path, Map<String, String> headers) {
