@@ -221,7 +221,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
     /**
      * 是否显示移动网络提示，可在Controller中配置
      */
-    protected boolean showNetWarning() {
+    public boolean showNetWarning() {
         //播放本地数据源时不检测网络
         if (isLocalDataSource()) return false;
         return mVideoController != null && mVideoController.showNetWarning();
@@ -963,7 +963,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
     /**
      * 向Controller设置播放状态，用于控制Controller的ui展示
      */
-    protected void setPlayState(int playState) {
+    public void setPlayState(int playState) {
         mCurrentPlayState = playState;
         if (mVideoController != null) {
             mVideoController.setPlayState(playState);
