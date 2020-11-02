@@ -193,6 +193,21 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         }
     }
 
+    public void start(int position) {
+        boolean isStarted = false;
+        if (isInIdleState() || isInStartAbortState()) {
+            isStarted = startPlay(position);
+        } else if (isInPlaybackState()) {
+            startInPlaybackState();
+            isStarted = true;
+        }
+        if (isStarted) {
+            mPlayerContainer.setKeepScreenOn(true);
+            if (mAudioFocusHelper != null)
+                mAudioFocusHelper.requestFocus();
+        }
+    }
+
     /**
      * 第一次播放
      * @return 是否成功开始播放
@@ -218,10 +233,32 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         return true;
     }
 
+    protected boolean startPlay(int position) {
+        //如果要显示移动网络提示则不继续播放
+        if (showNetWarning()) {
+            //中止播放
+            setPlayState(STATE_START_ABORT);
+            return false;
+        }
+        //监听音频焦点改变
+        if (mEnableAudioFocus) {
+            mAudioFocusHelper = new AudioFocusHelper(this);
+        }
+        //读取播放进度
+
+
+        mCurrentPosition = position;
+
+        initPlayer();
+        addDisplay();
+        startPrepare(false);
+        return true;
+    }
+
     /**
      * 是否显示移动网络提示，可在Controller中配置
      */
-    public boolean showNetWarning() {
+    protected boolean showNetWarning() {
         //播放本地数据源时不检测网络
         if (isLocalDataSource()) return false;
         return mVideoController != null && mVideoController.showNetWarning();
@@ -638,7 +675,8 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
 
     /**
      * 一开始播放就seek到预先设置好的位置
-     */
+     * not work when use progressManager
+     */@Deprecated
     public void skipPositionWhenPlay(int position) {
         this.mCurrentPosition = position;
     }
@@ -963,7 +1001,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
     /**
      * 向Controller设置播放状态，用于控制Controller的ui展示
      */
-    public void setPlayState(int playState) {
+    protected void setPlayState(int playState) {
         mCurrentPlayState = playState;
         if (mVideoController != null) {
             mVideoController.setPlayState(playState);
