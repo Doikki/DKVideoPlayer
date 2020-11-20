@@ -19,5 +19,3 @@ dependencies {
 ext {
     releaseArtifact = 'dkplayer-java'
 }
-
-apply from: '../publish.gradle'

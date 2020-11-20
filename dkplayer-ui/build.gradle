@@ -21,4 +21,3 @@ ext {
     releaseArtifact = 'dkplayer-ui'
 }
 
-apply from: '../publish.gradle'

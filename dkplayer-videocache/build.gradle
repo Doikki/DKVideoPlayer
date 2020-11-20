@@ -14,5 +14,3 @@ android {
 ext {
     releaseArtifact = 'videocache'
 }
-
-apply from: '../publish.gradle'

@@ -21,4 +21,3 @@ ext {
     releaseArtifact = 'player-ijk'
 }
 
-apply from: '../../publish.gradle'

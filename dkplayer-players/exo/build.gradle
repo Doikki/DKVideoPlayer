@@ -24,5 +24,3 @@ dependencies {
 ext {
     releaseArtifact = 'player-exo'
 }
-
-apply from: '../../publish.gradle'
