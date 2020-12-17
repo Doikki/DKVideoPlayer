@@ -1,13 +1,11 @@
 package com.dueeeke.dkplayer.activity.list;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.transition.Transition;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
-
-import androidx.annotation.RequiresApi;
-import androidx.core.view.ViewCompat;
 
 import com.dueeeke.dkplayer.R;
 import com.dueeeke.dkplayer.activity.BaseActivity;
@@ -16,6 +14,12 @@ import com.dueeeke.dkplayer.util.Tag;
 import com.dueeeke.dkplayer.util.Utils;
 import com.dueeeke.videocontroller.StandardVideoController;
 import com.dueeeke.videoplayer.player.VideoView;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
+import androidx.annotation.RequiresApi;
+import androidx.core.view.ViewCompat;
 
 public class DetailActivity extends BaseActivity<VideoView> {
 
@@ -122,5 +126,29 @@ public class DetailActivity extends BaseActivity<VideoView> {
             mVideoView = null;
         }
         super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateResume(this);
+    }
+
+    /**
+     * Android10 Activity的onStop方法会导致共享元素动画失效，通过反射注入恢复共享元素动画
+     * 需要同时配置项目的targetSdkVersion <= 27 ， 因为Android10把反射也禁止了。
+     */
+    public static void updateResume(Activity activity) {
+        try {
+            Field activityTransitionStateField = Activity.class.getDeclaredField("mActivityTransitionState");
+            activityTransitionStateField.setAccessible(true);
+            Object mActivityTransitionState = activityTransitionStateField.get(activity);
+            Class clazz = Class.forName("android.app.ActivityTransitionState");
+            Method enterReady = clazz.getDeclaredMethod("enterReady", Activity.class);
+            enterReady.setAccessible(true);
+            enterReady.invoke(mActivityTransitionState, activity);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
