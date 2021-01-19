@@ -1,6 +1,6 @@
 # DKVideoPlayer
 A video player for Android.
-
+# see release logs , add more expand method.add function like zoomable videoview & not use decorview to improve performance 
 [![JCenter](https://api.bintray.com/packages/dueeeke/maven/dkplayer-java/images/download.svg)](https://bintray.com/dueeeke/maven/dkplayer-java/_latestVersion)
 [![API](https://img.shields.io/badge/API-16%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=16)
 
