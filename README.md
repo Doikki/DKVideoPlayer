@@ -2,7 +2,7 @@
 A video player for Android.
 # Update: 
 # 3.3.2: add more expand method 
-# 3.4.0.RC: add function like zoomable videoview & not use decorview to improve performance 
+# 3.4.1.RC: add function like zoomable videoview & not use decorview to improve performance 
 [![JCenter](https://api.bintray.com/packages/dueeeke/maven/dkplayer-java/images/download.svg)](https://bintray.com/dueeeke/maven/dkplayer-java/_latestVersion)
 [![API](https://img.shields.io/badge/API-16%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=16)
 
