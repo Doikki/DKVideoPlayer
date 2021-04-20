@@ -18,11 +18,14 @@ import java.util.Map;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
-public class IjkPlayer extends AbstractPlayer {
+public class IjkPlayer extends AbstractPlayer implements IMediaPlayer.OnErrorListener,
+        IMediaPlayer.OnCompletionListener, IMediaPlayer.OnInfoListener,
+        IMediaPlayer.OnBufferingUpdateListener, IMediaPlayer.OnPreparedListener,
+        IMediaPlayer.OnVideoSizeChangedListener, IjkMediaPlayer.OnNativeInvokeListener {
 
     protected IjkMediaPlayer mMediaPlayer;
     private int mBufferedPercent;
-    private Context mAppContext;
+    private final Context mAppContext;
 
     public IjkPlayer(Context context) {
         mAppContext = context;
@@ -35,18 +38,13 @@ public class IjkPlayer extends AbstractPlayer {
         IjkMediaPlayer.native_setLogLevel(VideoViewManager.getConfig().mIsEnableLog ? IjkMediaPlayer.IJK_LOG_INFO : IjkMediaPlayer.IJK_LOG_SILENT);
         setOptions();
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        mMediaPlayer.setOnErrorListener(onErrorListener);
-        mMediaPlayer.setOnCompletionListener(onCompletionListener);
-        mMediaPlayer.setOnInfoListener(onInfoListener);
-        mMediaPlayer.setOnBufferingUpdateListener(onBufferingUpdateListener);
-        mMediaPlayer.setOnPreparedListener(onPreparedListener);
-        mMediaPlayer.setOnVideoSizeChangedListener(onVideoSizeChangedListener);
-        mMediaPlayer.setOnNativeInvokeListener(new IjkMediaPlayer.OnNativeInvokeListener() {
-            @Override
-            public boolean onNativeInvoke(int i, Bundle bundle) {
-                return true;
-            }
-        });
+        mMediaPlayer.setOnErrorListener(this);
+        mMediaPlayer.setOnCompletionListener(this);
+        mMediaPlayer.setOnInfoListener(this);
+        mMediaPlayer.setOnBufferingUpdateListener(this);
+        mMediaPlayer.setOnPreparedListener(this);
+        mMediaPlayer.setOnVideoSizeChangedListener(this);
+        mMediaPlayer.setOnNativeInvokeListener(this);
     }
 
 
@@ -124,7 +122,7 @@ public class IjkPlayer extends AbstractPlayer {
     @Override
     public void reset() {
         mMediaPlayer.reset();
-        mMediaPlayer.setOnVideoSizeChangedListener(onVideoSizeChangedListener);
+        mMediaPlayer.setOnVideoSizeChangedListener(this);
         setOptions();
     }
 
@@ -212,52 +210,44 @@ public class IjkPlayer extends AbstractPlayer {
         return mMediaPlayer.getTcpSpeed();
     }
 
-    private IMediaPlayer.OnErrorListener onErrorListener = new IMediaPlayer.OnErrorListener() {
-        @Override
-        public boolean onError(IMediaPlayer iMediaPlayer, int framework_err, int impl_err) {
-            mPlayerEventListener.onError();
-            return true;
-        }
-    };
+    @Override
+    public boolean onError(IMediaPlayer mp, int what, int extra) {
+        mPlayerEventListener.onError();
+        return true;
+    }
 
-    private IMediaPlayer.OnCompletionListener onCompletionListener = new IMediaPlayer.OnCompletionListener() {
-        @Override
-        public void onCompletion(IMediaPlayer iMediaPlayer) {
-            mPlayerEventListener.onCompletion();
-        }
-    };
+    @Override
+    public void onCompletion(IMediaPlayer mp) {
+        mPlayerEventListener.onCompletion();
+    }
 
-    private IMediaPlayer.OnInfoListener onInfoListener = new IMediaPlayer.OnInfoListener() {
-        @Override
-        public boolean onInfo(IMediaPlayer iMediaPlayer, int what, int extra) {
-            mPlayerEventListener.onInfo(what, extra);
-            return true;
-        }
-    };
+    @Override
+    public boolean onInfo(IMediaPlayer mp, int what, int extra) {
+        mPlayerEventListener.onInfo(what, extra);
+        return true;
+    }
 
-    private IMediaPlayer.OnBufferingUpdateListener onBufferingUpdateListener = new IMediaPlayer.OnBufferingUpdateListener() {
-        @Override
-        public void onBufferingUpdate(IMediaPlayer iMediaPlayer, int percent) {
-            mBufferedPercent = percent;
-        }
-    };
+    @Override
+    public void onBufferingUpdate(IMediaPlayer mp, int percent) {
+        mBufferedPercent = percent;
+    }
 
+    @Override
+    public void onPrepared(IMediaPlayer mp) {
+        mPlayerEventListener.onPrepared();
+    }
 
-    private IMediaPlayer.OnPreparedListener onPreparedListener = new IMediaPlayer.OnPreparedListener() {
-        @Override
-        public void onPrepared(IMediaPlayer iMediaPlayer) {
-            mPlayerEventListener.onPrepared();
+    @Override
+    public void onVideoSizeChanged(IMediaPlayer mp, int width, int height, int sar_num, int sar_den) {
+        int videoWidth = mp.getVideoWidth();
+        int videoHeight = mp.getVideoHeight();
+        if (videoWidth != 0 && videoHeight != 0) {
+            mPlayerEventListener.onVideoSizeChanged(videoWidth, videoHeight);
         }
-    };
+    }
 
-    private IMediaPlayer.OnVideoSizeChangedListener onVideoSizeChangedListener = new IMediaPlayer.OnVideoSizeChangedListener() {
-        @Override
-        public void onVideoSizeChanged(IMediaPlayer iMediaPlayer, int i, int i1, int i2, int i3) {
-            int videoWidth = iMediaPlayer.getVideoWidth();
-            int videoHeight = iMediaPlayer.getVideoHeight();
-            if (videoWidth != 0 && videoHeight != 0) {
-                mPlayerEventListener.onVideoSizeChanged(videoWidth, videoHeight);
-            }
-        }
-    };
+    @Override
+    public boolean onNativeInvoke(int what, Bundle args) {
+        return true;
+    }
 }

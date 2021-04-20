@@ -14,7 +14,6 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     compileOnly project(':dkplayer-java')
-    api "tv.danmaku.ijk.media:ijkplayer-java:$project.ijkPlayerVersion"
 }
 
 ext {
