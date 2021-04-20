@@ -91,9 +91,9 @@ dependencies {
     implementation project(':dkplayer-videocache')
 
 
-//    implementation 'com.github.dueeeke.dkplayer:dkplayer-java:3.2.6'
-//    implementation 'com.github.dueeeke.dkplayer:dkplayer-ui:3.2.6'
-//    implementation 'com.github.dueeeke.dkplayer:player-exo:3.2.6'
-//    implementation 'com.github.dueeeke.dkplayer:player-ijk:3.2.6'
-//    implementation 'com.github.dueeeke.dkplayer:videocache:3.2.6'
+//    implementation 'xyz.doikki.android.dkplayer:dkplayer-java:3.3.0'
+//    implementation 'xyz.doikki.android.dkplayer:dkplayer-ui:3.3.0'
+//    implementation 'xyz.doikki.android.dkplayer:player-exo:3.3.0'
+//    implementation 'xyz.doikki.android.dkplayer:player-ijk:3.3.0'
+//    implementation 'xyz.doikki.android.dkplayer:videocache:3.3.0'
 }

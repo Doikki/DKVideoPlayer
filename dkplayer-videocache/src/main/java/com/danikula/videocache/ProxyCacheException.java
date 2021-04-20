@@ -7,17 +7,15 @@ package com.danikula.videocache;
  */
 public class ProxyCacheException extends Exception {
 
-    private static final String LIBRARY_VERSION = ". Version: " + BuildConfig.VERSION_NAME;
-
     public ProxyCacheException(String message) {
-        super(message + LIBRARY_VERSION);
+        super(message);
     }
 
     public ProxyCacheException(String message, Throwable cause) {
-        super(message + LIBRARY_VERSION, cause);
+        super(message, cause);
     }
 
     public ProxyCacheException(Throwable cause) {
-        super("No explanation error" + LIBRARY_VERSION, cause);
+        super("No explanation error", cause);
     }
 }

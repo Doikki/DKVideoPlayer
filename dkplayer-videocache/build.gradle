@@ -12,7 +12,7 @@ android {
 }
 
 ext {
-    releaseArtifact = 'videocache'
+    PUBLISH_ARTIFACT_ID = 'videocache'
 }
 
 apply from: '../publish.gradle'
