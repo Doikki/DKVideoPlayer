@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 
 import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.database.ExoDatabaseProvider;
 import com.google.android.exoplayer2.ext.rtmp.RtmpDataSourceFactory;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -15,11 +16,9 @@ import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.upstream.cache.Cache;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
-import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.google.android.exoplayer2.util.Util;
@@ -33,7 +32,7 @@ public final class ExoMediaSourceHelper {
     private static ExoMediaSourceHelper sInstance;
 
     private final String mUserAgent;
-    private Context mAppContext;
+    private final Context mAppContext;
     private HttpDataSource.Factory mHttpDataSourceFactory;
     private Cache mCache;
 
@@ -69,7 +68,7 @@ public final class ExoMediaSourceHelper {
         Uri contentUri = Uri.parse(uri);
         if ("rtmp".equals(contentUri.getScheme())) {
             return new ProgressiveMediaSource.Factory(new RtmpDataSourceFactory(null))
-                    .createMediaSource(contentUri);
+                    .createMediaSource(MediaItem.fromUri(contentUri));
         }
         int contentType = inferContentType(uri);
         DataSource.Factory factory;
@@ -83,14 +82,14 @@ public final class ExoMediaSourceHelper {
         }
         switch (contentType) {
             case C.TYPE_DASH:
-                return new DashMediaSource.Factory(factory).createMediaSource(contentUri);
+                return new DashMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
             case C.TYPE_SS:
-                return new SsMediaSource.Factory(factory).createMediaSource(contentUri);
+                return new SsMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
             case C.TYPE_HLS:
-                return new HlsMediaSource.Factory(factory).createMediaSource(contentUri);
+                return new HlsMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
             default:
             case C.TYPE_OTHER:
-                return new ProgressiveMediaSource.Factory(factory).createMediaSource(contentUri);
+                return new ProgressiveMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
         }
     }
 
@@ -111,10 +110,10 @@ public final class ExoMediaSourceHelper {
         if (mCache == null) {
             mCache = newCache();
         }
-        return new CacheDataSourceFactory(
-                mCache,
-                getDataSourceFactory(),
-                CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR);
+        return new CacheDataSource.Factory()
+                .setCache(mCache)
+                .setUpstreamDataSourceFactory(getDataSourceFactory())
+                .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR);
     }
 
     private Cache newCache() {
@@ -140,37 +139,29 @@ public final class ExoMediaSourceHelper {
      */
     private DataSource.Factory getHttpDataSourceFactory() {
         if (mHttpDataSourceFactory == null) {
-            mHttpDataSourceFactory = new DefaultHttpDataSourceFactory(
-                    mUserAgent,
-                    null,
-                    DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
-                    DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,
-                    //http->https重定向支持
-                    true);
+            mHttpDataSourceFactory = new DefaultHttpDataSource.Factory()
+                    .setUserAgent(mUserAgent)
+                    .setAllowCrossProtocolRedirects(true);
         }
         return mHttpDataSourceFactory;
     }
 
     private void setHeaders(Map<String, String> headers) {
         if (headers != null && headers.size() > 0) {
-            for (Map.Entry<String, String> header : headers.entrySet()) {
-                String key = header.getKey();
-                String value = header.getValue();
-                //如果发现用户通过header传递了UA，则强行将HttpDataSourceFactory里面的userAgent字段替换成用户的
-                if (TextUtils.equals(key, "User-Agent")) {
-                    if (!TextUtils.isEmpty(value)) {
-                        try {
-                            Field userAgentField = mHttpDataSourceFactory.getClass().getDeclaredField("userAgent");
-                            userAgentField.setAccessible(true);
-                            userAgentField.set(mHttpDataSourceFactory, value);
-                        } catch (Exception e) {
-                            //ignore
-                        }
+            //如果发现用户通过header传递了UA，则强行将HttpDataSourceFactory里面的userAgent字段替换成用户的
+            if (headers.containsKey("User-Agent")) {
+                String value = headers.remove("User-Agent");
+                if (!TextUtils.isEmpty(value)) {
+                    try {
+                        Field userAgentField = mHttpDataSourceFactory.getClass().getDeclaredField("userAgent");
+                        userAgentField.setAccessible(true);
+                        userAgentField.set(mHttpDataSourceFactory, value);
+                    } catch (Exception e) {
+                        //ignore
                     }
-                } else {
-                    mHttpDataSourceFactory.getDefaultRequestProperties().set(key, value);
                 }
             }
+            mHttpDataSourceFactory.setDefaultRequestProperties(headers);
         }
     }
 
