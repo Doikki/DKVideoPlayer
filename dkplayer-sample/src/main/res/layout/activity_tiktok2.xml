@@ -6,7 +6,7 @@
     android:orientation="vertical"
     tools:context=".activity.list.tiktok.TikTok2Activity">
 
-    <com.dueeeke.dkplayer.widget.VerticalViewPager
+    <xyz.doikki.dkplayer.widget.VerticalViewPager
         android:id="@+id/vvp"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

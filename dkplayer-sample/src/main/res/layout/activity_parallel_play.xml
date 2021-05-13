@@ -5,14 +5,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.dueeeke.videoplayer.player.VideoView
+    <xyz.doikki.videoplayer.player.VideoView
         android:id="@+id/player_1"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintDimensionRatio="16:9"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.dueeeke.videoplayer.player.VideoView
+    <xyz.doikki.videoplayer.player.VideoView
         android:id="@+id/player_2"
         android:layout_width="match_parent"
         android:layout_height="0dp"

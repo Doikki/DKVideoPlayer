@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.dueeeke.dkplayer.widget.component.TikTokView
+    <xyz.doikki.dkplayer.widget.component.TikTokView
         android:id="@+id/tiktok_View"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

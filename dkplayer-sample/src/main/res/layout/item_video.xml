@@ -14,7 +14,7 @@
         app:layout_constraintDimensionRatio="16:9"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.dueeeke.videocontroller.component.PrepareView
+        <xyz.doikki.videocontroller.component.PrepareView
             android:id="@+id/prepare_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

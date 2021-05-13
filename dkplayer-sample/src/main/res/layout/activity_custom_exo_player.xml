@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".activity.extend.CustomExoPlayerActivity">
 
-    <com.dueeeke.dkplayer.widget.videoview.ExoVideoView
+    <xyz.doikki.dkplayer.widget.videoview.ExoVideoView
         android:id="@+id/vv"
         android:layout_width="match_parent"
         android:layout_height="260dp"/>

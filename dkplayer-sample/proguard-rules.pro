@@ -26,8 +26,8 @@
 
 -keep class tv.danmaku.ijk.** { *; }
 -dontwarn tv.danmaku.ijk.**
--keep class com.dueeeke.videoplayer.** { *; }
--dontwarn com.dueeeke.videoplayer.**
+-keep class xyz.doikki.videoplayer.** { *; }
+-dontwarn xyz.doikki.videoplayer.**
 
 -keep class com.google.android.exoplayer2.** { *; }
 -dontwarn com.google.android.exoplayer2.**
@@ -41,4 +41,4 @@
 
 -keep class com.bumptech.glide.** { *; }
 
--keep class com.dueeeke.dkplayer.bean.** { *; }
+-keep class xyz.doikki.dkplayer.bean.** { *; }

@@ -10,7 +10,7 @@ android {
     buildToolsVersion project.ext.buildToolsVersion
 
     defaultConfig {
-        applicationId "com.dueeeke.dkplayer"
+        applicationId "xyz.doikki.dkplayer"
         minSdkVersion project.ext.minSdkVersion
         targetSdkVersion project.ext.targetSdkVersion
         versionCode project.ext.releaseVersionCode
