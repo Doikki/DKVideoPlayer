@@ -3,6 +3,7 @@ package xyz.doikki.dkplayer.activity.api;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -11,6 +12,7 @@ import com.bumptech.glide.Glide;
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.activity.BaseActivity;
 import xyz.doikki.dkplayer.util.IntentKeys;
+import xyz.doikki.dkplayer.util.Utils;
 import xyz.doikki.dkplayer.widget.component.DebugInfoView;
 import xyz.doikki.dkplayer.widget.component.PlayerMonitor;
 import xyz.doikki.videocontroller.StandardVideoController;
@@ -21,6 +23,7 @@ import xyz.doikki.videocontroller.component.LiveControlView;
 import xyz.doikki.videocontroller.component.PrepareView;
 import xyz.doikki.videocontroller.component.TitleView;
 import xyz.doikki.videocontroller.component.VodControlView;
+import xyz.doikki.videoplayer.player.AbstractPlayer;
 import xyz.doikki.videoplayer.player.VideoView;
 import xyz.doikki.videoplayer.util.L;
 
@@ -29,7 +32,7 @@ import xyz.doikki.videoplayer.util.L;
  * Created by Doikki on 2017/4/7.
  */
 
-public class PlayerActivity extends BaseActivity<VideoView> {
+public class PlayerActivity extends BaseActivity<VideoView<AbstractPlayer>> {
 
     private static final String THUMB = "https://cms-bucket.nosdn.127.net/eb411c2810f04ffa8aaafc42052b233820180418095416.jpeg";
 
@@ -112,7 +115,15 @@ public class PlayerActivity extends BaseActivity<VideoView> {
             //如果你不想要UI，不要设置控制器即可
             mVideoView.setVideoController(controller);
 
-            mVideoView.setUrl(getIntent().getStringExtra(IntentKeys.URL));
+            String url = intent.getStringExtra(IntentKeys.URL);
+
+            //点击文件管理器中的视频，选择DKPlayer打开，将会走以下代码
+            if (TextUtils.isEmpty(url)
+                    && Intent.ACTION_VIEW.equals(intent.getAction())) {
+                //获取intent中的视频地址
+                url = Utils.getFileFromContentUri(this, intent.getData());
+            }
+            mVideoView.setUrl(url);
 
             //保存播放进度
 //            mVideoView.setProgressManager(new ProgressManagerImpl());
