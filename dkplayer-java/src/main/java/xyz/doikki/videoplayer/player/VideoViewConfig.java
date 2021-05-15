@@ -59,7 +59,7 @@ public class VideoViewConfig {
     public final static class Builder {
 
         private boolean mIsEnableLog;
-        private boolean mPlayOnMobileNetwork;
+        private boolean mPlayOnMobileNetwork = true;
         private boolean mEnableOrientation;
         private boolean mEnableAudioFocus = true;
         private ProgressManager mProgressManager;
