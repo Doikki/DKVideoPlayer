@@ -179,17 +179,11 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      */
     @Override
     public void start() {
-        boolean isStarted = false;
-        if (isInIdleState() || isInStartAbortState()) {
-            isStarted = startPlay();
+        if (isInIdleState()
+                || isInStartAbortState()) {
+            startPlay();
         } else if (isInPlaybackState()) {
             startInPlaybackState();
-            isStarted = true;
-        }
-        if (isStarted) {
-            mPlayerContainer.setKeepScreenOn(true);
-            if (mAudioFocusHelper != null)
-                mAudioFocusHelper.requestFocus();
         }
     }
 
@@ -322,6 +316,10 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
     protected void startInPlaybackState() {
         mMediaPlayer.start();
         setPlayState(STATE_PLAYING);
+        if (mAudioFocusHelper != null && !isMute()) {
+            mAudioFocusHelper.requestFocus();
+        }
+        mPlayerContainer.setKeepScreenOn(true);
     }
 
     /**
@@ -333,7 +331,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
                 && mMediaPlayer.isPlaying()) {
             mMediaPlayer.pause();
             setPlayState(STATE_PAUSED);
-            if (mAudioFocusHelper != null) {
+            if (mAudioFocusHelper != null && !isMute()) {
                 mAudioFocusHelper.abandonFocus();
             }
             mPlayerContainer.setKeepScreenOn(false);
@@ -348,7 +346,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
                 && !mMediaPlayer.isPlaying()) {
             mMediaPlayer.start();
             setPlayState(STATE_PLAYING);
-            if (mAudioFocusHelper != null) {
+            if (mAudioFocusHelper != null && !isMute()) {
                 mAudioFocusHelper.requestFocus();
             }
             mPlayerContainer.setKeepScreenOn(true);
@@ -549,6 +547,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
                 break;
             case AbstractPlayer.MEDIA_INFO_VIDEO_RENDERING_START: // 视频开始渲染
                 setPlayState(STATE_PLAYING);
+                mPlayerContainer.setKeepScreenOn(true);
                 if (mPlayerContainer.getWindowVisibility() != VISIBLE) {
                     pause();
                 }
@@ -566,6 +565,9 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
     @Override
     public void onPrepared() {
         setPlayState(STATE_PREPARED);
+        if (!isMute() && mAudioFocusHelper != null) {
+            mAudioFocusHelper.requestFocus();
+        }
         if (mCurrentPosition > 0) {
             seekTo(mCurrentPosition);
         }
