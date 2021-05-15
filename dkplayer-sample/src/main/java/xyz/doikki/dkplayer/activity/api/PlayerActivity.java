@@ -127,6 +127,9 @@ public class PlayerActivity extends BaseActivity<VideoView> {
             //使用MediaPlayer解码
 //            mVideoView.setPlayerFactory(AndroidMediaPlayerFactory.create());
 
+            //设置静音播放
+//            mVideoView.setMute(true);
+
             mVideoView.start();
         }
 
@@ -159,8 +162,6 @@ public class PlayerActivity extends BaseActivity<VideoView> {
                 case VideoView.STATE_IDLE:
                     break;
                 case VideoView.STATE_PREPARING:
-                    //在STATE_PREPARING时设置setMute(true)可实现静音播放
-//                    mVideoView.setMute(true);
                     break;
                 case VideoView.STATE_PREPARED:
                     break;
@@ -235,7 +236,7 @@ public class PlayerActivity extends BaseActivity<VideoView> {
                 i++;
                 break;
             case R.id.btn_mute:
-                mVideoView.setMute(true);
+                mVideoView.setMute(!mVideoView.isMute());
                 break;
         }
     }

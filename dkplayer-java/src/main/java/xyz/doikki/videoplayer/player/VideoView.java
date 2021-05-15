@@ -264,6 +264,8 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      */
     protected void setOptions() {
         mMediaPlayer.setLooping(mIsLooping);
+        float volume = mIsMute ? 0.0f : 1.0f;
+        mMediaPlayer.setVolume(volume, volume);
     }
 
     /**
@@ -498,8 +500,8 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      */
     @Override
     public void setMute(boolean isMute) {
+        this.mIsMute = isMute;
         if (mMediaPlayer != null) {
-            this.mIsMute = isMute;
             float volume = isMute ? 0.0f : 1.0f;
             mMediaPlayer.setVolume(volume, volume);
         }
