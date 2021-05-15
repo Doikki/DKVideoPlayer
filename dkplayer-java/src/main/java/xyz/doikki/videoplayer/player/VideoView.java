@@ -548,7 +548,9 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
             case AbstractPlayer.MEDIA_INFO_VIDEO_RENDERING_START: // 视频开始渲染
                 setPlayState(STATE_PLAYING);
                 mPlayerContainer.setKeepScreenOn(true);
-                if (mPlayerContainer.getWindowVisibility() != VISIBLE) {
+                // 视频准备完成之后，activity 如果处于 paused，则暂停播放
+                Activity activity = getActivity();
+                if (activity != null && !activity.hasWindowFocus()) {
                     pause();
                 }
                 break;
