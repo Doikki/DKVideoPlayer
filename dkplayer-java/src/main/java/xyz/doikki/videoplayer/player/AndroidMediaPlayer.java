@@ -98,6 +98,7 @@ public class AndroidMediaPlayer extends AbstractPlayer implements MediaPlayer.On
 
     @Override
     public void reset() {
+        stop();
         mMediaPlayer.reset();
         mMediaPlayer.setSurface(null);
         mMediaPlayer.setDisplay(null);
@@ -126,11 +127,14 @@ public class AndroidMediaPlayer extends AbstractPlayer implements MediaPlayer.On
         mMediaPlayer.setOnBufferingUpdateListener(null);
         mMediaPlayer.setOnPreparedListener(null);
         mMediaPlayer.setOnVideoSizeChangedListener(null);
+        stop();
+        final MediaPlayer mediaPlayer = mMediaPlayer;
+        mMediaPlayer = null;
         new Thread() {
             @Override
             public void run() {
                 try {
-                    mMediaPlayer.release();
+                    mediaPlayer.release();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
