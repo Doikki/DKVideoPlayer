@@ -4,7 +4,7 @@ A video player for Android.
 ![Maven Central](https://img.shields.io/maven-central/v/xyz.doikki.android.dkplayer/dkplayer-java)
 [![API](https://img.shields.io/badge/API-16%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=16)
 
-### [Demo](https://d.alphaqr.com/1r3u)
+### [Demo](https://d.7short.com/qwtj)
 
 ### [特性](https://github.com/Doikki/DKVideoPlayer/wiki#%E7%89%B9%E6%80%A7)
 
