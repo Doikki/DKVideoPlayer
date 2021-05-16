@@ -9,6 +9,10 @@ android {
         minSdkVersion project.ext.minSdkVersion
         targetSdkVersion project.ext.targetSdkVersion
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -17,7 +21,7 @@ dependencies {
     api "com.google.android.exoplayer:exoplayer-core:$project.exoPlayerVersion"
     api "com.google.android.exoplayer:exoplayer-dash:$project.exoPlayerVersion"
     api "com.google.android.exoplayer:exoplayer-hls:$project.exoPlayerVersion"
-    api "com.google.android.exoplayer:exoplayer-smoothstreaming:$project.exoPlayerVersion"
+    api "com.google.android.exoplayer:exoplayer-rtsp:$project.exoPlayerVersion"
     api "com.google.android.exoplayer:extension-rtmp:$project.exoPlayerVersion"
 }
 

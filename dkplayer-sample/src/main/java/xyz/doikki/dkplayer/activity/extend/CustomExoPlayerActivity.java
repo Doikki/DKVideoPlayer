@@ -2,6 +2,10 @@ package xyz.doikki.dkplayer.activity.extend;
 
 import android.view.View;
 
+import com.google.android.exoplayer2.source.ClippingMediaSource;
+import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
+
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.activity.BaseActivity;
 import xyz.doikki.dkplayer.widget.videoview.ExoVideoView;
@@ -9,10 +13,6 @@ import xyz.doikki.videocontroller.StandardVideoController;
 import xyz.doikki.videoplayer.exo.ExoMediaPlayer;
 import xyz.doikki.videoplayer.exo.ExoMediaSourceHelper;
 import xyz.doikki.videoplayer.player.AbstractPlayer;
-import com.google.android.exoplayer2.source.ClippingMediaSource;
-import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
-import com.google.android.exoplayer2.source.LoopingMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
 
 /**
  * 自定义MediaPlayer，有多种情形：
@@ -43,12 +43,12 @@ public class CustomExoPlayerActivity extends BaseActivity<ExoVideoView> {
         mVideoView.release();
         mVideoView.setCacheEnabled(false);
         switch (view.getId()) {
-            case R.id.cache: {
+            case R.id.btn_cache: {
                 mVideoView.setCacheEnabled(true);
                 mVideoView.setUrl("http://playertest.longtailvideo.com/adaptive/bipbop/gear4/prog_index.m3u8");
                 break;
             }
-            case R.id.concat: {
+            case R.id.btn_concat: {
                 //将多个视频拼接在一起播放
                 ConcatenatingMediaSource concatenatingMediaSource = new ConcatenatingMediaSource();
                 MediaSource mediaSource1 = mHelper.getMediaSource("http://vfx.mtime.cn/Video/2019/02/04/mp4/190204084208765161.mp4");
@@ -60,12 +60,19 @@ public class CustomExoPlayerActivity extends BaseActivity<ExoVideoView> {
                 mVideoView.setMediaSource(concatenatingMediaSource);
                 break;
             }
-            case R.id.clip: {
+            case R.id.btn_clip: {
                 MediaSource mediaSource = mHelper.getMediaSource("http://vfx.mtime.cn/Video/2019/02/04/mp4/190204084208765161.mp4");
                 //裁剪10-15秒的内容进行播放
                 ClippingMediaSource clippingMediaSource = new ClippingMediaSource(mediaSource, 10_000_000, 15_000_000);
-                LoopingMediaSource loopingMediaSource = new LoopingMediaSource(clippingMediaSource);
-                mVideoView.setMediaSource(loopingMediaSource);
+                mVideoView.setMediaSource(clippingMediaSource);
+                break;
+            }
+            case R.id.btn_dash: {
+                mVideoView.setUrl("http://www.bok.net/dash/tears_of_steel/cleartext/stream.mpd");
+                break;
+            }
+            case R.id.btn_rtsp: {
+                mVideoView.setUrl("rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov");
                 break;
             }
         }

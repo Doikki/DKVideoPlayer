@@ -2,16 +2,16 @@ package xyz.doikki.dkplayer.activity.extend;
 
 import android.view.View;
 
-import xyz.doikki.dkplayer.R;
-import xyz.doikki.dkplayer.activity.BaseActivity;
-import xyz.doikki.dkplayer.widget.videoview.IjkVideoView;
-import xyz.doikki.videocontroller.StandardVideoController;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import xyz.doikki.dkplayer.R;
+import xyz.doikki.dkplayer.activity.BaseActivity;
+import xyz.doikki.dkplayer.widget.videoview.IjkVideoView;
+import xyz.doikki.videocontroller.StandardVideoController;
 
 /**
  * 自定义的IjkVideoView
@@ -95,7 +95,8 @@ public class CustomIjkPlayerActivity extends BaseActivity<IjkVideoView> implemen
 //                mVideoView.addFormatOption("flush_packets", 1L);
 //                mVideoView.addPlayerOption("packet-buffering", 0L);
 //                mVideoView.addPlayerOption("framedrop", 1L);
-                String rtspUrl = "rtsp://192.168.31.246:8554/test";
+//                String rtspUrl = "rtsp://192.168.31.246:8554/test";
+                String rtspUrl = "rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov";
                 mVideoView.setUrl(rtspUrl);
                 break;
         }

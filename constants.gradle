@@ -8,7 +8,7 @@ project.ext {
     buildToolsVersion = '28.0.3'
 
     // App dependencies
-    exoPlayerVersion = '2.13.3'
+    exoPlayerVersion = '2.14.0'
 
     annotation = 'androidx.annotation:annotation:1.1.0'
 }

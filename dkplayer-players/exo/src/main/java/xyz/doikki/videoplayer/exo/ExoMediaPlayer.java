@@ -6,8 +6,6 @@ import android.os.Handler;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
-import xyz.doikki.videoplayer.player.AbstractPlayer;
-import xyz.doikki.videoplayer.player.VideoViewManager;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -28,12 +26,15 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.util.EventLogger;
-import com.google.android.exoplayer2.video.VideoListener;
+import com.google.android.exoplayer2.video.VideoSize;
 
 import java.util.Map;
 
+import xyz.doikki.videoplayer.player.AbstractPlayer;
+import xyz.doikki.videoplayer.player.VideoViewManager;
 
-public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Player.EventListener, MediaSourceEventListener {
+
+public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener, MediaSourceEventListener {
 
     protected Context mAppContext;
     protected SimpleExoPlayer mInternalPlayer;
@@ -298,11 +299,11 @@ public class ExoMediaPlayer extends AbstractPlayer implements VideoListener, Pla
     }
 
     @Override
-    public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
+    public void onVideoSizeChanged(VideoSize videoSize) {
         if (mPlayerEventListener != null) {
-            mPlayerEventListener.onVideoSizeChanged(width, height);
-            if (unappliedRotationDegrees > 0) {
-                mPlayerEventListener.onInfo(MEDIA_INFO_VIDEO_ROTATION_CHANGED, unappliedRotationDegrees);
+            mPlayerEventListener.onVideoSizeChanged(videoSize.width, videoSize.height);
+            if (videoSize.unappliedRotationDegrees > 0) {
+                mPlayerEventListener.onInfo(MEDIA_INFO_VIDEO_ROTATION_CHANGED, videoSize.unappliedRotationDegrees);
             }
         }
     }
