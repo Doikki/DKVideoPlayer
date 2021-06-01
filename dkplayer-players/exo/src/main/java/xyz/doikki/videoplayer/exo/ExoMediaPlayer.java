@@ -2,7 +2,6 @@ package xyz.doikki.videoplayer.exo;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
-import android.os.Handler;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
@@ -16,10 +15,7 @@ import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.analytics.AnalyticsCollector;
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory;
-import com.google.android.exoplayer2.source.LoadEventInfo;
-import com.google.android.exoplayer2.source.MediaLoadData;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
@@ -34,7 +30,7 @@ import xyz.doikki.videoplayer.player.AbstractPlayer;
 import xyz.doikki.videoplayer.player.VideoViewManager;
 
 
-public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener, MediaSourceEventListener {
+public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     protected Context mAppContext;
     protected SimpleExoPlayer mInternalPlayer;
@@ -43,9 +39,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener, M
 
     private PlaybackParameters mSpeedPlaybackParameters;
 
-    private int mLastReportedPlaybackState = Player.STATE_IDLE;
     private boolean mIsPreparing;
-    private boolean mIsBuffering;
 
     private LoadControl mLoadControl;
     private RenderersFactory mRenderersFactory;
@@ -130,7 +124,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener, M
             mInternalPlayer.setPlaybackParameters(mSpeedPlaybackParameters);
         }
         mIsPreparing = true;
-        mMediaSource.addEventListener(new Handler(), this);
         mInternalPlayer.setMediaSource(mMediaSource);
         mInternalPlayer.prepare();
     }
@@ -141,8 +134,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener, M
             mInternalPlayer.stop(true);
             mInternalPlayer.setVideoSurface(null);
             mIsPreparing = false;
-            mIsBuffering = false;
-            mLastReportedPlaybackState = Player.STATE_IDLE;
         }
     }
 
@@ -179,8 +170,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener, M
         }
 
         mIsPreparing = false;
-        mIsBuffering = false;
-        mLastReportedPlaybackState = Player.STATE_IDLE;
         mSpeedPlaybackParameters = null;
     }
 
@@ -260,34 +249,24 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener, M
     }
 
     @Override
-    public void onLoadCompleted(int windowIndex, MediaSource.MediaPeriodId mediaPeriodId,
-                                LoadEventInfo loadEventInfo, MediaLoadData mediaLoadData) {
-        if (mPlayerEventListener != null && mIsPreparing) {
-            mPlayerEventListener.onPrepared();
-        }
-    }
-
-    @Override
     public void onPlaybackStateChanged(int playbackState) {
         if (mPlayerEventListener == null) return;
-        if (mIsPreparing) return;
-        if (mLastReportedPlaybackState != playbackState) {
-            switch (playbackState) {
-                case Player.STATE_BUFFERING:
-                    mPlayerEventListener.onInfo(MEDIA_INFO_BUFFERING_START, getBufferedPercentage());
-                    mIsBuffering = true;
-                    break;
-                case Player.STATE_READY:
-                    if (mIsBuffering) {
-                        mPlayerEventListener.onInfo(MEDIA_INFO_BUFFERING_END, getBufferedPercentage());
-                        mIsBuffering = false;
-                    }
-                    break;
-                case Player.STATE_ENDED:
-                    mPlayerEventListener.onCompletion();
-                    break;
+        if (mIsPreparing) {
+            if (playbackState == Player.STATE_READY) {
+                mIsPreparing = false;
             }
-            mLastReportedPlaybackState = playbackState;
+            return;
+        }
+        switch (playbackState) {
+            case Player.STATE_BUFFERING:
+                mPlayerEventListener.onInfo(MEDIA_INFO_BUFFERING_START, getBufferedPercentage());
+                break;
+            case Player.STATE_READY:
+                mPlayerEventListener.onInfo(MEDIA_INFO_BUFFERING_END, getBufferedPercentage());
+                break;
+            case Player.STATE_ENDED:
+                mPlayerEventListener.onCompletion();
+                break;
         }
     }
 
@@ -311,8 +290,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener, M
     @Override
     public void onRenderedFirstFrame() {
         if (mPlayerEventListener != null && mIsPreparing) {
+            mPlayerEventListener.onPrepared();
             mPlayerEventListener.onInfo(MEDIA_INFO_VIDEO_RENDERING_START, 0);
-            mIsPreparing = false;
         }
     }
 }

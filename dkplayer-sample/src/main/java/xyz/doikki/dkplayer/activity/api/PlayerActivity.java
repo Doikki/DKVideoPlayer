@@ -141,6 +141,9 @@ public class PlayerActivity extends BaseActivity<VideoView<AbstractPlayer>> {
             //设置静音播放
 //            mVideoView.setMute(true);
 
+            //从设置的position开始播放
+//            mVideoView.skipPositionWhenPlay(10000);
+
             mVideoView.start();
         }
 
