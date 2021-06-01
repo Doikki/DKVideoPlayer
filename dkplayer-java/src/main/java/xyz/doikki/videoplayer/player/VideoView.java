@@ -21,6 +21,11 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import xyz.doikki.videoplayer.R;
 import xyz.doikki.videoplayer.controller.BaseVideoController;
 import xyz.doikki.videoplayer.controller.MediaPlayerControl;
@@ -28,11 +33,6 @@ import xyz.doikki.videoplayer.render.IRenderView;
 import xyz.doikki.videoplayer.render.RenderViewFactory;
 import xyz.doikki.videoplayer.util.L;
 import xyz.doikki.videoplayer.util.PlayerUtils;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 播放器
@@ -124,6 +124,8 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      * {@link #mPlayerContainer}背景色，默认黑色
      */
     private int mPlayerBackgroundColor;
+
+    private boolean isPausedByUser = false;
 
     public VideoView(@NonNull Context context) {
         this(context, null);
@@ -336,6 +338,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
             }
             mPlayerContainer.setKeepScreenOn(false);
         }
+        isPausedByUser = true;
     }
 
     /**
@@ -351,6 +354,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
             }
             mPlayerContainer.setKeepScreenOn(true);
         }
+        isPausedByUser = false;
     }
 
     /**
@@ -549,8 +553,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
                 setPlayState(STATE_PLAYING);
                 mPlayerContainer.setKeepScreenOn(true);
                 // 视频准备完成之后，activity 如果处于 paused，则暂停播放
-                Activity activity = getActivity();
-                if (activity != null && !activity.hasWindowFocus()) {
+                if (isPausedByUser) {
                     pause();
                 }
                 break;
