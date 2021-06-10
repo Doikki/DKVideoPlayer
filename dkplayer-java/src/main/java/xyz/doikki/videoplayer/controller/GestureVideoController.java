@@ -13,10 +13,10 @@ import android.view.WindowManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.Map;
+
 import xyz.doikki.videoplayer.player.VideoView;
 import xyz.doikki.videoplayer.util.PlayerUtils;
-
-import java.util.Map;
 
 /**
  * 包含手势操作的VideoController
@@ -46,6 +46,8 @@ public abstract class GestureVideoController extends BaseVideoController impleme
     private boolean mCanSlide;
 
     private int mCurPlayState;
+
+    private boolean mIsDoubleTapTogglePlayEnabled = true;
 
 
     public GestureVideoController(@NonNull Context context) {
@@ -83,10 +85,17 @@ public abstract class GestureVideoController extends BaseVideoController impleme
     }
 
     /**
-     * 是否开启手势空控制，默认开启，关闭之后，双击播放暂停以及手势调节进度，音量，亮度功能将关闭
+     * 是否开启手势控制，默认开启，关闭之后，手势调节进度，音量，亮度功能将关闭
      */
     public void setGestureEnabled(boolean gestureEnabled) {
         mIsGestureEnabled = gestureEnabled;
+    }
+
+    /**
+     * 是否开启双击播放/暂停，默认开启
+     */
+    public void setDoubleTapTogglePlayEnabled(boolean enabled) {
+        mIsDoubleTapTogglePlayEnabled = enabled;
     }
 
     @Override
@@ -159,7 +168,7 @@ public abstract class GestureVideoController extends BaseVideoController impleme
      */
     @Override
     public boolean onDoubleTap(MotionEvent e) {
-        if (!isLocked() && isInPlaybackState()) togglePlay();
+        if (mIsDoubleTapTogglePlayEnabled && !isLocked() && isInPlaybackState()) togglePlay();
         return true;
     }
 

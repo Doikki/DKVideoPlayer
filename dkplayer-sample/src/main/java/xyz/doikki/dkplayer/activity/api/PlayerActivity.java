@@ -107,6 +107,8 @@ public class PlayerActivity extends BaseActivity<VideoView<AbstractPlayer>> {
 //            controller.setGestureEnabled(false);
             //适配刘海屏，默认开启
 //            controller.setAdaptCutout(false);
+            //双击播放暂停，默认开启
+//            controller.setDoubleTapTogglePlayEnabled(false);
 
             //在控制器上显示调试信息
             controller.addControlComponent(new DebugInfoView(this));
