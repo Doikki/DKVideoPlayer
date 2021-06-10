@@ -61,6 +61,7 @@ public class PlayerActivity extends BaseActivity<VideoView<AbstractPlayer>> {
             controller.setEnableOrientation(true);
 
             PrepareView prepareView = new PrepareView(this);//准备播放界面
+            prepareView.setClickStart();
             ImageView thumb = prepareView.findViewById(R.id.thumb);//封面图
             Glide.with(this).load(THUMB).into(thumb);
             controller.addControlComponent(prepareView);
@@ -252,6 +253,16 @@ public class PlayerActivity extends BaseActivity<VideoView<AbstractPlayer>> {
             case R.id.btn_mute:
                 mVideoView.setMute(!mVideoView.isMute());
                 break;
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //如果视频还在准备就 activity 就进入了后台，建议直接将 VideoView release
+        //防止进入后台后视频还在播放
+        if (mVideoView.getCurrentPlayState() == VideoView.STATE_PREPARING) {
+            mVideoView.release();
         }
     }
 }

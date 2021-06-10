@@ -125,8 +125,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      */
     private int mPlayerBackgroundColor;
 
-    private boolean isPausedByUser = false;
-
     public VideoView(@NonNull Context context) {
         this(context, null);
     }
@@ -338,7 +336,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
             }
             mPlayerContainer.setKeepScreenOn(false);
         }
-        isPausedByUser = true;
     }
 
     /**
@@ -354,7 +351,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
             }
             mPlayerContainer.setKeepScreenOn(true);
         }
-        isPausedByUser = false;
     }
 
     /**
@@ -445,7 +441,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         }
         addDisplay();
         startPrepare(true);
-        mPlayerContainer.setKeepScreenOn(true);
     }
 
     /**
@@ -518,6 +513,42 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
     }
 
     /**
+     * 视频缓冲完毕，准备开始播放时回调
+     */
+    @Override
+    public void onPrepared() {
+        setPlayState(STATE_PREPARED);
+        if (!isMute() && mAudioFocusHelper != null) {
+            mAudioFocusHelper.requestFocus();
+        }
+        if (mCurrentPosition > 0) {
+            seekTo(mCurrentPosition);
+        }
+    }
+
+    /**
+     * 播放信息回调，播放中的缓冲开始与结束，开始渲染视频第一帧，视频旋转信息
+     */
+    @Override
+    public void onInfo(int what, int extra) {
+        switch (what) {
+            case AbstractPlayer.MEDIA_INFO_BUFFERING_START:
+                setPlayState(STATE_BUFFERING);
+                break;
+            case AbstractPlayer.MEDIA_INFO_BUFFERING_END:
+                setPlayState(STATE_BUFFERED);
+                break;
+            case AbstractPlayer.MEDIA_INFO_VIDEO_RENDERING_START: // 视频开始渲染
+                setPlayState(STATE_PLAYING);
+                mPlayerContainer.setKeepScreenOn(true);
+                break;
+            case AbstractPlayer.MEDIA_INFO_VIDEO_ROTATION_CHANGED:
+                if (mRenderView != null) mRenderView.setVideoRotation(extra);
+                break;
+        }
+    }
+
+    /**
      * 视频播放出错回调
      */
     @Override
@@ -538,44 +569,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
             mProgressManager.saveProgress(mUrl, 0);
         }
         setPlayState(STATE_PLAYBACK_COMPLETED);
-    }
-
-    @Override
-    public void onInfo(int what, int extra) {
-        switch (what) {
-            case AbstractPlayer.MEDIA_INFO_BUFFERING_START:
-                setPlayState(STATE_BUFFERING);
-                break;
-            case AbstractPlayer.MEDIA_INFO_BUFFERING_END:
-                setPlayState(STATE_BUFFERED);
-                break;
-            case AbstractPlayer.MEDIA_INFO_VIDEO_RENDERING_START: // 视频开始渲染
-                setPlayState(STATE_PLAYING);
-                mPlayerContainer.setKeepScreenOn(true);
-                // 视频准备完成之后，activity 如果处于 paused，则暂停播放
-                if (isPausedByUser) {
-                    pause();
-                }
-                break;
-            case AbstractPlayer.MEDIA_INFO_VIDEO_ROTATION_CHANGED:
-                if (mRenderView != null)
-                    mRenderView.setVideoRotation(extra);
-                break;
-        }
-    }
-
-    /**
-     * 视频缓冲完毕，准备开始播放时回调
-     */
-    @Override
-    public void onPrepared() {
-        setPlayState(STATE_PREPARED);
-        if (!isMute() && mAudioFocusHelper != null) {
-            mAudioFocusHelper.requestFocus();
-        }
-        if (mCurrentPosition > 0) {
-            seekTo(mCurrentPosition);
-        }
     }
 
     /**
