@@ -6,6 +6,9 @@ import android.view.View;
 
 import androidx.viewpager.widget.ViewPager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.activity.BaseActivity;
 import xyz.doikki.dkplayer.adapter.Tiktok2Adapter;
@@ -19,9 +22,6 @@ import xyz.doikki.dkplayer.widget.controller.TikTokController;
 import xyz.doikki.dkplayer.widget.render.TikTokRenderViewFactory;
 import xyz.doikki.videoplayer.player.VideoView;
 import xyz.doikki.videoplayer.util.L;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -154,6 +154,7 @@ public class TikTok2Activity extends BaseActivity<VideoView> {
                 String playUrl = mPreloadManager.getPlayUrl(tiktokBean.videoDownloadUrl);
                 L.i("startPlay: " + "position: " + position + "  url: " + playUrl);
                 mVideoView.setUrl(playUrl);
+                //请点进去看isDissociate的解释
                 mController.addControlComponent(viewHolder.mTikTokView, true);
                 viewHolder.mPlayerContainer.addView(mVideoView, 0);
                 mVideoView.start();

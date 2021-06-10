@@ -248,6 +248,8 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
     private void toggleFullScreen() {
         Activity activity = PlayerUtils.scanForActivity(getContext());
         mControlWrapper.toggleFullScreen(activity);
+        // 下面方法会根据适配宽高决定是否旋转屏幕
+//        mControlWrapper.toggleFullScreenByVideoSize(activity);
     }
 
     @Override

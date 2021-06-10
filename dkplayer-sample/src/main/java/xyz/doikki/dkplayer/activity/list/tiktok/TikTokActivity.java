@@ -7,6 +7,9 @@ import android.view.View;
 import androidx.recyclerview.widget.OrientationHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.activity.BaseActivity;
 import xyz.doikki.dkplayer.adapter.TikTokAdapter;
@@ -18,9 +21,6 @@ import xyz.doikki.dkplayer.widget.controller.TikTokController;
 import xyz.doikki.dkplayer.widget.render.TikTokRenderViewFactory;
 import xyz.doikki.videoplayer.player.VideoView;
 import xyz.doikki.videoplayer.util.L;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 模仿抖音短视频, 使用RecyclerView实现
@@ -115,6 +115,7 @@ public class TikTokActivity extends BaseActivity<VideoView> {
         String playUrl = PreloadManager.getInstance(this).getPlayUrl(item.videoDownloadUrl);
         L.i("startPlay: " + "position: " + position + "  url: " + playUrl);
         mVideoView.setUrl(playUrl);
+        //请点进去看isDissociate的解释
         mController.addControlComponent(viewHolder.mTikTokView, true);
         viewHolder.mPlayerContainer.addView(mVideoView, 0);
         mVideoView.start();

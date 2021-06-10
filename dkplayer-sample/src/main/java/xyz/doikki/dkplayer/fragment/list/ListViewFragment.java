@@ -6,6 +6,9 @@ import android.widget.AbsListView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.adapter.VideoListViewAdapter;
 import xyz.doikki.dkplayer.adapter.listener.OnItemChildClickListener;
@@ -21,9 +24,6 @@ import xyz.doikki.videocontroller.component.GestureView;
 import xyz.doikki.videocontroller.component.TitleView;
 import xyz.doikki.videocontroller.component.VodControlView;
 import xyz.doikki.videoplayer.player.VideoView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * ListView demo，不推荐，建议使用{@link RecyclerViewFragment}
@@ -162,6 +162,7 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
         mTitleView.setTitle(videoBean.getTitle());
         View itemView = mAdapter.getItemView(position);
         VideoListViewAdapter.ViewHolder viewHolder = (VideoListViewAdapter.ViewHolder) itemView.getTag();
+        //请点进去看isDissociate的解释
         mController.addControlComponent(viewHolder.mPrepareView, true);
         Utils.removeViewFormParent(mVideoView);
         viewHolder.mPlayerContainer.addView(mVideoView, 0);

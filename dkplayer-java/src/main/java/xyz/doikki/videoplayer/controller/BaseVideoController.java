@@ -16,15 +16,15 @@ import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import xyz.doikki.videoplayer.player.VideoView;
 import xyz.doikki.videoplayer.player.VideoViewManager;
 import xyz.doikki.videoplayer.util.CutoutUtil;
 import xyz.doikki.videoplayer.util.L;
 import xyz.doikki.videoplayer.util.PlayerUtils;
-
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * 控制器基类
@@ -139,27 +139,41 @@ public abstract class BaseVideoController extends FrameLayout
     /**
      * 添加控制组件，最后面添加的在最下面，合理组织添加顺序，可让ControlComponent位于不同的层级
      *
-     * @param isPrivate 是否为独有的组件，如果是就不添加到控制器中
+     * @param isDissociate 是否为游离的控制组件，
+     *                     如果为 true ControlComponent 不会添加到控制器中，ControlComponent 将独立于控制器而存在，
+     *                     如果为 false ControlComponent 将会被添加到控制器中，并显示出来。
+     *                     为什么要让 ControlComponent 将独立于控制器而存在，假设有如下几种情况：
+     *                     情况一：
+     *                     如果在一个列表中控制器是复用的，但是控制器的某些部分是不能复用的，比如封面图，
+     *                     此时你就可以将封面图拆分成一个游离的 ControlComponent，并把这个 ControlComponent
+     *                     放在 item 的布局中，就可以实现每个item的封面图都是不一样，并且封面图可以随着播放器的状态显示和隐藏。
+     *                     demo中演示的就是这种情况。
+     *                     情况二：
+     *                     假设有这样一种需求，播放器控制区域在显示区域的下面，此时你就可以通过自定义 ControlComponent
+     *                     并将 isDissociate 设置为 true 来实现这种效果。
      */
-    public void addControlComponent(IControlComponent component, boolean isPrivate) {
-        mControlComponents.put(component, isPrivate);
+    public void addControlComponent(IControlComponent component, boolean isDissociate) {
+        mControlComponents.put(component, isDissociate);
         if (mControlWrapper != null) {
             component.attach(mControlWrapper);
         }
         View view = component.getView();
-        if (view != null && !isPrivate) {
+        if (view != null && !isDissociate) {
             addView(view, 0);
         }
     }
 
     /**
-     * 移除控制组件
+     * 移除某个控制组件
      */
     public void removeControlComponent(IControlComponent component) {
         removeView(component.getView());
         mControlComponents.remove(component);
     }
 
+    /**
+     * 移除所有控制组件
+     */
     public void removeAllControlComponent() {
         for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
             removeView(next.getKey().getView());
@@ -167,7 +181,11 @@ public abstract class BaseVideoController extends FrameLayout
         mControlComponents.clear();
     }
 
-    public void removeAllPrivateComponents() {
+    /**
+     * 移除所有的游离控制组件
+     * 关于游离控制组件的定义请看 {@link #addControlComponent(IControlComponent, boolean)} 关于 isDissociate 的解释
+     */
+    public void removeAllDissociateComponents() {
         Iterator<Map.Entry<IControlComponent, Boolean>> it = mControlComponents.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<IControlComponent, Boolean> next = it.next();
@@ -298,7 +316,7 @@ public abstract class BaseVideoController extends FrameLayout
         public void run() {
             int pos = setProgress();
             if (mControlWrapper.isPlaying()) {
-                postDelayed(this, (long) ((1000  - pos % 1000) / mControlWrapper.getSpeed()));
+                postDelayed(this, (long) ((1000 - pos % 1000) / mControlWrapper.getSpeed()));
             } else {
                 mIsStartProgress = false;
             }
@@ -562,7 +580,9 @@ public abstract class BaseVideoController extends FrameLayout
                 mOrientation = 0;
                 mIsLocked = false;
                 mShowing = false;
-                removeAllPrivateComponents();
+                //由于游离组件是独立于控制器存在的，
+                //所以在播放器release的时候需要移除
+                removeAllDissociateComponents();
                 break;
             case VideoView.STATE_PLAYBACK_COMPLETED:
                 mIsLocked = false;

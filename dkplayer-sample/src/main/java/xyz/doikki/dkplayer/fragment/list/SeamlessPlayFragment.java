@@ -137,7 +137,7 @@ public class SeamlessPlayFragment extends RecyclerViewAutoPlayFragment {
         mVideoView = getVideoViewManager().get(Tag.SEAMLESS);
         Utils.removeViewFormParent(mVideoView);
         viewHolder.mPlayerContainer.addView(mVideoView, 0);
-
+        // 请点进去看isDissociate的解释
         mController.addControlComponent(viewHolder.mPrepareView, true);
         mController.setPlayState(mVideoView.getCurrentPlayState());
         mController.setPlayerState(mVideoView.getCurrentPlayerState());
