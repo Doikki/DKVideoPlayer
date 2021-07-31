@@ -1,6 +1,6 @@
 package xyz.doikki.dkplayer.app;
 
-import android.app.Application;
+import androidx.multidex.MultiDexApplication;
 
 import xyz.doikki.videoplayer.BuildConfig;
 import xyz.doikki.videoplayer.ijk.IjkPlayerFactory;
@@ -12,7 +12,7 @@ import xyz.doikki.videoplayer.player.VideoViewManager;
  * Created by doikki on 2017/4/22.
  */
 
-public class MyApplication extends Application {
+public class MyApplication extends MultiDexApplication {
 
     private static MyApplication instance;
 
