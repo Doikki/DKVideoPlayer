@@ -8,6 +8,10 @@ public final class Logger {
 
     private static boolean IS_DEBUG = false;
 
+    public static void setDebug(boolean isDebug) {
+        IS_DEBUG = isDebug;
+    }
+
     public static void debug(String msg) {
         if (IS_DEBUG) {
             Log.d(TAG, msg);

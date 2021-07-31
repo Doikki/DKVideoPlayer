@@ -2,6 +2,8 @@ package xyz.doikki.dkplayer.app;
 
 import androidx.multidex.MultiDexApplication;
 
+import com.danikula.videocache.Logger;
+
 import xyz.doikki.videoplayer.BuildConfig;
 import xyz.doikki.videoplayer.ijk.IjkPlayerFactory;
 import xyz.doikki.videoplayer.player.VideoViewConfig;
@@ -49,6 +51,9 @@ public class MyApplication extends MultiDexApplication {
 //            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().build());
 //            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().penaltyLog().build());
 //        }
+
+        // VideoCache 日志
+        Logger.setDebug(BuildConfig.DEBUG);
     }
 
     public static MyApplication getInstance() {

@@ -17,8 +17,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
-        android:requestLegacyExternalStorage="true"
-        android:allowNativeHeapPointerTagging="true"
         tools:ignore="LockedOrientationActivity">
 
         <!--允许绘制到oppo、vivo刘海屏机型的刘海区域 -->
