@@ -6,12 +6,12 @@ import android.util.AttributeSet;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import xyz.doikki.dkplayer.widget.player.CustomIjkMediaPlayer;
 import xyz.doikki.videoplayer.player.PlayerFactory;
 import xyz.doikki.videoplayer.player.VideoView;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class IjkVideoView extends VideoView<CustomIjkMediaPlayer> {
 
@@ -134,24 +134,5 @@ public class IjkVideoView extends VideoView<CustomIjkMediaPlayer> {
 
     public void addSwsOption(String name, long value) {
         mSwsOptions.put(name, value);
-    }
-
-    @Override
-    protected void setInitOptions() {
-        super.setInitOptions();
-        if (mCurrentPosition > 0) {
-            addPlayerOption("seek-at-start", mCurrentPosition);
-        }
-    }
-
-    @Override
-    public void onPrepared() {
-        setPlayState(STATE_PREPARED);
-    }
-
-
-    @Override
-    public void skipPositionWhenPlay(int position) {
-        addPlayerOption("seek-at-start", position);
     }
 }
