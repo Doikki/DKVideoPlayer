@@ -4,15 +4,16 @@ import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.view.View;
 
+import com.google.android.exoplayer2.upstream.DataSpec;
+import com.google.android.exoplayer2.upstream.RawResourceDataSource;
+
+import java.io.IOException;
+
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.activity.BaseActivity;
 import xyz.doikki.dkplayer.util.Utils;
 import xyz.doikki.videocontroller.StandardVideoController;
 import xyz.doikki.videoplayer.exo.ExoMediaPlayerFactory;
-import com.google.android.exoplayer2.upstream.DataSpec;
-import com.google.android.exoplayer2.upstream.RawResourceDataSource;
-
-import java.io.IOException;
 
 /**
  * 播放raw/assets视频
@@ -41,7 +42,7 @@ public class PlayRawAssetsActivity extends BaseActivity {
 
     public void onButtonClick(View view) {
         mVideoView.release();
-        Object playerFactory = Utils.getCurrentPlayerFactory();
+        Object playerFactory = Utils.getCurrentPlayerFactoryInVideoView(mVideoView);
 
         switch (view.getId()) {
             case R.id.btn_raw:

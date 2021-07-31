@@ -1,18 +1,19 @@
 package xyz.doikki.dkplayer.activity.api;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.util.DataUtil;
 import xyz.doikki.videocontroller.StandardVideoController;
 import xyz.doikki.videoplayer.player.VideoView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 多开
@@ -53,6 +54,14 @@ public class ParallelPlayActivity extends AppCompatActivity {
         controller2.addDefaultControlComponent(getString(R.string.str_multi_player), false);
         player2.setVideoController(controller2);
         mVideoViews.add(player2);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

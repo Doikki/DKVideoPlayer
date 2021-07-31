@@ -32,12 +32,12 @@ import xyz.doikki.videoplayer.util.L;
  * Created by Doikki on 2017/4/7.
  */
 
-public class PlayerActivity extends BaseActivity<VideoView<AbstractPlayer>> {
+public class PlayerActivityJava extends BaseActivity<VideoView<AbstractPlayer>> {
 
     private static final String THUMB = "https://cms-bucket.nosdn.127.net/eb411c2810f04ffa8aaafc42052b233820180418095416.jpeg";
 
     public static void start(Context context, String url, String title, boolean isLive) {
-        Intent intent = new Intent(context, PlayerActivity.class);
+        Intent intent = new Intent(context, PlayerActivityJava.class);
         intent.putExtra(IntentKeys.URL, url);
         intent.putExtra(IntentKeys.IS_LIVE, isLive);
         intent.putExtra(IntentKeys.TITLE, title);

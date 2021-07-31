@@ -80,7 +80,7 @@ public class DebugInfoView extends AppCompatTextView implements IControlComponen
 
     protected String getCurrentPlayer() {
         String player;
-        Object playerFactory = Utils.getCurrentPlayerFactory();
+        Object playerFactory = Utils.getCurrentPlayerFactoryInVideoView(mControlWrapper);
         if (playerFactory instanceof ExoMediaPlayerFactory) {
             player = "ExoPlayer";
         } else if (playerFactory instanceof IjkPlayerFactory) {
