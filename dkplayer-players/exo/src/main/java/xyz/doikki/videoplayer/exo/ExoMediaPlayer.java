@@ -69,7 +69,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         }
 
         mInternalPlayer.addListener(this);
-        mInternalPlayer.addVideoListener(this);
     }
 
     public void setTrackSelector(TrackSelector trackSelector) {
@@ -131,7 +130,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     @Override
     public void reset() {
         if (mInternalPlayer != null) {
-            mInternalPlayer.stop(true);
+            mInternalPlayer.stop();
+            mInternalPlayer.clearMediaItems();
             mInternalPlayer.setVideoSurface(null);
             mIsPreparing = false;
         }
@@ -164,7 +164,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     public void release() {
         if (mInternalPlayer != null) {
             mInternalPlayer.removeListener(this);
-            mInternalPlayer.removeVideoListener(this);
             mInternalPlayer.release();
             mInternalPlayer = null;
         }
@@ -253,6 +252,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         if (mPlayerEventListener == null) return;
         if (mIsPreparing) {
             if (playbackState == Player.STATE_READY) {
+                mPlayerEventListener.onPrepared();
+                mPlayerEventListener.onInfo(MEDIA_INFO_VIDEO_RENDERING_START, 0);
                 mIsPreparing = false;
             }
             return;
@@ -284,14 +285,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
             if (videoSize.unappliedRotationDegrees > 0) {
                 mPlayerEventListener.onInfo(MEDIA_INFO_VIDEO_ROTATION_CHANGED, videoSize.unappliedRotationDegrees);
             }
-        }
-    }
-
-    @Override
-    public void onRenderedFirstFrame() {
-        if (mPlayerEventListener != null && mIsPreparing) {
-            mPlayerEventListener.onPrepared();
-            mPlayerEventListener.onInfo(MEDIA_INFO_VIDEO_RENDERING_START, 0);
         }
     }
 }
