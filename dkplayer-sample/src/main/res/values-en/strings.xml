@@ -7,6 +7,7 @@
     <string name="str_pip">PiP</string>
     <string name="str_api_vod">VOD</string>
     <string name="str_api_live">LIVE</string>
+    <string name="str_api_music">music</string>
     <string name="str_definition">DEFINITION</string>
     <string name="str_screen_shot">SCREEN SHOT</string>
     <string name="str_raw_or_assets">Raw or Assets</string>

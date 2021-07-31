@@ -234,7 +234,7 @@ public class AndroidMediaPlayer extends AbstractPlayer implements MediaPlayer.On
     @Override
     public boolean onInfo(MediaPlayer mp, int what, int extra) {
         //解决MEDIA_INFO_VIDEO_RENDERING_START多次回调问题
-        if (what == AbstractPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
+        if (what == AbstractPlayer.MEDIA_INFO_RENDERING_START) {
             if (mIsPreparing) {
                 mPlayerEventListener.onInfo(what, extra);
                 mIsPreparing = false;
@@ -254,6 +254,25 @@ public class AndroidMediaPlayer extends AbstractPlayer implements MediaPlayer.On
     public void onPrepared(MediaPlayer mp) {
         mPlayerEventListener.onPrepared();
         start();
+        // 修复播放纯音频时状态出错问题
+        if (!isVideo()) {
+            mPlayerEventListener.onInfo(AbstractPlayer.MEDIA_INFO_RENDERING_START, 0);
+        }
+    }
+
+    private boolean isVideo() {
+        try {
+            MediaPlayer.TrackInfo[] trackInfo = mMediaPlayer.getTrackInfo();
+            for (MediaPlayer.TrackInfo info :
+                    trackInfo) {
+                if (info.getTrackType() == MediaPlayer.TrackInfo.MEDIA_TRACK_TYPE_VIDEO) {
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return false;
     }
 
     @Override

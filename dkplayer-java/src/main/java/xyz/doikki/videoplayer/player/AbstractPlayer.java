@@ -13,9 +13,9 @@ import java.util.Map;
 public abstract class AbstractPlayer {
 
     /**
-     * 开始渲染视频画面
+     * 视频/音频开始渲染
      */
-    public static final int MEDIA_INFO_VIDEO_RENDERING_START = 3;
+    public static final int MEDIA_INFO_RENDERING_START = 3;
 
     /**
      * 缓冲开始

@@ -253,7 +253,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         if (mIsPreparing) {
             if (playbackState == Player.STATE_READY) {
                 mPlayerEventListener.onPrepared();
-                mPlayerEventListener.onInfo(MEDIA_INFO_VIDEO_RENDERING_START, 0);
+                mPlayerEventListener.onInfo(MEDIA_INFO_RENDERING_START, 0);
                 mIsPreparing = false;
             }
             return;

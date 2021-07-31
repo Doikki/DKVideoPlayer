@@ -24,7 +24,7 @@ public class ApiFragment extends BaseFragment implements View.OnClickListener {
     //断线自动重连,需加上ijkhttphook:
 //    private static final String VOD_URL = "ijkhttphook:http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv";
 
-//    private static final String LIVE_URL = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
+    //    private static final String LIVE_URL = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
 //    private static final String LIVE_URL = "http://ivi.bupt.edu.cn/hls/sztv.m3u8";
     private static final String LIVE_URL = "http://220.161.87.62:8800/hls/0/index.m3u8";
 //    private static final String LIVE_URL = "http://ivi.bupt.edu.cn/hls/cctv6.m3u8";
@@ -34,6 +34,9 @@ public class ApiFragment extends BaseFragment implements View.OnClickListener {
 
     //断线自动重连,需加上ijklivehook:
 //    private static final String LIVE_URL = "ijklivehook:rtmp://live.hkstv.hk.lxdns.com/live/hks";
+
+    // 音频
+    private static final String MUSIC_URL = "https://music.163.com/song/media/outer/url?id=516497142.mp3";
 
     @Override
     protected int getLayoutResId() {
@@ -45,6 +48,7 @@ public class ApiFragment extends BaseFragment implements View.OnClickListener {
         super.initView();
         findViewById(R.id.btn_vod).setOnClickListener(this);
         findViewById(R.id.btn_live).setOnClickListener(this);
+        findViewById(R.id.btn_music).setOnClickListener(this);
         findViewById(R.id.btn_raw_assets).setOnClickListener(this);
         findViewById(R.id.btn_parallel_play).setOnClickListener(this);
     }
@@ -57,6 +61,9 @@ public class ApiFragment extends BaseFragment implements View.OnClickListener {
                 break;
             case R.id.btn_live:
                 PlayerActivity.start(getActivity(), LIVE_URL, "直播", true);
+                break;
+            case R.id.btn_music:
+                PlayerActivity.start(getActivity(), MUSIC_URL, "音乐", false);
                 break;
             case R.id.btn_raw_assets:
                 startActivity(new Intent(getActivity(), PlayRawAssetsActivity.class));
