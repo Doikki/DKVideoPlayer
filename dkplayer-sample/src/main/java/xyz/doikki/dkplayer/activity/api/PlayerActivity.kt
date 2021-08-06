@@ -98,6 +98,7 @@ class PlayerActivity : BaseActivity<VideoView<AbstractPlayer>>() {
                 //获取intent中的视频地址
                 url = Utils.getFileFromContentUri(this, it.data)
             }
+//            val header = hashMapOf("User-Agent" to "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36")
             mVideoView.setUrl(url)
 
             //保存播放进度
