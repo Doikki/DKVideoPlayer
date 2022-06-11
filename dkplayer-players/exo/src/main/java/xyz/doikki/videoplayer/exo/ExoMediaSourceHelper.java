@@ -6,15 +6,15 @@ import android.text.TextUtils;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.database.ExoDatabaseProvider;
-import com.google.android.exoplayer2.ext.rtmp.RtmpDataSourceFactory;
+import com.google.android.exoplayer2.database.StandaloneDatabaseProvider;
+import com.google.android.exoplayer2.ext.rtmp.RtmpDataSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.source.rtsp.RtspMediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.upstream.DefaultDataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.upstream.cache.Cache;
@@ -29,7 +29,7 @@ import java.util.Map;
 
 public final class ExoMediaSourceHelper {
 
-    private static ExoMediaSourceHelper sInstance;
+    private static volatile ExoMediaSourceHelper sInstance;
 
     private final String mUserAgent;
     private final Context mAppContext;
@@ -67,7 +67,7 @@ public final class ExoMediaSourceHelper {
     public MediaSource getMediaSource(String uri, Map<String, String> headers, boolean isCache) {
         Uri contentUri = Uri.parse(uri);
         if ("rtmp".equals(contentUri.getScheme())) {
-            return new ProgressiveMediaSource.Factory(new RtmpDataSourceFactory(null))
+            return new ProgressiveMediaSource.Factory(new RtmpDataSource.Factory())
                     .createMediaSource(MediaItem.fromUri(contentUri));
         } else if ("rtsp".equals(contentUri.getScheme())) {
             return new RtspMediaSource.Factory().createMediaSource(MediaItem.fromUri(contentUri));
@@ -118,7 +118,7 @@ public final class ExoMediaSourceHelper {
         return new SimpleCache(
                 new File(mAppContext.getExternalCacheDir(), "exo-video-cache"),//缓存目录
                 new LeastRecentlyUsedCacheEvictor(512 * 1024 * 1024),//缓存大小，默认512M，使用LRU算法实现
-                new ExoDatabaseProvider(mAppContext));
+                new StandaloneDatabaseProvider(mAppContext));
     }
 
     /**
@@ -127,7 +127,7 @@ public final class ExoMediaSourceHelper {
      * @return A new DataSource factory.
      */
     private DataSource.Factory getDataSourceFactory() {
-        return new DefaultDataSourceFactory(mAppContext, getHttpDataSourceFactory());
+        return new DefaultDataSource.Factory(mAppContext, getHttpDataSourceFactory());
     }
 
     /**
