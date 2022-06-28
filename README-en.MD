@@ -5,8 +5,7 @@ A video player for Android.
 [![API](https://img.shields.io/badge/API-16%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=16)
 
 
-### Language [Chinese](https://github.com/Doikki/DKVideoPlayer/blob/master/README.md) or [English](https://github.com/Doikki/DKVideoPlayer/blob/master/README-en.md)
-
+### [中文](https://github.com/Doikki/DKVideoPlayer/blob/master/README.md) | English
 
 ### [Demo](https://d.7short.com/qwtj)
 
