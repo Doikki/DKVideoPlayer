@@ -6,7 +6,7 @@ A video player for Android.
 
 
 
-### Language [Chinese](https://github.com/Doikki/DKVideoPlayer/blob/master/README.md) or [English](https://github.com/Doikki/DKVideoPlayer/blob/master/README-en.md)
+### 中文 | [English](https://github.com/Doikki/DKVideoPlayer/blob/master/README-en.md)
 
 ### [Demo](https://d.7short.com/qwtj)
 
