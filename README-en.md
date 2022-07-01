@@ -7,7 +7,7 @@ A video player for Android.
 
 ### [中文](https://github.com/Doikki/DKVideoPlayer/blob/master/README.md) | English
 
-### [Demo](https://d.7short.com/qwtj)
+### [Demo](https://www.pgyer.com/EGTZ)
 
 ### [Characteristic](https://github.com/Doikki/DKVideoPlayer/wiki#%E7%89%B9%E6%80%A7)
 
