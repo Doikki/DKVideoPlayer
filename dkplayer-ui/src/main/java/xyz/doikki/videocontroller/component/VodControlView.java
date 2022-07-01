@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import androidx.annotation.BoolRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -162,8 +163,12 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
                 mPlayButton.setSelected(false);
                 break;
             case VideoView.STATE_BUFFERING:
+                mPlayButton.setSelected(mControlWrapper.isPlaying());
+                break;
             case VideoView.STATE_BUFFERED:
                 mPlayButton.setSelected(mControlWrapper.isPlaying());
+                //开始刷新进度
+                mControlWrapper.startProgress();
                 break;
         }
     }
@@ -265,7 +270,6 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
         long newPosition = (duration * seekBar.getProgress()) / mVideoProgress.getMax();
         mControlWrapper.seekTo((int) newPosition);
         mIsDragging = false;
-        mControlWrapper.startProgress();
         mControlWrapper.startFadeOut();
     }
 
