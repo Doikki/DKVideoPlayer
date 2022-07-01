@@ -96,9 +96,9 @@ dependencies {
     implementation project(':dkplayer-videocache')
 
 
-//    implementation 'xyz.doikki.android.dkplayer:dkplayer-java:3.3.5'
-//    implementation 'xyz.doikki.android.dkplayer:dkplayer-ui:3.3.5'
-//    implementation 'xyz.doikki.android.dkplayer:player-exo:3.3.5'
-//    implementation 'xyz.doikki.android.dkplayer:player-ijk:3.3.5'
-//    implementation 'xyz.doikki.android.dkplayer:videocache:3.3.5'
+//    implementation 'xyz.doikki.android.dkplayer:dkplayer-java:3.3.6'
+//    implementation 'xyz.doikki.android.dkplayer:dkplayer-ui:3.3.6'
+//    implementation 'xyz.doikki.android.dkplayer:player-exo:3.3.6'
+//    implementation 'xyz.doikki.android.dkplayer:player-ijk:3.3.6'
+//    implementation 'xyz.doikki.android.dkplayer:videocache:3.3.6'
 }
