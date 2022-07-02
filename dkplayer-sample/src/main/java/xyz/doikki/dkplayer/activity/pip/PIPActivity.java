@@ -1,6 +1,10 @@
 package xyz.doikki.dkplayer.activity.pip;
 
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -10,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 
 import com.bumptech.glide.Glide;
+
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.activity.BaseActivity;
 import xyz.doikki.dkplayer.util.DataUtil;
@@ -17,7 +22,6 @@ import xyz.doikki.dkplayer.util.PIPManager;
 import xyz.doikki.dkplayer.util.Tag;
 import xyz.doikki.videocontroller.StandardVideoController;
 import xyz.doikki.videoplayer.player.VideoView;
-import com.yanzhenjie.permission.AndPermission;
 
 public class PIPActivity extends BaseActivity {
 
@@ -88,18 +92,25 @@ public class PIPActivity extends BaseActivity {
     }
 
     public void startFloatWindow(View view) {
+        if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this)) {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
+            startActivityForResult(intent, 10000);
+        } else {
+            mPIPManager.startFloatWindow();
+            mPIPManager.resume();
+            finish();
+        }
+    }
 
-        AndPermission
-                .with(this)
-                .overlay()
-                .onGranted(data -> {
-                    mPIPManager.startFloatWindow();
-                    mPIPManager.resume();
-                    finish();
-                })
-                .onDenied(data -> {
-
-                })
-                .start();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (requestCode == 10000 && Settings.canDrawOverlays(this)) {
+                mPIPManager.startFloatWindow();
+                mPIPManager.resume();
+                finish();
+            }
+        }
     }
 }
