@@ -1,13 +1,16 @@
 package xyz.doikki.dkplayer.activity.pip;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.Settings;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.yanzhenjie.permission.AndPermission;
 
 import java.util.List;
 
@@ -102,16 +105,22 @@ public class PIPListActivity extends BaseActivity implements OnItemChildClickLis
     }
 
     private void startFloatWindow() {
-        AndPermission
-                .with(this)
-                .overlay()
-                .onGranted(data -> {
-                    mPIPManager.startFloatWindow();
-                })
-                .onDenied(data -> {
+        if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this)) {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
+            startActivityForResult(intent, 10000);
+        } else {
+            mPIPManager.startFloatWindow();
+        }
+    }
 
-                })
-                .start();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (requestCode == 10000 && Settings.canDrawOverlays(this)) {
+                mPIPManager.startFloatWindow();
+            }
+        }
     }
 
     @Override
