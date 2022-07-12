@@ -15,7 +15,6 @@ import xyz.doikki.dkplayer.widget.component.DebugInfoView
 import xyz.doikki.dkplayer.widget.component.PlayerMonitor
 import xyz.doikki.videocontroller.StandardVideoController
 import xyz.doikki.videocontroller.component.*
-import xyz.doikki.videoplayer.player.AbstractPlayer
 import xyz.doikki.videoplayer.player.VideoView
 import xyz.doikki.videoplayer.player.VideoView.OnStateChangeListener
 import xyz.doikki.videoplayer.player.VideoView.SimpleOnStateChangeListener
@@ -25,7 +24,7 @@ import xyz.doikki.videoplayer.util.L
  * 播放器演示
  * Created by Doikki on 2017/4/7.
  */
-class PlayerActivity : BaseActivity<VideoView<AbstractPlayer>>() {
+class PlayerActivity : BaseActivity<VideoView<*>>() {
 
     override fun getLayoutResId() = R.layout.activity_player
 
