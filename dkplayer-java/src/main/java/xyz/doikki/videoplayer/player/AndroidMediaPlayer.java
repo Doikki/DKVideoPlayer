@@ -17,7 +17,7 @@ import java.util.Map;
 public class AndroidMediaPlayer extends AbstractPlayer implements MediaPlayer.OnErrorListener,
         MediaPlayer.OnCompletionListener, MediaPlayer.OnInfoListener,
         MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnPreparedListener,
-        MediaPlayer.OnVideoSizeChangedListener, MediaPlayer.OnSeekCompleteListener {
+        MediaPlayer.OnVideoSizeChangedListener {
 
     protected MediaPlayer mMediaPlayer;
     private int mBufferedPercent;
@@ -39,7 +39,6 @@ public class AndroidMediaPlayer extends AbstractPlayer implements MediaPlayer.On
         mMediaPlayer.setOnBufferingUpdateListener(this);
         mMediaPlayer.setOnPreparedListener(this);
         mMediaPlayer.setOnVideoSizeChangedListener(this);
-        mMediaPlayer.setOnSeekCompleteListener(this);
     }
 
     @Override
@@ -116,8 +115,8 @@ public class AndroidMediaPlayer extends AbstractPlayer implements MediaPlayer.On
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 //使用这个api seekTo定位更加准确 支持android 8.0以上的设备 https://developer.android.com/reference/android/media/MediaPlayer#SEEK_CLOSEST
-                mMediaPlayer.seekTo((int) time,MediaPlayer.SEEK_CLOSEST);
-            }else {
+                mMediaPlayer.seekTo(time, MediaPlayer.SEEK_CLOSEST);
+            } else {
                 mMediaPlayer.seekTo((int) time);
             }
         } catch (IllegalStateException e) {
@@ -212,9 +211,11 @@ public class AndroidMediaPlayer extends AbstractPlayer implements MediaPlayer.On
         // only support above Android M
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             try {
-                return mMediaPlayer.getPlaybackParams().getSpeed();
+                float speed = mMediaPlayer.getPlaybackParams().getSpeed();
+                if (speed == 0f) speed = 1f;
+                return speed;
             } catch (Exception e) {
-                mPlayerEventListener.onError();
+                return 1f;
             }
         }
         return 1f;
@@ -288,10 +289,5 @@ public class AndroidMediaPlayer extends AbstractPlayer implements MediaPlayer.On
         if (videoWidth != 0 && videoHeight != 0) {
             mPlayerEventListener.onVideoSizeChanged(videoWidth, videoHeight);
         }
-    }
-
-    @Override
-    public void onSeekComplete(MediaPlayer mp) {
-        mPlayerEventListener.onInfo(AbstractPlayer.MEDIA_INFO_BUFFERING_END, 0);
     }
 }
