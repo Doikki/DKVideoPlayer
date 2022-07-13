@@ -33,7 +33,7 @@ public abstract class GestureVideoController extends BaseVideoController impleme
     private boolean mIsGestureEnabled = true;
     private int mStreamVolume;
     private float mBrightness;
-    private int mSeekPosition;
+    private int mSeekPosition = -1;
     private boolean mFirstTouch;
     private boolean mChangePosition;
     private boolean mChangeBrightness;
@@ -65,7 +65,6 @@ public abstract class GestureVideoController extends BaseVideoController impleme
     @Override
     protected void initView() {
         super.initView();
-        mSeekPosition=-1;
         mAudioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
         mGestureDetector = new GestureDetector(getContext(), this);
         setOnTouchListener(this);
