@@ -107,11 +107,11 @@ class PlayerActivity : BaseActivity<VideoView<*>>() {
 
             //临时切换播放核心，如需全局请通过VideoConfig配置，详见MyApplication
             //使用IjkPlayer解码
-//            (mVideoView as VideoView<IjkPlayer>).setPlayerFactory(IjkPlayerFactory.create())
+//            mVideoView.setPlayerFactory(IjkPlayerFactory.create())
             //使用ExoPlayer解码
-//            (mVideoView as VideoView<ExoMediaPlayer>).setPlayerFactory(ExoMediaPlayerFactory.create())
+//            mVideoView.setPlayerFactory(ExoMediaPlayerFactory.create())
             //使用MediaPlayer解码
-//            (mVideoView as VideoView<AndroidMediaPlayer>).setPlayerFactory(AndroidMediaPlayerFactory.create())
+//            mVideoView.setPlayerFactory(AndroidMediaPlayerFactory.create())
 
             //设置静音播放
 //            mVideoView.setMute(true)

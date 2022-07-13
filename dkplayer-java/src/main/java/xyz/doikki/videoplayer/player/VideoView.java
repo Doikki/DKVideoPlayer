@@ -685,7 +685,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
     /**
      * 自定义播放核心，继承{@link PlayerFactory}实现自己的播放核心
      */
-    public void setPlayerFactory(PlayerFactory<P> playerFactory) {
+    public void setPlayerFactory(PlayerFactory playerFactory) {
         if (playerFactory == null) {
             throw new IllegalArgumentException("PlayerFactory can not be null!");
         }
