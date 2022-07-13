@@ -39,6 +39,8 @@ public class StandardVideoController extends GestureVideoController implements V
 
     protected ProgressBar mLoadingProgress;
 
+    private boolean isBuffering;
+
     public StandardVideoController(@NonNull Context context) {
         this(context, null);
     }
@@ -175,11 +177,19 @@ public class StandardVideoController extends GestureVideoController implements V
             case VideoView.STATE_PREPARED:
             case VideoView.STATE_ERROR:
             case VideoView.STATE_BUFFERED:
-                mLoadingProgress.setVisibility(GONE);
+                if (playState == VideoView.STATE_BUFFERED) {
+                    isBuffering = false;
+                }
+                if (!isBuffering) {
+                    mLoadingProgress.setVisibility(GONE);
+                }
                 break;
             case VideoView.STATE_PREPARING:
             case VideoView.STATE_BUFFERING:
                 mLoadingProgress.setVisibility(VISIBLE);
+                if (playState == VideoView.STATE_BUFFERING) {
+                    isBuffering = true;
+                }
                 break;
             case VideoView.STATE_PLAYBACK_COMPLETED:
                 mLoadingProgress.setVisibility(GONE);
