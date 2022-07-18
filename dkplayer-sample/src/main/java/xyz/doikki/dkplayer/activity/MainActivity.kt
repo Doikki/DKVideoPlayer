@@ -26,7 +26,7 @@ import xyz.doikki.videoplayer.player.PlayerFactory
 import xyz.doikki.videoplayer.player.VideoView
 import xyz.doikki.videoplayer.player.VideoViewManager
 
-class MainActivity : BaseActivity<VideoView<*>>(), NavigationBarView.OnItemSelectedListener {
+class MainActivity : BaseActivity<VideoView>(), NavigationBarView.OnItemSelectedListener {
 
     private val mFragments: MutableList<Fragment> = ArrayList()
     override fun getLayoutResId(): Int {

@@ -10,10 +10,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import xyz.doikki.dkplayer.widget.player.CustomIjkMediaPlayer;
+import xyz.doikki.videoplayer.player.BaseVideoView;
 import xyz.doikki.videoplayer.player.PlayerFactory;
-import xyz.doikki.videoplayer.player.VideoView;
 
-public class IjkVideoView extends VideoView<CustomIjkMediaPlayer> {
+public class IjkVideoView extends BaseVideoView<CustomIjkMediaPlayer> {
 
     private HashMap<String, Object> mPlayerOptions = new HashMap<>();
     private HashMap<String, Object> mFormatOptions = new HashMap<>();

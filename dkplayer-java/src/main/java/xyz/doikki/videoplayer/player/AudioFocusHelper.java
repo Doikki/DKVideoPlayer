@@ -16,7 +16,7 @@ final class AudioFocusHelper implements AudioManager.OnAudioFocusChangeListener 
 
     private Handler mHandler = new Handler(Looper.getMainLooper());
 
-    private WeakReference<VideoView> mWeakVideoView;
+    private WeakReference<BaseVideoView> mWeakVideoView;
 
     private AudioManager mAudioManager;
 
@@ -24,7 +24,7 @@ final class AudioFocusHelper implements AudioManager.OnAudioFocusChangeListener 
     private boolean mPausedForLoss = false;
     private int mCurrentFocus = 0;
 
-    AudioFocusHelper(@NonNull VideoView videoView) {
+    AudioFocusHelper(@NonNull BaseVideoView videoView) {
         mWeakVideoView = new WeakReference<>(videoView);
         mAudioManager = (AudioManager) videoView.getContext().getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
     }
@@ -48,7 +48,7 @@ final class AudioFocusHelper implements AudioManager.OnAudioFocusChangeListener 
     }
 
     private void handleAudioFocusChange(int focusChange) {
-        final VideoView videoView = mWeakVideoView.get();
+        final BaseVideoView videoView = mWeakVideoView.get();
         if (videoView == null) {
             return;
         }

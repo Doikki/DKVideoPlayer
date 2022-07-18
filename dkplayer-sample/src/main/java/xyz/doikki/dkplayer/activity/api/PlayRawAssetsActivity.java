@@ -14,12 +14,13 @@ import xyz.doikki.dkplayer.activity.BaseActivity;
 import xyz.doikki.dkplayer.util.Utils;
 import xyz.doikki.videocontroller.StandardVideoController;
 import xyz.doikki.videoplayer.exo.ExoMediaPlayerFactory;
+import xyz.doikki.videoplayer.player.VideoView;
 
 /**
  * 播放raw/assets视频
  */
 
-public class PlayRawAssetsActivity extends BaseActivity {
+public class PlayRawAssetsActivity extends BaseActivity<VideoView> {
 
     @Override
     protected int getLayoutResId() {
