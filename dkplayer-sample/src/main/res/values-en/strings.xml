@@ -11,6 +11,7 @@
     <string name="str_definition">DEFINITION</string>
     <string name="str_screen_shot">SCREEN SHOT</string>
     <string name="str_raw_or_assets">Raw or Assets</string>
+    <string name="str_file">File</string>
     <string name="str_multi_player">Multi-player</string>
     <string name="str_list_view">LIST VIEW</string>
     <string name="str_recycler_view">RECYCLER VIEW</string>

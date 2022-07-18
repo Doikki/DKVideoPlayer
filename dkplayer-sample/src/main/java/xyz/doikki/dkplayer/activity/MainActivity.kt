@@ -25,6 +25,7 @@ import xyz.doikki.videoplayer.player.AndroidMediaPlayerFactory
 import xyz.doikki.videoplayer.player.PlayerFactory
 import xyz.doikki.videoplayer.player.VideoView
 import xyz.doikki.videoplayer.player.VideoViewManager
+import java.io.*
 
 class MainActivity : BaseActivity<VideoView>(), NavigationBarView.OnItemSelectedListener {
 
@@ -39,6 +40,7 @@ class MainActivity : BaseActivity<VideoView>(), NavigationBarView.OnItemSelected
 
     override fun initView() {
         super.initView()
+        copyAssetsFile()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 10000)
         }
@@ -158,5 +160,44 @@ class MainActivity : BaseActivity<VideoView>(), NavigationBarView.OnItemSelected
     companion object {
         @JvmField
         var mCurrentIndex = 0
+    }
+
+    private fun copyAssetsFile(): Boolean {
+        val outFile = File(externalCacheDir, "test.mp4")
+        if (outFile.parentFile?.exists() != true) {
+            outFile.parentFile!!.mkdirs()
+        }
+
+        var inputStream: InputStream? = null
+        var out: OutputStream? = null
+
+        try {
+            inputStream = assets.open("test.mp4")
+            out = FileOutputStream(outFile)
+
+            val buffer = ByteArray(1024)
+            var read: Int = inputStream.read(buffer)
+            while (read != -1) {
+                out.write(buffer, 0, read)
+                read = inputStream.read(buffer)
+            }
+        } catch (e: IOException) {
+            return false
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close()
+                } catch (e: IOException) {
+                }
+            }
+            if (out != null) {
+                try {
+                    out.flush()
+                    out.close()
+                } catch (e: IOException) {
+                }
+            }
+        }
+        return true
     }
 }

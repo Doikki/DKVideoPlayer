@@ -10,6 +10,7 @@
     <string name="str_definition">清晰度切换</string>
     <string name="str_screen_shot">截图</string>
     <string name="str_raw_or_assets">播放Raw或Assets</string>
+    <string name="str_file">播放文件</string>
     <string name="str_multi_player">多播放器同时播放</string>
     <string name="str_list_view">ListView</string>
     <string name="str_recycler_view">RecyclerView</string>
