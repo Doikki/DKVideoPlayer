@@ -16,9 +16,9 @@ import xyz.doikki.videoplayer.player.VideoViewManager;
 public class PIPManager {
 
     private static PIPManager instance;
-    private VideoView mVideoView;
-    private FloatView mFloatView;
-    private FloatController mFloatController;
+    private final VideoView mVideoView;
+    private final FloatView mFloatView;
+    private final FloatController mFloatController;
     private boolean mIsShowing;
     private int mPlayingPosition = -1;
     private Class mActClass;

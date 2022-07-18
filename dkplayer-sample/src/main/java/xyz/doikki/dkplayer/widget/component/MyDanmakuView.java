@@ -38,8 +38,8 @@ import master.flame.danmaku.ui.widget.DanmakuView;
 
 public class MyDanmakuView extends DanmakuView implements IControlComponent {
 
-    private DanmakuContext mContext;
-    private BaseDanmakuParser mParser;
+    private final DanmakuContext mContext;
+    private final BaseDanmakuParser mParser;
 
     public MyDanmakuView(@NonNull Context context) {
         super(context);

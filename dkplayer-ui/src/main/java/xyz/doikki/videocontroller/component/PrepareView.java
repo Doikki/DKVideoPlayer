@@ -25,10 +25,10 @@ public class PrepareView extends FrameLayout implements IControlComponent {
 
     private ControlWrapper mControlWrapper;
     
-    private ImageView mThumb;
-    private ImageView mStartPlay;
-    private ProgressBar mLoading;
-    private FrameLayout mNetWarning;
+    private final ImageView mThumb;
+    private final ImageView mStartPlay;
+    private final ProgressBar mLoading;
+    private final FrameLayout mNetWarning;
 
     public PrepareView(@NonNull Context context) {
         super(context);

@@ -17,25 +17,25 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
-import xyz.doikki.dkplayer.R;
-import xyz.doikki.videocontroller.component.VodControlView;
-import xyz.doikki.videoplayer.player.VideoView;
-import xyz.doikki.videoplayer.util.L;
-import xyz.doikki.videoplayer.util.PlayerUtils;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import xyz.doikki.dkplayer.R;
+import xyz.doikki.videocontroller.component.VodControlView;
+import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.util.L;
+import xyz.doikki.videoplayer.util.PlayerUtils;
+
 public class DefinitionControlView extends VodControlView {
 
-    private TextView mDefinition;
+    private final TextView mDefinition;
 
-    private PopupWindow mPopupWindow;
+    private final PopupWindow mPopupWindow;
     private List<String> mRateStr;
-    private LinearLayout mPopLayout;
+    private final LinearLayout mPopLayout;
 
     private int mCurIndex;
 
@@ -125,7 +125,7 @@ public class DefinitionControlView extends VodControlView {
         }
     }
 
-    private OnClickListener rateOnClickListener = new OnClickListener() {
+    private final OnClickListener rateOnClickListener = new OnClickListener() {
 
         @Override
         public void onClick(View v) {

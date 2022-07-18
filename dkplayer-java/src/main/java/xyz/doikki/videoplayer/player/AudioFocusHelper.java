@@ -14,11 +14,11 @@ import java.lang.ref.WeakReference;
  */
 final class AudioFocusHelper implements AudioManager.OnAudioFocusChangeListener {
 
-    private Handler mHandler = new Handler(Looper.getMainLooper());
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
 
-    private WeakReference<BaseVideoView> mWeakVideoView;
+    private final WeakReference<BaseVideoView> mWeakVideoView;
 
-    private AudioManager mAudioManager;
+    private final AudioManager mAudioManager;
 
     private boolean mStartRequested = false;
     private boolean mPausedForLoss = false;

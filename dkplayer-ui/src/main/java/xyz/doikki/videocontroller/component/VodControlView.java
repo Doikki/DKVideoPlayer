@@ -35,12 +35,13 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
     
     protected ControlWrapper mControlWrapper;
 
-    private TextView mTotalTime, mCurrTime;
-    private ImageView mFullScreen;
-    private LinearLayout mBottomContainer;
-    private SeekBar mVideoProgress;
-    private ProgressBar mBottomProgress;
-    private ImageView mPlayButton;
+    private final TextView mTotalTime;
+    private final TextView mCurrTime;
+    private final ImageView mFullScreen;
+    private final LinearLayout mBottomContainer;
+    private final SeekBar mVideoProgress;
+    private final ProgressBar mBottomProgress;
+    private final ImageView mPlayButton;
 
     private boolean mIsDragging;
 

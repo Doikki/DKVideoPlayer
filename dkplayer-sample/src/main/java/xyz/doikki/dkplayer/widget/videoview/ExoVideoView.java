@@ -28,7 +28,7 @@ public class ExoVideoView extends BaseVideoView<CustomExoMediaPlayer> {
     private RenderersFactory mRenderersFactory;
     private TrackSelector mTrackSelector;
 
-    private ExoMediaSourceHelper mHelper;
+    private final ExoMediaSourceHelper mHelper;
 
     public ExoVideoView(Context context) {
         super(context);

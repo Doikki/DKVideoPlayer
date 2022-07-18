@@ -246,7 +246,7 @@ public abstract class GestureVideoController extends BaseVideoController impleme
         WindowManager.LayoutParams attributes = window.getAttributes();
         int height = getMeasuredHeight();
         if (mBrightness == -1.0f) mBrightness = 0.5f;
-        float brightness = deltaY * 2 / height * 1.0f + mBrightness;
+        float brightness = deltaY * 2 / height + mBrightness;
         if (brightness < 0) {
             brightness = 0f;
         }

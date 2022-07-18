@@ -15,7 +15,7 @@ import xyz.doikki.videoplayer.render.IRenderView;
  */
 public class TikTokRenderView implements IRenderView {
 
-    private IRenderView mProxyRenderView;
+    private final IRenderView mProxyRenderView;
 
     TikTokRenderView(@NonNull IRenderView renderView) {
         this.mProxyRenderView = renderView;

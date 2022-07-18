@@ -122,7 +122,7 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
     /**
      * {@link #mPlayerContainer}背景色，默认黑色
      */
-    private int mPlayerBackgroundColor;
+    private final int mPlayerBackgroundColor;
 
     public BaseVideoView(@NonNull Context context) {
         this(context, null);
@@ -144,11 +144,11 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
         mRenderViewFactory = config.mRenderViewFactory;
 
         //读取xml中的配置，并综合全局配置
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.VideoView);
-        mEnableAudioFocus = a.getBoolean(R.styleable.VideoView_enableAudioFocus, mEnableAudioFocus);
-        mIsLooping = a.getBoolean(R.styleable.VideoView_looping, false);
-        mCurrentScreenScaleType = a.getInt(R.styleable.VideoView_screenScaleType, mCurrentScreenScaleType);
-        mPlayerBackgroundColor = a.getColor(R.styleable.VideoView_playerBackgroundColor, Color.BLACK);
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.BaseVideoView);
+        mEnableAudioFocus = a.getBoolean(R.styleable.BaseVideoView_enableAudioFocus, mEnableAudioFocus);
+        mIsLooping = a.getBoolean(R.styleable.BaseVideoView_looping, false);
+        mCurrentScreenScaleType = a.getInt(R.styleable.BaseVideoView_screenScaleType, mCurrentScreenScaleType);
+        mPlayerBackgroundColor = a.getColor(R.styleable.BaseVideoView_playerBackgroundColor, Color.BLACK);
         a.recycle();
 
         initView();
@@ -728,9 +728,7 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
 
     private void hideSysBar(ViewGroup decorView) {
         int uiOptions = decorView.getSystemUiVisibility();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            uiOptions |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-        }
+        uiOptions |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             uiOptions |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         }
@@ -775,9 +773,7 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
 
     private void showSysBar(ViewGroup decorView) {
         int uiOptions = decorView.getSystemUiVisibility();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            uiOptions &= ~View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-        }
+        uiOptions &= ~View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             uiOptions &= ~View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         }

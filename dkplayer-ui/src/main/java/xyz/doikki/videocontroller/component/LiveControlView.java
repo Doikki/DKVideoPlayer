@@ -27,9 +27,9 @@ public class LiveControlView extends FrameLayout implements IControlComponent, V
 
     private ControlWrapper mControlWrapper;
 
-    private ImageView mFullScreen;
-    private LinearLayout mBottomContainer;
-    private ImageView mPlayButton;
+    private final ImageView mFullScreen;
+    private final LinearLayout mBottomContainer;
+    private final ImageView mPlayButton;
 
     public LiveControlView(@NonNull Context context) {
         super(context);

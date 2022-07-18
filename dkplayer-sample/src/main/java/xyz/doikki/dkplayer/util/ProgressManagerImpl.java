@@ -1,14 +1,15 @@
 package xyz.doikki.dkplayer.util;
 
-import androidx.collection.LruCache;
 import android.text.TextUtils;
+
+import androidx.collection.LruCache;
 
 import xyz.doikki.videoplayer.player.ProgressManager;
 
 public class ProgressManagerImpl extends ProgressManager {
 
     //保存100条记录
-    private static LruCache<Integer, Long> mCache = new LruCache<>(100);
+    private static final LruCache<Integer, Long> mCache = new LruCache<>(100);
 
     @Override
     public void saveProgress(String url, long progress) {

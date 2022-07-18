@@ -2,9 +2,9 @@ package xyz.doikki.videoplayer.player;
 
 import android.app.Application;
 
-import xyz.doikki.videoplayer.util.L;
-
 import java.util.LinkedHashMap;
+
+import xyz.doikki.videoplayer.util.L;
 
 /**
  * 视频播放器管理器，管理当前正在播放的VideoView，以及播放器配置
@@ -16,7 +16,7 @@ public class VideoViewManager {
     /**
      * 保存VideoView的容器
      */
-    private LinkedHashMap<String, VideoView> mVideoViews = new LinkedHashMap<>();
+    private final LinkedHashMap<String, VideoView> mVideoViews = new LinkedHashMap<>();
 
     /**
      * 是否在移动网络下直接播放视频

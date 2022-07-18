@@ -23,9 +23,9 @@ public class PipControlView extends FrameLayout implements IControlComponent, Vi
 
     private ControlWrapper mControlWrapper;
 
-    private ImageView mPlay;
-    private ImageView mClose;
-    private ProgressBar mLoading;
+    private final ImageView mPlay;
+    private final ImageView mClose;
+    private final ProgressBar mLoading;
 
     public PipControlView(@NonNull Context context) {
         super(context);
@@ -82,19 +82,19 @@ public class PipControlView extends FrameLayout implements IControlComponent, Vi
             if (mPlay.getVisibility() == VISIBLE)
                 return;
             mPlay.setVisibility(VISIBLE);
-            mPlay.startAnimation(anim);
         } else {
             if (mPlay.getVisibility() == GONE)
                 return;
             mPlay.setVisibility(GONE);
-            mPlay.startAnimation(anim);
         }
+        mPlay.startAnimation(anim);
     }
 
     @Override
     public void onPlayStateChanged(int playState) {
         switch (playState) {
             case VideoView.STATE_IDLE:
+            case VideoView.STATE_PAUSED:
                 mPlay.setSelected(false);
                 mPlay.setVisibility(VISIBLE);
                 mLoading.setVisibility(GONE);
@@ -104,12 +104,8 @@ public class PipControlView extends FrameLayout implements IControlComponent, Vi
                 mPlay.setVisibility(GONE);
                 mLoading.setVisibility(GONE);
                 break;
-            case VideoView.STATE_PAUSED:
-                mPlay.setSelected(false);
-                mPlay.setVisibility(VISIBLE);
-                mLoading.setVisibility(GONE);
-                break;
             case VideoView.STATE_PREPARING:
+            case VideoView.STATE_BUFFERING:
                 mPlay.setVisibility(GONE);
                 mLoading.setVisibility(VISIBLE);
                 break;
@@ -121,10 +117,6 @@ public class PipControlView extends FrameLayout implements IControlComponent, Vi
                 mLoading.setVisibility(GONE);
                 mPlay.setVisibility(GONE);
                 bringToFront();
-                break;
-            case VideoView.STATE_BUFFERING:
-                mPlay.setVisibility(GONE);
-                mLoading.setVisibility(VISIBLE);
                 break;
             case VideoView.STATE_BUFFERED:
                 mPlay.setVisibility(GONE);

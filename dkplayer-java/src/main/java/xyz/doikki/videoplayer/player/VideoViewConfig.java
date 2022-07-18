@@ -77,7 +77,7 @@ public class VideoViewConfig {
         }
 
         /**
-         * 在移动环境下调用start()后是否继续播放，默认不继续播放
+         * 在移动环境下调用start()后是否继续播放，默认继续播放
          */
         public Builder setPlayOnMobileNetwork(boolean playOnMobileNetwork) {
             mPlayOnMobileNetwork = playOnMobileNetwork;

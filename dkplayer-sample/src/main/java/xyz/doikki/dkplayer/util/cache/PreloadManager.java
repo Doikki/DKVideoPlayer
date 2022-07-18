@@ -23,19 +23,19 @@ public class PreloadManager {
     /**
      * 单线程池，按照添加顺序依次执行{@link PreloadTask}
      */
-    private ExecutorService mExecutorService = Executors.newSingleThreadExecutor();
+    private final ExecutorService mExecutorService = Executors.newSingleThreadExecutor();
 
     /**
      * 保存正在预加载的{@link PreloadTask}
      */
-    private LinkedHashMap<String, PreloadTask> mPreloadTasks = new LinkedHashMap<>();
+    private final LinkedHashMap<String, PreloadTask> mPreloadTasks = new LinkedHashMap<>();
 
     /**
      * 标识是否需要预加载
      */
     private boolean mIsStartPreload = true;
 
-    private HttpProxyCacheServer mHttpProxyCacheServer;
+    private final HttpProxyCacheServer mHttpProxyCacheServer;
 
     /**
      * 预加载的大小，每个视频预加载1M，这个参数可根据实际情况调整
