@@ -15,7 +15,6 @@ import xyz.doikki.dkplayer.widget.component.DebugInfoView
 import xyz.doikki.dkplayer.widget.component.PlayerMonitor
 import xyz.doikki.videocontroller.StandardVideoController
 import xyz.doikki.videocontroller.component.*
-import xyz.doikki.videoplayer.exo.ExoMediaPlayerFactory
 import xyz.doikki.videoplayer.player.BaseVideoView
 import xyz.doikki.videoplayer.player.VideoView
 import xyz.doikki.videoplayer.util.L
@@ -109,7 +108,7 @@ class PlayerActivity : BaseActivity<VideoView>() {
             //使用IjkPlayer解码
 //            mVideoView.setPlayerFactory(IjkPlayerFactory.create())
             //使用ExoPlayer解码
-            mVideoView.setPlayerFactory(ExoMediaPlayerFactory.create())
+//            mVideoView.setPlayerFactory(ExoMediaPlayerFactory.create())
             //使用MediaPlayer解码
 //            mVideoView.setPlayerFactory(AndroidMediaPlayerFactory.create())
 
