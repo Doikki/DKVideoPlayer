@@ -12,8 +12,8 @@ import androidx.annotation.NonNull;
  */
 public class ControlWrapper implements MediaPlayerControl, IVideoController {
     
-    private MediaPlayerControl mPlayerControl;
-    private IVideoController mController;
+    private final MediaPlayerControl mPlayerControl;
+    private final IVideoController mController;
     
     public ControlWrapper(@NonNull MediaPlayerControl playerControl, @NonNull IVideoController controller) {
         mPlayerControl = playerControl;

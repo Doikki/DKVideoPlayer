@@ -10,15 +10,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import xyz.doikki.dkplayer.widget.player.CustomIjkMediaPlayer;
+import xyz.doikki.videoplayer.player.BaseVideoView;
 import xyz.doikki.videoplayer.player.PlayerFactory;
-import xyz.doikki.videoplayer.player.VideoView;
 
-public class IjkVideoView extends VideoView<CustomIjkMediaPlayer> {
+public class IjkVideoView extends BaseVideoView<CustomIjkMediaPlayer> {
 
-    private HashMap<String, Object> mPlayerOptions = new HashMap<>();
-    private HashMap<String, Object> mFormatOptions = new HashMap<>();
-    private HashMap<String, Object> mCodecOptions = new HashMap<>();
-    private HashMap<String, Object> mSwsOptions = new HashMap<>();
+    private final HashMap<String, Object> mPlayerOptions = new HashMap<>();
+    private final HashMap<String, Object> mFormatOptions = new HashMap<>();
+    private final HashMap<String, Object> mCodecOptions = new HashMap<>();
+    private final HashMap<String, Object> mSwsOptions = new HashMap<>();
 
     public IjkVideoView(@NonNull Context context) {
         super(context);

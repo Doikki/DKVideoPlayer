@@ -6,10 +6,6 @@ import android.util.AttributeSet;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import xyz.doikki.dkplayer.widget.player.CustomExoMediaPlayer;
-import xyz.doikki.videoplayer.exo.ExoMediaSourceHelper;
-import xyz.doikki.videoplayer.player.PlayerFactory;
-import xyz.doikki.videoplayer.player.VideoView;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -17,7 +13,12 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 
 import java.util.Map;
 
-public class ExoVideoView extends VideoView<CustomExoMediaPlayer> {
+import xyz.doikki.dkplayer.widget.player.CustomExoMediaPlayer;
+import xyz.doikki.videoplayer.exo.ExoMediaSourceHelper;
+import xyz.doikki.videoplayer.player.BaseVideoView;
+import xyz.doikki.videoplayer.player.PlayerFactory;
+
+public class ExoVideoView extends BaseVideoView<CustomExoMediaPlayer> {
 
     private MediaSource mMediaSource;
 
@@ -27,7 +28,7 @@ public class ExoVideoView extends VideoView<CustomExoMediaPlayer> {
     private RenderersFactory mRenderersFactory;
     private TrackSelector mTrackSelector;
 
-    private ExoMediaSourceHelper mHelper;
+    private final ExoMediaSourceHelper mHelper;
 
     public ExoVideoView(Context context) {
         super(context);

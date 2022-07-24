@@ -15,16 +15,15 @@ import xyz.doikki.dkplayer.widget.component.DebugInfoView
 import xyz.doikki.dkplayer.widget.component.PlayerMonitor
 import xyz.doikki.videocontroller.StandardVideoController
 import xyz.doikki.videocontroller.component.*
+import xyz.doikki.videoplayer.player.BaseVideoView
 import xyz.doikki.videoplayer.player.VideoView
-import xyz.doikki.videoplayer.player.VideoView.OnStateChangeListener
-import xyz.doikki.videoplayer.player.VideoView.SimpleOnStateChangeListener
 import xyz.doikki.videoplayer.util.L
 
 /**
  * 播放器演示
  * Created by Doikki on 2017/4/7.
  */
-class PlayerActivity : BaseActivity<VideoView<*>>() {
+class PlayerActivity : BaseActivity<VideoView>() {
 
     override fun getLayoutResId() = R.layout.activity_player
 
@@ -107,11 +106,11 @@ class PlayerActivity : BaseActivity<VideoView<*>>() {
 
             //临时切换播放核心，如需全局请通过VideoConfig配置，详见MyApplication
             //使用IjkPlayer解码
-//            (mVideoView as VideoView<IjkPlayer>).setPlayerFactory(IjkPlayerFactory.create())
+//            mVideoView.setPlayerFactory(IjkPlayerFactory.create())
             //使用ExoPlayer解码
-//            (mVideoView as VideoView<ExoMediaPlayer>).setPlayerFactory(ExoMediaPlayerFactory.create())
+//            mVideoView.setPlayerFactory(ExoMediaPlayerFactory.create())
             //使用MediaPlayer解码
-//            (mVideoView as VideoView<AndroidMediaPlayer>).setPlayerFactory(AndroidMediaPlayerFactory.create())
+//            mVideoView.setPlayerFactory(AndroidMediaPlayerFactory.create())
 
             //设置静音播放
 //            mVideoView.setMute(true)
@@ -130,8 +129,8 @@ class PlayerActivity : BaseActivity<VideoView<*>>() {
         }
     }
 
-    private val mOnStateChangeListener: OnStateChangeListener =
-        object : SimpleOnStateChangeListener() {
+    private val mOnStateChangeListener: BaseVideoView.OnStateChangeListener =
+        object : BaseVideoView.SimpleOnStateChangeListener() {
             override fun onPlayerStateChanged(playerState: Int) {
                 when (playerState) {
                     VideoView.PLAYER_NORMAL -> {

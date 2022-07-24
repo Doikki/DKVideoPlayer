@@ -15,7 +15,7 @@ import xyz.doikki.videoplayer.player.AbstractPlayer;
 
 @SuppressLint("ViewConstructor")
 public class TextureRenderView extends TextureView implements IRenderView, TextureView.SurfaceTextureListener {
-    private MeasureHelper mMeasureHelper;
+    private final MeasureHelper mMeasureHelper;
     private SurfaceTexture mSurfaceTexture;
 
     @Nullable

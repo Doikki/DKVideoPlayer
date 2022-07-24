@@ -85,7 +85,7 @@ public class DanmakuActivity extends BaseActivity<VideoView> {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                mMyDanmakuView.addDanmaku("awsl", false);
+                mMyDanmakuView.addDanmaku("破防了", false);
                 mHandler.postDelayed(this, 100);
             }
         });

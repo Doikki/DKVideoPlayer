@@ -21,7 +21,7 @@ public class AndroidMediaPlayer extends AbstractPlayer implements MediaPlayer.On
 
     protected MediaPlayer mMediaPlayer;
     private int mBufferedPercent;
-    private Context mAppContext;
+    protected Context mAppContext;
     private boolean mIsPreparing;
 
     public AndroidMediaPlayer(Context context) {
@@ -113,7 +113,12 @@ public class AndroidMediaPlayer extends AbstractPlayer implements MediaPlayer.On
     @Override
     public void seekTo(long time) {
         try {
-            mMediaPlayer.seekTo((int) time);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                //使用这个api seekTo定位更加准确 支持android 8.0以上的设备 https://developer.android.com/reference/android/media/MediaPlayer#SEEK_CLOSEST
+                mMediaPlayer.seekTo(time, MediaPlayer.SEEK_CLOSEST);
+            } else {
+                mMediaPlayer.seekTo((int) time);
+            }
         } catch (IllegalStateException e) {
             mPlayerEventListener.onError();
         }
@@ -206,9 +211,11 @@ public class AndroidMediaPlayer extends AbstractPlayer implements MediaPlayer.On
         // only support above Android M
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             try {
-                return mMediaPlayer.getPlaybackParams().getSpeed();
+                float speed = mMediaPlayer.getPlaybackParams().getSpeed();
+                if (speed == 0f) speed = 1f;
+                return speed;
             } catch (Exception e) {
-                mPlayerEventListener.onError();
+                return 1f;
             }
         }
         return 1f;

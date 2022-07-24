@@ -22,11 +22,11 @@ import xyz.doikki.videoplayer.util.L;
 
 public class TikTokView extends FrameLayout implements IControlComponent {
 
-    private ImageView thumb;
-    private ImageView mPlayBtn;
+    private final ImageView thumb;
+    private final ImageView mPlayBtn;
 
     private ControlWrapper mControlWrapper;
-    private int mScaledTouchSlop;
+    private final int mScaledTouchSlop;
     private int mStartX, mStartY;
 
     public TikTokView(@NonNull Context context) {

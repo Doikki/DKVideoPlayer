@@ -12,6 +12,7 @@ import android.widget.FrameLayout;
 import java.lang.reflect.Field;
 
 import xyz.doikki.videoplayer.controller.ControlWrapper;
+import xyz.doikki.videoplayer.player.BaseVideoView;
 import xyz.doikki.videoplayer.player.VideoView;
 import xyz.doikki.videoplayer.player.VideoViewConfig;
 import xyz.doikki.videoplayer.player.VideoViewManager;
@@ -56,7 +57,7 @@ public final class Utils {
     public static Object getCurrentPlayerFactoryInVideoView(VideoView videoView) {
         Object playerFactory = null;
         try {
-            Field mPlayerFactoryField = videoView.getClass().getDeclaredField("mPlayerFactory");
+            Field mPlayerFactoryField = videoView.getClass().getSuperclass().getDeclaredField("mPlayerFactory");
             mPlayerFactoryField.setAccessible(true);
             playerFactory = mPlayerFactoryField.get(videoView);
         } catch (Exception e) {

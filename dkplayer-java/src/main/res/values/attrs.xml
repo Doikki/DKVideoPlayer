@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="VideoView">
+    <declare-styleable name="BaseVideoView">
         <attr name="looping" format="boolean"/>
         <attr name="enableAudioFocus" format="boolean"/>
         <attr name="screenScaleType" format="dimension">

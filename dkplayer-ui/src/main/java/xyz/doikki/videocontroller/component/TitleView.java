@@ -32,11 +32,11 @@ public class TitleView extends FrameLayout implements IControlComponent {
 
     private ControlWrapper mControlWrapper;
 
-    private LinearLayout mTitleContainer;
-    private TextView mTitle;
-    private TextView mSysTime;//系统当前时间
+    private final LinearLayout mTitleContainer;
+    private final TextView mTitle;
+    private final TextView mSysTime;//系统当前时间
 
-    private BatteryReceiver mBatteryReceiver;
+    private final BatteryReceiver mBatteryReceiver;
     private boolean mIsRegister;//是否注册BatteryReceiver
 
     public TitleView(@NonNull Context context) {
@@ -184,7 +184,7 @@ public class TitleView extends FrameLayout implements IControlComponent {
     }
 
     private static class BatteryReceiver extends BroadcastReceiver {
-        private ImageView pow;
+        private final ImageView pow;
 
         public BatteryReceiver(ImageView pow) {
             this.pow = pow;

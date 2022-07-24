@@ -25,6 +25,12 @@
         android:onClick="onButtonClick"
         android:text="@string/str_raw_or_assets" />
     <Button
+        android:id="@+id/btn_file"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onButtonClick"
+        android:text="@string/str_file" />
+    <Button
         android:id="@+id/btn_parallel_play"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

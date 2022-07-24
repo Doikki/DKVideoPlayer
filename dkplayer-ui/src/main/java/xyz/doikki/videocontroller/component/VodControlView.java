@@ -1,5 +1,7 @@
 package xyz.doikki.videocontroller.component;
 
+import static xyz.doikki.videoplayer.util.PlayerUtils.stringForTime;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -17,7 +19,6 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import androidx.annotation.BoolRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -27,8 +28,6 @@ import xyz.doikki.videoplayer.controller.IControlComponent;
 import xyz.doikki.videoplayer.player.VideoView;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
-import static xyz.doikki.videoplayer.util.PlayerUtils.stringForTime;
-
 /**
  * 点播底部控制栏
  */
@@ -36,12 +35,13 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
     
     protected ControlWrapper mControlWrapper;
 
-    private TextView mTotalTime, mCurrTime;
-    private ImageView mFullScreen;
-    private LinearLayout mBottomContainer;
-    private SeekBar mVideoProgress;
-    private ProgressBar mBottomProgress;
-    private ImageView mPlayButton;
+    private final TextView mTotalTime;
+    private final TextView mCurrTime;
+    private final ImageView mFullScreen;
+    private final LinearLayout mBottomContainer;
+    private final SeekBar mVideoProgress;
+    private final ProgressBar mBottomProgress;
+    private final ImageView mPlayButton;
 
     private boolean mIsDragging;
 
@@ -272,6 +272,7 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
         long newPosition = (duration * seekBar.getProgress()) / mVideoProgress.getMax();
         mControlWrapper.seekTo((int) newPosition);
         mIsDragging = false;
+        mControlWrapper.startProgress();
         mControlWrapper.startFadeOut();
     }
 

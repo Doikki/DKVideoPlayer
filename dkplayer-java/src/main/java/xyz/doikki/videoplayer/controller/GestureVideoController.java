@@ -33,7 +33,7 @@ public abstract class GestureVideoController extends BaseVideoController impleme
     private boolean mIsGestureEnabled = true;
     private int mStreamVolume;
     private float mBrightness;
-    private int mSeekPosition;
+    private int mSeekPosition = -1;
     private boolean mFirstTouch;
     private boolean mChangePosition;
     private boolean mChangeBrightness;
@@ -246,7 +246,7 @@ public abstract class GestureVideoController extends BaseVideoController impleme
         WindowManager.LayoutParams attributes = window.getAttributes();
         int height = getMeasuredHeight();
         if (mBrightness == -1.0f) mBrightness = 0.5f;
-        float brightness = deltaY * 2 / height * 1.0f + mBrightness;
+        float brightness = deltaY * 2 / height + mBrightness;
         if (brightness < 0) {
             brightness = 0f;
         }
@@ -287,14 +287,14 @@ public abstract class GestureVideoController extends BaseVideoController impleme
             switch (action) {
                 case MotionEvent.ACTION_UP:
                     stopSlide();
-                    if (mSeekPosition > 0) {
+                    if (mSeekPosition >= 0) {
                         mControlWrapper.seekTo(mSeekPosition);
-                        mSeekPosition = 0;
+                        mSeekPosition = -1;
                     }
                     break;
                 case MotionEvent.ACTION_CANCEL:
                     stopSlide();
-                    mSeekPosition = 0;
+                    mSeekPosition = -1;
                     break;
             }
         }

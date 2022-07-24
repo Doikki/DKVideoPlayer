@@ -233,7 +233,7 @@ public final class PlayerUtils {
     /**
      * 通过反射获取Application
      *
-     * @deprecated 不在使用，后期谷歌可能封掉改接口
+     * @deprecated 不在使用，后期谷歌可能封掉该接口
      */
     @SuppressLint("PrivateApi")
     @Deprecated

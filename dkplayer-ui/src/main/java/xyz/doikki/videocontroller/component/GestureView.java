@@ -1,5 +1,7 @@
 package xyz.doikki.videocontroller.component;
 
+import static xyz.doikki.videoplayer.util.PlayerUtils.stringForTime;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
@@ -17,11 +19,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import xyz.doikki.videocontroller.R;
-import xyz.doikki.videoplayer.controller.IGestureComponent;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
+import xyz.doikki.videoplayer.controller.IGestureComponent;
 import xyz.doikki.videoplayer.player.VideoView;
-
-import static xyz.doikki.videoplayer.util.PlayerUtils.stringForTime;
 
 /**
  * 手势控制
@@ -42,11 +42,11 @@ public class GestureView extends FrameLayout implements IGestureComponent {
 
     private ControlWrapper mControlWrapper;
 
-    private ImageView mIcon;
-    private ProgressBar mProgressPercent;
-    private TextView mTextPercent;
+    private final ImageView mIcon;
+    private final ProgressBar mProgressPercent;
+    private final TextView mTextPercent;
 
-    private LinearLayout mCenterContainer;
+    private final LinearLayout mCenterContainer;
 
 
     {

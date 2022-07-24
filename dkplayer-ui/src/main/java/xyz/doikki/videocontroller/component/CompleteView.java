@@ -26,7 +26,7 @@ public class CompleteView extends FrameLayout implements IControlComponent {
 
     private ControlWrapper mControlWrapper;
 
-    private ImageView mStopFullscreen;
+    private final ImageView mStopFullscreen;
 
     public CompleteView(@NonNull Context context) {
         super(context);

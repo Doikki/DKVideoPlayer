@@ -9,13 +9,14 @@ import xyz.doikki.dkplayer.activity.api.PlayRawAssetsActivity;
 import xyz.doikki.dkplayer.activity.api.PlayerActivity;
 import xyz.doikki.dkplayer.fragment.BaseFragment;
 import xyz.doikki.dkplayer.util.DataUtil;
+import xyz.doikki.videoplayer.util.L;
 
 public class ApiFragment extends BaseFragment implements View.OnClickListener {
 
     //    private static final String VOD_URL = "http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv";
 //    private static final String VOD_URL = "http://vfx.mtime.cn/Video/2019/03/18/mp4/190318231014076505.mp4";
     private static final String VOD_URL = DataUtil.SAMPLE_URL;
-    //    private static final String VOD_URL = "http://155.138.214.164/test/1.mp4";
+//        private static final String VOD_URL = "https://wolongzywcdn2.com:65/20220402/Vd6iSsrO/index.m3u8";
 //    private static final String VOD_URL = "http://youku163.zuida-bofang.com/20190113/24356_0cbc9d8f/index.m3u8";
 //    private static final String VOD_URL = "http://sohu.zuida-163sina.com/20190303/ZRkvZAiK/index.m3u8";
 //    private static final String VOD_URL = "http://vfile.hshan.com/2018/1524/9156/4430/152491564430.ssm/152491564430.m3u8";
@@ -51,19 +52,26 @@ public class ApiFragment extends BaseFragment implements View.OnClickListener {
         findViewById(R.id.btn_music).setOnClickListener(this);
         findViewById(R.id.btn_raw_assets).setOnClickListener(this);
         findViewById(R.id.btn_parallel_play).setOnClickListener(this);
+        findViewById(R.id.btn_file).setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_vod:
-                PlayerActivity.start(getActivity(), VOD_URL, "点播", false);
+                PlayerActivity.start(getActivity(), VOD_URL, getString(R.string.str_api_vod), false);
                 break;
             case R.id.btn_live:
-                PlayerActivity.start(getActivity(), LIVE_URL, "直播", true);
+                PlayerActivity.start(getActivity(), LIVE_URL, getString(R.string.str_api_live), true);
                 break;
             case R.id.btn_music:
-                PlayerActivity.start(getActivity(), MUSIC_URL, "音乐", false);
+                PlayerActivity.start(getActivity(), MUSIC_URL, getString(R.string.str_api_music), false);
+                break;
+            case R.id.btn_file:
+                // 此处演示的是播放私有目录的文件，如果是共有目录需要存储权限
+                String url = "file://" + requireContext().getExternalCacheDir().getAbsolutePath() + "/test.mp4";
+                L.d("play local file: " + url);
+                PlayerActivity.start(getActivity(), url, getString(R.string.str_file), false);
                 break;
             case R.id.btn_raw_assets:
                 startActivity(new Intent(getActivity(), PlayRawAssetsActivity.class));
