@@ -9,7 +9,7 @@
     <string name="str_api_live">LIVE</string>
     <string name="str_api_music">music</string>
     <string name="str_definition">DEFINITION</string>
-    <string name="str_custom_render_view">Custom RenderView，video overlay</string>
+    <string name="str_custom_render_view">Custom RenderView,filter,watermark</string>
     <string name="str_custom_ijk">Custom IjkMediaPlayer</string>
     <string name="str_custom_exo">Custom ExoMediaPlayer</string>
     <string name="str_screen_shot">SCREEN SHOT</string>

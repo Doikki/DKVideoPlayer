@@ -8,7 +8,7 @@
     <string name="str_api_live">直播</string>
     <string name="str_api_music">音乐</string>
     <string name="str_definition">清晰度切换</string>
-    <string name="str_custom_render_view">自定义RenderView，视频加水印</string>
+    <string name="str_custom_render_view">自定义RenderView，滤镜，水印</string>
     <string name="str_custom_ijk">自定义IjkMediaPlayer</string>
     <string name="str_custom_exo">自定义ExoMediaPlayer</string>
     <string name="str_screen_shot">截图</string>

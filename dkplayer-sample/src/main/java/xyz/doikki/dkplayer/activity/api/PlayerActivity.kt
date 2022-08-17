@@ -2,6 +2,7 @@ package xyz.doikki.dkplayer.activity.api
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.text.TextUtils
 import android.view.View
 import android.widget.EditText
@@ -13,11 +14,17 @@ import xyz.doikki.dkplayer.util.IntentKeys
 import xyz.doikki.dkplayer.util.Utils
 import xyz.doikki.dkplayer.widget.component.DebugInfoView
 import xyz.doikki.dkplayer.widget.component.PlayerMonitor
-import xyz.doikki.dkplayer.widget.render.gl.GLSurfaceRenderViewFactory
+import xyz.doikki.dkplayer.widget.render.gl2.GLSurfaceRenderView2
+import xyz.doikki.dkplayer.widget.render.gl2.filter.GlFilterGroup
+import xyz.doikki.dkplayer.widget.render.gl2.filter.GlSepiaFilter
+import xyz.doikki.dkplayer.widget.render.gl2.filter.GlSharpenFilter
+import xyz.doikki.dkplayer.widget.render.gl2.filter.GlWatermarkFilter
 import xyz.doikki.videocontroller.StandardVideoController
 import xyz.doikki.videocontroller.component.*
 import xyz.doikki.videoplayer.player.BaseVideoView
 import xyz.doikki.videoplayer.player.VideoView
+import xyz.doikki.videoplayer.render.IRenderView
+import xyz.doikki.videoplayer.render.RenderViewFactory
 import xyz.doikki.videoplayer.util.L
 
 /**
@@ -25,6 +32,10 @@ import xyz.doikki.videoplayer.util.L
  * Created by Doikki on 2017/4/7.
  */
 class PlayerActivity : BaseActivity<VideoView>() {
+
+    private val renderView by lazy {
+        GLSurfaceRenderView2(this)
+    }
 
     override fun getLayoutResId() = R.layout.activity_player
 
@@ -107,7 +118,19 @@ class PlayerActivity : BaseActivity<VideoView>() {
 
             // 临时切换RenderView, 如需全局请通过VideoConfig配置，详见MyApplication
             if (intent.getBooleanExtra(IntentKeys.CUSTOM_RENDER, false)) {
-                mVideoView.setRenderViewFactory(GLSurfaceRenderViewFactory.create())
+//                mVideoView.setRenderViewFactory(GLSurfaceRenderViewFactory.create())
+                mVideoView.setRenderViewFactory(object : RenderViewFactory() {
+                    override fun createRenderView(context: Context?): IRenderView {
+                        return renderView
+                    }
+                })
+                // 设置滤镜
+                renderView.setGlFilter(GlFilterGroup(
+                    // 水印
+                    GlWatermarkFilter(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher)),
+                    GlSepiaFilter(),
+                    GlSharpenFilter()
+                ))
             }
             //临时切换播放核心，如需全局请通过VideoConfig配置，详见MyApplication
             //使用IjkPlayer解码
