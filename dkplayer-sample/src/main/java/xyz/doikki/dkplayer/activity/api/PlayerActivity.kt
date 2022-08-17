@@ -13,6 +13,7 @@ import xyz.doikki.dkplayer.util.IntentKeys
 import xyz.doikki.dkplayer.util.Utils
 import xyz.doikki.dkplayer.widget.component.DebugInfoView
 import xyz.doikki.dkplayer.widget.component.PlayerMonitor
+import xyz.doikki.dkplayer.widget.render.gl.GLSurfaceRenderViewFactory
 import xyz.doikki.videocontroller.StandardVideoController
 import xyz.doikki.videocontroller.component.*
 import xyz.doikki.videoplayer.player.BaseVideoView
@@ -104,6 +105,10 @@ class PlayerActivity : BaseActivity<VideoView>() {
             //播放状态监听
             mVideoView.addOnStateChangeListener(mOnStateChangeListener)
 
+            // 临时切换RenderView, 如需全局请通过VideoConfig配置，详见MyApplication
+            if (intent.getBooleanExtra(IntentKeys.CUSTOM_RENDER, false)) {
+                mVideoView.setRenderViewFactory(GLSurfaceRenderViewFactory.create())
+            }
             //临时切换播放核心，如需全局请通过VideoConfig配置，详见MyApplication
             //使用IjkPlayer解码
 //            mVideoView.setPlayerFactory(IjkPlayerFactory.create())
@@ -208,11 +213,12 @@ class PlayerActivity : BaseActivity<VideoView>() {
             "https://cms-bucket.nosdn.127.net/eb411c2810f04ffa8aaafc42052b233820180418095416.jpeg"
 
         @JvmStatic
-        fun start(context: Context, url: String, title: String, isLive: Boolean) {
+        fun start(context: Context, url: String, title: String, isLive: Boolean, customRender: Boolean = false) {
             val intent = Intent(context, PlayerActivity::class.java)
             intent.putExtra(IntentKeys.URL, url)
             intent.putExtra(IntentKeys.IS_LIVE, isLive)
             intent.putExtra(IntentKeys.TITLE, title)
+            intent.putExtra(IntentKeys.CUSTOM_RENDER, customRender)
             context.startActivity(intent)
         }
     }

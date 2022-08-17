@@ -44,13 +44,20 @@
         android:id="@+id/btn_custom_exo_player"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="自定义ExoMediaPlayer"/>
+        android:text="@string/str_custom_exo"/>
 
     <Button
         android:id="@+id/btn_custom_ijk_player"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="自定义IjkMediaPlayer"/>
+        android:text="@string/str_custom_ijk"/>
+
+    <Button
+        android:id="@+id/btn_custom_render_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onButtonClick"
+        android:text="@string/str_custom_render_view" />
 
     <Button
         android:id="@+id/btn_definition"
