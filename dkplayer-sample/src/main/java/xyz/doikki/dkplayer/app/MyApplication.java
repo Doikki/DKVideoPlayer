@@ -32,8 +32,6 @@ public class MyApplication extends MultiDexApplication {
                 .setPlayerFactory(ExoMediaPlayerFactory.create())
                 // 设置自己的渲染view，内部默认TextureView实现
 //                .setRenderViewFactory(SurfaceRenderViewFactory.create())
-                // GLSurfaceView 可对视频加滤镜
-//                .setRenderViewFactory(GLSurfaceRenderViewFactory.create())
                 // 根据手机重力感应自动切换横竖屏，默认false
 //                .setEnableOrientation(true)
                 // 监听系统中其他播放器是否获取音频焦点，实现不与其他播放器同时播放的效果，默认true
