@@ -2,7 +2,7 @@ package xyz.doikki.videoplayer.render;
 
 import android.view.View;
 
-import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.VideoView;
 
 public class MeasureHelper {
 

@@ -1,4 +1,4 @@
-package xyz.doikki.videoplayer.player;
+package xyz.doikki.videoplayer;
 
 import android.content.res.AssetFileDescriptor;
 import android.view.Surface;
@@ -8,9 +8,12 @@ import java.util.Map;
 
 /**
  * 抽象的播放器，继承此接口扩展自己的播放器
+ * 备注：本类的职责应该完全定位在播放器的“能力”上
+ *
  * Created by Doikki on 2017/12/21.
+ * update by luochao on 2022/9/16. 调整部分代码及结构
  */
-public abstract class AbstractPlayer {
+public abstract class MediaPlayer {
 
     /**
      * 视频/音频开始渲染
@@ -35,12 +38,22 @@ public abstract class AbstractPlayer {
     /**
      * 播放器事件回调
      */
-    protected PlayerEventListener mPlayerEventListener;
+    protected EventListener mPlayerEventListener;
 
     /**
      * 初始化播放器实例
+     * todo 该方法放在这里不合理，是否是为了懒加载实现？
      */
     public abstract void initPlayer();
+
+    /**
+     * 设置播放地址
+     *
+     * @param path 播放地址
+     */
+    public void setDataSource(String path) {
+        setDataSource(path, null);
+    }
 
     /**
      * 设置播放地址
@@ -54,6 +67,11 @@ public abstract class AbstractPlayer {
      * 用于播放raw和asset里面的视频文件
      */
     public abstract void setDataSource(AssetFileDescriptor fd);
+
+    /**
+     * 准备开始播放（异步）
+     */
+    public abstract void prepareAsync();
 
     /**
      * 播放
@@ -71,11 +89,6 @@ public abstract class AbstractPlayer {
     public abstract void stop();
 
     /**
-     * 准备开始播放（异步）
-     */
-    public abstract void prepareAsync();
-
-    /**
      * 重置播放器
      */
     public abstract void reset();
@@ -87,11 +100,14 @@ public abstract class AbstractPlayer {
 
     /**
      * 调整进度
+     *
+     * @param timeMills 毫秒
      */
-    public abstract void seekTo(long time);
+    public abstract void seekTo(long timeMills);
 
     /**
      * 释放播放器
+     * 释放之后此播放器就不能再被使用
      */
     public abstract void release();
 
@@ -122,8 +138,10 @@ public abstract class AbstractPlayer {
 
     /**
      * 设置音量
+     * @param leftVolume 左音量
+     * @param rightVolume 右音量
      */
-    public abstract void setVolume(float v1, float v2);
+    public abstract void setVolume(float leftVolume, float rightVolume);
 
     /**
      * 设置是否循环播放
@@ -131,44 +149,44 @@ public abstract class AbstractPlayer {
     public abstract void setLooping(boolean isLooping);
 
     /**
-     * 设置其他播放配置
-     */
-    public abstract void setOptions();
-
-    /**
      * 设置播放速度
+     * 注意：使用系统播放器时，只有6.0及以上系统才支持
      */
     public abstract void setSpeed(float speed);
 
     /**
      * 获取播放速度
+     * 注意：使用系统播放器时，只有6.0及以上系统才支持
      */
     public abstract float getSpeed();
 
     /**
-     * 获取当前缓冲的网速
+     * 获取当前缓冲的网速（IJK播放器才支持）
      */
     public abstract long getTcpSpeed();
 
     /**
-     * 绑定VideoView
+     * 设置播放器事件监听
      */
-    public void setPlayerEventListener(PlayerEventListener playerEventListener) {
+    public void setEventListener(EventListener playerEventListener) {
         this.mPlayerEventListener = playerEventListener;
     }
 
-    public interface PlayerEventListener {
+    /**
+     * 设置其他播放配置
+     * todo 该方法放在这里不合理
+     */
+    public abstract void setOptions();
 
-        void onError();
-
-        void onCompletion();
-
-        void onInfo(int what, int extra);
-
+    /**
+     * 事件监听器
+     */
+    public interface EventListener {
         void onPrepared();
-
+        void onInfo(int what, int extra);
         void onVideoSizeChanged(int width, int height);
-
+        void onCompletion();
+        void onError(Throwable e);
     }
 
 }

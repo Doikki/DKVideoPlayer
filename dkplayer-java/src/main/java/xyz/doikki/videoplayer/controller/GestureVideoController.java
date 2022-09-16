@@ -15,7 +15,7 @@ import androidx.annotation.Nullable;
 
 import java.util.Map;
 
-import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
 /**

@@ -25,7 +25,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.util.DataUtil;
 import xyz.doikki.videocontroller.StandardVideoController;
-import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.VideoView;
 
 import java.util.ArrayList;
 

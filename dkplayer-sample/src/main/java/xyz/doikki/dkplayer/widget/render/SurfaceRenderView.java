@@ -10,14 +10,14 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
-import xyz.doikki.videoplayer.player.AbstractPlayer;
+import xyz.doikki.videoplayer.MediaPlayer;
 import xyz.doikki.videoplayer.render.IRenderView;
 import xyz.doikki.videoplayer.render.MeasureHelper;
 
 public class SurfaceRenderView extends SurfaceView implements IRenderView, SurfaceHolder.Callback {
     private final MeasureHelper mMeasureHelper;
 
-    private AbstractPlayer mMediaPlayer;
+    private MediaPlayer mMediaPlayer;
 
     public SurfaceRenderView(Context context) {
         super(context);
@@ -39,7 +39,7 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
     }
 
     @Override
-    public void attachToPlayer(@NonNull AbstractPlayer player) {
+    public void attachToPlayer(@NonNull MediaPlayer player) {
         this.mMediaPlayer = player;
     }
 

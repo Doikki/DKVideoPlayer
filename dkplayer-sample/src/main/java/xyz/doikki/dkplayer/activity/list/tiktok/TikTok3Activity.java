@@ -21,7 +21,7 @@ import xyz.doikki.dkplayer.util.cache.ProxyVideoCacheManager;
 import xyz.doikki.dkplayer.widget.VerticalViewPager;
 import xyz.doikki.dkplayer.widget.controller.TikTokController;
 import xyz.doikki.dkplayer.widget.render.TikTokRenderViewFactory;
-import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.util.L;
 
 

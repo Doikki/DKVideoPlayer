@@ -2,7 +2,7 @@ package xyz.doikki.videoplayer.util;
 
 import android.util.Log;
 
-import xyz.doikki.videoplayer.player.VideoViewManager;
+import xyz.doikki.videoplayer.VideoViewManager;
 
 /**
  * 日志类

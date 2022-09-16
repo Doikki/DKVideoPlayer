@@ -21,8 +21,7 @@ import xyz.doikki.dkplayer.widget.render.gl2.filter.GlSharpenFilter
 import xyz.doikki.dkplayer.widget.render.gl2.filter.GlWatermarkFilter
 import xyz.doikki.videocontroller.StandardVideoController
 import xyz.doikki.videocontroller.component.*
-import xyz.doikki.videoplayer.player.BaseVideoView
-import xyz.doikki.videoplayer.player.VideoView
+import xyz.doikki.videoplayer.VideoView
 import xyz.doikki.videoplayer.render.IRenderView
 import xyz.doikki.videoplayer.render.RenderViewFactory
 import xyz.doikki.videoplayer.util.L
@@ -157,8 +156,8 @@ class PlayerActivity : BaseActivity<VideoView>() {
         }
     }
 
-    private val mOnStateChangeListener: BaseVideoView.OnStateChangeListener =
-        object : BaseVideoView.SimpleOnStateChangeListener() {
+    private val mOnStateChangeListener: VideoView.OnStateChangeListener =
+        object : VideoView.SimpleOnStateChangeListener() {
             override fun onPlayerStateChanged(playerState: Int) {
                 when (playerState) {
                     VideoView.PLAYER_NORMAL -> {

@@ -12,30 +12,30 @@ import android.view.SurfaceHolder;
 import java.util.Map;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
-import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 import tv.danmaku.ijk.media.player.misc.ITrackInfo;
 import tv.danmaku.ijk.media.player.misc.IjkTrackInfo;
-import xyz.doikki.videoplayer.player.AbstractPlayer;
-import xyz.doikki.videoplayer.player.VideoViewManager;
+import xyz.doikki.videoplayer.MediaPlayer;
+import xyz.doikki.videoplayer.player.AndroidMediaPlayerException;
+import xyz.doikki.videoplayer.VideoViewManager;
 
-public class IjkPlayer extends AbstractPlayer implements IMediaPlayer.OnErrorListener,
+public class IjkMPlayer extends MediaPlayer implements IMediaPlayer.OnErrorListener,
         IMediaPlayer.OnCompletionListener, IMediaPlayer.OnInfoListener,
         IMediaPlayer.OnBufferingUpdateListener, IMediaPlayer.OnPreparedListener,
-        IMediaPlayer.OnVideoSizeChangedListener, IjkMediaPlayer.OnNativeInvokeListener {
+        IMediaPlayer.OnVideoSizeChangedListener, tv.danmaku.ijk.media.player.IjkMediaPlayer.OnNativeInvokeListener {
 
-    protected IjkMediaPlayer mMediaPlayer;
+    protected tv.danmaku.ijk.media.player.IjkMediaPlayer mMediaPlayer;
     private int mBufferedPercent;
     private final Context mAppContext;
 
-    public IjkPlayer(Context context) {
+    public IjkMPlayer(Context context) {
         mAppContext = context;
     }
 
     @Override
     public void initPlayer() {
-        mMediaPlayer = new IjkMediaPlayer();
+        mMediaPlayer = new tv.danmaku.ijk.media.player.IjkMediaPlayer();
         //native日志
-        IjkMediaPlayer.native_setLogLevel(VideoViewManager.getConfig().mIsEnableLog ? IjkMediaPlayer.IJK_LOG_INFO : IjkMediaPlayer.IJK_LOG_SILENT);
+        tv.danmaku.ijk.media.player.IjkMediaPlayer.native_setLogLevel(VideoViewManager.getConfig().mIsEnableLog ? tv.danmaku.ijk.media.player.IjkMediaPlayer.IJK_LOG_INFO : tv.danmaku.ijk.media.player.IjkMediaPlayer.IJK_LOG_SILENT);
         setOptions();
         mMediaPlayer.setOnErrorListener(this);
         mMediaPlayer.setOnCompletionListener(this);
@@ -63,7 +63,7 @@ public class IjkPlayer extends AbstractPlayer implements IMediaPlayer.OnErrorLis
                 if (headers != null) {
                     String userAgent = headers.get("User-Agent");
                     if (!TextUtils.isEmpty(userAgent)) {
-                        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "user_agent", userAgent);
+                        mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_FORMAT, "user_agent", userAgent);
                         // 移除header中的User-Agent，防止重复
                         headers.remove("User-Agent");
                     }
@@ -71,7 +71,7 @@ public class IjkPlayer extends AbstractPlayer implements IMediaPlayer.OnErrorLis
                 mMediaPlayer.setDataSource(mAppContext, uri, headers);
             }
         } catch (Exception e) {
-            mPlayerEventListener.onError();
+            mPlayerEventListener.onError(e);
         }
     }
 
@@ -80,7 +80,7 @@ public class IjkPlayer extends AbstractPlayer implements IMediaPlayer.OnErrorLis
         try {
             mMediaPlayer.setDataSource(new RawDataSourceProvider(fd));
         } catch (Exception e) {
-            mPlayerEventListener.onError();
+            mPlayerEventListener.onError(e);
         }
     }
 
@@ -89,7 +89,7 @@ public class IjkPlayer extends AbstractPlayer implements IMediaPlayer.OnErrorLis
         try {
             mMediaPlayer.pause();
         } catch (IllegalStateException e) {
-            mPlayerEventListener.onError();
+            mPlayerEventListener.onError(e);
         }
     }
 
@@ -98,7 +98,7 @@ public class IjkPlayer extends AbstractPlayer implements IMediaPlayer.OnErrorLis
         try {
             mMediaPlayer.start();
         } catch (IllegalStateException e) {
-            mPlayerEventListener.onError();
+            mPlayerEventListener.onError(e);
         }
     }
 
@@ -107,7 +107,7 @@ public class IjkPlayer extends AbstractPlayer implements IMediaPlayer.OnErrorLis
         try {
             mMediaPlayer.stop();
         } catch (IllegalStateException e) {
-            mPlayerEventListener.onError();
+            mPlayerEventListener.onError(e);
         }
     }
 
@@ -116,7 +116,7 @@ public class IjkPlayer extends AbstractPlayer implements IMediaPlayer.OnErrorLis
         try {
             mMediaPlayer.prepareAsync();
         } catch (IllegalStateException e) {
-            mPlayerEventListener.onError();
+            mPlayerEventListener.onError(e);
         }
     }
 
@@ -133,11 +133,11 @@ public class IjkPlayer extends AbstractPlayer implements IMediaPlayer.OnErrorLis
     }
 
     @Override
-    public void seekTo(long time) {
+    public void seekTo(long timeMills) {
         try {
-            mMediaPlayer.seekTo((int) time);
+            mMediaPlayer.seekTo((int) timeMills);
         } catch (IllegalStateException e) {
-            mPlayerEventListener.onError();
+            mPlayerEventListener.onError(e);
         }
     }
 
@@ -213,7 +213,7 @@ public class IjkPlayer extends AbstractPlayer implements IMediaPlayer.OnErrorLis
 
     @Override
     public boolean onError(IMediaPlayer mp, int what, int extra) {
-        mPlayerEventListener.onError();
+        mPlayerEventListener.onError(new AndroidMediaPlayerException(what,extra));
         return true;
     }
 
@@ -238,7 +238,7 @@ public class IjkPlayer extends AbstractPlayer implements IMediaPlayer.OnErrorLis
         mPlayerEventListener.onPrepared();
         // 修复播放纯音频时状态出错问题
         if (!isVideo()) {
-            mPlayerEventListener.onInfo(AbstractPlayer.MEDIA_INFO_RENDERING_START, 0);
+            mPlayerEventListener.onInfo(MediaPlayer.MEDIA_INFO_RENDERING_START, 0);
         }
     }
 

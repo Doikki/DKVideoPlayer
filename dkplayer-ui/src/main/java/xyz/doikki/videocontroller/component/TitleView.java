@@ -20,9 +20,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import xyz.doikki.videocontroller.R;
+import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.controller.IControlComponent;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
-import xyz.doikki.videoplayer.player.VideoView;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
 /**

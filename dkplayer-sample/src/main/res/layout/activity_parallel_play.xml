@@ -5,17 +5,18 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <xyz.doikki.videoplayer.player.VideoView
+    <xyz.doikki.videoplayer.VideoView
         android:id="@+id/player_1"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintDimensionRatio="16:9"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <xyz.doikki.videoplayer.player.VideoView
+    <xyz.doikki.videoplayer.VideoView
         android:id="@+id/player_2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintDimensionRatio="16:9"
         app:layout_constraintTop_toBottomOf="@id/player_1" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

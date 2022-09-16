@@ -17,7 +17,7 @@ import xyz.doikki.dkplayer.bean.VideoBean;
 import xyz.doikki.dkplayer.util.IntentKeys;
 import xyz.doikki.dkplayer.util.Tag;
 import xyz.doikki.dkplayer.util.Utils;
-import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.VideoView;
 
 /**
  * 无缝播放

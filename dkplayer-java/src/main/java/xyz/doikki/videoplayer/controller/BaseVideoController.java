@@ -20,8 +20,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import xyz.doikki.videoplayer.player.VideoView;
-import xyz.doikki.videoplayer.player.VideoViewManager;
+import xyz.doikki.videoplayer.VideoView;
+import xyz.doikki.videoplayer.VideoViewManager;
 import xyz.doikki.videoplayer.util.CutoutUtil;
 import xyz.doikki.videoplayer.util.L;
 import xyz.doikki.videoplayer.util.PlayerUtils;

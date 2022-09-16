@@ -15,7 +15,7 @@ import xyz.doikki.dkplayer.util.IntentKeys;
 import xyz.doikki.dkplayer.util.Tag;
 import xyz.doikki.dkplayer.util.Utils;
 import xyz.doikki.videocontroller.StandardVideoController;
-import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.VideoView;
 
 public class DetailActivity extends BaseActivity<VideoView> {
 

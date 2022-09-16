@@ -20,9 +20,9 @@ import androidx.core.content.ContextCompat;
 
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.widget.CenteredImageSpan;
-import xyz.doikki.videoplayer.BuildConfig;
-import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.util.PlayerUtils;
+import xyz.doikki.videoplayer.BuildConfig;
 
 import master.flame.danmaku.controller.IDanmakuView;
 import master.flame.danmaku.danmaku.model.BaseDanmaku;

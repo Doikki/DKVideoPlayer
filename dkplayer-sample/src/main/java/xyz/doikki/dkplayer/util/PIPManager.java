@@ -5,8 +5,8 @@ import android.view.View;
 import xyz.doikki.dkplayer.app.MyApplication;
 import xyz.doikki.dkplayer.widget.FloatView;
 import xyz.doikki.dkplayer.widget.controller.FloatController;
-import xyz.doikki.videoplayer.player.VideoView;
-import xyz.doikki.videoplayer.player.VideoViewManager;
+import xyz.doikki.videoplayer.VideoView;
+import xyz.doikki.videoplayer.VideoViewManager;
 
 /**
  * 悬浮播放

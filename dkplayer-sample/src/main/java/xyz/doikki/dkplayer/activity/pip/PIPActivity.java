@@ -21,7 +21,7 @@ import xyz.doikki.dkplayer.util.DataUtil;
 import xyz.doikki.dkplayer.util.PIPManager;
 import xyz.doikki.dkplayer.util.Tag;
 import xyz.doikki.videocontroller.StandardVideoController;
-import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.VideoView;
 
 public class PIPActivity extends BaseActivity {
 

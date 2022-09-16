@@ -23,7 +23,7 @@ import xyz.doikki.videocontroller.component.ErrorView;
 import xyz.doikki.videocontroller.component.GestureView;
 import xyz.doikki.videocontroller.component.TitleView;
 import xyz.doikki.videocontroller.component.VodControlView;
-import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.VideoView;
 
 /**
  * ListView demo，不推荐，建议使用{@link RecyclerViewFragment}

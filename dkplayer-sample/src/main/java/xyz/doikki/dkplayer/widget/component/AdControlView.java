@@ -14,9 +14,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import xyz.doikki.dkplayer.R;
+import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.controller.IControlComponent;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
-import xyz.doikki.videoplayer.player.VideoView;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
 public class AdControlView extends FrameLayout implements IControlComponent, View.OnClickListener {

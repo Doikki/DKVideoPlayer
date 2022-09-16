@@ -1,6 +1,8 @@
-package xyz.doikki.videoplayer.player;
+package xyz.doikki.videoplayer;
 
 import android.app.Application;
+
+import androidx.annotation.NonNull;
 
 import java.util.LinkedHashMap;
 
@@ -10,6 +12,8 @@ import xyz.doikki.videoplayer.util.L;
  * 视频播放器管理器，管理当前正在播放的VideoView，以及播放器配置
  * 你也可以用来保存常驻内存的VideoView，但是要注意通过Application Context创建，
  * 以免内存泄漏
+ *
+ * todo：应该共享的是整个播放器，而不应该是VideoView
  */
 public class VideoViewManager {
 
@@ -26,7 +30,7 @@ public class VideoViewManager {
     /**
      * VideoViewManager实例
      */
-    private static VideoViewManager sInstance;
+    private static final VideoViewManager sInstance;
 
     /**
      * VideoViewConfig实例
@@ -34,29 +38,34 @@ public class VideoViewManager {
     private static VideoViewConfig sConfig;
 
     private VideoViewManager() {
-        mPlayOnMobileNetwork = getConfig().mPlayOnMobileNetwork;
+        mPlayOnMobileNetwork = sConfig.mPlayOnMobileNetwork;
+    }
+
+    static {
+        sConfig = VideoViewConfig.newBuilder().build();
+        sInstance = new VideoViewManager();
+    }
+
+
+    public static VideoViewManager instance() {
+        return sInstance;
     }
 
     /**
      * 设置VideoViewConfig
      */
-    public static void setConfig(VideoViewConfig config) {
-        if (sConfig == null) {
-            synchronized (VideoViewConfig.class) {
-                if (sConfig == null) {
-                    sConfig = config == null ? VideoViewConfig.newBuilder().build() : config;
-                }
-            }
-        }
+    public static void setConfig(@NonNull VideoViewConfig config) {
+        sConfig = config;
     }
 
     /**
      * 获取VideoViewConfig
      */
+    @NonNull
     public static VideoViewConfig getConfig() {
-        setConfig(null);
         return sConfig;
     }
+
 
     /**
      * 获取是否在移动网络下直接播放视频配置
@@ -72,19 +81,10 @@ public class VideoViewManager {
         mPlayOnMobileNetwork = playOnMobileNetwork;
     }
 
-    public static VideoViewManager instance() {
-        if (sInstance == null) {
-            synchronized (VideoViewManager.class) {
-                if (sInstance == null) {
-                    sInstance = new VideoViewManager();
-                }
-            }
-        }
-        return sInstance;
-    }
 
     /**
      * 添加VideoView
+     *
      * @param tag 相同tag的VideoView只会保存一个，如果tag相同则会release并移除前一个
      */
     public void add(VideoView videoView, String tag) {
@@ -99,6 +99,7 @@ public class VideoViewManager {
         }
         mVideoViews.put(tag, videoView);
     }
+
 
     public VideoView get(String tag) {
         return mVideoViews.get(tag);

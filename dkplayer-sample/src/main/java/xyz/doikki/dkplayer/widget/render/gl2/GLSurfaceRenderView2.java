@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import xyz.doikki.dkplayer.widget.render.gl2.chooser.GLConfigChooser;
 import xyz.doikki.dkplayer.widget.render.gl2.contextfactory.GLContextFactory;
 import xyz.doikki.dkplayer.widget.render.gl2.filter.GlFilter;
-import xyz.doikki.videoplayer.player.AbstractPlayer;
+import xyz.doikki.videoplayer.MediaPlayer;
 import xyz.doikki.videoplayer.render.IRenderView;
 import xyz.doikki.videoplayer.render.MeasureHelper;
 
@@ -34,7 +34,7 @@ public class GLSurfaceRenderView2 extends GLSurfaceView implements IRenderView {
     private final MeasureHelper mMeasureHelper = new MeasureHelper();
 
     @Override
-    public void attachToPlayer(@NonNull AbstractPlayer player) {
+    public void attachToPlayer(@NonNull MediaPlayer player) {
         this.renderer.setPlayer(player);
     }
 

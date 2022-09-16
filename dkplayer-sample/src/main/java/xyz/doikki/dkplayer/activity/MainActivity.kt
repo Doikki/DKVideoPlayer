@@ -21,10 +21,10 @@ import xyz.doikki.dkplayer.util.Utils
 import xyz.doikki.dkplayer.util.cache.ProxyVideoCacheManager
 import xyz.doikki.videoplayer.exo.ExoMediaPlayerFactory
 import xyz.doikki.videoplayer.ijk.IjkPlayerFactory
-import xyz.doikki.videoplayer.player.AndroidMediaPlayerFactory
-import xyz.doikki.videoplayer.player.PlayerFactory
-import xyz.doikki.videoplayer.player.VideoView
-import xyz.doikki.videoplayer.player.VideoViewManager
+import xyz.doikki.videoplayer.sys.SysMediaPlayerFactory
+import xyz.doikki.videoplayer.MediaPlayerFactory
+import xyz.doikki.videoplayer.VideoView
+import xyz.doikki.videoplayer.VideoViewManager
 import java.io.*
 
 class MainActivity : BaseActivity<VideoView>(), NavigationBarView.OnItemSelectedListener {
@@ -52,7 +52,7 @@ class MainActivity : BaseActivity<VideoView>(), NavigationBarView.OnItemSelected
             is IjkPlayerFactory -> {
                 setTitle(resources.getString(R.string.app_name) + " (IjkPlayer)")
             }
-            is AndroidMediaPlayerFactory -> {
+            is SysMediaPlayerFactory -> {
                 setTitle(resources.getString(R.string.app_name) + " (MediaPlayer)")
             }
             else -> {
@@ -89,7 +89,7 @@ class MainActivity : BaseActivity<VideoView>(), NavigationBarView.OnItemSelected
             try {
                 val mPlayerFactoryField = config.javaClass.getDeclaredField("mPlayerFactory")
                 mPlayerFactoryField.isAccessible = true
-                var playerFactory: PlayerFactory<*>? = null
+                var playerFactory: MediaPlayerFactory<*>? = null
                 when (itemId) {
                     R.id.ijk -> {
                         playerFactory = IjkPlayerFactory.create()
@@ -100,7 +100,7 @@ class MainActivity : BaseActivity<VideoView>(), NavigationBarView.OnItemSelected
                         setTitle(resources.getString(R.string.app_name) + " (ExoPlayer)")
                     }
                     R.id.media -> {
-                        playerFactory = AndroidMediaPlayerFactory.create()
+                        playerFactory = SysMediaPlayerFactory.create()
                         setTitle(resources.getString(R.string.app_name) + " (MediaPlayer)")
                     }
                 }

@@ -9,14 +9,16 @@ import androidx.annotation.NonNull;
 
 import java.lang.ref.WeakReference;
 
+import xyz.doikki.videoplayer.VideoView;
+
 /**
- * 音频焦点改变监听
+ * 音频焦点 帮助类
  */
-final class AudioFocusHelper implements AudioManager.OnAudioFocusChangeListener {
+public final class AudioFocusHelper implements AudioManager.OnAudioFocusChangeListener {
 
     private final Handler mHandler = new Handler(Looper.getMainLooper());
 
-    private final WeakReference<BaseVideoView> mWeakVideoView;
+    private final WeakReference<VideoView> mWeakVideoView;
 
     private final AudioManager mAudioManager;
 
@@ -24,7 +26,7 @@ final class AudioFocusHelper implements AudioManager.OnAudioFocusChangeListener 
     private boolean mPausedForLoss = false;
     private int mCurrentFocus = 0;
 
-    AudioFocusHelper(@NonNull BaseVideoView videoView) {
+    public AudioFocusHelper(@NonNull VideoView videoView) {
         mWeakVideoView = new WeakReference<>(videoView);
         mAudioManager = (AudioManager) videoView.getContext().getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
     }
@@ -34,21 +36,25 @@ final class AudioFocusHelper implements AudioManager.OnAudioFocusChangeListener 
         if (mCurrentFocus == focusChange) {
             return;
         }
+        //这里应该先改变状态，然后在post，否则在极短时间内存在理论上的多次post
+        mCurrentFocus = focusChange;
 
         //由于onAudioFocusChange有可能在子线程调用，
         //故通过此方式切换到主线程去执行
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                handleAudioFocusChange(focusChange);
+                try {//进行异常捕获，避免因为音频焦点导致crash
+                    handleAudioFocusChange(focusChange);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
             }
         });
-
-        mCurrentFocus = focusChange;
     }
 
     private void handleAudioFocusChange(int focusChange) {
-        final BaseVideoView videoView = mWeakVideoView.get();
+        final VideoView videoView = mWeakVideoView.get();
         if (videoView == null) {
             return;
         }
@@ -81,7 +87,7 @@ final class AudioFocusHelper implements AudioManager.OnAudioFocusChangeListener 
     /**
      * Requests to obtain the audio focus
      */
-    void requestFocus() {
+    public void requestFocus() {
         if (mCurrentFocus == AudioManager.AUDIOFOCUS_GAIN) {
             return;
         }
@@ -101,13 +107,12 @@ final class AudioFocusHelper implements AudioManager.OnAudioFocusChangeListener 
 
     /**
      * Requests the system to drop the audio focus
+     * 放弃音频焦点
      */
-    void abandonFocus() {
-
+    public void abandonFocus() {
         if (mAudioManager == null) {
             return;
         }
-
         mStartRequested = false;
         mAudioManager.abandonAudioFocus(this);
     }

@@ -5,14 +5,14 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
-import xyz.doikki.videoplayer.player.AbstractPlayer;
+import xyz.doikki.videoplayer.MediaPlayer;
 
 public interface IRenderView {
 
     /**
      * 关联AbstractPlayer
      */
-    void attachToPlayer(@NonNull AbstractPlayer player);
+    void attachToPlayer(@NonNull MediaPlayer player);
 
     /**
      * 设置视频宽高

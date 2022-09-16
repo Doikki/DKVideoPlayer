@@ -5,8 +5,8 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
-import xyz.doikki.videoplayer.player.AbstractPlayer;
-import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.MediaPlayer;
+import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.render.IRenderView;
 
 /**
@@ -22,7 +22,7 @@ public class TikTokRenderView implements IRenderView {
     }
 
     @Override
-    public void attachToPlayer(@NonNull AbstractPlayer player) {
+    public void attachToPlayer(@NonNull MediaPlayer player) {
         mProxyRenderView.attachToPlayer(player);
     }
 

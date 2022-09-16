@@ -9,7 +9,7 @@ import xyz.doikki.dkplayer.util.DataUtil;
 import xyz.doikki.dkplayer.util.cache.ProxyVideoCacheManager;
 import xyz.doikki.dkplayer.widget.component.AdControlView;
 import xyz.doikki.videocontroller.StandardVideoController;
-import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.VideoView;
 
 /**
  * 广告

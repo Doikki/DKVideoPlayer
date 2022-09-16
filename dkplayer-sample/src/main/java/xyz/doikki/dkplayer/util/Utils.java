@@ -11,11 +11,10 @@ import android.widget.FrameLayout;
 
 import java.lang.reflect.Field;
 
+import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
-import xyz.doikki.videoplayer.player.BaseVideoView;
-import xyz.doikki.videoplayer.player.VideoView;
-import xyz.doikki.videoplayer.player.VideoViewConfig;
-import xyz.doikki.videoplayer.player.VideoViewManager;
+import xyz.doikki.videoplayer.VideoViewConfig;
+import xyz.doikki.videoplayer.VideoViewManager;
 
 public final class Utils {
 

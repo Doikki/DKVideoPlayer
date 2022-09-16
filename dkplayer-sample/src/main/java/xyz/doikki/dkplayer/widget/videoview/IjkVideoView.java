@@ -10,10 +10,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import xyz.doikki.dkplayer.widget.player.CustomIjkMediaPlayer;
-import xyz.doikki.videoplayer.player.BaseVideoView;
-import xyz.doikki.videoplayer.player.PlayerFactory;
+import xyz.doikki.videoplayer.VideoView;
+import xyz.doikki.videoplayer.MediaPlayerFactory;
 
-public class IjkVideoView extends BaseVideoView<CustomIjkMediaPlayer> {
+public class IjkVideoView extends VideoView {
 
     private final HashMap<String, Object> mPlayerOptions = new HashMap<>();
     private final HashMap<String, Object> mFormatOptions = new HashMap<>();
@@ -33,12 +33,16 @@ public class IjkVideoView extends BaseVideoView<CustomIjkMediaPlayer> {
     }
 
     {
-        setPlayerFactory(new PlayerFactory<CustomIjkMediaPlayer>() {
+        setPlayerFactory(new MediaPlayerFactory<CustomIjkMediaPlayer>() {
             @Override
-            public CustomIjkMediaPlayer createPlayer(Context context) {
+            public CustomIjkMediaPlayer create(Context context) {
                 return new CustomIjkMediaPlayer(context);
             }
         });
+    }
+
+    private CustomIjkMediaPlayer mediaPlayer(){
+        return (CustomIjkMediaPlayer)mMediaPlayer;
     }
 
     @Override
@@ -48,36 +52,36 @@ public class IjkVideoView extends BaseVideoView<CustomIjkMediaPlayer> {
             String key = next.getKey();
             Object value = next.getValue();
             if (value instanceof String) {
-                mMediaPlayer.setPlayerOption(key, (String) value);
+                mediaPlayer().setPlayerOption(key, (String) value);
             } else if (value instanceof Long) {
-                mMediaPlayer.setPlayerOption(key, (Long) value);
+                mediaPlayer().setPlayerOption(key, (Long) value);
             }
         }
         for (Map.Entry<String, Object> next : mFormatOptions.entrySet()) {
             String key = next.getKey();
             Object value = next.getValue();
             if (value instanceof String) {
-                mMediaPlayer.setFormatOption(key, (String) value);
+                mediaPlayer().setFormatOption(key, (String) value);
             } else if (value instanceof Long) {
-                mMediaPlayer.setFormatOption(key, (Long) value);
+                mediaPlayer().setFormatOption(key, (Long) value);
             }
         }
         for (Map.Entry<String, Object> next : mCodecOptions.entrySet()) {
             String key = next.getKey();
             Object value = next.getValue();
             if (value instanceof String) {
-                mMediaPlayer.setCodecOption(key, (String) value);
+                mediaPlayer().setCodecOption(key, (String) value);
             } else if (value instanceof Long) {
-                mMediaPlayer.setCodecOption(key, (Long) value);
+                mediaPlayer().setCodecOption(key, (Long) value);
             }
         }
         for (Map.Entry<String, Object> next : mSwsOptions.entrySet()) {
             String key = next.getKey();
             Object value = next.getValue();
             if (value instanceof String) {
-                mMediaPlayer.setSwsOption(key, (String) value);
+                mediaPlayer().setSwsOption(key, (String) value);
             } else if (value instanceof Long) {
-                mMediaPlayer.setSwsOption(key, (Long) value);
+                mediaPlayer().setSwsOption(key, (Long) value);
             }
         }
     }

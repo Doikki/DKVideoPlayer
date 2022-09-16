@@ -25,7 +25,7 @@ import java.util.Map;
 
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.videocontroller.component.VodControlView;
-import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.util.L;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 

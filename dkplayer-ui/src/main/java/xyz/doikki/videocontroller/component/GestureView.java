@@ -19,9 +19,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import xyz.doikki.videocontroller.R;
+import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
 import xyz.doikki.videoplayer.controller.IGestureComponent;
-import xyz.doikki.videoplayer.player.VideoView;
 
 /**
  * 手势控制

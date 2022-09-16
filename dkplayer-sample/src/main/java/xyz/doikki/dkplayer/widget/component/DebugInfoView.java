@@ -18,7 +18,7 @@ import xyz.doikki.videoplayer.controller.ControlWrapper;
 import xyz.doikki.videoplayer.controller.IControlComponent;
 import xyz.doikki.videoplayer.exo.ExoMediaPlayerFactory;
 import xyz.doikki.videoplayer.ijk.IjkPlayerFactory;
-import xyz.doikki.videoplayer.player.AndroidMediaPlayerFactory;
+import xyz.doikki.videoplayer.sys.SysMediaPlayerFactory;
 
 /**
  * 调试信息
@@ -85,7 +85,7 @@ public class DebugInfoView extends AppCompatTextView implements IControlComponen
             player = "ExoPlayer";
         } else if (playerFactory instanceof IjkPlayerFactory) {
             player = "IjkPlayer";
-        } else if (playerFactory instanceof AndroidMediaPlayerFactory) {
+        } else if (playerFactory instanceof SysMediaPlayerFactory) {
             player = "MediaPlayer";
         } else {
             player = "unknown";

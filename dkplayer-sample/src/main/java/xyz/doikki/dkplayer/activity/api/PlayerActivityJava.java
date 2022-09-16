@@ -24,7 +24,7 @@ import xyz.doikki.videocontroller.component.LiveControlView;
 import xyz.doikki.videocontroller.component.PrepareView;
 import xyz.doikki.videocontroller.component.TitleView;
 import xyz.doikki.videocontroller.component.VodControlView;
-import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.util.L;
 
 /**

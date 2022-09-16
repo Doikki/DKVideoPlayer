@@ -39,7 +39,7 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 import javax.microedition.khronos.opengles.GL10;
 
-import xyz.doikki.videoplayer.player.AbstractPlayer;
+import xyz.doikki.videoplayer.MediaPlayer;
 import xyz.doikki.videoplayer.render.IRenderView;
 import xyz.doikki.videoplayer.render.MeasureHelper;
 
@@ -59,10 +59,10 @@ public final class GLSurfaceRenderView extends GLSurfaceView implements IRenderV
 
     private final MeasureHelper mMeasureHelper = new MeasureHelper();
 
-    private AbstractPlayer player;
+    private MediaPlayer player;
 
     @Override
-    public void attachToPlayer(@NonNull AbstractPlayer player) {
+    public void attachToPlayer(@NonNull MediaPlayer player) {
         this.player = player;
         setVideoRenderer(new BitmapOverlayVideoProcessor(getContext()), false);
     }

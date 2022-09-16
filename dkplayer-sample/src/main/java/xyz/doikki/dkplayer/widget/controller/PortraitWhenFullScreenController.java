@@ -12,8 +12,8 @@ import androidx.annotation.Nullable;
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.videocontroller.StandardVideoController;
 import xyz.doikki.videocontroller.component.VodControlView;
+import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.controller.MediaPlayerControl;
-import xyz.doikki.videoplayer.player.VideoView;
 
 public class PortraitWhenFullScreenController extends StandardVideoController {
 

@@ -1,4 +1,4 @@
-package xyz.doikki.videoplayer.player;
+package xyz.doikki.videoplayer;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -26,9 +26,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import xyz.doikki.videoplayer.R;
 import xyz.doikki.videoplayer.controller.BaseVideoController;
 import xyz.doikki.videoplayer.controller.MediaPlayerControl;
+import xyz.doikki.videoplayer.player.AudioFocusHelper;
+import xyz.doikki.videoplayer.player.ProgressManager;
 import xyz.doikki.videoplayer.render.IRenderView;
 import xyz.doikki.videoplayer.render.RenderViewFactory;
 import xyz.doikki.videoplayer.util.L;
@@ -38,11 +39,12 @@ import xyz.doikki.videoplayer.util.PlayerUtils;
  * 带泛型的播放器，可继承 AbstractPlayer 扩展自己的播放器
  * Created by Doikki on 2017/4/7.
  */
-public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
-        implements MediaPlayerControl, AbstractPlayer.PlayerEventListener {
+public class VideoView extends FrameLayout
+        implements MediaPlayerControl, MediaPlayer.EventListener {
 
-    protected P mMediaPlayer;//播放器
-    protected PlayerFactory<P> mPlayerFactory;//工厂类，用于实例化播放核心
+    protected MediaPlayer mMediaPlayer;//播放器
+    protected MediaPlayerFactory<MediaPlayer> mPlayerFactory;//工厂类，用于实例化播放核心
+
     @Nullable
     protected BaseVideoController mVideoController;//控制器
 
@@ -92,7 +94,6 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
     protected int mCurrentPlayerState = PLAYER_NORMAL;
 
     protected boolean mIsFullScreen;//是否处于全屏状态
-
     protected boolean mIsTinyScreen;//是否处于小屏状态
     protected int[] mTinyScreenSize = {0, 0};
 
@@ -124,15 +125,15 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
      */
     private final int mPlayerBackgroundColor;
 
-    public BaseVideoView(@NonNull Context context) {
+    public VideoView(@NonNull Context context) {
         this(context, null);
     }
 
-    public BaseVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public VideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public BaseVideoView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public VideoView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
         //读取全局配置
@@ -186,8 +187,12 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
         }
     }
 
+    public <T extends MediaPlayer> T requireMediaPlayer(Class<T> t){
+        return (T) mMediaPlayer;
+    }
     /**
      * 第一次播放
+     *
      * @return 是否成功开始播放
      */
     protected boolean startPlay() {
@@ -197,14 +202,12 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
             setPlayState(STATE_START_ABORT);
             return false;
         }
+        //todo 此处存在问题就是如果在中途修改了mEnableAudioFocus为false，并且之前已初始化了mAudioFocusHelper，则会导致问题，不过该问题并不太可能出现
         //监听音频焦点改变
         if (mEnableAudioFocus) {
             mAudioFocusHelper = new AudioFocusHelper(this);
         }
-        //读取播放进度
-        if (mProgressManager != null) {
-            mCurrentPosition = mProgressManager.getSavedProgress(mUrl);
-        }
+        mCurrentPosition = getSavedPlayedProgress();
         initPlayer();
         addDisplay();
         startPrepare(false);
@@ -239,8 +242,8 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
      * 初始化播放器
      */
     protected void initPlayer() {
-        mMediaPlayer = mPlayerFactory.createPlayer(getContext());
-        mMediaPlayer.setPlayerEventListener(this);
+        mMediaPlayer = mPlayerFactory.create(getContext());
+        mMediaPlayer.setEventListener(this);
         setInitOptions();
         mMediaPlayer.initPlayer();
         setOptions();
@@ -296,6 +299,7 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
 
     /**
      * 设置播放数据
+     *
      * @return 播放数据是否设置成功
      */
     protected boolean prepareDataSource() {
@@ -384,7 +388,7 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
             //关闭屏幕常亮
             mPlayerContainer.setKeepScreenOn(false);
             //保存播放进度
-            saveProgress();
+            saveCurrentPlayedProgress();
             //重置播放进度
             mCurrentPosition = 0;
             //切换转态
@@ -393,13 +397,47 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
     }
 
     /**
-     * 保存播放进度
+     * 设置进度管理器，用于保存播放进度
      */
-    protected void saveProgress() {
-        if (mProgressManager != null && mCurrentPosition > 0) {
-            L.d("saveProgress: " + mCurrentPosition);
-            mProgressManager.saveProgress(mUrl, mCurrentPosition);
+    public void setProgressManager(@Nullable ProgressManager progressManager) {
+        this.mProgressManager = progressManager;
+    }
+
+    /**
+     * 获取已保存的当前播放进度
+     *
+     * @return
+     */
+    private long getSavedPlayedProgress() {
+        //读取播放进度
+        if (mProgressManager == null)
+            return 0;
+        return mProgressManager.getSavedProgress(mUrl);
+    }
+
+    /**
+     * 保存进度
+     *
+     * @param position 当前播放位置
+     */
+    private void savePlayedProgress(long position) {
+        if (mProgressManager == null) {
+            L.w("savePlayedProgress is ignored,ProgressManager is null.");
+            return;
         }
+        L.d("saveProgress: " + position);
+        mProgressManager.saveProgress(mUrl, position);
+    }
+
+    /**
+     * 保存当前播放位置
+     * 只会在已存在播放的情况下才会保存
+     */
+    private void saveCurrentPlayedProgress() {
+        long position = mCurrentPosition;
+        if (position <= 0)
+            return;
+        savePlayedProgress(position);
     }
 
     /**
@@ -531,17 +569,17 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
     @Override
     public void onInfo(int what, int extra) {
         switch (what) {
-            case AbstractPlayer.MEDIA_INFO_BUFFERING_START:
+            case MediaPlayer.MEDIA_INFO_BUFFERING_START:
                 setPlayState(STATE_BUFFERING);
                 break;
-            case AbstractPlayer.MEDIA_INFO_BUFFERING_END:
+            case MediaPlayer.MEDIA_INFO_BUFFERING_END:
                 setPlayState(STATE_BUFFERED);
                 break;
-            case AbstractPlayer.MEDIA_INFO_RENDERING_START: // 视频/音频开始渲染
+            case MediaPlayer.MEDIA_INFO_RENDERING_START: // 视频/音频开始渲染
                 setPlayState(STATE_PLAYING);
                 mPlayerContainer.setKeepScreenOn(true);
                 break;
-            case AbstractPlayer.MEDIA_INFO_VIDEO_ROTATION_CHANGED:
+            case MediaPlayer.MEDIA_INFO_VIDEO_ROTATION_CHANGED:
                 if (mRenderView != null) mRenderView.setVideoRotation(extra);
                 break;
         }
@@ -551,7 +589,7 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
      * 视频播放出错回调
      */
     @Override
-    public void onError() {
+    public void onError(Throwable e) {
         mPlayerContainer.setKeepScreenOn(false);
         setPlayState(STATE_ERROR);
     }
@@ -563,10 +601,8 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
     public void onCompletion() {
         mPlayerContainer.setKeepScreenOn(false);
         mCurrentPosition = 0;
-        if (mProgressManager != null) {
-            //播放完成，清除进度
-            mProgressManager.saveProgress(mUrl, 0);
-        }
+        //播放完成，清除进度
+        savePlayedProgress(0);
         setPlayState(STATE_PLAYBACK_COMPLETED);
     }
 
@@ -656,12 +692,6 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
         }
     }
 
-    /**
-     * 设置进度管理器，用于保存播放进度
-     */
-    public void setProgressManager(@Nullable ProgressManager progressManager) {
-        this.mProgressManager = progressManager;
-    }
 
     /**
      * 循环播放， 默认不循环播放
@@ -682,9 +712,9 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
     }
 
     /**
-     * 自定义播放核心，继承{@link PlayerFactory}实现自己的播放核心
+     * 自定义播放核心，继承{@link MediaPlayerFactory}实现自己的播放核心
      */
-    public void setPlayerFactory(PlayerFactory playerFactory) {
+    public void setPlayerFactory(MediaPlayerFactory playerFactory) {
         if (playerFactory == null) {
             throw new IllegalArgumentException("PlayerFactory can not be null!");
         }
@@ -996,6 +1026,7 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
      */
     public interface OnStateChangeListener {
         void onPlayerStateChanged(int playerState);
+
         void onPlayStateChanged(int playState);
     }
 
@@ -1004,9 +1035,12 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
      */
     public static class SimpleOnStateChangeListener implements OnStateChangeListener {
         @Override
-        public void onPlayerStateChanged(int playerState) {}
+        public void onPlayerStateChanged(int playerState) {
+        }
+
         @Override
-        public void onPlayStateChanged(int playState) {}
+        public void onPlayStateChanged(int playState) {
+        }
     }
 
     /**
@@ -1061,7 +1095,7 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
     protected Parcelable onSaveInstanceState() {
         L.d("onSaveInstanceState: " + mCurrentPosition);
         //activity切到后台后可能被系统回收，故在此处进行进度保存
-        saveProgress();
+        saveCurrentPlayedProgress();
         return super.onSaveInstanceState();
     }
 }

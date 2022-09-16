@@ -33,7 +33,7 @@ public interface IControlComponent {
 
     /**
      * 回调播放器的播放器状态，如果你只是单纯的想监听此状态，建议使用
-     * {@link xyz.doikki.videoplayer.player.VideoView} 中的
+     * {@link VideoView} 中的
      * addOnStateChangeListener 方法
      * @param playState 播放状态
      */
@@ -41,7 +41,7 @@ public interface IControlComponent {
 
     /**
      * 回调播放器的状态，如果你只是单纯的想监听此状态，建议使用
-     * {@link xyz.doikki.videoplayer.player.VideoView} 中的
+     * {@link VideoView} 中的
      * addOnStateChangeListener 方法
      * @param playerState 播放器状态
      */

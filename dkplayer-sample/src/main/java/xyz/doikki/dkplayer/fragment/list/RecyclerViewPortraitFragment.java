@@ -6,7 +6,7 @@ import xyz.doikki.videocontroller.component.CompleteView;
 import xyz.doikki.videocontroller.component.ErrorView;
 import xyz.doikki.videocontroller.component.GestureView;
 import xyz.doikki.videocontroller.component.TitleView;
-import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.VideoView;
 
 /**
  * 全屏后手动横屏，并不完美，仅做参考

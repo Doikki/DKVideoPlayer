@@ -11,7 +11,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import xyz.doikki.videoplayer.player.AbstractPlayer;
+import xyz.doikki.videoplayer.MediaPlayer;
 
 @SuppressLint("ViewConstructor")
 public class TextureRenderView extends TextureView implements IRenderView, TextureView.SurfaceTextureListener {
@@ -19,7 +19,7 @@ public class TextureRenderView extends TextureView implements IRenderView, Textu
     private SurfaceTexture mSurfaceTexture;
 
     @Nullable
-    private AbstractPlayer mMediaPlayer;
+    private MediaPlayer mMediaPlayer;
     private Surface mSurface;
 
     public TextureRenderView(Context context) {
@@ -32,7 +32,7 @@ public class TextureRenderView extends TextureView implements IRenderView, Textu
     }
 
     @Override
-    public void attachToPlayer(@NonNull AbstractPlayer player) {
+    public void attachToPlayer(@NonNull MediaPlayer player) {
         this.mMediaPlayer = player;
     }
 

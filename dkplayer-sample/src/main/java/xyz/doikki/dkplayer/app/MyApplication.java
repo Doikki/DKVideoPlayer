@@ -6,8 +6,8 @@ import com.danikula.videocache.Logger;
 
 import xyz.doikki.videoplayer.BuildConfig;
 import xyz.doikki.videoplayer.exo.ExoMediaPlayerFactory;
-import xyz.doikki.videoplayer.player.VideoViewConfig;
-import xyz.doikki.videoplayer.player.VideoViewManager;
+import xyz.doikki.videoplayer.VideoViewConfig;
+import xyz.doikki.videoplayer.VideoViewManager;
 
 /**
  * app

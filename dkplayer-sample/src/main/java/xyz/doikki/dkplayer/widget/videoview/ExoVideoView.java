@@ -15,10 +15,10 @@ import java.util.Map;
 
 import xyz.doikki.dkplayer.widget.player.CustomExoMediaPlayer;
 import xyz.doikki.videoplayer.exo.ExoMediaSourceHelper;
-import xyz.doikki.videoplayer.player.BaseVideoView;
-import xyz.doikki.videoplayer.player.PlayerFactory;
+import xyz.doikki.videoplayer.VideoView;
+import xyz.doikki.videoplayer.MediaPlayerFactory;
 
-public class ExoVideoView extends BaseVideoView<CustomExoMediaPlayer> {
+public class ExoVideoView extends VideoView {
 
     private MediaSource mMediaSource;
 
@@ -44,27 +44,30 @@ public class ExoVideoView extends BaseVideoView<CustomExoMediaPlayer> {
 
     {
         //由于传递了泛型，必须将CustomExoMediaPlayer设置进来，否者报错
-        setPlayerFactory(new PlayerFactory<CustomExoMediaPlayer>() {
+        setPlayerFactory(new MediaPlayerFactory<CustomExoMediaPlayer>() {
             @Override
-            public CustomExoMediaPlayer createPlayer(Context context) {
+            public CustomExoMediaPlayer create(Context context) {
                 return new CustomExoMediaPlayer(context);
             }
         });
         mHelper = ExoMediaSourceHelper.getInstance(getContext());
     }
 
+    private CustomExoMediaPlayer mediaPlayer(){
+        return (CustomExoMediaPlayer)mMediaPlayer;
+    }
     @Override
     protected void setInitOptions() {
         super.setInitOptions();
-        mMediaPlayer.setLoadControl(mLoadControl);
-        mMediaPlayer.setRenderersFactory(mRenderersFactory);
-        mMediaPlayer.setTrackSelector(mTrackSelector);
+        mediaPlayer().setLoadControl(mLoadControl);
+        mediaPlayer().setRenderersFactory(mRenderersFactory);
+        mediaPlayer().setTrackSelector(mTrackSelector);
     }
 
     @Override
     protected boolean prepareDataSource() {
         if (mMediaSource != null) {
-            mMediaPlayer.setDataSource(mMediaSource);
+            mediaPlayer().setDataSource(mMediaSource);
             return true;
         }
         return false;

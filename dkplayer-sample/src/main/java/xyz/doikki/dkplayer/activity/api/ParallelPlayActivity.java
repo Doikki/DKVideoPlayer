@@ -13,7 +13,7 @@ import java.util.List;
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.util.DataUtil;
 import xyz.doikki.videocontroller.StandardVideoController;
-import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.VideoView;
 
 /**
  * 多开

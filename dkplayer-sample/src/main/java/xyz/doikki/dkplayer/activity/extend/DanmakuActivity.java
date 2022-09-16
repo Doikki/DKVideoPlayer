@@ -8,7 +8,7 @@ import xyz.doikki.dkplayer.activity.BaseActivity;
 import xyz.doikki.dkplayer.util.DataUtil;
 import xyz.doikki.dkplayer.widget.component.MyDanmakuView;
 import xyz.doikki.videocontroller.StandardVideoController;
-import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.VideoView;
 
 /**
  * 弹幕播放

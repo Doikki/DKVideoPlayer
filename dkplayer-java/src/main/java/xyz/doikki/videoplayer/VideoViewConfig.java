@@ -1,10 +1,12 @@
-package xyz.doikki.videoplayer.player;
+package xyz.doikki.videoplayer;
 
 
 import androidx.annotation.Nullable;
 
+import xyz.doikki.videoplayer.player.ProgressManager;
 import xyz.doikki.videoplayer.render.RenderViewFactory;
 import xyz.doikki.videoplayer.render.TextureRenderViewFactory;
+import xyz.doikki.videoplayer.sys.SysMediaPlayerFactory;
 
 /**
  * 播放器全局配置
@@ -25,7 +27,7 @@ public class VideoViewConfig {
 
     public final ProgressManager mProgressManager;
 
-    public final PlayerFactory mPlayerFactory;
+    public final MediaPlayerFactory mPlayerFactory;
 
     public final int mScreenScaleType;
 
@@ -42,7 +44,7 @@ public class VideoViewConfig {
         mScreenScaleType = builder.mScreenScaleType;
         if (builder.mPlayerFactory == null) {
             //默认为AndroidMediaPlayer
-            mPlayerFactory = AndroidMediaPlayerFactory.create();
+            mPlayerFactory = SysMediaPlayerFactory.create();
         } else {
             mPlayerFactory = builder.mPlayerFactory;
         }
@@ -63,7 +65,7 @@ public class VideoViewConfig {
         private boolean mEnableOrientation;
         private boolean mEnableAudioFocus = true;
         private ProgressManager mProgressManager;
-        private PlayerFactory mPlayerFactory;
+        private MediaPlayerFactory mPlayerFactory;
         private int mScreenScaleType;
         private RenderViewFactory mRenderViewFactory;
         private boolean mAdaptCutout = true;
@@ -111,7 +113,7 @@ public class VideoViewConfig {
         /**
          * 自定义播放核心
          */
-        public Builder setPlayerFactory(PlayerFactory playerFactory) {
+        public Builder setPlayerFactory(MediaPlayerFactory playerFactory) {
             mPlayerFactory = playerFactory;
             return this;
         }

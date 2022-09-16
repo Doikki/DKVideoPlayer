@@ -24,13 +24,15 @@ import com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.video.VideoSize;
 
+import java.io.FileDescriptor;
 import java.util.Map;
 
-import xyz.doikki.videoplayer.player.AbstractPlayer;
-import xyz.doikki.videoplayer.player.VideoViewManager;
+import xyz.doikki.videoplayer.MediaPlayer;
+import xyz.doikki.videoplayer.player.AndroidMediaPlayerException;
+import xyz.doikki.videoplayer.VideoViewManager;
 
 
-public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
+public class ExoMediaPlayer extends MediaPlayer implements Player.Listener {
 
     protected Context mAppContext;
     protected ExoPlayer mInternalPlayer;
@@ -93,6 +95,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         //no support
     }
 
+
     @Override
     public void start() {
         if (mInternalPlayer == null)
@@ -154,10 +157,10 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     }
 
     @Override
-    public void seekTo(long time) {
+    public void seekTo(long timeMills) {
         if (mInternalPlayer == null)
             return;
-        mInternalPlayer.seekTo(time);
+        mInternalPlayer.seekTo(timeMills);
     }
 
     @Override
@@ -276,7 +279,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     @Override
     public void onPlayerError(PlaybackException error) {
         if (mPlayerEventListener != null) {
-            mPlayerEventListener.onError();
+            mPlayerEventListener.onError(new AndroidMediaPlayerException(error));
         }
     }
 
