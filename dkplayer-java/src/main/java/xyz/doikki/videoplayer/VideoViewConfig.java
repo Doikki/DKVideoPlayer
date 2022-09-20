@@ -4,8 +4,8 @@ package xyz.doikki.videoplayer;
 import androidx.annotation.Nullable;
 
 import xyz.doikki.videoplayer.player.ProgressManager;
-import xyz.doikki.videoplayer.render.RenderViewFactory;
-import xyz.doikki.videoplayer.render.TextureRenderViewFactory;
+import xyz.doikki.videoplayer.render.RenderFactory;
+import xyz.doikki.videoplayer.render.TextureViewRenderFactory;
 import xyz.doikki.videoplayer.sys.SysMediaPlayerFactory;
 
 /**
@@ -21,17 +21,20 @@ public class VideoViewConfig {
 
     public final boolean mEnableOrientation;
 
-    public final boolean mEnableAudioFocus;
+    /**
+     * 是否启用音频焦点处理
+     */
+    public final boolean enableAudioFocus;
 
     public final boolean mIsEnableLog;
 
     public final ProgressManager mProgressManager;
 
-    public final MediaPlayerFactory mPlayerFactory;
+    public final AVPlayerFactory mPlayerFactory;
 
     public final int mScreenScaleType;
 
-    public final RenderViewFactory mRenderViewFactory;
+    public final RenderFactory mRenderViewFactory;
 
     public final boolean mAdaptCutout;
 
@@ -39,7 +42,7 @@ public class VideoViewConfig {
         mIsEnableLog = builder.mIsEnableLog;
         mEnableOrientation = builder.mEnableOrientation;
         mPlayOnMobileNetwork = builder.mPlayOnMobileNetwork;
-        mEnableAudioFocus = builder.mEnableAudioFocus;
+        enableAudioFocus = builder.mEnableAudioFocus;
         mProgressManager = builder.mProgressManager;
         mScreenScaleType = builder.mScreenScaleType;
         if (builder.mPlayerFactory == null) {
@@ -50,7 +53,7 @@ public class VideoViewConfig {
         }
         if (builder.mRenderViewFactory == null) {
             //默认使用TextureView渲染视频
-            mRenderViewFactory = TextureRenderViewFactory.create();
+            mRenderViewFactory = TextureViewRenderFactory.create();
         } else {
             mRenderViewFactory = builder.mRenderViewFactory;
         }
@@ -65,9 +68,9 @@ public class VideoViewConfig {
         private boolean mEnableOrientation;
         private boolean mEnableAudioFocus = true;
         private ProgressManager mProgressManager;
-        private MediaPlayerFactory mPlayerFactory;
+        private AVPlayerFactory mPlayerFactory;
         private int mScreenScaleType;
-        private RenderViewFactory mRenderViewFactory;
+        private RenderFactory mRenderViewFactory;
         private boolean mAdaptCutout = true;
 
         /**
@@ -113,7 +116,7 @@ public class VideoViewConfig {
         /**
          * 自定义播放核心
          */
-        public Builder setPlayerFactory(MediaPlayerFactory playerFactory) {
+        public Builder setPlayerFactory(AVPlayerFactory playerFactory) {
             mPlayerFactory = playerFactory;
             return this;
         }
@@ -129,7 +132,7 @@ public class VideoViewConfig {
         /**
          * 自定义RenderView
          */
-        public Builder setRenderViewFactory(RenderViewFactory renderViewFactory) {
+        public Builder setRenderViewFactory(RenderFactory renderViewFactory) {
             mRenderViewFactory = renderViewFactory;
             return this;
         }

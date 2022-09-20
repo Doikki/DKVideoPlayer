@@ -99,12 +99,12 @@ public class AndroidOPiPActivity extends AppCompatActivity {
         mWidthPixels = getResources().getDisplayMetrics().widthPixels;
         mVideoView.setLayoutParams(new LinearLayout.LayoutParams(mWidthPixels, mWidthPixels * 9 / 16 + 1));
 
-        mVideoView.setUrl(DataUtil.SAMPLE_URL);
+        mVideoView.setDataSource(DataUtil.SAMPLE_URL);
         mController = new StandardVideoController(this);
         mController.addDefaultControlComponent(getString(R.string.str_pip_android_o), false);
         mVideoView.setVideoController(mController);
         mVideoView.start();
-        mVideoView.addOnStateChangeListener(new VideoView.SimpleOnStateChangeListener() {
+        mVideoView.addOnStateChangeListener(new VideoView.OnStateChangeListener() {
             @Override
             public void onPlayStateChanged(int playState) {
                 switch (playState) {

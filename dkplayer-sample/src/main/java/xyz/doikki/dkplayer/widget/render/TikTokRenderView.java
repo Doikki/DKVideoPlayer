@@ -1,28 +1,27 @@
 package xyz.doikki.dkplayer.widget.render;
 
-import android.graphics.Bitmap;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 
-import xyz.doikki.videoplayer.MediaPlayer;
+import xyz.doikki.videoplayer.AVPlayer;
 import xyz.doikki.videoplayer.VideoView;
-import xyz.doikki.videoplayer.render.IRenderView;
+import xyz.doikki.videoplayer.render.Render;
 
 /**
  * TikTok专用RenderView，横屏视频默认显示，竖屏视频居中裁剪
  * 使用代理模式实现
  */
-public class TikTokRenderView implements IRenderView {
+public class TikTokRenderView implements Render {
 
-    private final IRenderView mProxyRenderView;
+    private final Render mProxyRenderView;
 
-    TikTokRenderView(@NonNull IRenderView renderView) {
+    TikTokRenderView(@NonNull Render renderView) {
         this.mProxyRenderView = renderView;
     }
 
     @Override
-    public void attachToPlayer(@NonNull MediaPlayer player) {
+    public void attachToPlayer(@NonNull AVPlayer player) {
         mProxyRenderView.attachToPlayer(player);
     }
 
@@ -41,6 +40,11 @@ public class TikTokRenderView implements IRenderView {
     }
 
     @Override
+    public void setSurfaceListener(SurfaceListener listener) {
+        mProxyRenderView.setSurfaceListener(listener);
+    }
+
+    @Override
     public void setVideoRotation(int degree) {
         mProxyRenderView.setVideoRotation(degree);
     }
@@ -56,8 +60,8 @@ public class TikTokRenderView implements IRenderView {
     }
 
     @Override
-    public Bitmap doScreenShot() {
-        return mProxyRenderView.doScreenShot();
+    public void screenshot(boolean highQuality, @NonNull ScreenShotCallback callback) {
+        mProxyRenderView.screenshot(highQuality, callback);
     }
 
     @Override

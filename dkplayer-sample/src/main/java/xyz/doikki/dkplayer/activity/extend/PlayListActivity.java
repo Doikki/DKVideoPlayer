@@ -48,12 +48,12 @@ public class PlayListActivity extends BaseActivity {
 
         //加载第一条数据
         VideoBean videoBean = data.get(0);
-        mVideoView.setUrl(videoBean.getUrl());
+        mVideoView.setDataSource(videoBean.getUrl());
         mTitleView.setTitle(videoBean.getTitle());
         mVideoView.setVideoController(mController);
 
         //监听播放结束
-        mVideoView.addOnStateChangeListener(new VideoView.SimpleOnStateChangeListener() {
+        mVideoView.addOnStateChangeListener(new VideoView.OnStateChangeListener() {
             private int mCurrentVideoPosition;
             @Override
             public void onPlayStateChanged(int playState) {
@@ -64,7 +64,7 @@ public class PlayListActivity extends BaseActivity {
                         mVideoView.release();
                         //重新设置数据
                         VideoBean videoBean = data.get(mCurrentVideoPosition);
-                        mVideoView.setUrl(videoBean.getUrl());
+                        mVideoView.setDataSource(videoBean.getUrl());
                         mTitleView.setTitle(videoBean.getTitle());
                         mVideoView.setVideoController(mController);
                         //开始播放

@@ -18,6 +18,12 @@ public class MeasureHelper {
         mVideoRotationDegree = videoRotationDegree;
     }
 
+    /**
+     * 设置视频大小
+     *
+     * @param width  视频内容宽
+     * @param height 视频内容高
+     */
     public void setVideoSize(int width, int height) {
         mVideoWidth = width;
         mVideoHeight = height;
@@ -31,6 +37,7 @@ public class MeasureHelper {
      * 注意：VideoView的宽高一定要定死，否者以下算法不成立
      */
     public int[] doMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+
         if (mVideoRotationDegree == 90 || mVideoRotationDegree == 270) { // 软解码时处理旋转信息，交换宽高
             widthMeasureSpec = widthMeasureSpec + heightMeasureSpec;
             heightMeasureSpec = widthMeasureSpec - heightMeasureSpec;

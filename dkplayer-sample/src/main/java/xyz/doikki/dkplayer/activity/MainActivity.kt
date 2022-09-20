@@ -22,7 +22,7 @@ import xyz.doikki.dkplayer.util.cache.ProxyVideoCacheManager
 import xyz.doikki.videoplayer.exo.ExoMediaPlayerFactory
 import xyz.doikki.videoplayer.ijk.IjkPlayerFactory
 import xyz.doikki.videoplayer.sys.SysMediaPlayerFactory
-import xyz.doikki.videoplayer.MediaPlayerFactory
+import xyz.doikki.videoplayer.AVPlayerFactory
 import xyz.doikki.videoplayer.VideoView
 import xyz.doikki.videoplayer.VideoViewManager
 import java.io.*
@@ -89,7 +89,7 @@ class MainActivity : BaseActivity<VideoView>(), NavigationBarView.OnItemSelected
             try {
                 val mPlayerFactoryField = config.javaClass.getDeclaredField("mPlayerFactory")
                 mPlayerFactoryField.isAccessible = true
-                var playerFactory: MediaPlayerFactory<*>? = null
+                var playerFactory: AVPlayerFactory<*>? = null
                 when (itemId) {
                     R.id.ijk -> {
                         playerFactory = IjkPlayerFactory.create()

@@ -22,7 +22,7 @@ public class PadActivity extends BaseActivity {
         super.initView();
         mVideoView = findViewById(R.id.video_view);
 
-        mVideoView.setUrl(DataUtil.SAMPLE_URL);
+        mVideoView.setDataSource(DataUtil.SAMPLE_URL);
 
         mController = new StandardVideoController(this);
         mController.addDefaultControlComponent("pad", false);

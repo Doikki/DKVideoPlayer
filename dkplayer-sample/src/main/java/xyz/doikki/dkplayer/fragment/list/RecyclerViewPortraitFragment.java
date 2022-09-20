@@ -16,7 +16,7 @@ public class RecyclerViewPortraitFragment extends RecyclerViewAutoPlayFragment {
     @Override
     protected void initVideoView() {
         mVideoView = new VideoView(getActivity());
-        mVideoView.setOnStateChangeListener(new VideoView.SimpleOnStateChangeListener() {
+        mVideoView.addOnStateChangeListener(new VideoView.OnStateChangeListener() {
             @Override
             public void onPlayStateChanged(int playState) {
                 if (playState == VideoView.STATE_IDLE) {

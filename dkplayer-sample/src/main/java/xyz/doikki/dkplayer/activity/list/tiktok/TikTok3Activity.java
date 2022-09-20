@@ -163,7 +163,7 @@ public class TikTok3Activity extends BaseActivity<VideoView> {
                 TiktokBean tiktokBean = mVideoList.get(position);
                 String playUrl = mPreloadManager.getPlayUrl(tiktokBean.videoDownloadUrl);
                 L.i("startPlay: " + "position: " + position + "  url: " + playUrl);
-                mVideoView.setUrl(playUrl);
+                mVideoView.setDataSource(playUrl);
                 //请点进去看isDissociate的解释
                 mController.addControlComponent(viewHolder.mTikTokView, true);
                 viewHolder.mPlayerContainer.addView(mVideoView, 0);

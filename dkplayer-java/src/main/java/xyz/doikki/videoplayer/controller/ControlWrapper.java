@@ -2,9 +2,14 @@ package xyz.doikki.videoplayer.controller;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
-import android.graphics.Bitmap;
+import android.content.res.AssetFileDescriptor;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import java.util.Map;
+
+import xyz.doikki.videoplayer.render.Render;
 
 /**
  * 此类的目的是为了在ControlComponent中既能调用VideoView的api又能调用BaseVideoController的api，
@@ -19,7 +24,17 @@ public class ControlWrapper implements MediaPlayerControl, IVideoController {
         mPlayerControl = playerControl;
         mController = controller;
     }
-    
+
+    @Override
+    public void setDataSource(@NonNull String path, @Nullable Map<String, String> headers) {
+        mPlayerControl.setDataSource(path,headers);
+    }
+
+    @Override
+    public void setDataSource(@NonNull AssetFileDescriptor fd) {
+        mPlayerControl.setDataSource(fd);
+    }
+
     @Override
     public void start() {
         mPlayerControl.start();
@@ -48,6 +63,11 @@ public class ControlWrapper implements MediaPlayerControl, IVideoController {
     @Override
     public boolean isPlaying() {
         return mPlayerControl.isPlaying();
+    }
+
+    @Override
+    public void setVolume(float leftVolume, float rightVolume) {
+        mPlayerControl.setVolume(leftVolume, rightVolume);
     }
 
     @Override
@@ -111,8 +131,8 @@ public class ControlWrapper implements MediaPlayerControl, IVideoController {
     }
 
     @Override
-    public Bitmap doScreenShot() {
-        return mPlayerControl.doScreenShot();
+    public void screenshot(boolean highQuality, @NonNull Render.ScreenShotCallback callback) {
+        mPlayerControl.screenshot(highQuality, callback);
     }
 
     @Override
@@ -272,4 +292,6 @@ public class ControlWrapper implements MediaPlayerControl, IVideoController {
             show();
         }
     }
+
+
 }

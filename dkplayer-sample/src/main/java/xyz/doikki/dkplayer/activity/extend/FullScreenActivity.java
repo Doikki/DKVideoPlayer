@@ -43,7 +43,7 @@ public class FullScreenActivity extends BaseActivity<VideoView> {
     protected void initView() {
         super.initView();
         mVideoView.startFullScreen();
-        mVideoView.setUrl(DataUtil.SAMPLE_URL);
+        mVideoView.setDataSource(DataUtil.SAMPLE_URL);
         mController = new StandardVideoController(this);
         mController.addControlComponent(new CompleteView(this));
         mController.addControlComponent(new ErrorView(this));

@@ -37,7 +37,7 @@ public class ParallelPlayActivity extends AppCompatActivity {
 
 
         VideoView player1 = findViewById(R.id.player_1);
-        player1.setUrl(VOD_URL_1);
+        player1.setDataSource(VOD_URL_1);
 
         //必须设置
         player1.setEnableAudioFocus(false);
@@ -47,7 +47,7 @@ public class ParallelPlayActivity extends AppCompatActivity {
         mVideoViews.add(player1);
 
         VideoView player2 = findViewById(R.id.player_2);
-        player2.setUrl(VOD_URL_2);
+        player2.setDataSource(VOD_URL_2);
         //必须设置
         player2.setEnableAudioFocus(false);
         StandardVideoController controller2 = new StandardVideoController(this);

@@ -11,7 +11,7 @@ import java.util.Map;
 
 import xyz.doikki.dkplayer.widget.player.CustomIjkMediaPlayer;
 import xyz.doikki.videoplayer.VideoView;
-import xyz.doikki.videoplayer.MediaPlayerFactory;
+import xyz.doikki.videoplayer.AVPlayerFactory;
 
 public class IjkVideoView extends VideoView {
 
@@ -33,7 +33,7 @@ public class IjkVideoView extends VideoView {
     }
 
     {
-        setPlayerFactory(new MediaPlayerFactory<CustomIjkMediaPlayer>() {
+        setPlayerFactory(new AVPlayerFactory<CustomIjkMediaPlayer>() {
             @Override
             public CustomIjkMediaPlayer create(Context context) {
                 return new CustomIjkMediaPlayer(context);
@@ -46,8 +46,8 @@ public class IjkVideoView extends VideoView {
     }
 
     @Override
-    protected void setOptions() {
-        super.setOptions();
+    protected void setupMediaPlayerOptions() {
+        super.setupMediaPlayerOptions();
         for (Map.Entry<String, Object> next : mPlayerOptions.entrySet()) {
             String key = next.getKey();
             Object value = next.getValue();

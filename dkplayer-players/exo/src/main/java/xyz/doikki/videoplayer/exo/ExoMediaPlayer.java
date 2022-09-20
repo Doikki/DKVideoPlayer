@@ -24,15 +24,14 @@ import com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.video.VideoSize;
 
-import java.io.FileDescriptor;
 import java.util.Map;
 
-import xyz.doikki.videoplayer.MediaPlayer;
+import xyz.doikki.videoplayer.AbstractAVPlayer;
 import xyz.doikki.videoplayer.player.AndroidMediaPlayerException;
 import xyz.doikki.videoplayer.VideoViewManager;
 
 
-public class ExoMediaPlayer extends MediaPlayer implements Player.Listener {
+public class ExoMediaPlayer extends AbstractAVPlayer implements Player.Listener {
 
     protected Context mAppContext;
     protected ExoPlayer mInternalPlayer;
@@ -53,7 +52,7 @@ public class ExoMediaPlayer extends MediaPlayer implements Player.Listener {
     }
 
     @Override
-    public void initPlayer() {
+    public void init() {
         mInternalPlayer = new ExoPlayer.Builder(
                 mAppContext,
                 mRenderersFactory == null ? mRenderersFactory = new DefaultRenderersFactory(mAppContext) : mRenderersFactory,
@@ -63,7 +62,8 @@ public class ExoMediaPlayer extends MediaPlayer implements Player.Listener {
                 DefaultBandwidthMeter.getSingletonInstance(mAppContext),
                 new DefaultAnalyticsCollector(Clock.DEFAULT))
                 .build();
-        setOptions();
+        //准备好就开始播放
+        mInternalPlayer.setPlayWhenReady(true);
 
         //播放器日志
         if (VideoViewManager.getConfig().mIsEnableLog && mTrackSelector instanceof MappingTrackSelector) {
@@ -157,10 +157,10 @@ public class ExoMediaPlayer extends MediaPlayer implements Player.Listener {
     }
 
     @Override
-    public void seekTo(long timeMills) {
+    public void seekTo(long msec) {
         if (mInternalPlayer == null)
             return;
-        mInternalPlayer.seekTo(timeMills);
+        mInternalPlayer.seekTo(msec);
     }
 
     @Override
@@ -222,12 +222,6 @@ public class ExoMediaPlayer extends MediaPlayer implements Player.Listener {
     }
 
     @Override
-    public void setOptions() {
-        //准备好就开始播放
-        mInternalPlayer.setPlayWhenReady(true);
-    }
-
-    @Override
     public void setSpeed(float speed) {
         PlaybackParameters playbackParameters = new PlaybackParameters(speed);
         mSpeedPlaybackParameters = playbackParameters;
@@ -252,24 +246,24 @@ public class ExoMediaPlayer extends MediaPlayer implements Player.Listener {
 
     @Override
     public void onPlaybackStateChanged(int playbackState) {
-        if (mPlayerEventListener == null) return;
+        if (eventListener == null) return;
         if (mIsPreparing) {
             if (playbackState == Player.STATE_READY) {
-                mPlayerEventListener.onPrepared();
-                mPlayerEventListener.onInfo(MEDIA_INFO_RENDERING_START, 0);
+                eventListener.onPrepared();
+                eventListener.onInfo(MEDIA_INFO_RENDERING_START, 0);
                 mIsPreparing = false;
             }
             return;
         }
         switch (playbackState) {
             case Player.STATE_BUFFERING:
-                mPlayerEventListener.onInfo(MEDIA_INFO_BUFFERING_START, getBufferedPercentage());
+                eventListener.onInfo(MEDIA_INFO_BUFFERING_START, getBufferedPercentage());
                 break;
             case Player.STATE_READY:
-                mPlayerEventListener.onInfo(MEDIA_INFO_BUFFERING_END, getBufferedPercentage());
+                eventListener.onInfo(MEDIA_INFO_BUFFERING_END, getBufferedPercentage());
                 break;
             case Player.STATE_ENDED:
-                mPlayerEventListener.onCompletion();
+                eventListener.onCompletion();
                 break;
             case Player.STATE_IDLE:
                 break;
@@ -278,17 +272,17 @@ public class ExoMediaPlayer extends MediaPlayer implements Player.Listener {
 
     @Override
     public void onPlayerError(PlaybackException error) {
-        if (mPlayerEventListener != null) {
-            mPlayerEventListener.onError(new AndroidMediaPlayerException(error));
+        if (eventListener != null) {
+            eventListener.onError(new AndroidMediaPlayerException(error));
         }
     }
 
     @Override
     public void onVideoSizeChanged(VideoSize videoSize) {
-        if (mPlayerEventListener != null) {
-            mPlayerEventListener.onVideoSizeChanged(videoSize.width, videoSize.height);
+        if (eventListener != null) {
+            eventListener.onVideoSizeChanged(videoSize.width, videoSize.height);
             if (videoSize.unappliedRotationDegrees > 0) {
-                mPlayerEventListener.onInfo(MEDIA_INFO_VIDEO_ROTATION_CHANGED, videoSize.unappliedRotationDegrees);
+                eventListener.onInfo(MEDIA_INFO_VIDEO_ROTATION_CHANGED, videoSize.unappliedRotationDegrees);
             }
         }
     }

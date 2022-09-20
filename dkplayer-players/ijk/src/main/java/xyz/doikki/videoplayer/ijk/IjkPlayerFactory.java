@@ -2,16 +2,16 @@ package xyz.doikki.videoplayer.ijk;
 
 import android.content.Context;
 
-import xyz.doikki.videoplayer.MediaPlayerFactory;
+import xyz.doikki.videoplayer.AVPlayerFactory;
 
-public class IjkPlayerFactory extends MediaPlayerFactory<IjkMPlayer> {
+public class IjkPlayerFactory implements AVPlayerFactory<IjkAVPlayer> {
 
     public static IjkPlayerFactory create() {
         return new IjkPlayerFactory();
     }
 
     @Override
-    public IjkMPlayer create(Context context) {
-        return new IjkMPlayer(context);
+    public IjkAVPlayer create(Context context) {
+        return new IjkAVPlayer(context);
     }
 }

@@ -100,7 +100,7 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
 
     protected void initVideoView() {
         mVideoView = new VideoView(getActivity());
-        mVideoView.setOnStateChangeListener(new VideoView.SimpleOnStateChangeListener() {
+        mVideoView.addOnStateChangeListener(new VideoView.OnStateChangeListener() {
             @Override
             public void onPlayStateChanged(int playState) {
                 //监听VideoViewManager释放，重置状态
@@ -192,7 +192,7 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
 //        String proxyUrl = ProxyVideoCacheManager.getProxy(getActivity()).getProxyUrl(videoBean.getUrl());
 //        mVideoView.setUrl(proxyUrl);
 
-        mVideoView.setUrl(videoBean.getUrl());
+        mVideoView.setDataSource(videoBean.getUrl());
         mTitleView.setTitle(videoBean.getTitle());
         View itemView = mLinearLayoutManager.findViewByPosition(position);
         if (itemView == null) return;

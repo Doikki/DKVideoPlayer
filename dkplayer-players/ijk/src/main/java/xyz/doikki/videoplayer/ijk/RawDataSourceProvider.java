@@ -80,7 +80,6 @@ public class RawDataSourceProvider implements IMediaDataSource {
         try {
             AssetFileDescriptor fileDescriptor = context.getContentResolver().openAssetFileDescriptor(uri, "r");
             return new RawDataSourceProvider(fileDescriptor);
-
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

@@ -22,8 +22,6 @@ import xyz.doikki.dkplayer.widget.render.gl2.filter.GlWatermarkFilter
 import xyz.doikki.videocontroller.StandardVideoController
 import xyz.doikki.videocontroller.component.*
 import xyz.doikki.videoplayer.VideoView
-import xyz.doikki.videoplayer.render.IRenderView
-import xyz.doikki.videoplayer.render.RenderViewFactory
 import xyz.doikki.videoplayer.util.L
 
 /**
@@ -108,7 +106,7 @@ class PlayerActivity : BaseActivity<VideoView>() {
                 url = Utils.getFileFromContentUri(this, it.data)
             }
 //            val header = hashMapOf("User-Agent" to "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36")
-            mVideoView.setUrl(url)
+            mVideoView.setDataSource(url!!)
 
             //保存播放进度
 //            mVideoView.setProgressManager(ProgressManagerImpl())
@@ -118,18 +116,21 @@ class PlayerActivity : BaseActivity<VideoView>() {
             // 临时切换RenderView, 如需全局请通过VideoConfig配置，详见MyApplication
             if (intent.getBooleanExtra(IntentKeys.CUSTOM_RENDER, false)) {
 //                mVideoView.setRenderViewFactory(GLSurfaceRenderViewFactory.create())
-                mVideoView.setRenderViewFactory(object : RenderViewFactory() {
-                    override fun createRenderView(context: Context?): IRenderView {
-                        return renderView
-                    }
-                })
+                mVideoView.setRenderViewFactory { renderView }
                 // 设置滤镜
-                renderView.setGlFilter(GlFilterGroup(
-                    // 水印
-                    GlWatermarkFilter(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher)),
-                    GlSepiaFilter(),
-                    GlSharpenFilter()
-                ))
+                renderView.setGlFilter(
+                    GlFilterGroup(
+                        // 水印
+                        GlWatermarkFilter(
+                            BitmapFactory.decodeResource(
+                                resources,
+                                R.mipmap.ic_launcher
+                            )
+                        ),
+                        GlSepiaFilter(),
+                        GlSharpenFilter()
+                    )
+                )
             }
             //临时切换播放核心，如需全局请通过VideoConfig配置，详见MyApplication
             //使用IjkPlayer解码
@@ -151,13 +152,13 @@ class PlayerActivity : BaseActivity<VideoView>() {
         val etOtherVideo = findViewById<EditText>(R.id.et_other_video)
         findViewById<View>(R.id.btn_start_play).setOnClickListener {
             mVideoView.release()
-            mVideoView.setUrl(etOtherVideo.text.toString())
+            mVideoView.setDataSource(etOtherVideo.text.toString())
             mVideoView.start()
         }
     }
 
     private val mOnStateChangeListener: VideoView.OnStateChangeListener =
-        object : VideoView.SimpleOnStateChangeListener() {
+        object : VideoView.OnStateChangeListener {
             override fun onPlayerStateChanged(playerState: Int) {
                 when (playerState) {
                     VideoView.PLAYER_NORMAL -> {
@@ -210,8 +211,10 @@ class PlayerActivity : BaseActivity<VideoView>() {
             R.id.speed_2_0 -> mVideoView!!.speed = 2.0f
             R.id.screen_shot -> {
                 val imageView = findViewById<ImageView>(R.id.iv_screen_shot)
-                val bitmap = mVideoView!!.doScreenShot()
-                imageView.setImageBitmap(bitmap)
+                mVideoView!!.screenshot {
+                    imageView.setImageBitmap(it)
+                }
+
             }
             R.id.mirror_rotate -> {
                 mVideoView!!.setMirrorRotation(i % 2 == 0)
@@ -235,7 +238,13 @@ class PlayerActivity : BaseActivity<VideoView>() {
             "https://cms-bucket.nosdn.127.net/eb411c2810f04ffa8aaafc42052b233820180418095416.jpeg"
 
         @JvmStatic
-        fun start(context: Context, url: String, title: String, isLive: Boolean, customRender: Boolean = false) {
+        fun start(
+            context: Context,
+            url: String,
+            title: String,
+            isLive: Boolean,
+            customRender: Boolean = false
+        ) {
             val intent = Intent(context, PlayerActivity::class.java)
             intent.putExtra(IntentKeys.URL, url)
             intent.putExtra(IntentKeys.IS_LIVE, isLive)

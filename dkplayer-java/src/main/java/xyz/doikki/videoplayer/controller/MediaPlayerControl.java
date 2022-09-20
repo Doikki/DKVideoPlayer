@@ -1,22 +1,10 @@
 package xyz.doikki.videoplayer.controller;
 
-import android.graphics.Bitmap;
+import xyz.doikki.videoplayer.AVPlayerFunction;
 
-public interface MediaPlayerControl {
-
-    void start();
+public interface MediaPlayerControl extends AVPlayerFunction, VideoController {
 
     void pause();
-
-    long getDuration();
-
-    long getCurrentPosition();
-
-    void seekTo(long pos);
-
-    boolean isPlaying();
-
-    int getBufferedPercentage();
 
     void startFullScreen();
 
@@ -24,9 +12,7 @@ public interface MediaPlayerControl {
 
     boolean isFullScreen();
 
-    void setMute(boolean isMute);
 
-    boolean isMute();
 
     void setScreenScaleType(int screenScaleType);
 
@@ -40,7 +26,6 @@ public interface MediaPlayerControl {
 
     void setMirrorRotation(boolean enable);
 
-    Bitmap doScreenShot();
 
     int[] getVideoSize();
 

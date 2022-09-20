@@ -1,18 +1,23 @@
 package xyz.doikki.videoplayer;
 
 import android.app.Application;
+import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.LinkedHashMap;
 
+import xyz.doikki.videoplayer.player.ProgressManager;
+import xyz.doikki.videoplayer.render.Render;
+import xyz.doikki.videoplayer.render.RenderFactory;
 import xyz.doikki.videoplayer.util.L;
 
 /**
  * 视频播放器管理器，管理当前正在播放的VideoView，以及播放器配置
  * 你也可以用来保存常驻内存的VideoView，但是要注意通过Application Context创建，
  * 以免内存泄漏
- *
+ * <p>
  * todo：应该共享的是整个播放器，而不应该是VideoView
  */
 public class VideoViewManager {
@@ -21,6 +26,11 @@ public class VideoViewManager {
      * 保存VideoView的容器
      */
     private final LinkedHashMap<String, VideoView> mVideoViews = new LinkedHashMap<>();
+
+    /**
+     * 保存VideoView的容器
+     */
+    private static final LinkedHashMap<String, AVPlayer> mSharedPlayers = new LinkedHashMap<>();
 
     /**
      * 是否在移动网络下直接播放视频
@@ -36,6 +46,11 @@ public class VideoViewManager {
      * VideoViewConfig实例
      */
     private static VideoViewConfig sConfig;
+
+    /**
+     * 是否开启硬解码渲染优化，默认开启
+     */
+    private static boolean textureRenderOptimization = true;
 
     private VideoViewManager() {
         mPlayOnMobileNetwork = sConfig.mPlayOnMobileNetwork;
@@ -81,6 +96,54 @@ public class VideoViewManager {
         mPlayOnMobileNetwork = playOnMobileNetwork;
     }
 
+    /**
+     * 是否允许音频焦点
+     *
+     * @return
+     */
+    public static boolean enableAudioFocus() {
+        return sConfig.enableAudioFocus;
+    }
+
+    /**
+     * 获取全局进度管理器
+     *
+     * @return
+     */
+    public static ProgressManager getProgressManager() {
+        return sConfig.mProgressManager;
+    }
+
+    /**
+     * 获取播放界面缩放模式
+     *
+     * @return
+     */
+    public static int getScreenType() {
+        return sConfig.mScreenScaleType;
+    }
+
+
+    /**
+     * 开启{@link xyz.doikki.videoplayer.render.TextureViewRender} 渲染优化
+     */
+    public static void enableTextureRenderOptimization() {
+        textureRenderOptimization = true;
+    }
+
+    /**
+     * 关闭开启{@link xyz.doikki.videoplayer.render.TextureViewRender} 渲染优化
+     */
+    public static void disableMediaCodecTexture() {
+        textureRenderOptimization = false;
+    }
+
+    /**
+     * {@link xyz.doikki.videoplayer.render.TextureViewRender}是否启用渲染优化
+     */
+    public static boolean isTextureRenderOptimization() {
+        return textureRenderOptimization;
+    }
 
     /**
      * 添加VideoView
@@ -134,6 +197,55 @@ public class VideoViewManager {
         VideoView videoView = get(tag);
         if (videoView == null) return false;
         return videoView.onBackPressed();
+    }
+
+    /**
+     * 创建播放器
+     *
+     * @param context
+     * @param customFactory 自定义工厂，如果为null，则使用全局配置的工厂创建
+     * @return
+     */
+    public static AVPlayer createMediaPlayer(@NonNull Context context, @Nullable AVPlayerFactory<?> customFactory) {
+        AVPlayerFactory<?> factory = customFactory == null ? sConfig.mPlayerFactory : customFactory;
+        return factory.create(context);
+    }
+
+    /**
+     * 获取或创建共享的播放器，通常用于播放器共享的情况（比如为了实现界面无缝切换效果）
+     *
+     * @param context
+     * @param tag           共享标记
+     * @param customFactory 自定义工厂
+     * @return
+     */
+    public static AVPlayer getOrCreateSharedMediaPlayer(@NonNull Context context, @NonNull String tag, @Nullable AVPlayerFactory<?> customFactory) {
+        AVPlayer cache = mSharedPlayers.get(tag);
+        if (cache == null) {
+            cache = createMediaPlayer(context, customFactory);
+            mSharedPlayers.put(tag, cache);
+        }
+        return cache;
+    }
+
+    /**
+     * 移除共享的播放器
+     *
+     * @param tag
+     */
+    public static void removeSharedMediaPlayer(String tag) {
+        mSharedPlayers.remove(tag);
+    }
+
+    /**
+     * 创建视图层
+     *
+     * @param customFactory 自定义工厂，如果为null，则使用全局配置的工厂创建
+     * @return
+     */
+    public static Render createRenderView(@NonNull Context context, @Nullable RenderFactory customFactory) {
+        RenderFactory factory = customFactory == null ? sConfig.mRenderViewFactory : customFactory;
+        return factory.create(context);
     }
 
 }

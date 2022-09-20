@@ -56,7 +56,7 @@ public final class Utils {
     public static Object getCurrentPlayerFactoryInVideoView(VideoView videoView) {
         Object playerFactory = null;
         try {
-            Field mPlayerFactoryField = videoView.getClass().getSuperclass().getDeclaredField("mPlayerFactory");
+            Field mPlayerFactoryField = videoView.getClass().getDeclaredField("mPlayerFactory");
             mPlayerFactoryField.setAccessible(true);
             playerFactory = mPlayerFactoryField.get(videoView);
         } catch (Exception e) {

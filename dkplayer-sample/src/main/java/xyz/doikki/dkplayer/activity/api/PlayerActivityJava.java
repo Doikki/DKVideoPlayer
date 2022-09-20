@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import androidx.annotation.Nullable;
+
 import com.bumptech.glide.Glide;
 
 import xyz.doikki.dkplayer.R;
@@ -25,6 +27,7 @@ import xyz.doikki.videocontroller.component.PrepareView;
 import xyz.doikki.videocontroller.component.TitleView;
 import xyz.doikki.videocontroller.component.VodControlView;
 import xyz.doikki.videoplayer.VideoView;
+import xyz.doikki.videoplayer.render.Render;
 import xyz.doikki.videoplayer.util.L;
 
 /**
@@ -126,7 +129,7 @@ public class PlayerActivityJava extends BaseActivity<VideoView> {
                 //获取intent中的视频地址
                 url = Utils.getFileFromContentUri(this, intent.getData());
             }
-            mVideoView.setUrl(url);
+            mVideoView.setDataSource(url);
 
             //保存播放进度
 //            mVideoView.setProgressManager(new ProgressManagerImpl());
@@ -156,13 +159,13 @@ public class PlayerActivityJava extends BaseActivity<VideoView> {
             @Override
             public void onClick(View v) {
                 mVideoView.release();
-                mVideoView.setUrl(etOtherVideo.getText().toString());
+                mVideoView.setDataSource(etOtherVideo.getText().toString());
                 mVideoView.start();
             }
         });
     }
 
-    private VideoView.OnStateChangeListener mOnStateChangeListener = new VideoView.SimpleOnStateChangeListener() {
+    private VideoView.OnStateChangeListener mOnStateChangeListener = new VideoView.OnStateChangeListener() {
         @Override
         public void onPlayerStateChanged(int playerState) {
             switch (playerState) {
@@ -244,8 +247,13 @@ public class PlayerActivityJava extends BaseActivity<VideoView> {
 
             case R.id.screen_shot:
                 ImageView imageView = findViewById(R.id.iv_screen_shot);
-                Bitmap bitmap = mVideoView.doScreenShot();
-                imageView.setImageBitmap(bitmap);
+                 mVideoView.screenshot(new Render.ScreenShotCallback() {
+                    @Override
+                    public void onScreenShotResult(@Nullable Bitmap bmp) {
+                        imageView.setImageBitmap(bmp);
+                    }
+                });
+
                 break;
 
             case R.id.mirror_rotate:

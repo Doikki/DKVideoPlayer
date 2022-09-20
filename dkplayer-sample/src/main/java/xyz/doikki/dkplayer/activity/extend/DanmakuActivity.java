@@ -38,10 +38,10 @@ public class DanmakuActivity extends BaseActivity<VideoView> {
         mMyDanmakuView = new MyDanmakuView(this);
         controller.addControlComponent(mMyDanmakuView);
         mVideoView.setVideoController(controller);
-        mVideoView.setUrl(DataUtil.SAMPLE_URL);
+        mVideoView.setDataSource(DataUtil.SAMPLE_URL);
         mVideoView.start();
 
-        mVideoView.addOnStateChangeListener(new VideoView.SimpleOnStateChangeListener() {
+        mVideoView.addOnStateChangeListener(new VideoView.OnStateChangeListener() {
             @Override
             public void onPlayStateChanged(int playState) {
                 if (playState == VideoView.STATE_PREPARED) {

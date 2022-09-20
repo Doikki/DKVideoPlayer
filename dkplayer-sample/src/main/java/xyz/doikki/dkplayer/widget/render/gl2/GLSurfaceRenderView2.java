@@ -1,7 +1,6 @@
 package xyz.doikki.dkplayer.widget.render.gl2;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 import android.view.View;
@@ -11,11 +10,11 @@ import androidx.annotation.NonNull;
 import xyz.doikki.dkplayer.widget.render.gl2.chooser.GLConfigChooser;
 import xyz.doikki.dkplayer.widget.render.gl2.contextfactory.GLContextFactory;
 import xyz.doikki.dkplayer.widget.render.gl2.filter.GlFilter;
-import xyz.doikki.videoplayer.MediaPlayer;
-import xyz.doikki.videoplayer.render.IRenderView;
+import xyz.doikki.videoplayer.AVPlayer;
 import xyz.doikki.videoplayer.render.MeasureHelper;
+import xyz.doikki.videoplayer.render.Render;
 
-public class GLSurfaceRenderView2 extends GLSurfaceView implements IRenderView {
+public class GLSurfaceRenderView2 extends GLSurfaceView implements Render {
 
     private final GLVideoRenderer renderer;
 
@@ -34,7 +33,7 @@ public class GLSurfaceRenderView2 extends GLSurfaceView implements IRenderView {
     private final MeasureHelper mMeasureHelper = new MeasureHelper();
 
     @Override
-    public void attachToPlayer(@NonNull MediaPlayer player) {
+    public void attachToPlayer(@NonNull AVPlayer player) {
         this.renderer.setPlayer(player);
     }
 
@@ -45,6 +44,7 @@ public class GLSurfaceRenderView2 extends GLSurfaceView implements IRenderView {
             requestLayout();
         }
     }
+
 
     @Override
     public void setVideoRotation(int degree) {
@@ -64,8 +64,14 @@ public class GLSurfaceRenderView2 extends GLSurfaceView implements IRenderView {
     }
 
     @Override
-    public Bitmap doScreenShot() {
-        return null;
+    public void screenshot(boolean highQuality, @NonNull ScreenShotCallback callback) {
+        //todo glsurface 是可以截图的，待处理
+        callback.onScreenShotResult(null);
+    }
+
+    @Override
+    public void setSurfaceListener(SurfaceListener listener) {
+        //todo
     }
 
     @Override

@@ -165,7 +165,7 @@ public class PIPListActivity extends BaseActivity implements OnItemChildClickLis
             releaseVideoView();
         }
         VideoBean videoBean = mVideos.get(position);
-        mVideoView.setUrl(videoBean.getUrl());
+        mVideoView.setDataSource(videoBean.getUrl());
         mTitleView.setTitle(videoBean.getTitle());
         View itemView = mLinearLayoutManager.findViewByPosition(position);
         if (itemView == null) return;

@@ -10,7 +10,8 @@ import android.view.SurfaceHolder;
 
 import java.util.Map;
 
-import xyz.doikki.videoplayer.MediaPlayer;
+import xyz.doikki.videoplayer.AVPlayer;
+import xyz.doikki.videoplayer.AbstractAVPlayer;
 import xyz.doikki.videoplayer.player.AndroidMediaPlayerException;
 import xyz.doikki.videoplayer.util.L;
 
@@ -18,134 +19,137 @@ import xyz.doikki.videoplayer.util.L;
  * 基于系统{@link android.media.MediaPlayer}封装
  * 注意：不推荐，兼容性差，建议使用IJK或者Exo播放器
  */
-public class SysMediaPlayer extends MediaPlayer implements android.media.MediaPlayer.OnErrorListener,
+public class SysMediaPlayer extends AbstractAVPlayer implements android.media.MediaPlayer.OnErrorListener,
         android.media.MediaPlayer.OnCompletionListener, android.media.MediaPlayer.OnInfoListener,
         android.media.MediaPlayer.OnBufferingUpdateListener, android.media.MediaPlayer.OnPreparedListener,
         android.media.MediaPlayer.OnVideoSizeChangedListener {
 
-    protected android.media.MediaPlayer mMediaPlayer;
-    private int mBufferedPercent;
-    protected Context mAppContext;
-    private boolean mIsPreparing;
+    //系统播放器核心
+    private android.media.MediaPlayer kernel;
+    private int bufferedPercent;
+    protected Context appContext;
+
+    /**
+     * 是否正在准备阶段：用于解决{@link android.media.MediaPlayer#MEDIA_INFO_VIDEO_RENDERING_START}多次回调问题
+     */
+    private boolean isPreparing;
 
     public SysMediaPlayer(Context context) {
-        mAppContext = context.getApplicationContext();
+        appContext = context.getApplicationContext();
     }
 
     @Override
-    public void initPlayer() {
-        mMediaPlayer = new android.media.MediaPlayer();
-        setOptions();
-        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        mMediaPlayer.setOnErrorListener(this);
-        mMediaPlayer.setOnCompletionListener(this);
-        mMediaPlayer.setOnInfoListener(this);
-        mMediaPlayer.setOnBufferingUpdateListener(this);
-        mMediaPlayer.setOnPreparedListener(this);
-        mMediaPlayer.setOnVideoSizeChangedListener(this);
+    public void init() {
+        kernel = new android.media.MediaPlayer();
+        kernel.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        kernel.setOnErrorListener(this);
+        kernel.setOnCompletionListener(this);
+        kernel.setOnInfoListener(this);
+        kernel.setOnBufferingUpdateListener(this);
+        kernel.setOnPreparedListener(this);
+        kernel.setOnVideoSizeChangedListener(this);
     }
 
     @Override
     public void setDataSource(String path, Map<String, String> headers) {
         try {
-            mMediaPlayer.setDataSource(mAppContext, Uri.parse(path), headers);
-        } catch (Exception e) {
-            mPlayerEventListener.onError(e);
+            kernel.setDataSource(appContext, Uri.parse(path), headers);
+        } catch (Throwable e) {
+            eventListener.onError(e);
         }
     }
 
     @Override
     public void setDataSource(AssetFileDescriptor fd) {
         try {
-            mMediaPlayer.setDataSource(fd.getFileDescriptor(), fd.getStartOffset(), fd.getLength());
-        } catch (Exception e) {
-            mPlayerEventListener.onError(e);
+            kernel.setDataSource(fd.getFileDescriptor(), fd.getStartOffset(), fd.getLength());
+        } catch (Throwable e) {
+            eventListener.onError(e);
         }
     }
 
     @Override
     public void start() {
         try {
-            mMediaPlayer.start();
+            kernel.start();
         } catch (IllegalStateException e) {
-            mPlayerEventListener.onError(e);
+            eventListener.onError(e);
         }
     }
 
     @Override
     public void pause() {
         try {
-            mMediaPlayer.pause();
+            kernel.pause();
         } catch (IllegalStateException e) {
-            mPlayerEventListener.onError(e);
+            eventListener.onError(e);
         }
     }
 
     @Override
     public void stop() {
         try {
-            mMediaPlayer.stop();
+            kernel.stop();
         } catch (IllegalStateException e) {
-            mPlayerEventListener.onError(e);
+            eventListener.onError(e);
         }
     }
 
     @Override
     public void prepareAsync() {
         try {
-            mIsPreparing = true;
-            mMediaPlayer.prepareAsync();
+            isPreparing = true;
+            kernel.prepareAsync();
         } catch (IllegalStateException e) {
-            mPlayerEventListener.onError(e);
+            eventListener.onError(e);
         }
     }
 
     @Override
     public void reset() {
         stop();
-        mMediaPlayer.reset();
-        mMediaPlayer.setSurface(null);
-        mMediaPlayer.setDisplay(null);
-        mMediaPlayer.setVolume(1, 1);
+        kernel.reset();
+        kernel.setSurface(null);
+        kernel.setDisplay(null);
+        kernel.setVolume(1, 1);
     }
 
     @Override
     public boolean isPlaying() {
-        return mMediaPlayer.isPlaying();
+        return kernel.isPlaying();
     }
 
     @Override
-    public void seekTo(long timeMills) {
+    public void seekTo(long msec) {
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (Build.VERSION.SDK_INT >= 26) {
                 //使用这个api seekTo定位更加准确 支持android 8.0以上的设备 https://developer.android.com/reference/android/media/MediaPlayer#SEEK_CLOSEST
-                mMediaPlayer.seekTo(timeMills, android.media.MediaPlayer.SEEK_CLOSEST);
+                kernel.seekTo(msec, android.media.MediaPlayer.SEEK_CLOSEST);
             } else {
-                mMediaPlayer.seekTo((int) timeMills);
+                kernel.seekTo((int) msec);
             }
         } catch (IllegalStateException e) {
-            mPlayerEventListener.onError(e);
+            eventListener.onError(e);
         }
     }
 
     @Override
     public void release() {
-        mMediaPlayer.setOnErrorListener(null);
-        mMediaPlayer.setOnCompletionListener(null);
-        mMediaPlayer.setOnInfoListener(null);
-        mMediaPlayer.setOnBufferingUpdateListener(null);
-        mMediaPlayer.setOnPreparedListener(null);
-        mMediaPlayer.setOnVideoSizeChangedListener(null);
+        kernel.setOnErrorListener(null);
+        kernel.setOnCompletionListener(null);
+        kernel.setOnInfoListener(null);
+        kernel.setOnBufferingUpdateListener(null);
+        kernel.setOnPreparedListener(null);
+        kernel.setOnVideoSizeChangedListener(null);
         stop();
-        final android.media.MediaPlayer mediaPlayer = mMediaPlayer;
-        mMediaPlayer = null;
-        //todo 此处挂独立线程是否合理？
+        final android.media.MediaPlayer mediaPlayer = kernel;
+        kernel = null;
         new Thread() {
             @Override
             public void run() {
                 try {
                     mediaPlayer.release();
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     e.printStackTrace();
                 }
             }
@@ -154,49 +158,45 @@ public class SysMediaPlayer extends MediaPlayer implements android.media.MediaPl
 
     @Override
     public long getCurrentPosition() {
-        return mMediaPlayer.getCurrentPosition();
+        return kernel.getCurrentPosition();
     }
 
     @Override
     public long getDuration() {
-        return mMediaPlayer.getDuration();
+        return kernel.getDuration();
     }
 
     @Override
     public int getBufferedPercentage() {
-        return mBufferedPercent;
+        return bufferedPercent;
     }
 
     @Override
     public void setSurface(Surface surface) {
         try {
-            mMediaPlayer.setSurface(surface);
+            kernel.setSurface(surface);
         } catch (Exception e) {
-            mPlayerEventListener.onError(e);
+            eventListener.onError(e);
         }
     }
 
     @Override
     public void setDisplay(SurfaceHolder holder) {
         try {
-            mMediaPlayer.setDisplay(holder);
+            kernel.setDisplay(holder);
         } catch (Exception e) {
-            mPlayerEventListener.onError(e);
+            eventListener.onError(e);
         }
     }
 
     @Override
     public void setVolume(float v1, float v2) {
-        mMediaPlayer.setVolume(v1, v2);
+        kernel.setVolume(v1, v2);
     }
 
     @Override
     public void setLooping(boolean isLooping) {
-        mMediaPlayer.setLooping(isLooping);
-    }
-
-    @Override
-    public void setOptions() {
+        kernel.setLooping(isLooping);
     }
 
     @Override
@@ -207,9 +207,9 @@ public class SysMediaPlayer extends MediaPlayer implements android.media.MediaPl
             return;
         }
         try {
-            mMediaPlayer.setPlaybackParams(mMediaPlayer.getPlaybackParams().setSpeed(speed));
+            kernel.setPlaybackParams(kernel.getPlaybackParams().setSpeed(speed));
         } catch (Exception e) {
-            mPlayerEventListener.onError(e);
+            eventListener.onError(e);
         }
     }
 
@@ -218,7 +218,7 @@ public class SysMediaPlayer extends MediaPlayer implements android.media.MediaPl
         // only support above Android M
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             try {
-                float speed = mMediaPlayer.getPlaybackParams().getSpeed();
+                float speed = kernel.getPlaybackParams().getSpeed();
                 if (speed == 0f) speed = 1f;
                 return speed;
             } catch (Exception e) {
@@ -238,47 +238,47 @@ public class SysMediaPlayer extends MediaPlayer implements android.media.MediaPl
 
     @Override
     public boolean onError(android.media.MediaPlayer mp, int what, int extra) {
-        mPlayerEventListener.onError(new AndroidMediaPlayerException(what, extra));
+        eventListener.onError(new AndroidMediaPlayerException(what, extra));
         return true;
     }
 
     @Override
     public void onCompletion(android.media.MediaPlayer mp) {
-        mPlayerEventListener.onCompletion();
+        eventListener.onCompletion();
     }
 
     @Override
     public boolean onInfo(android.media.MediaPlayer mp, int what, int extra) {
         //解决MEDIA_INFO_VIDEO_RENDERING_START多次回调问题
-        if (what == MediaPlayer.MEDIA_INFO_RENDERING_START) {
-            if (mIsPreparing) {
-                mPlayerEventListener.onInfo(what, extra);
-                mIsPreparing = false;
+        if (what == AVPlayer.MEDIA_INFO_RENDERING_START) {
+            if (isPreparing) {
+                eventListener.onInfo(what, extra);
+                isPreparing = false;
             }
         } else {
-            mPlayerEventListener.onInfo(what, extra);
+            eventListener.onInfo(what, extra);
         }
         return true;
     }
 
     @Override
     public void onBufferingUpdate(android.media.MediaPlayer mp, int percent) {
-        mBufferedPercent = percent;
+        bufferedPercent = percent;
     }
 
     @Override
     public void onPrepared(android.media.MediaPlayer mp) {
-        mPlayerEventListener.onPrepared();
+        eventListener.onPrepared();
         start();
         // 修复播放纯音频时状态出错问题
         if (!isVideo()) {
-            mPlayerEventListener.onInfo(MediaPlayer.MEDIA_INFO_RENDERING_START, 0);
+            eventListener.onInfo(AVPlayer.MEDIA_INFO_RENDERING_START, 0);
         }
     }
 
     private boolean isVideo() {
         try {
-            android.media.MediaPlayer.TrackInfo[] trackInfo = mMediaPlayer.getTrackInfo();
+            android.media.MediaPlayer.TrackInfo[] trackInfo = kernel.getTrackInfo();
             for (android.media.MediaPlayer.TrackInfo info :
                     trackInfo) {
                 if (info.getTrackType() == android.media.MediaPlayer.TrackInfo.MEDIA_TRACK_TYPE_VIDEO) {
@@ -296,7 +296,7 @@ public class SysMediaPlayer extends MediaPlayer implements android.media.MediaPl
         int videoWidth = mp.getVideoWidth();
         int videoHeight = mp.getVideoHeight();
         if (videoWidth != 0 && videoHeight != 0) {
-            mPlayerEventListener.onVideoSizeChanged(videoWidth, videoHeight);
+            eventListener.onVideoSizeChanged(videoWidth, videoHeight);
         }
     }
 

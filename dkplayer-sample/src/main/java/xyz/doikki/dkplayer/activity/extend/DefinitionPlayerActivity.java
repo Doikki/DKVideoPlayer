@@ -46,7 +46,7 @@ public class DefinitionPlayerActivity extends BaseActivity<VideoView> implements
         videos.put("高清", "http://34.92.158.191:8080/test-hd.mp4");
         mDefinitionControlView.setData(videos);
         mVideoView.setVideoController(mController);
-        mVideoView.setUrl(videos.get("标清"));//默认播放标清
+        mVideoView.setDataSource(videos.get("标清"));//默认播放标清
         mVideoView.start();
     }
 
@@ -64,7 +64,7 @@ public class DefinitionPlayerActivity extends BaseActivity<VideoView> implements
 
     @Override
     public void onRateChange(String url) {
-        mVideoView.setUrl(url);
+        mVideoView.setDataSource(url);
         mVideoView.replay(false);
     }
 }

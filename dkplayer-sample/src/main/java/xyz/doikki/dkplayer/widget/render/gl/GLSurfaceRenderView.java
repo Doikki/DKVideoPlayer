@@ -16,7 +16,6 @@
 package xyz.doikki.dkplayer.widget.render.gl;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
 import android.opengl.EGL14;
 import android.opengl.GLES20;
@@ -39,8 +38,8 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 import javax.microedition.khronos.opengles.GL10;
 
-import xyz.doikki.videoplayer.MediaPlayer;
-import xyz.doikki.videoplayer.render.IRenderView;
+import xyz.doikki.videoplayer.AVPlayer;
+import xyz.doikki.videoplayer.render.Render;
 import xyz.doikki.videoplayer.render.MeasureHelper;
 
 /**
@@ -55,14 +54,14 @@ import xyz.doikki.videoplayer.render.MeasureHelper;
  * https://developer.android.com/guide/topics/graphics/opengl?hl=zh-cn
  * https://github.com/google/grafika
  */
-public final class GLSurfaceRenderView extends GLSurfaceView implements IRenderView {
+public final class GLSurfaceRenderView extends GLSurfaceView implements Render {
 
     private final MeasureHelper mMeasureHelper = new MeasureHelper();
 
-    private MediaPlayer player;
+    private AVPlayer player;
 
     @Override
-    public void attachToPlayer(@NonNull MediaPlayer player) {
+    public void attachToPlayer(@NonNull AVPlayer player) {
         this.player = player;
         setVideoRenderer(new BitmapOverlayVideoProcessor(getContext()), false);
     }
@@ -73,6 +72,11 @@ public final class GLSurfaceRenderView extends GLSurfaceView implements IRenderV
             mMeasureHelper.setVideoSize(videoWidth, videoHeight);
             requestLayout();
         }
+    }
+
+    @Override
+    public void setSurfaceListener(SurfaceListener listener) {
+        //todo
     }
 
     @Override
@@ -93,8 +97,9 @@ public final class GLSurfaceRenderView extends GLSurfaceView implements IRenderV
     }
 
     @Override
-    public Bitmap doScreenShot() {
-        return null;
+    public void screenshot(boolean highQuality, @NonNull ScreenShotCallback callback) {
+        //todo glsurface 是可以截图的，待处理
+        callback.onScreenShotResult(null);
     }
 
     @Override

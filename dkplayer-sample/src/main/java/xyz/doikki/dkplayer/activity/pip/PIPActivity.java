@@ -53,7 +53,7 @@ public class PIPActivity extends BaseActivity {
                     .load("http://sh.people.com.cn/NMediaFile/2016/0112/LOCAL201601121344000138197365721.jpg")
                     .placeholder(android.R.color.darker_gray)
                     .into(thumb);
-            videoView.setUrl(DataUtil.SAMPLE_URL);
+            videoView.setDataSource(DataUtil.SAMPLE_URL);
         }
         playerContainer.addView(videoView);
     }

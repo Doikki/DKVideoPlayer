@@ -81,7 +81,7 @@ public class CustomIjkPlayerActivity extends BaseActivity<IjkVideoView> implemen
                 }
 
                 String concatUrl = "file://" + concat.getAbsolutePath();
-                mVideoView.setUrl(concatUrl);
+                mVideoView.setDataSource(concatUrl);
                 break;
             case R.id.btn_rtsp:
                 //使用tcp方式拉取rtsp流，默认是通过udp方式
@@ -97,7 +97,7 @@ public class CustomIjkPlayerActivity extends BaseActivity<IjkVideoView> implemen
 //                mVideoView.addPlayerOption("framedrop", 1L);
 //                String rtspUrl = "rtsp://192.168.31.246:8554/test";
                 String rtspUrl = "rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov";
-                mVideoView.setUrl(rtspUrl);
+                mVideoView.setDataSource(rtspUrl);
                 break;
         }
         mVideoView.start();

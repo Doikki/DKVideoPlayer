@@ -47,7 +47,7 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
     protected void initView() {
         super.initView();
         mVideoView = new VideoView(getActivity());
-        mVideoView.setOnStateChangeListener(new VideoView.SimpleOnStateChangeListener() {
+        mVideoView.addOnStateChangeListener(new VideoView.OnStateChangeListener() {
             @Override
             public void onPlayStateChanged(int playState) {
                 if (playState == VideoView.STATE_IDLE) {
@@ -158,7 +158,7 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
             releaseVideoView();
         }
         VideoBean videoBean = mVideos.get(position);
-        mVideoView.setUrl(videoBean.getUrl());
+        mVideoView.setDataSource(videoBean.getUrl());
         mTitleView.setTitle(videoBean.getTitle());
         View itemView = mAdapter.getItemView(position);
         VideoListViewAdapter.ViewHolder viewHolder = (VideoListViewAdapter.ViewHolder) itemView.getTag();

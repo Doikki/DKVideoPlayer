@@ -53,11 +53,11 @@ public class ADActivity extends BaseActivity<VideoView> {
 
         HttpProxyCacheServer cacheServer = ProxyVideoCacheManager.getProxy(this);
         String proxyUrl = cacheServer.getProxyUrl(URL_AD);
-        mVideoView.setUrl(proxyUrl);
+        mVideoView.setDataSource(proxyUrl);
         mVideoView.setVideoController(mController);
 
         //监听播放结束
-        mVideoView.addOnStateChangeListener(new VideoView.SimpleOnStateChangeListener() {
+        mVideoView.addOnStateChangeListener(new VideoView.OnStateChangeListener() {
             @Override
             public void onPlayStateChanged(int playState) {
                 if (playState == VideoView.STATE_PLAYBACK_COMPLETED) {
@@ -77,7 +77,7 @@ public class ADActivity extends BaseActivity<VideoView> {
         mController.removeAllControlComponent();
         mController.addDefaultControlComponent("正片", false);
         //重新设置数据
-        mVideoView.setUrl(DataUtil.SAMPLE_URL);
+        mVideoView.setDataSource(DataUtil.SAMPLE_URL);
         //开始播放
         mVideoView.start();
     }

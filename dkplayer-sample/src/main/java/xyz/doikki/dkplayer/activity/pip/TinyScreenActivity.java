@@ -49,7 +49,7 @@ public class TinyScreenActivity extends BaseActivity<VideoView> implements OnIte
     @Override
     protected void initView() {
         mVideoView = new VideoView(this);
-        mVideoView.setOnStateChangeListener(new VideoView.SimpleOnStateChangeListener() {
+        mVideoView.addOnStateChangeListener(new VideoView.OnStateChangeListener() {
             @Override
             public void onPlayStateChanged(int playState) {
                 if (playState == VideoView.STATE_PLAYBACK_COMPLETED) {
@@ -123,7 +123,7 @@ public class TinyScreenActivity extends BaseActivity<VideoView> implements OnIte
             releaseVideoView();
         }
         VideoBean videoBean = mVideos.get(position);
-        mVideoView.setUrl(videoBean.getUrl());
+        mVideoView.setDataSource(videoBean.getUrl());
         mTitleView.setTitle(videoBean.getTitle());
         View itemView = mLinearLayoutManager.findViewByPosition(position);
         if (itemView == null) return;

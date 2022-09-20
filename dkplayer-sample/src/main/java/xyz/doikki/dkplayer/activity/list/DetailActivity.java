@@ -74,7 +74,7 @@ public class DetailActivity extends BaseActivity<VideoView> {
         } else {
             //不是无缝播放的情况
             String url = intent.getStringExtra(IntentKeys.URL);
-            mVideoView.setUrl(url);
+            mVideoView.setDataSource(url);
             mVideoView.start();
         }
     }
