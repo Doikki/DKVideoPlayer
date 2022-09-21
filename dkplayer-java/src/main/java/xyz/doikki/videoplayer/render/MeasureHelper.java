@@ -14,7 +14,7 @@ public class MeasureHelper {
 
     private int mVideoRotationDegree;
 
-    public void setVideoRotation(int videoRotationDegree) {
+    public void setVideoRotationDegree(int videoRotationDegree) {
         mVideoRotationDegree = videoRotationDegree;
     }
 
@@ -29,7 +29,7 @@ public class MeasureHelper {
         mVideoHeight = height;
     }
 
-    public void setScreenScale(int screenScale) {
+    public void setAspectRatioType(int screenScale) {
         mCurrentScreenScale = screenScale;
     }
 

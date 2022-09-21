@@ -32,6 +32,7 @@ import xyz.doikki.videoplayer.controller.BaseVideoController;
 import xyz.doikki.videoplayer.controller.MediaPlayerControl;
 import xyz.doikki.videoplayer.player.AudioFocusHelper;
 import xyz.doikki.videoplayer.player.ProgressManager;
+import xyz.doikki.videoplayer.render.AspectRatioType;
 import xyz.doikki.videoplayer.render.Render;
 import xyz.doikki.videoplayer.render.RenderFactory;
 import xyz.doikki.videoplayer.util.L;
@@ -158,12 +159,13 @@ public class VideoView extends FrameLayout
      */
     private boolean mLooping = false;
 
-    public static final int SCREEN_SCALE_DEFAULT = 0;
-    public static final int SCREEN_SCALE_16_9 = 1;
-    public static final int SCREEN_SCALE_4_3 = 2;
-    public static final int SCREEN_SCALE_MATCH_PARENT = 3;
-    public static final int SCREEN_SCALE_ORIGINAL = 4;
-    public static final int SCREEN_SCALE_CENTER_CROP = 5;
+    public static final int SCREEN_SCALE_DEFAULT = AspectRatioType.SCALE;
+    public static final int SCREEN_SCALE_18_9 = AspectRatioType.SCALE_18_9;
+    public static final int SCREEN_SCALE_16_9 = AspectRatioType.SCALE_16_9;
+    public static final int SCREEN_SCALE_4_3 = AspectRatioType.SCALE_4_3;
+    public static final int SCREEN_SCALE_MATCH_PARENT = AspectRatioType.MATCH_PARENT;
+    public static final int SCREEN_SCALE_ORIGINAL = AspectRatioType.SCALE_ORIGINAL;
+    public static final int SCREEN_SCALE_CENTER_CROP = AspectRatioType.CENTER_CROP;
     protected int mScreenScaleType;
 
     protected int[] mVideoSize = {0, 0};
@@ -332,8 +334,8 @@ public class VideoView extends FrameLayout
         mRenderView = createRenderView();
         mRenderView.attachToPlayer(mMediaPlayer);
         LayoutParams params = new LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
                 Gravity.CENTER);
         mPlayerContainer.addView(mRenderView.getView(), 0, params);
     }

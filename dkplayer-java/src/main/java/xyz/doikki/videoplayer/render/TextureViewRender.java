@@ -24,7 +24,7 @@ import xyz.doikki.videoplayer.VideoViewManager;
 @SuppressLint("ViewConstructor")
 public class TextureViewRender extends TextureView implements Render, TextureView.SurfaceTextureListener {
 
-    private final MeasureHelper mMeasureHelper;
+    private final RenderLayoutMeasure mMeasureHelper;
 
     @Nullable
     private WeakReference<AVPlayer> mPlayerRef;
@@ -47,7 +47,7 @@ public class TextureViewRender extends TextureView implements Render, TextureVie
     }
 
     {
-        mMeasureHelper = new MeasureHelper();
+        mMeasureHelper = new RenderLayoutMeasure();
         setSurfaceTextureListener(this);
     }
 
@@ -188,13 +188,13 @@ public class TextureViewRender extends TextureView implements Render, TextureVie
 
     @Override
     public void setVideoRotation(int degree) {
-        mMeasureHelper.setVideoRotation(degree);
+        mMeasureHelper.setVideoRotationDegree(degree);
         setRotation(degree);
     }
 
     @Override
     public void setScaleType(int scaleType) {
-        mMeasureHelper.setScreenScale(scaleType);
+        mMeasureHelper.setAspectRatioType(scaleType);
         requestLayout();
     }
 
@@ -210,8 +210,8 @@ public class TextureViewRender extends TextureView implements Render, TextureVie
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int[] measuredSize = mMeasureHelper.doMeasure(widthMeasureSpec, heightMeasureSpec);
-        setMeasuredDimension(measuredSize[0], measuredSize[1]);
+        mMeasureHelper.doMeasure(widthMeasureSpec, heightMeasureSpec);
+        setMeasuredDimension(mMeasureHelper.getMeasuredWidth(), mMeasureHelper.getMeasuredHeight());
     }
 
 

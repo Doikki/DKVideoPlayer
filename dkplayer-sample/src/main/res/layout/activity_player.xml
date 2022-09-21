@@ -11,6 +11,8 @@
         android:id="@+id/player"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="#ff00ff"
+        app:playerBackgroundColor="#ffff00"
         app:layout_constraintDimensionRatio="16:10"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -38,6 +40,12 @@
                     android:onClick="onButtonClick"
                     android:text="默认" />
 
+                <Button
+                    android:id="@+id/scale_189"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="onButtonClick"
+                    android:text="18:9" />
                 <Button
                     android:id="@+id/scale_169"
                     android:layout_width="wrap_content"

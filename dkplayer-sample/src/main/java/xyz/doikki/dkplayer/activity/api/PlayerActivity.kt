@@ -199,6 +199,7 @@ class PlayerActivity : BaseActivity<VideoView>() {
     fun onButtonClick(view: View) {
         when (view.id) {
             R.id.scale_default -> mVideoView!!.setScreenScaleType(VideoView.SCREEN_SCALE_DEFAULT)
+            R.id.scale_189 -> mVideoView!!.setScreenScaleType(VideoView.SCREEN_SCALE_18_9)
             R.id.scale_169 -> mVideoView!!.setScreenScaleType(VideoView.SCREEN_SCALE_16_9)
             R.id.scale_43 -> mVideoView!!.setScreenScaleType(VideoView.SCREEN_SCALE_4_3)
             R.id.scale_original -> mVideoView!!.setScreenScaleType(VideoView.SCREEN_SCALE_ORIGINAL)

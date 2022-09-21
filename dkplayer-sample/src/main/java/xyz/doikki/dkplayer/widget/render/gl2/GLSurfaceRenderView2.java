@@ -48,13 +48,13 @@ public class GLSurfaceRenderView2 extends GLSurfaceView implements Render {
 
     @Override
     public void setVideoRotation(int degree) {
-        mMeasureHelper.setVideoRotation(degree);
+        mMeasureHelper.setVideoRotationDegree(degree);
         setRotation(degree);
     }
 
     @Override
     public void setScaleType(int scaleType) {
-        mMeasureHelper.setScreenScale(scaleType);
+        mMeasureHelper.setAspectRatioType(scaleType);
         requestLayout();
     }
 
