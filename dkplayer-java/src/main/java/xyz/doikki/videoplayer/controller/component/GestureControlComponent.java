@@ -1,6 +1,11 @@
-package xyz.doikki.videoplayer.controller;
+package xyz.doikki.videoplayer.controller.component;
 
-public interface IGestureComponent extends IControlComponent {
+import xyz.doikki.videoplayer.controller.component.ControlComponent;
+
+/**
+ * 与手势操作相关的控制组件
+ */
+public interface GestureControlComponent extends ControlComponent {
     /**
      * 开始滑动
      */

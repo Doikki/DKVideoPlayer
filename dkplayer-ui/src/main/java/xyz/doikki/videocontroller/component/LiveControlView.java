@@ -16,14 +16,14 @@ import androidx.annotation.Nullable;
 
 import xyz.doikki.videocontroller.R;
 import xyz.doikki.videoplayer.VideoView;
-import xyz.doikki.videoplayer.controller.IControlComponent;
+import xyz.doikki.videoplayer.controller.component.ControlComponent;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
 /**
  * 直播底部控制栏
  */
-public class LiveControlView extends FrameLayout implements IControlComponent, View.OnClickListener {
+public class LiveControlView extends FrameLayout implements ControlComponent, View.OnClickListener {
 
     private ControlWrapper mControlWrapper;
 
@@ -135,7 +135,7 @@ public class LiveControlView extends FrameLayout implements IControlComponent, V
     }
 
     @Override
-    public void setProgress(int duration, int position) {
+    public void onProgressChanged(int duration, int position) {
 
     }
 

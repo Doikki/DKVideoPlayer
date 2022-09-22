@@ -40,7 +40,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import xyz.doikki.videoplayer.AVPlayer;
 import xyz.doikki.videoplayer.render.Render;
-import xyz.doikki.videoplayer.render.MeasureHelper;
+import xyz.doikki.videoplayer.render.RenderLayoutMeasure;
 
 /**
  * {@link GLSurfaceView} that creates a GL context (optionally for protected content) and passes
@@ -56,7 +56,7 @@ import xyz.doikki.videoplayer.render.MeasureHelper;
  */
 public final class GLSurfaceRenderView extends GLSurfaceView implements Render {
 
-    private final MeasureHelper mMeasureHelper = new MeasureHelper();
+    private final RenderLayoutMeasure mMeasureHelper = new RenderLayoutMeasure();
 
     private AVPlayer player;
 
@@ -86,7 +86,7 @@ public final class GLSurfaceRenderView extends GLSurfaceView implements Render {
     }
 
     @Override
-    public void setScaleType(int scaleType) {
+    public void setAspectRatioType(int scaleType) {
         mMeasureHelper.setAspectRatioType(scaleType);
         requestLayout();
     }
@@ -109,8 +109,8 @@ public final class GLSurfaceRenderView extends GLSurfaceView implements Render {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int[] measuredSize = mMeasureHelper.doMeasure(widthMeasureSpec, heightMeasureSpec);
-        setMeasuredDimension(measuredSize[0], measuredSize[1]);
+        mMeasureHelper.doMeasure(widthMeasureSpec, heightMeasureSpec);
+        setMeasuredDimension(mMeasureHelper.getMeasuredWidth(), mMeasureHelper.getMeasuredHeight());
     }
 
     /**

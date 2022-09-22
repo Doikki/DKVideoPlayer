@@ -15,11 +15,11 @@ import androidx.annotation.Nullable;
 
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.videoplayer.VideoView;
-import xyz.doikki.videoplayer.controller.IControlComponent;
+import xyz.doikki.videoplayer.controller.component.ControlComponent;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
-public class AdControlView extends FrameLayout implements IControlComponent, View.OnClickListener {
+public class AdControlView extends FrameLayout implements ControlComponent, View.OnClickListener {
 
     protected TextView mAdTime, mAdDetail;
     protected ImageView mBack, mVolume, mFullScreen, mPlayButton;
@@ -108,7 +108,7 @@ public class AdControlView extends FrameLayout implements IControlComponent, Vie
     }
 
     @Override
-    public void setProgress(int duration, int position) {
+    public void onProgressChanged(int duration, int position) {
         if (mAdTime != null)
             mAdTime.setText(String.format("%s | 跳过", (duration - position) / 1000));
     }

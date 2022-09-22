@@ -3,6 +3,7 @@ package xyz.doikki.dkplayer.activity.api
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.media.MediaPlayer
 import android.text.TextUtils
 import android.view.View
 import android.widget.EditText
@@ -22,6 +23,7 @@ import xyz.doikki.dkplayer.widget.render.gl2.filter.GlWatermarkFilter
 import xyz.doikki.videocontroller.StandardVideoController
 import xyz.doikki.videocontroller.component.*
 import xyz.doikki.videoplayer.VideoView
+import xyz.doikki.videoplayer.render.AspectRatioType
 import xyz.doikki.videoplayer.util.L
 
 /**
@@ -30,6 +32,7 @@ import xyz.doikki.videoplayer.util.L
  */
 class PlayerActivity : BaseActivity<VideoView>() {
 
+    private lateinit var controller:StandardVideoController
     private val renderView by lazy {
         GLSurfaceRenderView2(this)
     }
@@ -40,7 +43,7 @@ class PlayerActivity : BaseActivity<VideoView>() {
         super.initView()
         mVideoView = findViewById(R.id.player)
         intent?.let {
-            val controller = StandardVideoController(this)
+            controller = StandardVideoController(this)
             //根据屏幕方向自动进入/退出全屏
             controller.setEnableOrientation(true)
             val prepareView = PrepareView(this) //准备播放界面
@@ -68,6 +71,8 @@ class PlayerActivity : BaseActivity<VideoView>() {
             //根据是否为直播决定是否需要滑动调节进度
             controller.setCanChangePosition(!isLive)
 
+            MediaPlayer()
+      
             //设置标题
             val title = it.getStringExtra(IntentKeys.TITLE)
             titleView.setTitle(title)
@@ -198,18 +203,23 @@ class PlayerActivity : BaseActivity<VideoView>() {
     private var i = 0
     fun onButtonClick(view: View) {
         when (view.id) {
-            R.id.scale_default -> mVideoView!!.setScreenScaleType(VideoView.SCREEN_SCALE_DEFAULT)
-            R.id.scale_189 -> mVideoView!!.setScreenScaleType(VideoView.SCREEN_SCALE_18_9)
-            R.id.scale_169 -> mVideoView!!.setScreenScaleType(VideoView.SCREEN_SCALE_16_9)
-            R.id.scale_43 -> mVideoView!!.setScreenScaleType(VideoView.SCREEN_SCALE_4_3)
-            R.id.scale_original -> mVideoView!!.setScreenScaleType(VideoView.SCREEN_SCALE_ORIGINAL)
-            R.id.scale_match_parent -> mVideoView!!.setScreenScaleType(VideoView.SCREEN_SCALE_MATCH_PARENT)
-            R.id.scale_center_crop -> mVideoView!!.setScreenScaleType(VideoView.SCREEN_SCALE_CENTER_CROP)
+            R.id.scale_default -> mVideoView!!.setScreenAspectRatioType(AspectRatioType.SCALE)
+            R.id.scale_189 -> mVideoView!!.setScreenAspectRatioType(AspectRatioType.SCALE_18_9)
+            R.id.scale_169 -> mVideoView!!.setScreenAspectRatioType(AspectRatioType.SCALE_16_9)
+            R.id.scale_43 -> mVideoView!!.setScreenAspectRatioType(AspectRatioType.SCALE_4_3)
+            R.id.scale_original -> mVideoView!!.setScreenAspectRatioType(AspectRatioType.SCALE_ORIGINAL)
+            R.id.scale_match_parent -> mVideoView!!.setScreenAspectRatioType(AspectRatioType.MATCH_PARENT)
+            R.id.scale_center_crop -> mVideoView!!.setScreenAspectRatioType(AspectRatioType.CENTER_CROP)
             R.id.speed_0_5 -> mVideoView!!.speed = 0.5f
             R.id.speed_0_75 -> mVideoView!!.speed = 0.75f
             R.id.speed_1_0 -> mVideoView!!.speed = 1.0f
             R.id.speed_1_5 -> mVideoView!!.speed = 1.5f
             R.id.speed_2_0 -> mVideoView!!.speed = 2.0f
+            R.id.rotate90 ->controller.controlWrapper.setRotation(90f)
+            R.id.rotate180 ->controller.controlWrapper.setRotation(180f)
+            R.id.rotate270 ->controller.controlWrapper.setRotation(270f)
+            R.id.rotate60 ->controller.controlWrapper.setRotation(60f)
+            R.id.rotate0 ->controller.controlWrapper.setRotation(0f)
             R.id.screen_shot -> {
                 val imageView = findViewById<ImageView>(R.id.iv_screen_shot)
                 mVideoView!!.screenshot {

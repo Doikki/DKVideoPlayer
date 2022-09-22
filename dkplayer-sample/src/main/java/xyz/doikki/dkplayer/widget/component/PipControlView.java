@@ -16,10 +16,10 @@ import androidx.annotation.Nullable;
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.util.PIPManager;
 import xyz.doikki.videoplayer.VideoView;
-import xyz.doikki.videoplayer.controller.IControlComponent;
+import xyz.doikki.videoplayer.controller.component.ControlComponent;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
 
-public class PipControlView extends FrameLayout implements IControlComponent, View.OnClickListener {
+public class PipControlView extends FrameLayout implements ControlComponent, View.OnClickListener {
 
     private ControlWrapper mControlWrapper;
 
@@ -135,7 +135,7 @@ public class PipControlView extends FrameLayout implements IControlComponent, Vi
     }
 
     @Override
-    public void setProgress(int duration, int position) {
+    public void onProgressChanged(int duration, int position) {
 
     }
 

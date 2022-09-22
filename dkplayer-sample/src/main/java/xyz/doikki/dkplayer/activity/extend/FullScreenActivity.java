@@ -69,7 +69,7 @@ public class FullScreenActivity extends BaseActivity<VideoView> {
         mController.addControlComponent(vodControlView);
         mController.addControlComponent(new GestureView(this));
         mVideoView.setVideoController(mController);
-        mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_16_9);
+        mVideoView.setScreenAspectRatioType(VideoView.SCREEN_ASPECT_RATIO_SCALE_16_9);
         mVideoView.start();
     }
 

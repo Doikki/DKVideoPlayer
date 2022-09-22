@@ -7,10 +7,10 @@ import androidx.annotation.NonNull;
 
 import xyz.doikki.dkplayer.util.Utils;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
-import xyz.doikki.videoplayer.controller.IControlComponent;
+import xyz.doikki.videoplayer.controller.component.ControlComponent;
 import xyz.doikki.videoplayer.util.L;
 
-public class PlayerMonitor implements IControlComponent {
+public class PlayerMonitor implements ControlComponent {
 
     private ControlWrapper mControlWrapper;
 
@@ -40,7 +40,7 @@ public class PlayerMonitor implements IControlComponent {
     }
 
     @Override
-    public void setProgress(int duration, int position) {
+    public void onProgressChanged(int duration, int position) {
         L.d("setProgress: duration: " + duration + " position: " + position + " buffered percent: " + mControlWrapper.getBufferedPercentage());
         L.d("network speed: " + mControlWrapper.getTcpSpeed());
     }

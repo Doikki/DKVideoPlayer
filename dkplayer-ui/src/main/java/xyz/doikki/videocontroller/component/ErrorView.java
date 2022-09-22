@@ -14,14 +14,14 @@ import androidx.annotation.Nullable;
 
 import xyz.doikki.videocontroller.R;
 import xyz.doikki.videoplayer.VideoView;
-import xyz.doikki.videoplayer.controller.IControlComponent;
+import xyz.doikki.videoplayer.controller.component.ControlComponent;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
 
 /**
  * 播放出错提示界面
  * Created by Doikki on 2017/4/13.
  */
-public class ErrorView extends LinearLayout implements IControlComponent {
+public class ErrorView extends LinearLayout implements ControlComponent {
 
     private float mDownX;
     private float mDownY;
@@ -84,7 +84,7 @@ public class ErrorView extends LinearLayout implements IControlComponent {
     }
 
     @Override
-    public void setProgress(int duration, int position) {
+    public void onProgressChanged(int duration, int position) {
 
     }
 

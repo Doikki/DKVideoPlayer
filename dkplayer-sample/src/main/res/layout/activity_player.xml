@@ -138,6 +138,57 @@
                     android:text="2.0" />
             </LinearLayout>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="旋转角度：（由于目前只是强制改变了显示界面的旋转角度，而实际的界面没有旋转，因此测试的结果看起来存在问题：）" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/rotate90"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:onClick="onButtonClick"
+                    android:padding="0dp"
+                    android:text="90°" />
+
+                <Button
+                    android:id="@+id/rotate180"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:onClick="onButtonClick"
+                    android:padding="0dp"
+                    android:text="180°" />
+
+                <Button
+                    android:id="@+id/rotate270"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:onClick="onButtonClick"
+                    android:padding="0dp"
+                    android:text="270°" />
+
+                <Button
+                    android:id="@+id/rotate60"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:onClick="onButtonClick"
+                    android:padding="0dp"
+                    android:text="60" />
+
+                <Button
+                    android:id="@+id/rotate0"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:onClick="onButtonClick"
+                    android:padding="0dp"
+                    android:text="0°" />
+            </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">

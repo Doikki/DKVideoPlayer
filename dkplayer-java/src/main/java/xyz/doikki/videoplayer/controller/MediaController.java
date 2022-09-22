@@ -13,6 +13,7 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.AttrRes;
 import androidx.annotation.CallSuper;
+import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -22,6 +23,7 @@ import java.util.Map;
 
 import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.VideoViewManager;
+import xyz.doikki.videoplayer.controller.component.ControlComponent;
 import xyz.doikki.videoplayer.util.CutoutUtil;
 import xyz.doikki.videoplayer.util.L;
 import xyz.doikki.videoplayer.util.PlayerUtils;
@@ -37,9 +39,14 @@ import xyz.doikki.videoplayer.util.PlayerUtils;
  * 6.设备方向监听: {@link #onOrientationChanged(int)}
  * Created by Doikki on 2017/4/12.
  */
-public abstract class BaseVideoController extends FrameLayout
-        implements IVideoController,
-        OrientationHelper.OnOrientationChangeListener {
+public abstract class MediaController extends FrameLayout implements VideoViewController, OrientationHelper.OnOrientationChangeListener {
+
+    /**
+     * 当前控制器中保存的所有控制组件
+     */
+    protected LinkedHashMap<ControlComponent, Boolean> mControlComponents = new LinkedHashMap<>();
+
+    private MediaPlayerControlV2 mPlayer;
 
     //播放器包装类，集合了MediaPlayerControl的api和IVideoController的api
     protected ControlWrapper mControlWrapper;
@@ -71,24 +78,25 @@ public abstract class BaseVideoController extends FrameLayout
     //是否开始刷新进度
     private boolean mIsStartProgress;
 
-    //保存了所有的控制组件
-    protected LinkedHashMap<IControlComponent, Boolean> mControlComponents = new LinkedHashMap<>();
 
     private Animation mShowAnim;
     private Animation mHideAnim;
 
-    public BaseVideoController(@NonNull Context context) {
+    public MediaController(@NonNull Context context) {
         this(context, null);
     }
 
-    public BaseVideoController(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public MediaController(@NonNull Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
-
     }
 
-    public BaseVideoController(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
+    public MediaController(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initView();
+    }
+
+    public ControlWrapper getControlWrapper() {
+        return mControlWrapper;
     }
 
     protected void initView() {
@@ -119,19 +127,25 @@ public abstract class BaseVideoController extends FrameLayout
     public void setMediaPlayer(MediaPlayerControl mediaPlayer) {
         mControlWrapper = new ControlWrapper(mediaPlayer, this);
         //绑定ControlComponent和Controller
-        for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
-            IControlComponent component = next.getKey();
+        for (Map.Entry<ControlComponent, Boolean> next : mControlComponents.entrySet()) {
+            ControlComponent component = next.getKey();
             component.attach(mControlWrapper);
         }
         //开始监听设备方向
         mOrientationHelper.setOnOrientationChangeListener(this);
     }
 
+    public void setMediaPlayer(MediaPlayerControlV2 mediaPlayer){
+        mPlayer = mediaPlayer;
+    }
+
+    /***********START 关键方法代码************/
+
     /**
      * 添加控制组件，最后面添加的在最下面，合理组织添加顺序，可让ControlComponent位于不同的层级
      */
-    public void addControlComponent(IControlComponent... component) {
-        for (IControlComponent item : component) {
+    public void addControlComponent(@NonNull ControlComponent... component) {
+        for (ControlComponent item : component) {
             addControlComponent(item, false);
         }
     }
@@ -152,7 +166,7 @@ public abstract class BaseVideoController extends FrameLayout
      *                     假设有这样一种需求，播放器控制区域在显示区域的下面，此时你就可以通过自定义 ControlComponent
      *                     并将 isDissociate 设置为 true 来实现这种效果。
      */
-    public void addControlComponent(IControlComponent component, boolean isDissociate) {
+    public void addControlComponent(@NonNull ControlComponent component, boolean isDissociate) {
         mControlComponents.put(component, isDissociate);
         if (mControlWrapper != null) {
             component.attach(mControlWrapper);
@@ -166,8 +180,8 @@ public abstract class BaseVideoController extends FrameLayout
     /**
      * 移除某个控制组件
      */
-    public void removeControlComponent(IControlComponent component) {
-        removeView(component.getView());
+    public void removeControlComponent(@NonNull ControlComponent component) {
+        removeControlComponentView(component);
         mControlComponents.remove(component);
     }
 
@@ -175,25 +189,41 @@ public abstract class BaseVideoController extends FrameLayout
      * 移除所有控制组件
      */
     public void removeAllControlComponent() {
-        for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
-            removeView(next.getKey().getView());
+        for (Map.Entry<ControlComponent, Boolean> item : mControlComponents.entrySet()) {
+            removeControlComponentView(item.getKey());
         }
         mControlComponents.clear();
     }
 
     /**
      * 移除所有的游离控制组件
-     * 关于游离控制组件的定义请看 {@link #addControlComponent(IControlComponent, boolean)} 关于 isDissociate 的解释
+     * 关于游离控制组件的定义请看 {@link #addControlComponent(ControlComponent, boolean)} 关于 isDissociate 的解释
      */
     public void removeAllDissociateComponents() {
-        Iterator<Map.Entry<IControlComponent, Boolean>> it = mControlComponents.entrySet().iterator();
+        Iterator<Map.Entry<ControlComponent, Boolean>> it = mControlComponents.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry<IControlComponent, Boolean> next = it.next();
+            Map.Entry<ControlComponent, Boolean> next = it.next();
             if (next.getValue()) {
                 it.remove();
             }
         }
     }
+
+    /**
+     * 从当前控制器中移除添加的控制器view
+     *
+     * @param component
+     */
+    private void removeControlComponentView(ControlComponent component) {
+        View view = component.getView();
+        if (view == null)
+            return;
+        removeView(view);
+    }
+
+    /***********END 关键方法代码************/
+
+    /***********START 关键方法代码************/
 
     /**
      * {@link VideoView}调用此方法向控制器设置播放状态
@@ -541,9 +571,9 @@ public abstract class BaseVideoController extends FrameLayout
 
     private void handleVisibilityChanged(boolean isVisible, Animation anim) {
         if (!mIsLocked) { //没锁住时才向ControlComponent下发此事件
-            for (Map.Entry<IControlComponent, Boolean> next
+            for (Map.Entry<ControlComponent, Boolean> next
                     : mControlComponents.entrySet()) {
-                IControlComponent component = next.getKey();
+                ControlComponent component = next.getKey();
                 component.onVisibilityChanged(isVisible, anim);
             }
         }
@@ -561,9 +591,9 @@ public abstract class BaseVideoController extends FrameLayout
     }
 
     private void handlePlayStateChanged(int playState) {
-        for (Map.Entry<IControlComponent, Boolean> next
+        for (Map.Entry<ControlComponent, Boolean> next
                 : mControlComponents.entrySet()) {
-            IControlComponent component = next.getKey();
+            ControlComponent component = next.getKey();
             component.onPlayStateChanged(playState);
         }
         onPlayStateChanged(playState);
@@ -595,9 +625,9 @@ public abstract class BaseVideoController extends FrameLayout
     }
 
     private void handlePlayerStateChanged(int playerState) {
-        for (Map.Entry<IControlComponent, Boolean> next
+        for (Map.Entry<ControlComponent, Boolean> next
                 : mControlComponents.entrySet()) {
-            IControlComponent component = next.getKey();
+            ControlComponent component = next.getKey();
             component.onPlayerStateChanged(playerState);
         }
         onPlayerStateChanged(playerState);
@@ -633,10 +663,10 @@ public abstract class BaseVideoController extends FrameLayout
     }
 
     private void handleSetProgress(int duration, int position) {
-        for (Map.Entry<IControlComponent, Boolean> next
+        for (Map.Entry<ControlComponent, Boolean> next
                 : mControlComponents.entrySet()) {
-            IControlComponent component = next.getKey();
-            component.setProgress(duration, position);
+            ControlComponent component = next.getKey();
+            component.onProgressChanged(duration, position);
         }
         setProgress(duration, position);
     }
@@ -652,9 +682,9 @@ public abstract class BaseVideoController extends FrameLayout
     }
 
     private void handleLockStateChanged(boolean isLocked) {
-        for (Map.Entry<IControlComponent, Boolean> next
+        for (Map.Entry<ControlComponent, Boolean> next
                 : mControlComponents.entrySet()) {
-            IControlComponent component = next.getKey();
+            ControlComponent component = next.getKey();
             component.onLockStateChanged(isLocked);
         }
         onLockStateChanged(isLocked);
@@ -665,6 +695,55 @@ public abstract class BaseVideoController extends FrameLayout
      */
     protected void onLockStateChanged(boolean isLocked) {
 
+    }
+
+    interface MediaPlayerControlV2 {
+
+        /**
+         * 开始播放
+         */
+        void start();
+
+        /**
+         * 暂停
+         */
+        void pause();
+
+        /**
+         * 播放时长
+         *
+         * @return
+         */
+        int getDuration();
+
+        /**
+         * 当前播放位置
+         *
+         * @return
+         */
+        int getCurrentPosition();
+
+        /**
+         * 调整播放位置
+         *
+         * @param pos
+         */
+        void seekTo(int pos);
+
+        /**
+         * 是否正在播放
+         *
+         * @return
+         */
+        boolean isPlaying();
+
+        /**
+         * 缓冲半分比
+         *
+         * @return
+         */
+        @IntRange(from = 0,to = 100)
+        int getBufferPercentage();
     }
 
     //------------------------ end handle event change ------------------------//

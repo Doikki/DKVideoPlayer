@@ -11,8 +11,8 @@ import xyz.doikki.dkplayer.widget.render.gl2.chooser.GLConfigChooser;
 import xyz.doikki.dkplayer.widget.render.gl2.contextfactory.GLContextFactory;
 import xyz.doikki.dkplayer.widget.render.gl2.filter.GlFilter;
 import xyz.doikki.videoplayer.AVPlayer;
-import xyz.doikki.videoplayer.render.MeasureHelper;
 import xyz.doikki.videoplayer.render.Render;
+import xyz.doikki.videoplayer.render.RenderLayoutMeasure;
 
 public class GLSurfaceRenderView2 extends GLSurfaceView implements Render {
 
@@ -30,7 +30,7 @@ public class GLSurfaceRenderView2 extends GLSurfaceView implements Render {
         setRenderer(renderer);
     }
 
-    private final MeasureHelper mMeasureHelper = new MeasureHelper();
+    private final RenderLayoutMeasure mMeasureHelper = new RenderLayoutMeasure();
 
     @Override
     public void attachToPlayer(@NonNull AVPlayer player) {
@@ -53,7 +53,7 @@ public class GLSurfaceRenderView2 extends GLSurfaceView implements Render {
     }
 
     @Override
-    public void setScaleType(int scaleType) {
+    public void setAspectRatioType(int scaleType) {
         mMeasureHelper.setAspectRatioType(scaleType);
         requestLayout();
     }
@@ -85,8 +85,8 @@ public class GLSurfaceRenderView2 extends GLSurfaceView implements Render {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int[] measuredSize = mMeasureHelper.doMeasure(widthMeasureSpec, heightMeasureSpec);
-        setMeasuredDimension(measuredSize[0], measuredSize[1]);
+        mMeasureHelper.doMeasure(widthMeasureSpec, heightMeasureSpec);
+        setMeasuredDimension(mMeasureHelper.getMeasuredWidth(), mMeasureHelper.getMeasuredHeight());
     }
 
     @Override

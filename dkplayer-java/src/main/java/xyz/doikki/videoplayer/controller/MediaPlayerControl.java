@@ -2,9 +2,8 @@ package xyz.doikki.videoplayer.controller;
 
 import xyz.doikki.videoplayer.AVPlayerFunction;
 
-public interface MediaPlayerControl extends AVPlayerFunction, VideoController {
+public interface MediaPlayerControl extends AVPlayerFunction,  VideoController {
 
-    void pause();
 
     void startFullScreen();
 
@@ -13,13 +12,10 @@ public interface MediaPlayerControl extends AVPlayerFunction, VideoController {
     boolean isFullScreen();
 
 
-
-    void setScreenScaleType(int screenScaleType);
-
-    void setSpeed(float speed);
-
-    float getSpeed();
-
+    /**
+     * 获取缓冲网速：只有IJK播放器支持
+     * @return
+     */
     long getTcpSpeed();
 
     void replay(boolean resetPosition);

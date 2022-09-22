@@ -65,6 +65,6 @@ public @interface AspectRatioType {
      *
      * @see android.widget.ImageView.ScaleType#FIT_XY
      */
-    int MATCH_PARENT = 11;
+    int MATCH_PARENT = 20;
 
 }

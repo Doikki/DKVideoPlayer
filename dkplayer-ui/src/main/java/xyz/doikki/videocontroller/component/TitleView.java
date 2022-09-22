@@ -21,14 +21,14 @@ import androidx.annotation.Nullable;
 
 import xyz.doikki.videocontroller.R;
 import xyz.doikki.videoplayer.VideoView;
-import xyz.doikki.videoplayer.controller.IControlComponent;
+import xyz.doikki.videoplayer.controller.component.ControlComponent;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
 /**
  * 播放器顶部标题栏
  */
-public class TitleView extends FrameLayout implements IControlComponent {
+public class TitleView extends FrameLayout implements ControlComponent {
 
     private ControlWrapper mControlWrapper;
 
@@ -169,7 +169,7 @@ public class TitleView extends FrameLayout implements IControlComponent {
     }
 
     @Override
-    public void setProgress(int duration, int position) {
+    public void onProgressChanged(int duration, int position) {
 
     }
 

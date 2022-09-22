@@ -15,7 +15,7 @@ import androidx.core.content.ContextCompat;
 
 import xyz.doikki.dkplayer.util.Utils;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
-import xyz.doikki.videoplayer.controller.IControlComponent;
+import xyz.doikki.videoplayer.controller.component.ControlComponent;
 import xyz.doikki.videoplayer.exo.ExoMediaPlayerFactory;
 import xyz.doikki.videoplayer.ijk.IjkPlayerFactory;
 import xyz.doikki.videoplayer.sys.SysMediaPlayerFactory;
@@ -23,7 +23,7 @@ import xyz.doikki.videoplayer.sys.SysMediaPlayerFactory;
 /**
  * 调试信息
  */
-public class DebugInfoView extends AppCompatTextView implements IControlComponent {
+public class DebugInfoView extends AppCompatTextView implements ControlComponent {
 
     private ControlWrapper mControlWrapper;
 
@@ -99,7 +99,7 @@ public class DebugInfoView extends AppCompatTextView implements IControlComponen
     }
 
     @Override
-    public void setProgress(int duration, int position) {
+    public void onProgressChanged(int duration, int position) {
 
     }
 

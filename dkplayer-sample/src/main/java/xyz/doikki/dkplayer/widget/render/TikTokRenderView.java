@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import xyz.doikki.videoplayer.AVPlayer;
 import xyz.doikki.videoplayer.VideoView;
+import xyz.doikki.videoplayer.render.AspectRatioType;
 import xyz.doikki.videoplayer.render.Render;
 
 /**
@@ -31,10 +32,10 @@ public class TikTokRenderView implements Render {
             mProxyRenderView.setVideoSize(videoWidth, videoHeight);
             if (videoHeight > videoWidth) {
                 //竖屏视频，使用居中裁剪
-                mProxyRenderView.setScaleType(VideoView.SCREEN_SCALE_CENTER_CROP);
+                mProxyRenderView.setAspectRatioType(AspectRatioType.CENTER_CROP);
             } else {
                 //横屏视频，使用默认模式
-                mProxyRenderView.setScaleType(VideoView.SCREEN_SCALE_DEFAULT);
+                mProxyRenderView.setAspectRatioType(AspectRatioType.SCALE);
             }
         }
     }
@@ -50,7 +51,7 @@ public class TikTokRenderView implements Render {
     }
 
     @Override
-    public void setScaleType(int scaleType) {
+    public void setAspectRatioType(int scaleType) {
         // 置空，不要让外部去设置ScaleType
     }
 

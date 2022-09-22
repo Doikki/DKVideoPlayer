@@ -27,6 +27,7 @@ import xyz.doikki.videocontroller.component.PrepareView;
 import xyz.doikki.videocontroller.component.TitleView;
 import xyz.doikki.videocontroller.component.VodControlView;
 import xyz.doikki.videoplayer.VideoView;
+import xyz.doikki.videoplayer.render.AspectRatioType;
 import xyz.doikki.videoplayer.render.Render;
 import xyz.doikki.videoplayer.util.L;
 
@@ -211,22 +212,22 @@ public class PlayerActivityJava extends BaseActivity<VideoView> {
         int id = view.getId();
         switch (id) {
             case R.id.scale_default:
-                mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_DEFAULT);
+                mVideoView.setScreenAspectRatioType(AspectRatioType.SCALE);
                 break;
             case R.id.scale_169:
-                mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_16_9);
+                mVideoView.setScreenAspectRatioType(AspectRatioType.SCALE_16_9);
                 break;
             case R.id.scale_43:
-                mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_4_3);
+                mVideoView.setScreenAspectRatioType(AspectRatioType.SCALE_4_3);
                 break;
             case R.id.scale_original:
-                mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_ORIGINAL);
+                mVideoView.setScreenAspectRatioType(AspectRatioType.SCALE_ORIGINAL);
                 break;
             case R.id.scale_match_parent:
-                mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_MATCH_PARENT);
+                mVideoView.setScreenAspectRatioType(AspectRatioType.MATCH_PARENT);
                 break;
             case R.id.scale_center_crop:
-                mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_CENTER_CROP);
+                mVideoView.setScreenAspectRatioType(AspectRatioType.CENTER_CROP);
                 break;
 
             case R.id.speed_0_5:

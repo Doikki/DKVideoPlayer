@@ -16,6 +16,8 @@ import androidx.annotation.Nullable;
 import java.util.Map;
 
 import xyz.doikki.videoplayer.VideoView;
+import xyz.doikki.videoplayer.controller.component.ControlComponent;
+import xyz.doikki.videoplayer.controller.component.GestureControlComponent;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
 /**
@@ -23,7 +25,7 @@ import xyz.doikki.videoplayer.util.PlayerUtils;
  * Created by Doikki on 2018/1/6.
  */
 
-public abstract class GestureVideoController extends BaseVideoController implements
+public abstract class GestureVideoController extends MediaController implements
         GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener,
         View.OnTouchListener {
@@ -203,10 +205,10 @@ public abstract class GestureVideoController extends BaseVideoController impleme
             }
 
             if (mChangePosition || mChangeBrightness || mChangeVolume) {
-                for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
-                    IControlComponent component = next.getKey();
-                    if (component instanceof IGestureComponent) {
-                        ((IGestureComponent) component).onStartSlide();
+                for (Map.Entry<ControlComponent, Boolean> next : mControlComponents.entrySet()) {
+                    ControlComponent component = next.getKey();
+                    if (component instanceof GestureControlComponent) {
+                        ((GestureControlComponent) component).onStartSlide();
                     }
                 }
             }
@@ -230,10 +232,10 @@ public abstract class GestureVideoController extends BaseVideoController impleme
         int position = (int) (deltaX / width * 120000 + currentPosition);
         if (position > duration) position = duration;
         if (position < 0) position = 0;
-        for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
-            IControlComponent component = next.getKey();
-            if (component instanceof IGestureComponent) {
-                ((IGestureComponent) component).onPositionChange(position, currentPosition, duration);
+        for (Map.Entry<ControlComponent, Boolean> next : mControlComponents.entrySet()) {
+            ControlComponent component = next.getKey();
+            if (component instanceof GestureControlComponent) {
+                ((GestureControlComponent) component).onPositionChange(position, currentPosition, duration);
             }
         }
         mSeekPosition = position;
@@ -254,10 +256,10 @@ public abstract class GestureVideoController extends BaseVideoController impleme
         int percent = (int) (brightness * 100);
         attributes.screenBrightness = brightness;
         window.setAttributes(attributes);
-        for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
-            IControlComponent component = next.getKey();
-            if (component instanceof IGestureComponent) {
-                ((IGestureComponent) component).onBrightnessChange(percent);
+        for (Map.Entry<ControlComponent, Boolean> next : mControlComponents.entrySet()) {
+            ControlComponent component = next.getKey();
+            if (component instanceof GestureControlComponent) {
+                ((GestureControlComponent) component).onBrightnessChange(percent);
             }
         }
     }
@@ -271,10 +273,10 @@ public abstract class GestureVideoController extends BaseVideoController impleme
         if (index < 0) index = 0;
         int percent = (int) (index / streamMaxVolume * 100);
         mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (int) index, 0);
-        for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
-            IControlComponent component = next.getKey();
-            if (component instanceof IGestureComponent) {
-                ((IGestureComponent) component).onVolumeChange(percent);
+        for (Map.Entry<ControlComponent, Boolean> next : mControlComponents.entrySet()) {
+            ControlComponent component = next.getKey();
+            if (component instanceof GestureControlComponent) {
+                ((GestureControlComponent) component).onVolumeChange(percent);
             }
         }
     }
@@ -302,10 +304,10 @@ public abstract class GestureVideoController extends BaseVideoController impleme
     }
 
     private void stopSlide() {
-        for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
-            IControlComponent component = next.getKey();
-            if (component instanceof IGestureComponent) {
-                ((IGestureComponent) component).onStopSlide();
+        for (Map.Entry<ControlComponent, Boolean> next : mControlComponents.entrySet()) {
+            ControlComponent component = next.getKey();
+            if (component instanceof GestureControlComponent) {
+                ((GestureControlComponent) component).onStopSlide();
             }
         }
     }

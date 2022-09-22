@@ -28,7 +28,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import xyz.doikki.videoplayer.controller.BaseVideoController;
+import xyz.doikki.videoplayer.controller.MediaController;
 import xyz.doikki.videoplayer.controller.MediaPlayerControl;
 import xyz.doikki.videoplayer.player.AudioFocusHelper;
 import xyz.doikki.videoplayer.player.ProgressManager;
@@ -96,14 +96,41 @@ public class VideoView extends FrameLayout
     /**
      * 播放过程中停止继续播放：比如手机不允许在手机流量的时候进行播放（此时播放器处于已就绪未播放中状态）
      */
-    public static final int STATE_START_ABORT = 8;//开始播放中止
+    public static final int STATE_START_ABORT = 8;
+
+    public static final int SCREEN_ASPECT_RATIO_DEFAULT = AspectRatioType.SCALE;
+    public static final int SCREEN_ASPECT_RATIO_SCALE_18_9 = AspectRatioType.SCALE_18_9;
+    public static final int SCREEN_ASPECT_RATIO_SCALE_16_9 = AspectRatioType.SCALE_16_9;
+    public static final int SCREEN_ASPECT_RATIO_SCALE_4_3 = AspectRatioType.SCALE_4_3;
+    public static final int SCREEN_ASPECT_RATIO_MATCH_PARENT = AspectRatioType.MATCH_PARENT;
+    public static final int SCREEN_ASPECT_RATIO_SCALE_ORIGINAL = AspectRatioType.SCALE_ORIGINAL;
+    public static final int SCREEN_ASPECT_RATIO_CENTER_CROP = AspectRatioType.CENTER_CROP;
 
     /**
      * 播放器状态
      */
     @IntDef({STATE_ERROR, STATE_IDLE, STATE_PREPARING, STATE_PREPARED, STATE_PLAYING, STATE_PAUSED, STATE_PLAYBACK_COMPLETED, STATE_BUFFERING, STATE_BUFFERED, STATE_START_ABORT})
     @Retention(RetentionPolicy.SOURCE)
-    public @interface PlayerState { }
+    public @interface PlayerState {
+    }
+
+    @Nullable
+    protected MediaController mVideoController;//控制器
+
+    /**
+     * 真正承载播放器视图的容器
+     */
+    protected FrameLayout mPlayerContainer;
+
+    /**
+     * 播放器内核
+     */
+    protected AVPlayer mMediaPlayer;//播放器
+
+    /**
+     * 自定义播放器构建工厂
+     */
+    private AVPlayerFactory<? extends AVPlayer> mPlayerFactory;
 
     /**
      * 当前播放器的状态
@@ -112,20 +139,8 @@ public class VideoView extends FrameLayout
     private int mPlayerState = STATE_IDLE;
 
     /**
-     * 播放器内核
+     * 渲染视图
      */
-    protected AVPlayer mMediaPlayer;//播放器
-
-    private AVPlayerFactory<? extends AVPlayer> mPlayerFactory;//工厂类，用于实例化播放核心
-
-    @Nullable
-    protected BaseVideoController mVideoController;//控制器
-
-    /**
-     * 真正承载播放器视图的容器
-     */
-    protected FrameLayout mPlayerContainer;
-
     protected Render mRenderView;
 
     /**
@@ -134,10 +149,10 @@ public class VideoView extends FrameLayout
     protected RenderFactory mCustomRenderViewFactory;
 
     /**
-     * 进度管理器，设置之后播放器会记录播放进度，以便下次播放恢复进度
+     * 渲染视图纵横比
      */
-    @Nullable
-    protected ProgressManager mProgressManager;
+    @AspectRatioType
+    protected int mScreenAspectRatioType = SCREEN_ASPECT_RATIO_DEFAULT;
 
     /**
      * 是否静音
@@ -159,39 +174,25 @@ public class VideoView extends FrameLayout
      */
     private boolean mLooping = false;
 
-    public static final int SCREEN_SCALE_DEFAULT = AspectRatioType.SCALE;
-    public static final int SCREEN_SCALE_18_9 = AspectRatioType.SCALE_18_9;
-    public static final int SCREEN_SCALE_16_9 = AspectRatioType.SCALE_16_9;
-    public static final int SCREEN_SCALE_4_3 = AspectRatioType.SCALE_4_3;
-    public static final int SCREEN_SCALE_MATCH_PARENT = AspectRatioType.MATCH_PARENT;
-    public static final int SCREEN_SCALE_ORIGINAL = AspectRatioType.SCALE_ORIGINAL;
-    public static final int SCREEN_SCALE_CENTER_CROP = AspectRatioType.CENTER_CROP;
-    protected int mScreenScaleType;
-
+    /**
+     * 视频画面大小
+     */
     protected int[] mVideoSize = {0, 0};
 
-
-    //--------- data sources ---------//
-    protected String mUrl;//当前播放视频的地址
-    protected Map<String, String> mHeaders;//当前视频地址的请求头
-    protected AssetFileDescriptor mAssetFileDescriptor;//assets文件
-
-    protected long mCurrentPosition;//当前正在播放视频的位置
-
-
-    public static final int PLAYER_NORMAL = 10;        // 普通播放器
-    public static final int PLAYER_FULL_SCREEN = 11;   // 全屏播放器
-    public static final int PLAYER_TINY_SCREEN = 12;   // 小屏播放器
-    protected int mCurrentPlayerState = PLAYER_NORMAL;
-
-    protected boolean mIsFullScreen;//是否处于全屏状态
-    protected boolean mIsTinyScreen;//是否处于小屏状态
-    protected int[] mTinyScreenSize = {0, 0};
+    /**
+     * 进度管理器，设置之后播放器会记录播放进度，以便下次播放恢复进度
+     */
+    @Nullable
+    protected ProgressManager mProgressManager;
 
     /**
      * 监听系统中音频焦点改变，见{@link #setEnableAudioFocus(boolean)}
      */
     protected boolean mEnableAudioFocus;
+
+    /**
+     * 音频焦点管理帮助类
+     */
     @Nullable
     protected AudioFocusHelper mAudioFocusHelper;
 
@@ -199,6 +200,24 @@ public class VideoView extends FrameLayout
      * OnStateChangeListener集合，保存了所有开发者设置的监听器
      */
     protected CopyOnWriteArrayList<OnStateChangeListener> mPlayerStateChangedListeners;
+
+    //--------- data sources ---------//
+    protected String mUrl;//当前播放视频的地址
+    protected Map<String, String> mHeaders;//当前视频地址的请求头
+    protected AssetFileDescriptor mAssetFileDescriptor;//assets文件
+
+    /**
+     * 当前正在播放视频的位置
+     */
+    protected long mCurrentPosition;
+
+    public static final int PLAYER_NORMAL = 10;        // 普通播放器
+    public static final int PLAYER_FULL_SCREEN = 11;   // 全屏播放器
+    public static final int PLAYER_TINY_SCREEN = 12;   // 小屏播放器
+    protected int mCurrentPlayerState = PLAYER_NORMAL;
+    protected boolean mIsFullScreen;//是否处于全屏状态
+    protected boolean mIsTinyScreen;//是否处于小屏状态
+    protected int[] mTinyScreenSize = {0, 0};
 
 
     /**
@@ -222,24 +241,21 @@ public class VideoView extends FrameLayout
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.VideoView);
         mEnableAudioFocus = a.getBoolean(R.styleable.VideoView_enableAudioFocus, VideoViewManager.enableAudioFocus());
         mLooping = a.getBoolean(R.styleable.VideoView_looping, false);
-        mScreenScaleType = a.getInt(R.styleable.VideoView_screenScaleType, VideoViewManager.getScreenType());
+        mScreenAspectRatioType = a.getInt(R.styleable.VideoView_screenScaleType, VideoViewManager.getScreenType());
         mPlayerBackgroundColor = a.getColor(R.styleable.VideoView_playerBackgroundColor, Color.BLACK);
         a.recycle();
-        initView();
+        prepareContainerView();
     }
 
     /**
-     * 初始化播放器视图
+     * 准备播放器容器
      */
-    protected void initView() {
+    private void prepareContainerView() {
         mPlayerContainer = new FrameLayout(getContext());
         mPlayerContainer.setBackgroundColor(mPlayerBackgroundColor);
-        LayoutParams params = new LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT);
+        LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         this.addView(mPlayerContainer, params);
     }
-
 
     /**
      * 第一次播放
@@ -574,7 +590,17 @@ public class VideoView extends FrameLayout
 
     /*************END AVPlayerFunction ***********************/
 
+
     /*************START VideoController ***********************/
+
+    @Override
+    public void setScreenAspectRatioType(@AspectRatioType int aspectRatioType) {
+        mScreenAspectRatioType = aspectRatioType;
+        if (mRenderView != null) {
+            mRenderView.setAspectRatioType(aspectRatioType);
+        }
+    }
+
     @Override
     public void screenshot(boolean highQuality, @NonNull Render.ScreenShotCallback callback) {
         if (mRenderView != null) {
@@ -960,9 +986,8 @@ public class VideoView extends FrameLayout
     public void onVideoSizeChanged(int videoWidth, int videoHeight) {
         mVideoSize[0] = videoWidth;
         mVideoSize[1] = videoHeight;
-
         if (mRenderView != null) {
-            mRenderView.setScaleType(mScreenScaleType);
+            mRenderView.setAspectRatioType(mScreenAspectRatioType);
             mRenderView.setVideoSize(videoWidth, videoHeight);
         }
     }
@@ -970,28 +995,16 @@ public class VideoView extends FrameLayout
     /**
      * 设置控制器，传null表示移除控制器
      */
-    public void setVideoController(@Nullable BaseVideoController mediaController) {
+    public void setVideoController(@Nullable MediaController mediaController) {
         mPlayerContainer.removeView(mVideoController);
         mVideoController = mediaController;
         if (mediaController != null) {
             mediaController.setMediaPlayer(this);
-            LayoutParams params = new LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT);
+            LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             mPlayerContainer.addView(mVideoController, params);
         }
     }
 
-    /**
-     * 设置视频比例
-     */
-    @Override
-    public void setScreenScaleType(int screenScaleType) {
-        mScreenScaleType = screenScaleType;
-        if (mRenderView != null) {
-            mRenderView.setScaleType(screenScaleType);
-        }
-    }
 
     /**
      * 设置镜像旋转，暂不支持SurfaceView

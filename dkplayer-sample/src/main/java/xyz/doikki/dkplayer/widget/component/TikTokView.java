@@ -16,11 +16,11 @@ import androidx.annotation.Nullable;
 
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.videoplayer.VideoView;
-import xyz.doikki.videoplayer.controller.IControlComponent;
+import xyz.doikki.videoplayer.controller.component.ControlComponent;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
 import xyz.doikki.videoplayer.util.L;
 
-public class TikTokView extends FrameLayout implements IControlComponent {
+public class TikTokView extends FrameLayout implements ControlComponent {
 
     private final ImageView thumb;
     private final ImageView mPlayBtn;
@@ -125,7 +125,7 @@ public class TikTokView extends FrameLayout implements IControlComponent {
     }
 
     @Override
-    public void setProgress(int duration, int position) {
+    public void onProgressChanged(int duration, int position) {
 
     }
 

@@ -14,14 +14,14 @@ import androidx.annotation.Nullable;
 
 import xyz.doikki.videocontroller.R;
 import xyz.doikki.videoplayer.VideoView;
-import xyz.doikki.videoplayer.controller.IControlComponent;
+import xyz.doikki.videoplayer.controller.component.ControlComponent;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
 import xyz.doikki.videoplayer.VideoViewManager;
 
 /**
  * 准备播放界面
  */
-public class PrepareView extends FrameLayout implements IControlComponent {
+public class PrepareView extends FrameLayout implements ControlComponent {
 
     private ControlWrapper mControlWrapper;
     
@@ -125,7 +125,7 @@ public class PrepareView extends FrameLayout implements IControlComponent {
     }
 
     @Override
-    public void setProgress(int duration, int position) {
+    public void onProgressChanged(int duration, int position) {
 
     }
 

@@ -190,14 +190,14 @@ public class TextureViewRender extends TextureView implements Render, TextureVie
     public void setVideoRotation(int degree) {
         mMeasureHelper.setVideoRotationDegree(degree);
         setRotation(degree);
-    }
-
-    @Override
-    public void setScaleType(int scaleType) {
-        mMeasureHelper.setAspectRatioType(scaleType);
         requestLayout();
     }
 
+    @Override
+    public void setAspectRatioType(int scaleType) {
+        mMeasureHelper.setAspectRatioType(scaleType);
+        requestLayout();
+    }
 
     @Override
     public void release() {

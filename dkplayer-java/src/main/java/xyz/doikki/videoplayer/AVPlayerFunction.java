@@ -3,6 +3,7 @@ package xyz.doikki.videoplayer;
 import android.content.res.AssetFileDescriptor;
 
 import androidx.annotation.FloatRange;
+import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -55,6 +56,7 @@ public interface AVPlayerFunction {
     /**
      * 获取缓冲百分比
      */
+    @IntRange(from = 0,to = 100)
     int getBufferedPercentage();
 
     /**

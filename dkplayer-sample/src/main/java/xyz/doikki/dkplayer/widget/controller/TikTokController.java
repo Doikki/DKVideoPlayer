@@ -7,14 +7,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import xyz.doikki.dkplayer.widget.component.DebugInfoView;
-import xyz.doikki.videoplayer.controller.BaseVideoController;
+import xyz.doikki.videoplayer.controller.MediaController;
 
 /**
  * 抖音
  * Created by Doikki on 2018/1/6.
  */
 
-public class TikTokController extends BaseVideoController {
+public class TikTokController extends MediaController {
 
     public TikTokController(@NonNull Context context) {
         super(context);

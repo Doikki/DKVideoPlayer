@@ -19,7 +19,7 @@ import xyz.doikki.videoplayer.util.L;
 
 public class SurfaceViewRender extends SurfaceView implements Render, SurfaceHolder.Callback {
 
-    private final MeasureHelper mMeasureHelper;
+    private final RenderLayoutMeasure mMeasureHelper;
 
     private AVPlayer mMediaPlayer;
 
@@ -38,7 +38,7 @@ public class SurfaceViewRender extends SurfaceView implements Render, SurfaceHol
     }
 
     {
-        mMeasureHelper = new MeasureHelper();
+        mMeasureHelper = new RenderLayoutMeasure();
         SurfaceHolder surfaceHolder = getHolder();
         surfaceHolder.addCallback(this);
         surfaceHolder.setFormat(PixelFormat.RGBA_8888);
@@ -69,7 +69,7 @@ public class SurfaceViewRender extends SurfaceView implements Render, SurfaceHol
     }
 
     @Override
-    public void setScaleType(int scaleType) {
+    public void setAspectRatioType(int scaleType) {
         mMeasureHelper.setAspectRatioType(scaleType);
         requestLayout();
     }
@@ -113,8 +113,8 @@ public class SurfaceViewRender extends SurfaceView implements Render, SurfaceHol
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int[] measuredSize = mMeasureHelper.doMeasure(widthMeasureSpec, heightMeasureSpec);
-        setMeasuredDimension(measuredSize[0], measuredSize[1]);
+        mMeasureHelper.doMeasure(widthMeasureSpec, heightMeasureSpec);
+        setMeasuredDimension(mMeasureHelper.getMeasuredWidth(), mMeasureHelper.getMeasuredHeight());
     }
 
     @Override

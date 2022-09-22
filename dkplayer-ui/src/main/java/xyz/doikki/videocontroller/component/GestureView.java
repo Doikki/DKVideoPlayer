@@ -21,12 +21,12 @@ import androidx.annotation.Nullable;
 import xyz.doikki.videocontroller.R;
 import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
-import xyz.doikki.videoplayer.controller.IGestureComponent;
+import xyz.doikki.videoplayer.controller.component.GestureControlComponent;
 
 /**
  * 手势控制
  */
-public class GestureView extends FrameLayout implements IGestureComponent {
+public class GestureView extends FrameLayout implements GestureControlComponent {
 
     public GestureView(@NonNull Context context) {
         super(context);
@@ -147,7 +147,7 @@ public class GestureView extends FrameLayout implements IGestureComponent {
     }
 
     @Override
-    public void setProgress(int duration, int position) {
+    public void onProgressChanged(int duration, int position) {
 
     }
 

@@ -39,7 +39,6 @@ public interface AVPlayer extends AVPlayerFunction {
      */
     void init();
 
-
     /**
      * 准备开始播放（异步）
      */
@@ -79,8 +78,8 @@ public interface AVPlayer extends AVPlayerFunction {
 
     /**
      * 设置播放速度
-     * 注意：使用系统播放器时，只有6.0及以上系统才支持
      */
+    @PartialFunc(message = "使用系统播放器时，只有6.0及以上系统才支持")
     void setSpeed(float speed);
 
     /**
@@ -90,8 +89,9 @@ public interface AVPlayer extends AVPlayerFunction {
     float getSpeed();
 
     /**
-     * 获取当前缓冲的网速（IJK播放器才支持）
+     * 获取当前缓冲的网速
      */
+    @PartialFunc(message = "IJK播放器才支持")
     long getTcpSpeed();
 
     /**

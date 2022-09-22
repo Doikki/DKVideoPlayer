@@ -22,7 +22,7 @@ import xyz.doikki.dkplayer.widget.CenteredImageSpan;
 import xyz.doikki.videoplayer.BuildConfig;
 import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
-import xyz.doikki.videoplayer.controller.IControlComponent;
+import xyz.doikki.videoplayer.controller.component.ControlComponent;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
 import master.flame.danmaku.controller.DrawHandler;
@@ -36,7 +36,7 @@ import master.flame.danmaku.danmaku.model.android.SpannedCacheStuffer;
 import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
 import master.flame.danmaku.ui.widget.DanmakuView;
 
-public class MyDanmakuView extends DanmakuView implements IControlComponent {
+public class MyDanmakuView extends DanmakuView implements ControlComponent {
 
     private final DanmakuContext mContext;
     private final BaseDanmakuParser mParser;
@@ -151,7 +151,7 @@ public class MyDanmakuView extends DanmakuView implements IControlComponent {
     }
 
     @Override
-    public void setProgress(int duration, int position) {
+    public void onProgressChanged(int duration, int position) {
 
     }
 

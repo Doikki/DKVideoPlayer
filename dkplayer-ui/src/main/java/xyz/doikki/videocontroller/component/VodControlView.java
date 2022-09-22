@@ -25,13 +25,13 @@ import androidx.annotation.Nullable;
 import xyz.doikki.videocontroller.R;
 import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
-import xyz.doikki.videoplayer.controller.IControlComponent;
+import xyz.doikki.videoplayer.controller.component.ControlComponent;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
 /**
  * 点播底部控制栏
  */
-public class VodControlView extends FrameLayout implements IControlComponent, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+public class VodControlView extends FrameLayout implements ControlComponent, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
     
     protected ControlWrapper mControlWrapper;
 
@@ -204,7 +204,7 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
     }
 
     @Override
-    public void setProgress(int duration, int position) {
+    public void onProgressChanged(int duration, int position) {
         if (mIsDragging) {
             return;
         }

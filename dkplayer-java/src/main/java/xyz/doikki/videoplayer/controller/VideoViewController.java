@@ -1,6 +1,9 @@
 package xyz.doikki.videoplayer.controller;
 
-public interface IVideoController {
+/**
+ * 视图控制器
+ */
+public interface VideoViewController {
 
     /**
      * 开始控制视图自动隐藏倒计时
