@@ -24,6 +24,7 @@ import xyz.doikki.videocontroller.component.TitleView;
 import xyz.doikki.videocontroller.component.VodControlView;
 import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.controller.GestureVideoController;
+import xyz.doikki.videoplayer.render.ScreenMode;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
 /**
@@ -130,13 +131,13 @@ public class StandardVideoController extends GestureVideoController implements V
     protected void onPlayerStateChanged(int playerState) {
         super.onPlayerStateChanged(playerState);
         switch (playerState) {
-            case VideoView.PLAYER_NORMAL:
+            case ScreenMode.NORMAL:
                 setLayoutParams(new FrameLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT));
                 mLockButton.setVisibility(GONE);
                 break;
-            case VideoView.PLAYER_FULL_SCREEN:
+            case ScreenMode.FULL:
                 if (isShowing()) {
                     mLockButton.setVisibility(VISIBLE);
                 } else {

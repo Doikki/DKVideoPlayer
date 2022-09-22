@@ -70,7 +70,7 @@ public class DetailActivity extends BaseActivity<VideoView> {
         if (seamlessPlay) {
             //无缝播放需还原Controller状态
             controller.setPlayState(mVideoView.getCurrentPlayState());
-            controller.setPlayerState(mVideoView.getCurrentPlayerState());
+            controller.setPlayerState(mVideoView.getScreenMode());
         } else {
             //不是无缝播放的情况
             String url = intent.getStringExtra(IntentKeys.URL);

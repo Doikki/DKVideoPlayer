@@ -15,6 +15,7 @@ import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
 import xyz.doikki.videoplayer.VideoViewConfig;
 import xyz.doikki.videoplayer.VideoViewManager;
+import xyz.doikki.videoplayer.render.ScreenMode;
 
 public final class Utils {
 
@@ -121,13 +122,13 @@ public final class Utils {
         String playerStateString;
         switch (state) {
             default:
-            case VideoView.PLAYER_NORMAL:
+            case ScreenMode.NORMAL:
                 playerStateString = "normal";
                 break;
-            case VideoView.PLAYER_FULL_SCREEN:
+            case ScreenMode.FULL:
                 playerStateString = "full screen";
                 break;
-            case VideoView.PLAYER_TINY_SCREEN:
+            case ScreenMode.TINY:
                 playerStateString = "tiny screen";
                 break;
         }

@@ -35,6 +35,7 @@ import xyz.doikki.videoplayer.player.ProgressManager;
 import xyz.doikki.videoplayer.render.AspectRatioType;
 import xyz.doikki.videoplayer.render.Render;
 import xyz.doikki.videoplayer.render.RenderFactory;
+import xyz.doikki.videoplayer.render.ScreenMode;
 import xyz.doikki.videoplayer.util.L;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
@@ -98,6 +99,9 @@ public class VideoView extends FrameLayout
      */
     public static final int STATE_START_ABORT = 8;
 
+    /**
+     * 屏幕比例类型
+     */
     public static final int SCREEN_ASPECT_RATIO_DEFAULT = AspectRatioType.SCALE;
     public static final int SCREEN_ASPECT_RATIO_SCALE_18_9 = AspectRatioType.SCALE_18_9;
     public static final int SCREEN_ASPECT_RATIO_SCALE_16_9 = AspectRatioType.SCALE_16_9;
@@ -107,12 +111,28 @@ public class VideoView extends FrameLayout
     public static final int SCREEN_ASPECT_RATIO_CENTER_CROP = AspectRatioType.CENTER_CROP;
 
     /**
+     * 普通模式
+     */
+    public static final int SCREEN_MODE_NORMAL = 10;
+
+    /**
+     * 全屏模式
+     */
+    public static final int SCREEN_MODE_FULL = 11;
+
+    /**
+     * 小窗模式
+     */
+    public static final int SCREEN_MODE_TINY = 22;
+
+    /**
      * 播放器状态
      */
     @IntDef({STATE_ERROR, STATE_IDLE, STATE_PREPARING, STATE_PREPARED, STATE_PLAYING, STATE_PAUSED, STATE_PLAYBACK_COMPLETED, STATE_BUFFERING, STATE_BUFFERED, STATE_START_ABORT})
     @Retention(RetentionPolicy.SOURCE)
     public @interface PlayerState {
     }
+
 
     @Nullable
     protected MediaController mVideoController;//控制器
@@ -153,6 +173,16 @@ public class VideoView extends FrameLayout
      */
     @AspectRatioType
     protected int mScreenAspectRatioType = SCREEN_ASPECT_RATIO_DEFAULT;
+
+    /**
+     * 当前屏幕模式：普通、全屏、小窗口
+     */
+    @ScreenMode
+    protected int mScreenMode = ScreenMode.NORMAL;
+
+
+    protected boolean mIsFullScreen;//是否处于全屏状态
+    protected boolean mIsTinyScreen;//是否处于小屏状态
 
     /**
      * 是否静音
@@ -211,12 +241,7 @@ public class VideoView extends FrameLayout
      */
     protected long mCurrentPosition;
 
-    public static final int PLAYER_NORMAL = 10;        // 普通播放器
-    public static final int PLAYER_FULL_SCREEN = 11;   // 全屏播放器
-    public static final int PLAYER_TINY_SCREEN = 12;   // 小屏播放器
-    protected int mCurrentPlayerState = PLAYER_NORMAL;
-    protected boolean mIsFullScreen;//是否处于全屏状态
-    protected boolean mIsTinyScreen;//是否处于小屏状态
+
     protected int[] mTinyScreenSize = {0, 0};
 
 
@@ -368,7 +393,7 @@ public class VideoView extends FrameLayout
         if (prepareDataSource()) {
             mMediaPlayer.prepareAsync();
             setPlayState(STATE_PREPARING);
-            setPlayerState(isFullScreen() ? PLAYER_FULL_SCREEN : isTinyScreen() ? PLAYER_TINY_SCREEN : PLAYER_NORMAL);
+            setScreenMode(isFullScreen() ? ScreenMode.FULL : isTinyScreen() ? ScreenMode.TINY : ScreenMode.NORMAL);
         }
     }
 
@@ -601,6 +626,30 @@ public class VideoView extends FrameLayout
         }
     }
 
+    /**
+     * 设置当前播放器显示模式
+     */
+    protected void setScreenMode(@ScreenMode int screenMode) {
+        mScreenMode = screenMode;
+        if (mVideoController != null) {
+            mVideoController.setPlayerState(screenMode);
+        }
+        if (mPlayerStateChangedListeners != null) {
+            for (OnStateChangeListener l : PlayerUtils.getSnapshot(mPlayerStateChangedListeners)) {
+                if (l != null) {
+                    l.onPlayerStateChanged(screenMode);
+                }
+            }
+        }
+    }
+
+    /**
+     * 获取当前播放器屏幕显示模式
+     */
+    public int getScreenMode() {
+        return mScreenMode;
+    }
+
     @Override
     public void screenshot(boolean highQuality, @NonNull Render.ScreenShotCallback callback) {
         if (mRenderView != null) {
@@ -731,13 +780,6 @@ public class VideoView extends FrameLayout
         }
     }
 
-    /**
-     * 获取当前播放器的状态
-     */
-    public int getCurrentPlayerState() {
-        return mCurrentPlayerState;
-    }
-
 
     /**
      * 获取缓冲速度
@@ -835,7 +877,7 @@ public class VideoView extends FrameLayout
         //将播放器视图添加到DecorView中即实现了全屏
         decorView.addView(mPlayerContainer);
 
-        setPlayerState(PLAYER_FULL_SCREEN);
+        setScreenMode(ScreenMode.FULL);
     }
 
     private void hideSysBar(ViewGroup decorView) {
@@ -880,7 +922,7 @@ public class VideoView extends FrameLayout
         decorView.removeView(mPlayerContainer);
         this.addView(mPlayerContainer);
 
-        setPlayerState(PLAYER_NORMAL);
+        setScreenMode(ScreenMode.NORMAL);
     }
 
     private void showSysBar(ViewGroup decorView) {
@@ -957,7 +999,7 @@ public class VideoView extends FrameLayout
         params.gravity = Gravity.BOTTOM | Gravity.END;
         contentView.addView(mPlayerContainer, params);
         mIsTinyScreen = true;
-        setPlayerState(PLAYER_TINY_SCREEN);
+        setScreenMode(ScreenMode.TINY);
     }
 
     /**
@@ -975,7 +1017,7 @@ public class VideoView extends FrameLayout
         this.addView(mPlayerContainer, params);
 
         mIsTinyScreen = false;
-        setPlayerState(PLAYER_NORMAL);
+        setScreenMode(ScreenMode.NORMAL);
     }
 
     public boolean isTinyScreen() {
@@ -1046,23 +1088,6 @@ public class VideoView extends FrameLayout
         this.mTinyScreenSize = tinyScreenSize;
     }
 
-
-    /**
-     * 向Controller设置播放器状态，包含全屏状态和非全屏状态
-     */
-    protected void setPlayerState(int playerState) {
-        mCurrentPlayerState = playerState;
-        if (mVideoController != null) {
-            mVideoController.setPlayerState(playerState);
-        }
-        if (mPlayerStateChangedListeners != null) {
-            for (OnStateChangeListener l : PlayerUtils.getSnapshot(mPlayerStateChangedListeners)) {
-                if (l != null) {
-                    l.onPlayerStateChanged(playerState);
-                }
-            }
-        }
-    }
 
     /**
      * 播放状态改变监听器

@@ -24,6 +24,7 @@ import java.util.Map;
 import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.VideoViewManager;
 import xyz.doikki.videoplayer.controller.component.ControlComponent;
+import xyz.doikki.videoplayer.render.ScreenMode;
 import xyz.doikki.videoplayer.util.CutoutUtil;
 import xyz.doikki.videoplayer.util.L;
 import xyz.doikki.videoplayer.util.PlayerUtils;
@@ -32,7 +33,7 @@ import xyz.doikki.videoplayer.util.PlayerUtils;
  * 控制器基类
  * 此类集成各种事件的处理逻辑，包括
  * 1.播放器状态改变: {@link #handlePlayerStateChanged(int)}
- * 2.播放状态改变: {@link #handlePlayStateChanged(int)}
+ * 2.播放状态改变: {@link #setPlayState(int)} {@link #onPlayerStateChanged(int)}
  * 3.控制视图的显示和隐藏: {@link #handleVisibilityChanged(boolean, Animation)}
  * 4.播放进度改变: {@link #handleSetProgress(int, int)}
  * 5.锁定状态改变: {@link #handleLockStateChanged(boolean)}
@@ -45,6 +46,13 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
      * 当前控制器中保存的所有控制组件
      */
     protected LinkedHashMap<ControlComponent, Boolean> mControlComponents = new LinkedHashMap<>();
+
+    /**
+     * 当前播放器状态
+     */
+    @VideoView.PlayerState
+    private int mPlayerState;
+
 
     private MediaPlayerControlV2 mPlayer;
 
@@ -78,7 +86,6 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
     //是否开始刷新进度
     private boolean mIsStartProgress;
 
-
     private Animation mShowAnim;
     private Animation mHideAnim;
 
@@ -93,10 +100,6 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
     public MediaController(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initView();
-    }
-
-    public ControlWrapper getControlWrapper() {
-        return mControlWrapper;
     }
 
     protected void initView() {
@@ -115,10 +118,31 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
         mActivity = PlayerUtils.scanForActivity(getContext());
     }
 
+
+    public ControlWrapper getControlWrapper() {
+        return mControlWrapper;
+    }
+
     /**
      * 设置控制器布局文件，子类必须实现
      */
     protected abstract int getLayoutId();
+
+    /**
+     * 是否处于播放状态
+     *
+     * @return
+     */
+    protected boolean isInPlaybackState() {
+        return mControlWrapper != null
+                && mPlayerState != VideoView.STATE_ERROR
+                && mPlayerState != VideoView.STATE_IDLE
+                && mPlayerState != VideoView.STATE_PREPARING
+                && mPlayerState != VideoView.STATE_PREPARED
+                && mPlayerState != VideoView.STATE_START_ABORT
+                && mPlayerState != VideoView.STATE_PLAYBACK_COMPLETED;
+    }
+
 
     /**
      * 重要：此方法用于将{@link VideoView} 和控制器绑定
@@ -135,7 +159,7 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
         mOrientationHelper.setOnOrientationChangeListener(this);
     }
 
-    public void setMediaPlayer(MediaPlayerControlV2 mediaPlayer){
+    public void setMediaPlayer(MediaPlayerControlV2 mediaPlayer) {
         mPlayer = mediaPlayer;
     }
 
@@ -226,12 +250,43 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
     /***********START 关键方法代码************/
 
     /**
-     * {@link VideoView}调用此方法向控制器设置播放状态
+     * call by {@link VideoView},设置播放器当前播放状态
      */
     @CallSuper
-    public void setPlayState(int playState) {
-        handlePlayStateChanged(playState);
+    public void setPlayState(@VideoView.PlayerState int playState) {
+        mPlayerState = playState;
+        for (Map.Entry<ControlComponent, Boolean> next : mControlComponents.entrySet()) {
+            next.getKey().onPlayStateChanged(playState);
+        }
+        onPlayStateChanged(playState);
     }
+
+    /**
+     * 通知播放器状态发生了变化
+     * 子类重写此方法并在其中更新控制器在不同播放状态下的ui
+     */
+    @CallSuper
+    protected void onPlayStateChanged(@VideoView.PlayerState int playState) {
+        switch (playState) {
+            case VideoView.STATE_IDLE:
+                mOrientationHelper.disable();
+                mOrientation = 0;
+                mIsLocked = false;
+                mShowing = false;
+                //由于游离组件是独立于控制器存在的，
+                //所以在播放器release的时候需要移除
+                removeAllDissociateComponents();
+                break;
+            case VideoView.STATE_PLAYBACK_COMPLETED:
+                mIsLocked = false;
+                mShowing = false;
+                break;
+            case VideoView.STATE_ERROR:
+                mShowing = false;
+                break;
+        }
+    }
+
 
     /**
      * {@link VideoView}调用此方法向控制器设置播放器状态
@@ -549,7 +604,7 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
     protected void onOrientationLandscape(Activity activity) {
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         if (mControlWrapper.isFullScreen()) {
-            handlePlayerStateChanged(VideoView.PLAYER_FULL_SCREEN);
+            handlePlayerStateChanged(ScreenMode.FULL);
         } else {
             mControlWrapper.startFullScreen();
         }
@@ -561,7 +616,7 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
     protected void onOrientationReverseLandscape(Activity activity) {
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
         if (mControlWrapper.isFullScreen()) {
-            handlePlayerStateChanged(VideoView.PLAYER_FULL_SCREEN);
+            handlePlayerStateChanged(ScreenMode.FULL);
         } else {
             mControlWrapper.startFullScreen();
         }
@@ -590,39 +645,6 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
 
     }
 
-    private void handlePlayStateChanged(int playState) {
-        for (Map.Entry<ControlComponent, Boolean> next
-                : mControlComponents.entrySet()) {
-            ControlComponent component = next.getKey();
-            component.onPlayStateChanged(playState);
-        }
-        onPlayStateChanged(playState);
-    }
-
-    /**
-     * 子类重写此方法并在其中更新控制器在不同播放状态下的ui
-     */
-    @CallSuper
-    protected void onPlayStateChanged(int playState) {
-        switch (playState) {
-            case VideoView.STATE_IDLE:
-                mOrientationHelper.disable();
-                mOrientation = 0;
-                mIsLocked = false;
-                mShowing = false;
-                //由于游离组件是独立于控制器存在的，
-                //所以在播放器release的时候需要移除
-                removeAllDissociateComponents();
-                break;
-            case VideoView.STATE_PLAYBACK_COMPLETED:
-                mIsLocked = false;
-                mShowing = false;
-                break;
-            case VideoView.STATE_ERROR:
-                mShowing = false;
-                break;
-        }
-    }
 
     private void handlePlayerStateChanged(int playerState) {
         for (Map.Entry<ControlComponent, Boolean> next
@@ -639,7 +661,7 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
     @CallSuper
     protected void onPlayerStateChanged(int playerState) {
         switch (playerState) {
-            case VideoView.PLAYER_NORMAL:
+            case ScreenMode.NORMAL:
                 if (mEnableOrientation) {
                     mOrientationHelper.enable();
                 } else {
@@ -649,14 +671,14 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
                     CutoutUtil.adaptCutoutAboveAndroidP(getContext(), false);
                 }
                 break;
-            case VideoView.PLAYER_FULL_SCREEN:
+            case ScreenMode.FULL:
                 //在全屏时强制监听设备方向
                 mOrientationHelper.enable();
                 if (hasCutout()) {
                     CutoutUtil.adaptCutoutAboveAndroidP(getContext(), true);
                 }
                 break;
-            case VideoView.PLAYER_TINY_SCREEN:
+            case ScreenMode.TINY:
                 mOrientationHelper.disable();
                 break;
         }
@@ -742,7 +764,7 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
          *
          * @return
          */
-        @IntRange(from = 0,to = 100)
+        @IntRange(from = 0, to = 100)
         int getBufferPercentage();
     }
 

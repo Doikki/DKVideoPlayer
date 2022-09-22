@@ -29,6 +29,7 @@ import xyz.doikki.videocontroller.component.VodControlView;
 import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.render.AspectRatioType;
 import xyz.doikki.videoplayer.render.Render;
+import xyz.doikki.videoplayer.render.ScreenMode;
 import xyz.doikki.videoplayer.util.L;
 
 /**
@@ -170,9 +171,9 @@ public class PlayerActivityJava extends BaseActivity<VideoView> {
         @Override
         public void onPlayerStateChanged(int playerState) {
             switch (playerState) {
-                case VideoView.PLAYER_NORMAL://小屏
+                case ScreenMode.NORMAL://小屏
                     break;
-                case VideoView.PLAYER_FULL_SCREEN://全屏
+                case ScreenMode.FULL://全屏
                     break;
             }
         }

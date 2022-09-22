@@ -28,6 +28,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import xyz.doikki.videoplayer.VideoView;
+
 /**
  * 播放器相关工具类
  * Created by Doikki on 2017/4/10.
@@ -285,5 +287,19 @@ public final class PlayerUtils {
             }
         }
         return result;
+    }
+
+    /**
+     * 是否处于播放状态
+     *
+     * @return
+     */
+    public static boolean isPlayingState(@VideoView.PlayerState int state) {
+        return state != VideoView.STATE_ERROR
+                && state != VideoView.STATE_IDLE
+                && state != VideoView.STATE_PREPARING
+                && state != VideoView.STATE_PREPARED
+                && state != VideoView.STATE_START_ABORT
+                && state != VideoView.STATE_PLAYBACK_COMPLETED;
     }
 }

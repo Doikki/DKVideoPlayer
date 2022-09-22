@@ -23,6 +23,7 @@ import xyz.doikki.videocontroller.R;
 import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.controller.component.ControlComponent;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
+import xyz.doikki.videoplayer.render.ScreenMode;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
 /**
@@ -143,7 +144,7 @@ public class TitleView extends FrameLayout implements ControlComponent {
 
     @Override
     public void onPlayerStateChanged(int playerState) {
-        if (playerState == VideoView.PLAYER_FULL_SCREEN) {
+        if (playerState == ScreenMode.FULL) {
             if (mControlWrapper.isShowing() && !mControlWrapper.isLocked()) {
                 setVisibility(VISIBLE);
                 mSysTime.setText(PlayerUtils.getCurrentSystemTime());

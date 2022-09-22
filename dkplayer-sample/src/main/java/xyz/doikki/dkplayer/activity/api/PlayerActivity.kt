@@ -24,6 +24,7 @@ import xyz.doikki.videocontroller.StandardVideoController
 import xyz.doikki.videocontroller.component.*
 import xyz.doikki.videoplayer.VideoView
 import xyz.doikki.videoplayer.render.AspectRatioType
+import xyz.doikki.videoplayer.render.ScreenMode
 import xyz.doikki.videoplayer.util.L
 
 /**
@@ -166,9 +167,9 @@ class PlayerActivity : BaseActivity<VideoView>() {
         object : VideoView.OnStateChangeListener {
             override fun onPlayerStateChanged(playerState: Int) {
                 when (playerState) {
-                    VideoView.PLAYER_NORMAL -> {
+                    ScreenMode.NORMAL -> {
                     }
-                    VideoView.PLAYER_FULL_SCREEN -> {
+                    ScreenMode.FULL -> {
                     }
                 }
             }

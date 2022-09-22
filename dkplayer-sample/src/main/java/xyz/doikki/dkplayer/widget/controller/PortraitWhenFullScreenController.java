@@ -14,6 +14,7 @@ import xyz.doikki.videocontroller.StandardVideoController;
 import xyz.doikki.videocontroller.component.VodControlView;
 import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.controller.MediaPlayerControl;
+import xyz.doikki.videoplayer.render.ScreenMode;
 
 public class PortraitWhenFullScreenController extends StandardVideoController {
 
@@ -79,7 +80,7 @@ public class PortraitWhenFullScreenController extends StandardVideoController {
     @Override
     protected void onPlayerStateChanged(int playerState) {
         super.onPlayerStateChanged(playerState);
-        if (playerState == VideoView.PLAYER_FULL_SCREEN) {
+        if (playerState == ScreenMode.FULL) {
             mFullScreen.setSelected(false);
         } else {
             hide();

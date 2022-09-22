@@ -18,6 +18,7 @@ import java.util.Map;
 import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.controller.component.ControlComponent;
 import xyz.doikki.videoplayer.controller.component.GestureControlComponent;
+import xyz.doikki.videoplayer.render.ScreenMode;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
 /**
@@ -47,7 +48,7 @@ public abstract class GestureVideoController extends MediaController implements
 
     private boolean mCanSlide;
 
-    private int mCurPlayState;
+
 
     private boolean mIsDoubleTapTogglePlayEnabled = true;
 
@@ -103,27 +104,11 @@ public abstract class GestureVideoController extends MediaController implements
     @Override
     public void setPlayerState(int playerState) {
         super.setPlayerState(playerState);
-        if (playerState == VideoView.PLAYER_NORMAL) {
+        if (playerState == ScreenMode.NORMAL) {
             mCanSlide = mEnableInNormal;
-        } else if (playerState == VideoView.PLAYER_FULL_SCREEN) {
+        } else if (playerState == ScreenMode.FULL) {
             mCanSlide = true;
         }
-    }
-
-    @Override
-    public void setPlayState(int playState) {
-        super.setPlayState(playState);
-        mCurPlayState = playState;
-    }
-
-    private boolean isInPlaybackState() {
-        return mControlWrapper != null
-                && mCurPlayState != VideoView.STATE_ERROR
-                && mCurPlayState != VideoView.STATE_IDLE
-                && mCurPlayState != VideoView.STATE_PREPARING
-                && mCurPlayState != VideoView.STATE_PREPARED
-                && mCurPlayState != VideoView.STATE_START_ABORT
-                && mCurPlayState != VideoView.STATE_PLAYBACK_COMPLETED;
     }
 
     @Override

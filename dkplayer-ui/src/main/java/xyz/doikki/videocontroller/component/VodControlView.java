@@ -26,6 +26,7 @@ import xyz.doikki.videocontroller.R;
 import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
 import xyz.doikki.videoplayer.controller.component.ControlComponent;
+import xyz.doikki.videoplayer.render.ScreenMode;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
 /**
@@ -178,10 +179,10 @@ public class VodControlView extends FrameLayout implements ControlComponent, Vie
     @Override
     public void onPlayerStateChanged(int playerState) {
         switch (playerState) {
-            case VideoView.PLAYER_NORMAL:
+            case ScreenMode.NORMAL:
                 mFullScreen.setSelected(false);
                 break;
-            case VideoView.PLAYER_FULL_SCREEN:
+            case ScreenMode.FULL:
                 mFullScreen.setSelected(true);
                 break;
         }
