@@ -21,9 +21,11 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import xyz.doikki.videoplayer.Utils;
 import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.VideoViewManager;
 import xyz.doikki.videoplayer.controller.component.ControlComponent;
+import xyz.doikki.videoplayer.player.ScreenOrientationHelper;
 import xyz.doikki.videoplayer.render.ScreenMode;
 import xyz.doikki.videoplayer.util.CutoutUtil;
 import xyz.doikki.videoplayer.util.L;
@@ -40,7 +42,7 @@ import xyz.doikki.videoplayer.util.PlayerUtils;
  * 6.设备方向监听: {@link #onOrientationChanged(int)}
  * Created by Doikki on 2017/4/12.
  */
-public abstract class MediaController extends FrameLayout implements VideoViewController, OrientationHelper.OnOrientationChangeListener {
+public abstract class MediaController extends FrameLayout implements VideoViewController, ScreenOrientationHelper.OnOrientationChangeListener {
 
     /**
      * 当前控制器中保存的所有控制组件
@@ -53,8 +55,6 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
     @VideoView.PlayerState
     private int mPlayerState;
 
-
-    private MediaPlayerControlV2 mPlayer;
 
     //播放器包装类，集合了MediaPlayerControl的api和IVideoController的api
     protected ControlWrapper mControlWrapper;
@@ -74,7 +74,7 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
     //是否开启根据屏幕方向进入/退出全屏
     private boolean mEnableOrientation;
     //屏幕方向监听辅助类
-    protected OrientationHelper mOrientationHelper;
+    protected ScreenOrientationHelper mOrientationHelper;
 
     //用户设置是否适配刘海屏
     private boolean mAdaptCutout;
@@ -106,7 +106,8 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
         if (getLayoutId() != 0) {
             LayoutInflater.from(getContext()).inflate(getLayoutId(), this, true);
         }
-        mOrientationHelper = new OrientationHelper(getContext().getApplicationContext());
+        mOrientationHelper = new ScreenOrientationHelper(getContext().getApplicationContext());
+        mOrientationHelper.attachActivity(PlayerUtils.scanForActivity(getContext()));
         mEnableOrientation = VideoViewManager.getConfig().mEnableOrientation;
         mAdaptCutout = VideoViewManager.getConfig().mAdaptCutout;
 
@@ -148,7 +149,7 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
      * 重要：此方法用于将{@link VideoView} 和控制器绑定
      */
     @CallSuper
-    public void setMediaPlayer(MediaPlayerControl mediaPlayer) {
+    public void setMediaPlayer(VideoViewControl mediaPlayer) {
         mControlWrapper = new ControlWrapper(mediaPlayer, this);
         //绑定ControlComponent和Controller
         for (Map.Entry<ControlComponent, Boolean> next : mControlComponents.entrySet()) {
@@ -157,10 +158,6 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
         }
         //开始监听设备方向
         mOrientationHelper.setOnOrientationChangeListener(this);
-    }
-
-    public void setMediaPlayer(MediaPlayerControlV2 mediaPlayer) {
-        mPlayer = mediaPlayer;
     }
 
     /***********START 关键方法代码************/
@@ -270,7 +267,7 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
         switch (playState) {
             case VideoView.STATE_IDLE:
                 mOrientationHelper.disable();
-                mOrientation = 0;
+
                 mIsLocked = false;
                 mShowing = false;
                 //由于游离组件是独立于控制器存在的，
@@ -292,8 +289,8 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
      * {@link VideoView}调用此方法向控制器设置播放器状态
      */
     @CallSuper
-    public void setPlayerState(final int playerState) {
-        handlePlayerStateChanged(playerState);
+    public void setScreenMode(@ScreenMode int screenMode) {
+        handlePlayerStateChanged(screenMode);
     }
 
     /**
@@ -540,51 +537,17 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
         mEnableOrientation = enableOrientation;
     }
 
-    private int mOrientation = 0;
-
     @CallSuper
     @Override
-    public void onOrientationChanged(int orientation) {
-        if (mActivity == null || mActivity.isFinishing()) return;
-
-        //记录用户手机上一次放置的位置
-        int lastOrientation = mOrientation;
-
-        if (orientation == OrientationEventListener.ORIENTATION_UNKNOWN) {
-            //手机平放时，检测不到有效的角度
-            //重置为原始位置 -1
-            mOrientation = -1;
-            return;
-        }
-
-        if (orientation > 350 || orientation < 10) {
-            int o = mActivity.getRequestedOrientation();
-            //手动切换横竖屏
-            if (o == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE && lastOrientation == 0) return;
-            if (mOrientation == 0) return;
-            //0度，用户竖直拿着手机
-            mOrientation = 0;
+    public void onOrientationChanged(@ScreenOrientationHelper.ScreenOrientation int orientation) {
+        if(orientation == ScreenOrientationHelper.SCREEN_ORIENTATION_PORTRAIT){
             onOrientationPortrait(mActivity);
-        } else if (orientation > 80 && orientation < 100) {
-
-            int o = mActivity.getRequestedOrientation();
-            //手动切换横竖屏
-            if (o == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT && lastOrientation == 90) return;
-            if (mOrientation == 90) return;
-            //90度，用户右侧横屏拿着手机
-            mOrientation = 90;
-            onOrientationReverseLandscape(mActivity);
-        } else if (orientation > 260 && orientation < 280) {
-            int o = mActivity.getRequestedOrientation();
-            //手动切换横竖屏
-            if (o == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT && lastOrientation == 270) return;
-            if (mOrientation == 270) return;
-            //270度，用户左侧横屏拿着手机
-            mOrientation = 270;
+        }else if(orientation == ScreenOrientationHelper.SCREEN_ORIENTATION_LANDSCAPE){
             onOrientationLandscape(mActivity);
+        }else if(orientation == ScreenOrientationHelper.SCREEN_ORIENTATION_LANDSCAPE_REVERSED){
+            onOrientationReverseLandscape(mActivity);
         }
     }
-
     /**
      * 竖屏
      */
@@ -593,7 +556,6 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
         if (mIsLocked) return;
         //没有开启设备方向监听的情况
         if (!mEnableOrientation) return;
-
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         mControlWrapper.stopFullScreen();
     }
@@ -717,55 +679,6 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
      */
     protected void onLockStateChanged(boolean isLocked) {
 
-    }
-
-    interface MediaPlayerControlV2 {
-
-        /**
-         * 开始播放
-         */
-        void start();
-
-        /**
-         * 暂停
-         */
-        void pause();
-
-        /**
-         * 播放时长
-         *
-         * @return
-         */
-        int getDuration();
-
-        /**
-         * 当前播放位置
-         *
-         * @return
-         */
-        int getCurrentPosition();
-
-        /**
-         * 调整播放位置
-         *
-         * @param pos
-         */
-        void seekTo(int pos);
-
-        /**
-         * 是否正在播放
-         *
-         * @return
-         */
-        boolean isPlaying();
-
-        /**
-         * 缓冲半分比
-         *
-         * @return
-         */
-        @IntRange(from = 0, to = 100)
-        int getBufferPercentage();
     }
 
     //------------------------ end handle event change ------------------------//

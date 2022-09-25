@@ -2,13 +2,9 @@ package xyz.doikki.videoplayer.controller;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
-import android.content.res.AssetFileDescriptor;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import java.util.Map;
 
 import xyz.doikki.videoplayer.render.Render;
 
@@ -16,12 +12,12 @@ import xyz.doikki.videoplayer.render.Render;
  * 此类的目的是为了在ControlComponent中既能调用VideoView的api又能调用BaseVideoController的api，
  * 并对部分api做了封装，方便使用
  */
-public class ControlWrapper implements MediaPlayerControl, VideoViewController {
+public class ControlWrapper implements VideoViewControl, VideoViewController {
     
-    private final MediaPlayerControl mPlayerControl;
+    private final VideoViewControl mPlayerControl;
     private final VideoViewController mController;
     
-    public ControlWrapper(@NonNull MediaPlayerControl playerControl, @NonNull VideoViewController controller) {
+    public ControlWrapper(@NonNull VideoViewControl playerControl, @NonNull VideoViewController controller) {
         mPlayerControl = playerControl;
         mController = controller;
     }
@@ -157,20 +153,6 @@ public class ControlWrapper implements MediaPlayerControl, VideoViewController {
     }
 
 
-
-
-    @Override
-    public void setDataSource(@NonNull String path, @Nullable Map<String, String> headers) {
-        mPlayerControl.setDataSource(path,headers);
-    }
-
-    @Override
-    public void setDataSource(@NonNull AssetFileDescriptor fd) {
-        mPlayerControl.setDataSource(fd);
-    }
-
-
-
     @Override
     public void pause() {
         mPlayerControl.pause();
@@ -191,21 +173,10 @@ public class ControlWrapper implements MediaPlayerControl, VideoViewController {
         mPlayerControl.seekTo(pos);
     }
 
-
-
-    @Override
-    public void setVolume(float leftVolume, float rightVolume) {
-        mPlayerControl.setVolume(leftVolume, rightVolume);
-    }
-
-
     @Override
     public void startFullScreen() {
         mPlayerControl.startFullScreen();
     }
-
-
-
 
     @Override
     public void setScreenAspectRatioType(int screenScaleType) {
@@ -254,10 +225,6 @@ public class ControlWrapper implements MediaPlayerControl, VideoViewController {
     public boolean isTinyScreen() {
         return mPlayerControl.isTinyScreen();
     }
-
-
-
-
 
     /**
      * 横竖屏切换，不会旋转屏幕

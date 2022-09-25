@@ -47,7 +47,7 @@ public class PIPManager {
         Utils.removeViewFormParent(mVideoView);
         mVideoView.setVideoController(mFloatController);
         mFloatController.setPlayState(mVideoView.getCurrentPlayState());
-        mFloatController.setPlayerState(mVideoView.getScreenMode());
+        mFloatController.setScreenMode(mVideoView.getScreenMode());
         mFloatView.addView(mVideoView);
         mFloatView.addToWindow();
         mIsShowing = true;

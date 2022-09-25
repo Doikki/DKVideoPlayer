@@ -13,6 +13,8 @@ import xyz.doikki.videoplayer.VideoView;
 
 /**
  * 音频焦点 帮助类
+ * @see #requestFocus()
+ * @see #abandonFocus()
  */
 public final class AudioFocusHelper implements AudioManager.OnAudioFocusChangeListener {
 
@@ -86,6 +88,7 @@ public final class AudioFocusHelper implements AudioManager.OnAudioFocusChangeLi
 
     /**
      * Requests to obtain the audio focus
+     * 请求音频焦点
      */
     public void requestFocus() {
         if (mCurrentFocus == AudioManager.AUDIOFOCUS_GAIN) {

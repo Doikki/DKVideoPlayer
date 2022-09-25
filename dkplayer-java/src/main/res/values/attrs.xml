@@ -14,4 +14,7 @@
         </attr>
         <attr name="playerBackgroundColor" format="color" />
     </declare-styleable>
+
+    <item name="screen_mode_layout_params" type="id"/>
+
 </resources>

@@ -165,14 +165,6 @@ class PlayerActivity : BaseActivity<VideoView>() {
 
     private val mOnStateChangeListener: VideoView.OnStateChangeListener =
         object : VideoView.OnStateChangeListener {
-            override fun onPlayerStateChanged(playerState: Int) {
-                when (playerState) {
-                    ScreenMode.NORMAL -> {
-                    }
-                    ScreenMode.FULL -> {
-                    }
-                }
-            }
 
             override fun onPlayStateChanged(playState: Int) {
                 when (playState) {

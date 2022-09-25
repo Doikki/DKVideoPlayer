@@ -12,8 +12,7 @@ import androidx.annotation.Nullable;
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.videocontroller.StandardVideoController;
 import xyz.doikki.videocontroller.component.VodControlView;
-import xyz.doikki.videoplayer.VideoView;
-import xyz.doikki.videoplayer.controller.MediaPlayerControl;
+import xyz.doikki.videoplayer.controller.VideoViewControl;
 import xyz.doikki.videoplayer.render.ScreenMode;
 
 public class PortraitWhenFullScreenController extends StandardVideoController {
@@ -48,7 +47,7 @@ public class PortraitWhenFullScreenController extends StandardVideoController {
     }
 
     @Override
-    public void setMediaPlayer(MediaPlayerControl mediaPlayer) {
+    public void setMediaPlayer(VideoViewControl mediaPlayer) {
         super.setMediaPlayer(mediaPlayer);
         //不监听设备方向
         mOrientationHelper.setOnOrientationChangeListener(null);

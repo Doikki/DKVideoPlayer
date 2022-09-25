@@ -168,15 +168,6 @@ public class PlayerActivityJava extends BaseActivity<VideoView> {
     }
 
     private VideoView.OnStateChangeListener mOnStateChangeListener = new VideoView.OnStateChangeListener() {
-        @Override
-        public void onPlayerStateChanged(int playerState) {
-            switch (playerState) {
-                case ScreenMode.NORMAL://小屏
-                    break;
-                case ScreenMode.FULL://全屏
-                    break;
-            }
-        }
 
         @Override
         public void onPlayStateChanged(int playState) {

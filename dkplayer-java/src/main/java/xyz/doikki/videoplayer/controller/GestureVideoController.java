@@ -15,7 +15,6 @@ import androidx.annotation.Nullable;
 
 import java.util.Map;
 
-import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.controller.component.ControlComponent;
 import xyz.doikki.videoplayer.controller.component.GestureControlComponent;
 import xyz.doikki.videoplayer.render.ScreenMode;
@@ -102,8 +101,8 @@ public abstract class GestureVideoController extends MediaController implements
     }
 
     @Override
-    public void setPlayerState(int playerState) {
-        super.setPlayerState(playerState);
+    public void setScreenMode(int playerState) {
+        super.setScreenMode(playerState);
         if (playerState == ScreenMode.NORMAL) {
             mCanSlide = mEnableInNormal;
         } else if (playerState == ScreenMode.FULL) {

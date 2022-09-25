@@ -7,16 +7,14 @@ import android.content.res.AssetFileDescriptor;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
-import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 
+import androidx.annotation.CallSuper;
 import androidx.annotation.FloatRange;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
@@ -25,11 +23,13 @@ import androidx.annotation.Nullable;
 import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import xyz.doikki.videoplayer.controller.MediaController;
-import xyz.doikki.videoplayer.controller.MediaPlayerControl;
+import xyz.doikki.videoplayer.player.ScreenModeHandler;
+import xyz.doikki.videoplayer.controller.VideoViewControl;
 import xyz.doikki.videoplayer.player.AudioFocusHelper;
 import xyz.doikki.videoplayer.player.ProgressManager;
 import xyz.doikki.videoplayer.render.AspectRatioType;
@@ -46,8 +46,7 @@ import xyz.doikki.videoplayer.util.PlayerUtils;
  * <p>
  * update by luochao on 2022/9/16
  */
-public class VideoView extends FrameLayout
-        implements MediaPlayerControl, AVPlayer.EventListener {
+public class VideoView extends FrameLayout implements VideoViewControl, AVPlayer.EventListener {
 
     /**
      * 播放出错
@@ -180,9 +179,10 @@ public class VideoView extends FrameLayout
     @ScreenMode
     protected int mScreenMode = ScreenMode.NORMAL;
 
-
-    protected boolean mIsFullScreen;//是否处于全屏状态
-    protected boolean mIsTinyScreen;//是否处于小屏状态
+    /**
+     * 屏幕模式切换帮助类
+     */
+    private ScreenModeHandler mScreenModeHandler;
 
     /**
      * 是否静音
@@ -229,7 +229,7 @@ public class VideoView extends FrameLayout
     /**
      * OnStateChangeListener集合，保存了所有开发者设置的监听器
      */
-    protected CopyOnWriteArrayList<OnStateChangeListener> mPlayerStateChangedListeners;
+    private final CopyOnWriteArrayList<OnStateChangeListener> mPlayerStateChangedListeners = new CopyOnWriteArrayList<>();
 
     //--------- data sources ---------//
     protected String mUrl;//当前播放视频的地址
@@ -240,9 +240,6 @@ public class VideoView extends FrameLayout
      * 当前正在播放视频的位置
      */
     protected long mCurrentPosition;
-
-
-    protected int[] mTinyScreenSize = {0, 0};
 
 
     /**
@@ -280,6 +277,8 @@ public class VideoView extends FrameLayout
         mPlayerContainer.setBackgroundColor(mPlayerBackgroundColor);
         LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         this.addView(mPlayerContainer, params);
+
+        mScreenModeHandler = new ScreenModeHandler(this);
     }
 
     /**
@@ -374,10 +373,7 @@ public class VideoView extends FrameLayout
         }
         mRenderView = createRenderView();
         mRenderView.attachToPlayer(mMediaPlayer);
-        LayoutParams params = new LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                Gravity.CENTER);
+        LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
         mPlayerContainer.addView(mRenderView.getView(), 0, params);
     }
 
@@ -481,13 +477,6 @@ public class VideoView extends FrameLayout
     }
 
     /**
-     * 设置进度管理器，用于保存播放进度
-     */
-    public void setProgressManager(@Nullable ProgressManager progressManager) {
-        this.mProgressManager = progressManager;
-    }
-
-    /**
      * 是否处于播放状态
      */
     protected boolean isInPlaybackState() {
@@ -527,16 +516,17 @@ public class VideoView extends FrameLayout
         startPrepare(true);
     }
 
-    /*************START AVPlayerFunction***********************/
+    /*************START 代理MediaPlayer的方法***********************/
+    public void setDataSource(@NonNull String path) {
+        setDataSource(path, null);
+    }
 
-    @Override
     public void setDataSource(@NonNull String path, @Nullable Map<String, String> headers) {
         mAssetFileDescriptor = null;
         mUrl = path;
         mHeaders = headers;
     }
 
-    @Override
     public void setDataSource(@NonNull AssetFileDescriptor fd) {
         mUrl = null;
         this.mAssetFileDescriptor = fd;
@@ -603,7 +593,6 @@ public class VideoView extends FrameLayout
         return isInPlaybackState() && mMediaPlayer.isPlaying();
     }
 
-    @Override
     public void setVolume(@FloatRange(from = 0.0f, to = 1.0f) float leftVolume, @FloatRange(from = 0.0f, to = 1.0f) float rightVolume) {
         mLeftVolume = leftVolume;
         mRightVolume = rightVolume;
@@ -615,31 +604,67 @@ public class VideoView extends FrameLayout
 
     /*************END AVPlayerFunction ***********************/
 
+    /*************START VideoViewControl ***********************/
 
-    /*************START VideoController ***********************/
-
+    /**
+     * 判断是否处于全屏状态
+     */
     @Override
-    public void setScreenAspectRatioType(@AspectRatioType int aspectRatioType) {
-        mScreenAspectRatioType = aspectRatioType;
-        if (mRenderView != null) {
-            mRenderView.setAspectRatioType(aspectRatioType);
+    public boolean isFullScreen() {
+        return mScreenMode == SCREEN_MODE_FULL;
+    }
+
+    /**
+     * 当前是否处于小屏状态
+     */
+    @Override
+    public boolean isTinyScreen() {
+        return mScreenMode == SCREEN_MODE_TINY;
+    }
+
+    /**
+     * 进入全屏
+     */
+    @Override
+    public void startFullScreen() {
+        if (isFullScreen())
+            return;
+        if (mScreenModeHandler.startFullScreen(getPreferredActivity(), mPlayerContainer)) {
+            setScreenMode(SCREEN_MODE_FULL);
         }
     }
 
     /**
-     * 设置当前播放器显示模式
+     * 退出全屏
      */
-    protected void setScreenMode(@ScreenMode int screenMode) {
-        mScreenMode = screenMode;
-        if (mVideoController != null) {
-            mVideoController.setPlayerState(screenMode);
+    @Override
+    public void stopFullScreen() {
+        if (!isFullScreen())
+            return;
+        if (mScreenModeHandler.stopFullScreen(getPreferredActivity(), mPlayerContainer)) {
+            setScreenMode(SCREEN_MODE_NORMAL);
         }
-        if (mPlayerStateChangedListeners != null) {
-            for (OnStateChangeListener l : PlayerUtils.getSnapshot(mPlayerStateChangedListeners)) {
-                if (l != null) {
-                    l.onPlayerStateChanged(screenMode);
-                }
-            }
+    }
+
+    /**
+     * 开启小屏
+     */
+    @Override
+    public void startTinyScreen() {
+        if (isTinyScreen()) return;
+        if (mScreenModeHandler.startTinyScreen(getPreferredActivity(), mPlayerContainer)) {
+            setScreenMode(SCREEN_MODE_TINY);
+        }
+    }
+
+    /**
+     * 退出小屏
+     */
+    @Override
+    public void stopTinyScreen() {
+        if (!isTinyScreen()) return;
+        if (mScreenModeHandler.stopTinyScreen(mPlayerContainer)) {
+            setScreenMode(SCREEN_MODE_NORMAL);
         }
     }
 
@@ -649,6 +674,46 @@ public class VideoView extends FrameLayout
     public int getScreenMode() {
         return mScreenMode;
     }
+
+    /**
+     * 设置当前界面模式
+     */
+    private void setScreenMode(@ScreenMode int screenMode) {
+        mScreenMode = screenMode;
+        notifyScreenModeChanged(screenMode);
+    }
+
+    /**
+     * 通知当前界面模式发生了变化
+     */
+    @CallSuper
+    protected void notifyScreenModeChanged(@ScreenMode int screenMode) {
+        if (mVideoController != null) {
+            mVideoController.setScreenMode(screenMode);
+        }
+
+        List<OnStateChangeListener> listeners = mPlayerStateChangedListeners;
+        if (Utils.isNullOrEmpty(listeners))
+            return;
+
+        for (OnStateChangeListener l : listeners) {
+            l.onScreenModeChanged(screenMode);
+        }
+    }
+
+    @Override
+    public void setScreenAspectRatioType(@AspectRatioType int aspectRatioType) {
+        mScreenAspectRatioType = aspectRatioType;
+        if (mRenderView != null) {
+            mRenderView.setAspectRatioType(aspectRatioType);
+        }
+    }
+
+    /*************START VideoViewControl ***********************/
+
+
+    /*************START VideoController ***********************/
+
 
     @Override
     public void screenshot(boolean highQuality, @NonNull Render.ScreenShotCallback callback) {
@@ -683,6 +748,7 @@ public class VideoView extends FrameLayout
     }
 
     /*************START VideoController ***********************/
+
 
     /*************START AVPlayer#EventListener 实现逻辑***********************/
 
@@ -745,6 +811,18 @@ public class VideoView extends FrameLayout
 
     /*************END AVPlayer#EventListener 实现逻辑***********************/
 
+    /**
+     * 设置进度管理器，用于保存播放进度
+     */
+    public void setProgressManager(@Nullable ProgressManager progressManager) {
+        this.mProgressManager = progressManager;
+    }
+
+    /**
+     * 保持屏幕常亮
+     *
+     * @param isOn
+     */
     private void keepScreenOn(boolean isOn) {
         mPlayerContainer.setKeepScreenOn(isOn);
     }
@@ -773,13 +851,14 @@ public class VideoView extends FrameLayout
         if (mVideoController != null) {
             mVideoController.setPlayState(playState);
         }
-        if (mPlayerStateChangedListeners != null) {
-            for (OnStateChangeListener listener : mPlayerStateChangedListeners) {
-                listener.onPlayStateChanged(playState);
-            }
+        List<OnStateChangeListener> listeners = mPlayerStateChangedListeners;
+        if (Utils.isNullOrEmpty(listeners))
+            return;
+
+        for (OnStateChangeListener listener : mPlayerStateChangedListeners) {
+            listener.onPlayStateChanged(playState);
         }
     }
-
 
     /**
      * 获取缓冲速度
@@ -813,7 +892,6 @@ public class VideoView extends FrameLayout
     public void skipPositionWhenPlay(int position) {
         this.mCurrentPosition = position;
     }
-
 
     /**
      * 循环播放， 默认不循环播放
@@ -855,174 +933,29 @@ public class VideoView extends FrameLayout
         mPlayerContainer.setBackgroundColor(color);
     }
 
-    /**
-     * 进入全屏
-     */
-    @Override
-    public void startFullScreen() {
-        if (mIsFullScreen)
-            return;
-
-        ViewGroup decorView = getDecorView();
-        if (decorView == null)
-            return;
-
-        mIsFullScreen = true;
-
-        //隐藏NavigationBar和StatusBar
-        hideSysBar(decorView);
-
-        //从当前FrameLayout中移除播放器视图
-        this.removeView(mPlayerContainer);
-        //将播放器视图添加到DecorView中即实现了全屏
-        decorView.addView(mPlayerContainer);
-
-        setScreenMode(ScreenMode.FULL);
-    }
-
-    private void hideSysBar(ViewGroup decorView) {
-        int uiOptions = decorView.getSystemUiVisibility();
-        uiOptions |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            uiOptions |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-        }
-        decorView.setSystemUiVisibility(uiOptions);
-        getActivity().getWindow().setFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-    }
-
     @Override
     public void onWindowFocusChanged(boolean hasWindowFocus) {
         super.onWindowFocusChanged(hasWindowFocus);
-        if (hasWindowFocus && mIsFullScreen) {
+        if (hasWindowFocus && isFullScreen()) {
             //重新获得焦点时保持全屏状态
-            hideSysBar(getDecorView());
+            ScreenModeHandler.hideSystemBar(getPreferredActivity());
         }
-    }
-
-    /**
-     * 退出全屏
-     */
-    @Override
-    public void stopFullScreen() {
-        if (!mIsFullScreen)
-            return;
-
-        ViewGroup decorView = getDecorView();
-        if (decorView == null)
-            return;
-
-        mIsFullScreen = false;
-
-        //显示NavigationBar和StatusBar
-        showSysBar(decorView);
-
-        //把播放器视图从DecorView中移除并添加到当前FrameLayout中即退出了全屏
-        decorView.removeView(mPlayerContainer);
-        this.addView(mPlayerContainer);
-
-        setScreenMode(ScreenMode.NORMAL);
-    }
-
-    private void showSysBar(ViewGroup decorView) {
-        int uiOptions = decorView.getSystemUiVisibility();
-        uiOptions &= ~View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            uiOptions &= ~View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-        }
-        decorView.setSystemUiVisibility(uiOptions);
-        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-    }
-
-    /**
-     * 获取DecorView
-     */
-    protected ViewGroup getDecorView() {
-        Activity activity = getActivity();
-        if (activity == null) return null;
-        return (ViewGroup) activity.getWindow().getDecorView();
-    }
-
-    /**
-     * 获取activity中的content view,其id为android.R.id.content
-     */
-    protected ViewGroup getContentView() {
-        Activity activity = getActivity();
-        if (activity == null) return null;
-        return activity.findViewById(android.R.id.content);
     }
 
     /**
      * 获取Activity，优先通过Controller去获取Activity
      */
-    protected Activity getActivity() {
-        Activity activity;
+    protected final Activity getPreferredActivity() {
+        Activity activity = null;
         if (mVideoController != null) {
             activity = PlayerUtils.scanForActivity(mVideoController.getContext());
-            if (activity == null) {
-                activity = PlayerUtils.scanForActivity(getContext());
-            }
-        } else {
+        }
+        if (activity == null) {
             activity = PlayerUtils.scanForActivity(getContext());
         }
         return activity;
     }
 
-    /**
-     * 判断是否处于全屏状态
-     */
-    @Override
-    public boolean isFullScreen() {
-        return mIsFullScreen;
-    }
-
-    /**
-     * 开启小屏
-     */
-    public void startTinyScreen() {
-        if (mIsTinyScreen) return;
-        ViewGroup contentView = getContentView();
-        if (contentView == null) return;
-        this.removeView(mPlayerContainer);
-        int width = mTinyScreenSize[0];
-        if (width <= 0) {
-            width = PlayerUtils.getScreenWidth(getContext(), false) / 2;
-        }
-
-        int height = mTinyScreenSize[1];
-        if (height <= 0) {
-            height = width * 9 / 16;
-        }
-
-        LayoutParams params = new LayoutParams(width, height);
-        params.gravity = Gravity.BOTTOM | Gravity.END;
-        contentView.addView(mPlayerContainer, params);
-        mIsTinyScreen = true;
-        setScreenMode(ScreenMode.TINY);
-    }
-
-    /**
-     * 退出小屏
-     */
-    public void stopTinyScreen() {
-        if (!mIsTinyScreen) return;
-
-        ViewGroup contentView = getContentView();
-        if (contentView == null) return;
-        contentView.removeView(mPlayerContainer);
-        LayoutParams params = new LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT);
-        this.addView(mPlayerContainer, params);
-
-        mIsTinyScreen = false;
-        setScreenMode(ScreenMode.NORMAL);
-    }
-
-    public boolean isTinyScreen() {
-        return mIsTinyScreen;
-    }
 
     @Override
     public void onVideoSizeChanged(int videoWidth, int videoHeight) {
@@ -1058,12 +991,12 @@ public class VideoView extends FrameLayout
         }
     }
 
-
     /**
      * 获取视频宽高,其中width: mVideoSize[0], height: mVideoSize[1]
      */
     @Override
     public int[] getVideoSize() {
+        //是否适合直接返回该变量,存在被外层修改的可能？是否应该 return new int[]{mVideoSize[0], mVideoSize[1]}
         return mVideoSize;
     }
 
@@ -1079,24 +1012,21 @@ public class VideoView extends FrameLayout
         }
     }
 
-    /**
-     * 设置小屏的宽高
-     *
-     * @param tinyScreenSize 其中tinyScreenSize[0]是宽，tinyScreenSize[1]是高
-     */
-    public void setTinyScreenSize(int[] tinyScreenSize) {
-        this.mTinyScreenSize = tinyScreenSize;
-    }
-
 
     /**
      * 播放状态改变监听器
      */
     public interface OnStateChangeListener {
-        default void onPlayerStateChanged(int playerState) {
+
+        default void onScreenModeChanged(@ScreenMode int screenMode) {
         }
 
-        default void onPlayStateChanged(int playState) {
+        /**
+         * 播放器播放状态发生了变化
+         *
+         * @param playState
+         */
+        default void onPlayStateChanged(@PlayerState int playState) {
         }
     }
 
@@ -1105,9 +1035,6 @@ public class VideoView extends FrameLayout
      * 添加一个播放状态监听器，播放状态发生变化时将会调用。
      */
     public void addOnStateChangeListener(@NonNull OnStateChangeListener listener) {
-        if (mPlayerStateChangedListeners == null) {
-            mPlayerStateChangedListeners = new CopyOnWriteArrayList<>();
-        }
         mPlayerStateChangedListeners.add(listener);
     }
 
@@ -1115,18 +1042,14 @@ public class VideoView extends FrameLayout
      * 移除某个播放状态监听
      */
     public void removeOnStateChangeListener(@NonNull OnStateChangeListener listener) {
-        if (mPlayerStateChangedListeners != null) {
-            mPlayerStateChangedListeners.remove(listener);
-        }
+        mPlayerStateChangedListeners.remove(listener);
     }
 
     /**
      * 移除所有播放状态监听
      */
     public void clearOnStateChangeListeners() {
-        if (mPlayerStateChangedListeners != null) {
-            mPlayerStateChangedListeners.clear();
-        }
+        mPlayerStateChangedListeners.clear();
     }
 
     /**
