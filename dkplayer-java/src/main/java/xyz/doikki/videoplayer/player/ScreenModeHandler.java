@@ -1,8 +1,6 @@
 package xyz.doikki.videoplayer.player;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.view.Gravity;
 import android.view.View;
@@ -249,4 +247,5 @@ public class ScreenModeHandler {
     protected ViewGroup getContentView(@NonNull Activity activity) {
         return activity.findViewById(android.R.id.content);
     }
+
 }

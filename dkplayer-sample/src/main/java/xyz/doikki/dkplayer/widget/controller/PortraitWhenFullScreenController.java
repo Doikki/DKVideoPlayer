@@ -50,7 +50,7 @@ public class PortraitWhenFullScreenController extends StandardVideoController {
     public void setMediaPlayer(VideoViewControl mediaPlayer) {
         super.setMediaPlayer(mediaPlayer);
         //不监听设备方向
-        mOrientationHelper.setOnOrientationChangeListener(null);
+        mOrientationHelper.setDeviceOrientationChangedListener(null);
     }
 
     @Override

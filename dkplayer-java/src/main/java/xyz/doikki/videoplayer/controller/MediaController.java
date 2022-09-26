@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -13,7 +12,6 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.AttrRes;
 import androidx.annotation.CallSuper;
-import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -21,11 +19,10 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import xyz.doikki.videoplayer.Utils;
 import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.VideoViewManager;
 import xyz.doikki.videoplayer.controller.component.ControlComponent;
-import xyz.doikki.videoplayer.player.ScreenOrientationHelper;
+import xyz.doikki.videoplayer.player.DeviceOrientationSensorHelper;
 import xyz.doikki.videoplayer.render.ScreenMode;
 import xyz.doikki.videoplayer.util.CutoutUtil;
 import xyz.doikki.videoplayer.util.L;
@@ -39,10 +36,10 @@ import xyz.doikki.videoplayer.util.PlayerUtils;
  * 3.控制视图的显示和隐藏: {@link #handleVisibilityChanged(boolean, Animation)}
  * 4.播放进度改变: {@link #handleSetProgress(int, int)}
  * 5.锁定状态改变: {@link #handleLockStateChanged(boolean)}
- * 6.设备方向监听: {@link #onOrientationChanged(int)}
+ * 6.设备方向监听: {@link #onDeviceDirectionChanged(int)}
  * Created by Doikki on 2017/4/12.
  */
-public abstract class MediaController extends FrameLayout implements VideoViewController, ScreenOrientationHelper.OnOrientationChangeListener {
+public abstract class MediaController extends FrameLayout implements VideoViewController, DeviceOrientationSensorHelper.DeviceOrientationChangedListener {
 
     /**
      * 当前控制器中保存的所有控制组件
@@ -74,7 +71,7 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
     //是否开启根据屏幕方向进入/退出全屏
     private boolean mEnableOrientation;
     //屏幕方向监听辅助类
-    protected ScreenOrientationHelper mOrientationHelper;
+    protected DeviceOrientationSensorHelper mOrientationHelper;
 
     //用户设置是否适配刘海屏
     private boolean mAdaptCutout;
@@ -106,7 +103,7 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
         if (getLayoutId() != 0) {
             LayoutInflater.from(getContext()).inflate(getLayoutId(), this, true);
         }
-        mOrientationHelper = new ScreenOrientationHelper(getContext().getApplicationContext());
+        mOrientationHelper = new DeviceOrientationSensorHelper(getContext().getApplicationContext());
         mOrientationHelper.attachActivity(PlayerUtils.scanForActivity(getContext()));
         mEnableOrientation = VideoViewManager.getConfig().mEnableOrientation;
         mAdaptCutout = VideoViewManager.getConfig().mAdaptCutout;
@@ -157,7 +154,7 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
             component.attach(mControlWrapper);
         }
         //开始监听设备方向
-        mOrientationHelper.setOnOrientationChangeListener(this);
+        mOrientationHelper.setDeviceOrientationChangedListener(this);
     }
 
     /***********START 关键方法代码************/
@@ -539,12 +536,12 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
 
     @CallSuper
     @Override
-    public void onOrientationChanged(@ScreenOrientationHelper.ScreenOrientation int orientation) {
-        if(orientation == ScreenOrientationHelper.SCREEN_ORIENTATION_PORTRAIT){
+    public void onDeviceDirectionChanged(@DeviceOrientationSensorHelper.DeviceDirection int direction) {
+        if(direction == DeviceOrientationSensorHelper.DEVICE_DIRECTION_PORTRAIT){
             onOrientationPortrait(mActivity);
-        }else if(orientation == ScreenOrientationHelper.SCREEN_ORIENTATION_LANDSCAPE){
+        }else if(direction == DeviceOrientationSensorHelper.DEVICE_DIRECTION_LANDSCAPE){
             onOrientationLandscape(mActivity);
-        }else if(orientation == ScreenOrientationHelper.SCREEN_ORIENTATION_LANDSCAPE_REVERSED){
+        }else if(direction == DeviceOrientationSensorHelper.DEVICE_DIRECTION_LANDSCAPE_REVERSED){
             onOrientationReverseLandscape(mActivity);
         }
     }
