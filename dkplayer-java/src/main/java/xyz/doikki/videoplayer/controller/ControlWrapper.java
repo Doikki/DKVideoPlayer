@@ -13,113 +13,71 @@ import xyz.doikki.videoplayer.render.Render;
  * 并对部分api做了封装，方便使用
  */
 public class ControlWrapper implements VideoViewControl, VideoViewController {
-    
+
     private final VideoViewControl mPlayerControl;
     private final VideoViewController mController;
-    
+
     public ControlWrapper(@NonNull VideoViewControl playerControl, @NonNull VideoViewController controller) {
         mPlayerControl = playerControl;
         mController = controller;
     }
 
-    /**
-     * 切换播放或暂停
-     */
-    @Keep
-    public void togglePlay() {
-        if (isPlaying()) {
-            pause();
-        } else {
-            start();
-        }
+    public VideoViewControl getPlayer() {
+        return mPlayerControl;
     }
 
-    /**
-     * 开始刷新进度
-     */
-    @Keep
-    @Override
-    public void startProgress() {
-        mController.startProgress();
+    public VideoViewController getController() {
+        return mController;
     }
 
-    /**
-     * 停止刷新进度
-     */
-    @Keep
+    //以下方法访问controller
     @Override
-    public void stopProgress() {
-        mController.stopProgress();
+    public boolean isShowing() {
+        return mController.isShowing();
+    }
+
+    @Override
+    public void startFadeOut() {
+        mController.startFadeOut();
+    }
+
+    @Override
+    public void stopFadeOut() {
+        mController.stopFadeOut();
     }
 
     @Keep
     @Override
-    public void setMute(boolean isMute) {
-        mPlayerControl.setMute(isMute);
+    public boolean isLocked() {
+        return mController.isLocked();
     }
 
     @Keep
     @Override
-    public boolean isMute() {
-        return mPlayerControl.isMute();
-    }
-
-    /**
-     * 横竖屏切换，会旋转屏幕
-     */
-    @Keep
-    public void toggleFullScreen(Activity activity) {
-        if (activity == null || activity.isFinishing())
-            return;
-        if (isFullScreen()) {
-            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            stopFullScreen();
-        } else {
-            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            startFullScreen();
-        }
-    }
-
-    @Keep
-    @Override
-    public int[] getVideoSize() {
-        return mPlayerControl.getVideoSize();
-    }
-
-    @Keep
-    @Override
-    public boolean isPlaying() {
-        return mPlayerControl.isPlaying();
-    }
-
-    @Keep
-    @Override
-    public int getBufferedPercentage() {
-        return mPlayerControl.getBufferedPercentage();
-    }
-
-    @Keep
-    @Override
-    public long getTcpSpeed() {
-        return mPlayerControl.getTcpSpeed();
+    public boolean toggleFullScreen() {
+        return mController.toggleFullScreen();
     }
 
     @Keep
     @Override
     public boolean isFullScreen() {
-        return mPlayerControl.isFullScreen();
+        return mController.isFullScreen();
+    }
+
+    @Override
+    public boolean startFullScreen() {
+        return mController.startFullScreen();
+    }
+
+    @Override
+    public boolean startFullScreen(boolean isLandscapeReversed) {
+        return mController.startFullScreen(isLandscapeReversed);
     }
 
     @Keep
     @Override
-    public void stopFullScreen() {
-        mPlayerControl.stopFullScreen();
-    }
-
-    @Keep
-    @Override
-    public void replay(boolean resetPosition) {
-        mPlayerControl.replay(resetPosition);
+    public boolean stopFullScreen() {
+        return mController.stopFullScreen();
     }
 
     @Keep
@@ -134,10 +92,29 @@ public class ControlWrapper implements VideoViewControl, VideoViewController {
         return mController.getCutoutHeight();
     }
 
+    /**
+     * 开始刷新进度
+     */
     @Keep
     @Override
-    public void hide() {
-        mController.hide();
+    public void startUpdateProgress() {
+        mController.startUpdateProgress();
+    }
+
+    /**
+     * 停止刷新进度
+     */
+    @Keep
+    @Override
+    public void stopUpdateProgress() {
+        mController.stopUpdateProgress();
+    }
+
+    //以下方法直接访问player
+    @Keep
+    @Override
+    public void replay(boolean resetPosition) {
+        mPlayerControl.replay(resetPosition);
     }
 
     @Keep
@@ -146,16 +123,15 @@ public class ControlWrapper implements VideoViewControl, VideoViewController {
         mPlayerControl.start();
     }
 
-    @Keep
-    @Override
-    public boolean isLocked() {
-        return mController.isLocked();
-    }
-
-
     @Override
     public void pause() {
         mPlayerControl.pause();
+    }
+
+    @Keep
+    @Override
+    public boolean isPlaying() {
+        return mPlayerControl.isPlaying();
     }
 
     @Override
@@ -164,18 +140,91 @@ public class ControlWrapper implements VideoViewControl, VideoViewController {
     }
 
     @Override
-    public long getCurrentPosition() {
-        return mPlayerControl.getCurrentPosition();
-    }
-
-    @Override
     public void seekTo(long pos) {
         mPlayerControl.seekTo(pos);
     }
 
+    @Keep
     @Override
-    public void startFullScreen() {
-        mPlayerControl.startFullScreen();
+    public int getBufferedPercentage() {
+        return mPlayerControl.getBufferedPercentage();
+    }
+
+    /**
+     * 切换播放或暂停
+     */
+    @Keep
+    public void togglePlay() {
+        if (isPlaying()) {
+            pause();
+        } else {
+            start();
+        }
+    }
+
+
+
+
+
+    @Override
+    public void setAdaptCutout(boolean adaptCutout) {
+
+    }
+
+    @Keep
+    @Override
+    public void setMute(boolean isMute) {
+        mPlayerControl.setMute(isMute);
+    }
+
+    @Keep
+    @Override
+    public boolean isMute() {
+        return mPlayerControl.isMute();
+    }
+
+
+
+    @Keep
+    @Override
+    public int[] getVideoSize() {
+        return mPlayerControl.getVideoSize();
+    }
+
+
+
+
+    @Keep
+    @Override
+    public long getTcpSpeed() {
+        return mPlayerControl.getTcpSpeed();
+    }
+
+
+    @Keep
+    @Override
+    public boolean stopVideoViewFullScreen() {
+        return mPlayerControl.stopVideoViewFullScreen();
+    }
+
+
+
+    @Keep
+    @Override
+    public void hide() {
+        mController.hide();
+    }
+
+
+    @Override
+    public long getCurrentPosition() {
+        return mPlayerControl.getCurrentPosition();
+    }
+
+
+    @Override
+    public boolean startVideoViewFullScreen() {
+        return mPlayerControl.startVideoViewFullScreen();
     }
 
     @Override
@@ -194,7 +243,6 @@ public class ControlWrapper implements VideoViewControl, VideoViewController {
     }
 
 
-
     @Override
     public void setMirrorRotation(boolean enable) {
         mPlayerControl.setMirrorRotation(enable);
@@ -207,7 +255,7 @@ public class ControlWrapper implements VideoViewControl, VideoViewController {
 
 
     @Override
-    public void setRotation(float rotation) {
+    public void setRotation(int rotation) {
         mPlayerControl.setRotation(rotation);
     }
 
@@ -227,17 +275,6 @@ public class ControlWrapper implements VideoViewControl, VideoViewController {
     }
 
     /**
-     * 横竖屏切换，不会旋转屏幕
-     */
-    public void toggleFullScreen() {
-        if (isFullScreen()) {
-            stopFullScreen();
-        } else {
-            startFullScreen();
-        }
-    }
-
-    /**
      * 横竖屏切换，根据适配宽高决定是否旋转屏幕
      */
     public void toggleFullScreenByVideoSize(Activity activity) {
@@ -247,12 +284,12 @@ public class ControlWrapper implements VideoViewControl, VideoViewController {
         int width = size[0];
         int height = size[1];
         if (isFullScreen()) {
-            stopFullScreen();
+            stopVideoViewFullScreen();
             if (width > height) {
-               activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             }
         } else {
-            startFullScreen();
+            startVideoViewFullScreen();
             if (width > height) {
                 activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             }
@@ -260,18 +297,14 @@ public class ControlWrapper implements VideoViewControl, VideoViewController {
     }
 
     @Override
-    public void startFadeOut() {
-        mController.startFadeOut();
+    public void setFadeOutTime(int timeout) {
+        mController.setFadeOutTime(timeout);
     }
 
-    @Override
-    public void stopFadeOut() {
-        mController.stopFadeOut();
-    }
 
     @Override
-    public boolean isShowing() {
-        return mController.isShowing();
+    public void setEnableOrientationSensor(boolean enableOrientation) {
+        mController.setEnableOrientationSensor(enableOrientation);
     }
 
     @Override
@@ -280,13 +313,10 @@ public class ControlWrapper implements VideoViewControl, VideoViewController {
     }
 
 
-
-
     @Override
     public void show() {
         mController.show();
     }
-
 
 
     /**

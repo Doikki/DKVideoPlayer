@@ -22,6 +22,15 @@ public interface RenderFunction {
     void setVideoRotation(@IntRange(from = 0, to = 360) int degree);
 
     /**
+     * 设置镜像旋转
+     *
+     * @param enable
+     */
+    default void setMirrorRotation(boolean enable){
+        //默认不支持镜像旋转;只有TextureView才支持
+    }
+
+    /**
      * 设置视频宽高
      *
      * @param videoWidth  宽

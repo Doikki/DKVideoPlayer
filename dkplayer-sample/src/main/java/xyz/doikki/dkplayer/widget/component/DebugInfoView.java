@@ -13,12 +13,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 
-import xyz.doikki.dkplayer.util.Utils;
+import xyz.doikki.videoplayer.Utils;
+import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
 import xyz.doikki.videoplayer.controller.component.ControlComponent;
-import xyz.doikki.videoplayer.exo.ExoMediaPlayerFactory;
-import xyz.doikki.videoplayer.ijk.IjkPlayerFactory;
-import xyz.doikki.videoplayer.sys.SysMediaPlayerFactory;
 
 /**
  * 调试信息
@@ -50,8 +48,8 @@ public class DebugInfoView extends AppCompatTextView implements ControlComponent
 
 
     @Override
-    public void attach(@NonNull ControlWrapper controlWrapper) {
-        mControlWrapper = controlWrapper;
+    public void attach(@NonNull ControlWrapper holder) {
+        mControlWrapper = holder;
     }
 
     @Override
@@ -74,27 +72,19 @@ public class DebugInfoView extends AppCompatTextView implements ControlComponent
      * Returns the debugging information string to be shown by the target {@link TextView}.
      */
     protected String getDebugString(int playState) {
-        return getCurrentPlayer() + Utils.playState2str(playState) + "\n"
-                + "video width: " + mControlWrapper.getVideoSize()[0] + " , height: " + mControlWrapper.getVideoSize()[1];
-    }
-
-    protected String getCurrentPlayer() {
-        String player;
-        Object playerFactory = Utils.getCurrentPlayerFactoryInVideoView(mControlWrapper);
-        if (playerFactory instanceof ExoMediaPlayerFactory) {
-            player = "ExoPlayer";
-        } else if (playerFactory instanceof IjkPlayerFactory) {
-            player = "IjkPlayer";
-        } else if (playerFactory instanceof SysMediaPlayerFactory) {
-            player = "MediaPlayer";
-        } else {
-            player = "unknown";
-        }
-        return String.format("player: %s ", player);
+        int[] videoSize = mControlWrapper.getPlayer().getVideoSize();
+        VideoView videoView = (VideoView) mControlWrapper.getPlayer();
+        StringBuilder sb = new StringBuilder();
+        sb.append("player:").append(videoView.getPlayerName()).append("   ")
+                .append("render:").append(videoView.getRenderName()).append("\n");
+        sb.append(Utils.playState2str(playState)).append("  ")
+                .append("video width:").append(videoSize[0])
+                .append(",height:").append(videoSize[1]);
+        return sb.toString();
     }
 
     @Override
-    public void onPlayerStateChanged(int playerState) {
+    public void onScreenModeChanged(int screenMode) {
         bringToFront();
     }
 

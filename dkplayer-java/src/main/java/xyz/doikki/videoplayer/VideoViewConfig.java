@@ -19,7 +19,10 @@ public class VideoViewConfig {
 
     public final boolean mPlayOnMobileNetwork;
 
-    public final boolean mEnableOrientation;
+    /**
+     * 是否启用设备旋转传感器（用于横竖屏切换，默认不开启）
+     */
+    public final boolean enableOrientationSensor;
 
     /**
      * 是否启用音频焦点处理
@@ -36,11 +39,14 @@ public class VideoViewConfig {
 
     public final RenderFactory mRenderViewFactory;
 
-    public final boolean mAdaptCutout;
+    /**
+     * 是否适配刘海
+     */
+    public final boolean adaptCutout;
 
     private VideoViewConfig(Builder builder) {
         mIsEnableLog = builder.mIsEnableLog;
-        mEnableOrientation = builder.mEnableOrientation;
+        enableOrientationSensor = builder.mEnableOrientation;
         mPlayOnMobileNetwork = builder.mPlayOnMobileNetwork;
         enableAudioFocus = builder.mEnableAudioFocus;
         mProgressManager = builder.mProgressManager;
@@ -57,7 +63,7 @@ public class VideoViewConfig {
         } else {
             mRenderViewFactory = builder.mRenderViewFactory;
         }
-        mAdaptCutout = builder.mAdaptCutout;
+        adaptCutout = builder.mAdaptCutout;
     }
 
 
@@ -76,7 +82,7 @@ public class VideoViewConfig {
         /**
          * 是否监听设备方向来切换全屏/半屏， 默认不开启
          */
-        public Builder setEnableOrientation(boolean enableOrientation) {
+        public Builder setEnableOrientationSensor(boolean enableOrientation) {
             mEnableOrientation = enableOrientation;
             return this;
         }

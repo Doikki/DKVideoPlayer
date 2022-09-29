@@ -70,6 +70,7 @@
         android:layout_gravity="bottom"
         android:max="1000"
         android:progressDrawable="@drawable/dkplayer_layer_progress_bar"
-        android:visibility="gone" />
+        android:visibility="gone"
+        tools:visibility="visible"/>
 
 </FrameLayout>

@@ -120,7 +120,7 @@ public class TikTokView extends FrameLayout implements ControlComponent {
     }
 
     @Override
-    public void onPlayerStateChanged(int playerState) {
+    public void onScreenModeChanged(int screenMode) {
 
     }
 

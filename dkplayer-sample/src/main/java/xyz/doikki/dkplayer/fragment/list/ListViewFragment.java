@@ -49,7 +49,7 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
         mVideoView = new VideoView(getActivity());
         mVideoView.addOnStateChangeListener(new VideoView.OnStateChangeListener() {
             @Override
-            public void onPlayStateChanged(int playState) {
+            public void onPlayerStateChanged(int playState) {
                 if (playState == VideoView.STATE_IDLE) {
                     Utils.removeViewFormParent(mVideoView);
                     mCurPosition = -1;
@@ -63,7 +63,7 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
         mTitleView = new TitleView(getActivity());
         mController.addControlComponent(mTitleView);
         mController.addControlComponent(new VodControlView(getActivity()));
-        mController.setEnableOrientation(true);
+        mController.setEnableOrientationSensor(true);
         mVideoView.setVideoController(mController);
 
         ListView listView = findViewById(R.id.lv);
@@ -175,7 +175,7 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
     private void releaseVideoView() {
         mVideoView.release();
         if (mVideoView.isFullScreen()) {
-            mVideoView.stopFullScreen();
+            mVideoView.stopVideoViewFullScreen();
         }
         if(getActivity().getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);

@@ -146,7 +146,7 @@ public class MyDanmakuView extends DanmakuView implements ControlComponent {
     }
 
     @Override
-    public void onPlayerStateChanged(int playerState) {
+    public void onScreenModeChanged(int screenMode) {
 
     }
 

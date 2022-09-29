@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.animation.Animation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -14,41 +13,47 @@ import androidx.annotation.Nullable;
 
 import xyz.doikki.videocontroller.R;
 import xyz.doikki.videoplayer.VideoView;
-import xyz.doikki.videoplayer.controller.component.ControlComponent;
-import xyz.doikki.videoplayer.controller.ControlWrapper;
 import xyz.doikki.videoplayer.VideoViewManager;
+import xyz.doikki.videoplayer.controller.component.ControlComponent;
 
 /**
  * 准备播放界面
  */
-public class PrepareView extends FrameLayout implements ControlComponent {
+public class PrepareView extends BaseControlComponent implements ControlComponent {
 
-    private ControlWrapper mControlWrapper;
-    
-    private final ImageView mThumb;
-    private final ImageView mStartPlay;
-    private final ProgressBar mLoading;
-    private final FrameLayout mNetWarning;
+    private ImageView mThumb;
+    private ImageView mStartPlay;
+    private ProgressBar mLoading;
+    private FrameLayout mNetWarning;
 
     public PrepareView(@NonNull Context context) {
         super(context);
     }
 
     public PrepareView(@NonNull Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
     }
 
     public PrepareView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
-    
-    {
+
+    @Override
+    protected void setupViews() {
         LayoutInflater.from(getContext()).inflate(R.layout.dkplayer_layout_prepare_view, this, true);
         mThumb = findViewById(R.id.thumb);
         mStartPlay = findViewById(R.id.start_play);
         mLoading = findViewById(R.id.loading);
         mNetWarning = findViewById(R.id.net_warning_layout);
-        findViewById(R.id.status_btn).setOnClickListener(new OnClickListener() {
+
+        View btnInWarning = findViewById(R.id.status_btn);
+
+        if (isFocusUiMode()) {
+            setViewInFocusMode(mStartPlay);
+            setViewInFocusMode(btnInWarning);
+        }
+
+        btnInWarning.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 mNetWarning.setVisibility(GONE);
@@ -62,6 +67,10 @@ public class PrepareView extends FrameLayout implements ControlComponent {
      * 设置点击此界面开始播放
      */
     public void setClickStart() {
+        if(isFocusUiMode()){
+            setViewInFocusMode(this);
+        }
+
         setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,20 +79,6 @@ public class PrepareView extends FrameLayout implements ControlComponent {
         });
     }
 
-    @Override
-    public void attach(@NonNull ControlWrapper controlWrapper) {
-        mControlWrapper = controlWrapper;
-    }
-
-    @Override
-    public View getView() {
-        return this;
-    }
-
-    @Override
-    public void onVisibilityChanged(boolean isVisible, Animation anim) {
-
-    }
 
     @Override
     public void onPlayStateChanged(int playState) {
@@ -117,20 +112,5 @@ public class PrepareView extends FrameLayout implements ControlComponent {
                 mNetWarning.bringToFront();
                 break;
         }
-    }
-
-    @Override
-    public void onPlayerStateChanged(int playerState) {
-
-    }
-
-    @Override
-    public void onProgressChanged(int duration, int position) {
-
-    }
-
-    @Override
-    public void onLockStateChanged(boolean isLocked) {
-
     }
 }

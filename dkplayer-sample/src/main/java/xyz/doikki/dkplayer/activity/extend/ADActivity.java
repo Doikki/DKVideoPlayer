@@ -59,7 +59,7 @@ public class ADActivity extends BaseActivity<VideoView> {
         //监听播放结束
         mVideoView.addOnStateChangeListener(new VideoView.OnStateChangeListener() {
             @Override
-            public void onPlayStateChanged(int playState) {
+            public void onPlayerStateChanged(int playState) {
                 if (playState == VideoView.STATE_PLAYBACK_COMPLETED) {
                     playVideo();
                 }

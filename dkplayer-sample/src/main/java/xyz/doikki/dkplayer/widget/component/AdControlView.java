@@ -83,7 +83,7 @@ public class AdControlView extends FrameLayout implements ControlComponent, View
     public void onPlayStateChanged(int playState) {
         switch (playState) {
             case VideoView.STATE_PLAYING:
-                mControlWrapper.startProgress();
+                mControlWrapper.startUpdateProgress();
                 mPlayButton.setSelected(true);
                 break;
             case VideoView.STATE_PAUSED:
@@ -93,8 +93,8 @@ public class AdControlView extends FrameLayout implements ControlComponent, View
     }
 
     @Override
-    public void onPlayerStateChanged(int playerState) {
-        switch (playerState) {
+    public void onScreenModeChanged(int screenMode) {
+        switch (screenMode) {
             case ScreenMode.NORMAL:
                 mBack.setVisibility(GONE);
                 mFullScreen.setSelected(false);
@@ -144,8 +144,7 @@ public class AdControlView extends FrameLayout implements ControlComponent, View
      * 横竖屏切换
      */
     private void toggleFullScreen() {
-        Activity activity = PlayerUtils.scanForActivity(getContext());
-        mControlWrapper.toggleFullScreen(activity);
+        mControlWrapper.toggleFullScreen();
     }
 
     public void setListener(AdControlListener listener) {

@@ -102,7 +102,7 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
         mVideoView = new VideoView(getActivity());
         mVideoView.addOnStateChangeListener(new VideoView.OnStateChangeListener() {
             @Override
-            public void onPlayStateChanged(int playState) {
+            public void onPlayerStateChanged(int playState) {
                 //监听VideoViewManager释放，重置状态
                 if (playState == VideoView.STATE_IDLE) {
                     Utils.removeViewFormParent(mVideoView);
@@ -120,7 +120,7 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
         mController.addControlComponent(mTitleView);
         mController.addControlComponent(new VodControlView(getActivity()));
         mController.addControlComponent(new GestureView(getActivity()));
-        mController.setEnableOrientation(true);
+        mController.setEnableOrientationSensor(true);
         mVideoView.setVideoController(mController);
     }
 
@@ -211,7 +211,7 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
     private void releaseVideoView() {
         mVideoView.release();
         if (mVideoView.isFullScreen()) {
-            mVideoView.stopFullScreen();
+            mVideoView.stopVideoViewFullScreen();
         }
         if(getActivity().getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);

@@ -52,6 +52,11 @@ public class VideoViewManager {
      */
     private static boolean textureRenderOptimization = true;
 
+    /**
+     * 是否采用焦点模式：用于TV项目采用按键操作
+     */
+    private static boolean isFocusInTouchMode = false;
+
     private VideoViewManager() {
         mPlayOnMobileNetwork = sConfig.mPlayOnMobileNetwork;
     }
@@ -168,6 +173,14 @@ public class VideoViewManager {
         return mVideoViews.get(tag);
     }
 
+    public static boolean isFocusInTouchMode() {
+        return isFocusInTouchMode;
+    }
+
+    public static void setFocusInTouchMode(boolean isFocusInTouchMode) {
+        VideoViewManager.isFocusInTouchMode = isFocusInTouchMode;
+    }
+
     public void remove(String tag) {
         mVideoViews.remove(tag);
     }
@@ -200,6 +213,16 @@ public class VideoViewManager {
     }
 
     /**
+     * 获取推荐或默认的播放器工厂（优先推荐的播放器）
+     *
+     * @param customFactory 如果不为空，则返回本对象，否则返回全局的工厂
+     * @return
+     */
+    public static AVPlayerFactory<?> getPlayerFactory(@Nullable AVPlayerFactory<?> customFactory) {
+        return customFactory == null ? sConfig.mPlayerFactory : customFactory;
+    }
+
+    /**
      * 创建播放器
      *
      * @param context
@@ -207,8 +230,7 @@ public class VideoViewManager {
      * @return
      */
     public static AVPlayer createMediaPlayer(@NonNull Context context, @Nullable AVPlayerFactory<?> customFactory) {
-        AVPlayerFactory<?> factory = customFactory == null ? sConfig.mPlayerFactory : customFactory;
-        return factory.create(context);
+        return getPlayerFactory(customFactory).create(context);
     }
 
     /**
@@ -237,6 +259,10 @@ public class VideoViewManager {
         mSharedPlayers.remove(tag);
     }
 
+    public static RenderFactory getRenderFactory(@Nullable RenderFactory customFactory) {
+        return customFactory == null ? sConfig.mRenderViewFactory : customFactory;
+    }
+
     /**
      * 创建视图层
      *
@@ -244,8 +270,7 @@ public class VideoViewManager {
      * @return
      */
     public static Render createRenderView(@NonNull Context context, @Nullable RenderFactory customFactory) {
-        RenderFactory factory = customFactory == null ? sConfig.mRenderViewFactory : customFactory;
-        return factory.create(context);
+        return getRenderFactory(customFactory).create(context);
     }
 
 }

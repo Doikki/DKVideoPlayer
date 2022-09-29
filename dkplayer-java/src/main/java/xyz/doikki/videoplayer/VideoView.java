@@ -1,8 +1,10 @@
 package xyz.doikki.videoplayer;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -28,10 +30,10 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import xyz.doikki.videoplayer.controller.MediaController;
-import xyz.doikki.videoplayer.player.ScreenModeHandler;
 import xyz.doikki.videoplayer.controller.VideoViewControl;
 import xyz.doikki.videoplayer.player.AudioFocusHelper;
 import xyz.doikki.videoplayer.player.ProgressManager;
+import xyz.doikki.videoplayer.player.ScreenModeHandler;
 import xyz.doikki.videoplayer.render.AspectRatioType;
 import xyz.doikki.videoplayer.render.Render;
 import xyz.doikki.videoplayer.render.RenderFactory;
@@ -40,11 +42,16 @@ import xyz.doikki.videoplayer.util.L;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
 /**
- * 播放器&播放视图  内部包含了对应的{@link AVPlayer} 和  {@link Render}
+ * 播放器&播放视图  内部包含了对应的{@link AVPlayer} 和  {@link Render}，因此由本类提供这两者的功能能力
  * <p>
  * Created by Doikki on 2017/4/7.
  * <p>
  * update by luochao on 2022/9/16
+ *
+ * @see #setScreenAspectRatioType(int)  设置界面比例（宽比高）模式;{@link AspectRatioType}
+ * @see #screenshot 截屏
+ * @see #setMute(boolean) 设置静音
+ * @see #isMute() 是静音
  */
 public class VideoView extends FrameLayout implements VideoViewControl, AVPlayer.EventListener {
 
@@ -282,6 +289,24 @@ public class VideoView extends FrameLayout implements VideoViewControl, AVPlayer
     }
 
     /**
+     * 获取播放器名字
+     * @return
+     */
+    public String getPlayerName(){
+        String className =  VideoViewManager.getPlayerFactory(mPlayerFactory).getClass().getName();
+        return className.substring(className.lastIndexOf("."));
+    }
+
+    /**
+     * 获取渲染视图的名字
+     * @return
+     */
+    public String getRenderName(){
+        String className = VideoViewManager.getRenderFactory(mCustomRenderViewFactory).getClass().getName();
+        return className.substring(className.lastIndexOf("."));
+    }
+
+    /**
      * 第一次播放
      *
      * @return 是否成功开始播放
@@ -330,7 +355,7 @@ public class VideoView extends FrameLayout implements VideoViewControl, AVPlayer
     }
 
     protected AVPlayer createMediaPlayer() {
-        return VideoViewManager.createMediaPlayer(getContext(), mPlayerFactory);
+        return VideoViewManager.createMediaPlayer(getContext(),mPlayerFactory);
     }
 
     /**
@@ -607,7 +632,7 @@ public class VideoView extends FrameLayout implements VideoViewControl, AVPlayer
     /*************START VideoViewControl ***********************/
 
     /**
-     * 判断是否处于全屏状态
+     * 判断是否处于全屏状态（视图处于全屏）
      */
     @Override
     public boolean isFullScreen() {
@@ -615,7 +640,7 @@ public class VideoView extends FrameLayout implements VideoViewControl, AVPlayer
     }
 
     /**
-     * 当前是否处于小屏状态
+     * 当前是否处于小屏状态（视图处于小屏）
      */
     @Override
     public boolean isTinyScreen() {
@@ -623,27 +648,77 @@ public class VideoView extends FrameLayout implements VideoViewControl, AVPlayer
     }
 
     /**
-     * 进入全屏
+     * 横竖屏切换
+     *
+     * @return
      */
     @Override
-    public void startFullScreen() {
-        if (isFullScreen())
-            return;
-        if (mScreenModeHandler.startFullScreen(getPreferredActivity(), mPlayerContainer)) {
-            setScreenMode(SCREEN_MODE_FULL);
+    public boolean toggleFullScreen() {
+        if (isFullScreen()) {
+            return stopFullScreen();
+        } else {
+            return startFullScreen();
         }
     }
 
     /**
-     * 退出全屏
+     * 开始全屏
      */
     @Override
-    public void stopFullScreen() {
+    public boolean startFullScreen(boolean isLandscapeReversed) {
+        //设置界面横屏
+        Activity activity = getPreferredActivity();
+        if (isLandscapeReversed) {
+            if (activity != null && activity.getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
+                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+            }
+        } else {
+            if (activity != null && activity.getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            }
+        }
+        return startVideoViewFullScreen();
+    }
+
+    /**
+     * 停止全屏
+     */
+    @SuppressLint("SourceLockedOrientationActivity")
+    @Override
+    public boolean stopFullScreen() {
+        Activity activity = getPreferredActivity();
+        if (activity != null && activity.getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+        return stopVideoViewFullScreen();
+    }
+
+    /**
+     * VideoView全屏
+     */
+    @Override
+    public boolean startVideoViewFullScreen() {
+        if (isFullScreen())
+            return false;
+        if (mScreenModeHandler.startFullScreen(getPreferredActivity(), mPlayerContainer)) {
+            setScreenMode(SCREEN_MODE_FULL);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * VideoView退出全屏
+     */
+    @Override
+    public boolean stopVideoViewFullScreen() {
         if (!isFullScreen())
-            return;
+            return false;
         if (mScreenModeHandler.stopFullScreen(getPreferredActivity(), mPlayerContainer)) {
             setScreenMode(SCREEN_MODE_NORMAL);
+            return true;
         }
+        return false;
     }
 
     /**
@@ -745,6 +820,18 @@ public class VideoView extends FrameLayout implements VideoViewControl, AVPlayer
     @Override
     public boolean isMute() {
         return mMute;
+    }
+
+    /**
+     * 旋转视频画面
+     *
+     * @param degree 旋转角度
+     */
+    @Override
+    public void setRotation(int degree) {
+        if (mRenderView != null) {
+            mRenderView.setVideoRotation(degree);
+        }
     }
 
     /*************START VideoController ***********************/
@@ -849,14 +936,14 @@ public class VideoView extends FrameLayout implements VideoViewControl, AVPlayer
     private void notifyPlayerStateChanged() {
         int playState = mPlayerState;
         if (mVideoController != null) {
-            mVideoController.setPlayState(playState);
+            mVideoController.setPlayerState(playState);
         }
         List<OnStateChangeListener> listeners = mPlayerStateChangedListeners;
         if (Utils.isNullOrEmpty(listeners))
             return;
 
         for (OnStateChangeListener listener : mPlayerStateChangedListeners) {
-            listener.onPlayStateChanged(playState);
+            listener.onPlayerStateChanged(playState);
         }
     }
 
@@ -988,6 +1075,7 @@ public class VideoView extends FrameLayout implements VideoViewControl, AVPlayer
     public void setMirrorRotation(boolean enable) {
         if (mRenderView != null) {
             mRenderView.getView().setScaleX(enable ? -1 : 1);
+            mRenderView.setMirrorRotation(enable);
         }
     }
 
@@ -1001,20 +1089,8 @@ public class VideoView extends FrameLayout implements VideoViewControl, AVPlayer
     }
 
     /**
-     * 旋转视频画面
-     *
-     * @param rotation 角度
-     */
-    @Override
-    public void setRotation(float rotation) {
-        if (mRenderView != null) {
-            mRenderView.setVideoRotation((int) rotation);
-        }
-    }
-
-
-    /**
      * 播放状态改变监听器
+     * todo 目前VideoView对外可访问的回调过少，{@link xyz.doikki.videoplayer.AVPlayer.EventListener}的回调太多对外不可见
      */
     public interface OnStateChangeListener {
 
@@ -1026,7 +1102,7 @@ public class VideoView extends FrameLayout implements VideoViewControl, AVPlayer
          *
          * @param playState
          */
-        default void onPlayStateChanged(@PlayerState int playState) {
+        default void onPlayerStateChanged(@PlayerState int playState) {
         }
     }
 

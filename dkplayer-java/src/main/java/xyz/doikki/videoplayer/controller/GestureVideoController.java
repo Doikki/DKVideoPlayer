@@ -42,13 +42,8 @@ public abstract class GestureVideoController extends MediaController implements
     private boolean mChangeVolume;
 
     private boolean mCanChangePosition = true;
-
     private boolean mEnableInNormal;
-
     private boolean mCanSlide;
-
-
-
     private boolean mIsDoubleTapTogglePlayEnabled = true;
 
 

@@ -10,8 +10,8 @@ import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -22,22 +22,20 @@ import androidx.annotation.Nullable;
 import xyz.doikki.videocontroller.R;
 import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.controller.component.ControlComponent;
-import xyz.doikki.videoplayer.controller.ControlWrapper;
 import xyz.doikki.videoplayer.render.ScreenMode;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
 /**
  * 播放器顶部标题栏
  */
-public class TitleView extends FrameLayout implements ControlComponent {
+public class TitleView extends BaseControlComponent implements ControlComponent {
 
-    private ControlWrapper mControlWrapper;
+    private LinearLayout mTitleContainer;
+    private TextView mTitle;
+    private TextView mSysTime;//系统当前时间
 
-    private final LinearLayout mTitleContainer;
-    private final TextView mTitle;
-    private final TextView mSysTime;//系统当前时间
+    private BatteryReceiver mBatteryReceiver;
 
-    private final BatteryReceiver mBatteryReceiver;
     private boolean mIsRegister;//是否注册BatteryReceiver
 
     public TitleView(@NonNull Context context) {
@@ -52,26 +50,42 @@ public class TitleView extends FrameLayout implements ControlComponent {
         super(context, attrs, defStyleAttr);
     }
 
-    {
+    @Override
+    protected void setupViews() {
         setVisibility(GONE);
         LayoutInflater.from(getContext()).inflate(R.layout.dkplayer_layout_title_view, this, true);
         mTitleContainer = findViewById(R.id.title_container);
         ImageView back = findViewById(R.id.back);
-        back.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Activity activity = PlayerUtils.scanForActivity(getContext());
-                if (activity != null && mControlWrapper.isFullScreen()) {
-                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                    mControlWrapper.stopFullScreen();
-                }
-            }
-        });
         mTitle = findViewById(R.id.title);
         mSysTime = findViewById(R.id.sys_time);
         //电量
         ImageView batteryLevel = findViewById(R.id.iv_battery);
-        mBatteryReceiver = new BatteryReceiver(batteryLevel);
+
+        if (isFocusUiMode()) {
+            //tv模式不要电量，不要返回按钮
+            back.setVisibility(View.GONE);
+            batteryLevel.setVisibility(View.GONE);
+
+            //因为返回按钮不可见，因此标题左侧设置多一个margin
+            ViewGroup.LayoutParams titleLp = mTitle.getLayoutParams();
+            if (titleLp instanceof MarginLayoutParams) {
+                MarginLayoutParams lp = (MarginLayoutParams) titleLp;
+                lp.setMargins(lp.leftMargin + getContext().getResources().getDimensionPixelSize(R.dimen.dkplayer_controller_icon_padding),
+                        lp.topMargin, lp.rightMargin, lp.bottomMargin);
+                mTitle.setLayoutParams(lp);
+            }
+        } else {
+            back.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Activity activity = PlayerUtils.scanForActivity(getContext());
+                    if (activity != null && mControlWrapper.isFullScreen()) {
+                        mControlWrapper.stopFullScreen();
+                    }
+                }
+            });
+            mBatteryReceiver = new BatteryReceiver(batteryLevel);
+        }
     }
 
     public void setTitle(String title) {
@@ -81,7 +95,7 @@ public class TitleView extends FrameLayout implements ControlComponent {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        if (mIsRegister) {
+        if (mIsRegister && mBatteryReceiver != null) {
             getContext().unregisterReceiver(mBatteryReceiver);
             mIsRegister = false;
         }
@@ -90,21 +104,12 @@ public class TitleView extends FrameLayout implements ControlComponent {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if (!mIsRegister) {
+        if (!mIsRegister && mBatteryReceiver != null) {
             getContext().registerReceiver(mBatteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
             mIsRegister = true;
         }
     }
 
-    @Override
-    public void attach(@NonNull ControlWrapper controlWrapper) {
-        mControlWrapper = controlWrapper;
-    }
-
-    @Override
-    public View getView() {
-        return this;
-    }
 
     @Override
     public void onVisibilityChanged(boolean isVisible, Animation anim) {
@@ -143,8 +148,8 @@ public class TitleView extends FrameLayout implements ControlComponent {
     }
 
     @Override
-    public void onPlayerStateChanged(int playerState) {
-        if (playerState == ScreenMode.FULL) {
+    public void onScreenModeChanged(int screenMode) {
+        if (screenMode == ScreenMode.FULL) {
             if (mControlWrapper.isShowing() && !mControlWrapper.isLocked()) {
                 setVisibility(VISIBLE);
                 mSysTime.setText(PlayerUtils.getCurrentSystemTime());
@@ -167,11 +172,6 @@ public class TitleView extends FrameLayout implements ControlComponent {
                 mTitleContainer.setPadding(0, 0, cutoutHeight, 0);
             }
         }
-    }
-
-    @Override
-    public void onProgressChanged(int duration, int position) {
-
     }
 
     @Override

@@ -15,7 +15,6 @@ import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
 import xyz.doikki.videoplayer.VideoViewConfig;
 import xyz.doikki.videoplayer.VideoViewManager;
-import xyz.doikki.videoplayer.render.ScreenMode;
 
 public final class Utils {
 
@@ -77,63 +76,6 @@ public final class Utils {
         }
     }
 
-    /**
-     * Returns a string containing player state debugging information.
-     */
-    public static String playState2str(int state) {
-        String playStateString;
-        switch (state) {
-            default:
-            case VideoView.STATE_IDLE:
-                playStateString = "idle";
-                break;
-            case VideoView.STATE_PREPARING:
-                playStateString = "preparing";
-                break;
-            case VideoView.STATE_PREPARED:
-                playStateString = "prepared";
-                break;
-            case VideoView.STATE_PLAYING:
-                playStateString = "playing";
-                break;
-            case VideoView.STATE_PAUSED:
-                playStateString = "pause";
-                break;
-            case VideoView.STATE_BUFFERING:
-                playStateString = "buffering";
-                break;
-            case VideoView.STATE_BUFFERED:
-                playStateString = "buffered";
-                break;
-            case VideoView.STATE_PLAYBACK_COMPLETED:
-                playStateString = "playback completed";
-                break;
-            case VideoView.STATE_ERROR:
-                playStateString = "error";
-                break;
-        }
-        return String.format("playState: %s", playStateString);
-    }
-
-    /**
-     * Returns a string containing player state debugging information.
-     */
-    public static String playerState2str(int state) {
-        String playerStateString;
-        switch (state) {
-            default:
-            case ScreenMode.NORMAL:
-                playerStateString = "normal";
-                break;
-            case ScreenMode.FULL:
-                playerStateString = "full screen";
-                break;
-            case ScreenMode.TINY:
-                playerStateString = "tiny screen";
-                break;
-        }
-        return String.format("playerState: %s", playerStateString);
-    }
 
     /**
      * Gets the corresponding path to a file from the given content:// URI

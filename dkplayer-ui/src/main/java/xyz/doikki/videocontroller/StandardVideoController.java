@@ -128,9 +128,9 @@ public class StandardVideoController extends GestureVideoController implements V
     }
 
     @Override
-    protected void onPlayerStateChanged(int playerState) {
-        super.onPlayerStateChanged(playerState);
-        switch (playerState) {
+    protected void onScreenModeChanged(int screenMode) {
+        super.onScreenModeChanged(screenMode);
+        switch (screenMode) {
             case ScreenMode.NORMAL:
                 setLayoutParams(new FrameLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
@@ -165,8 +165,8 @@ public class StandardVideoController extends GestureVideoController implements V
     }
 
     @Override
-    protected void onPlayStateChanged(int playState) {
-        super.onPlayStateChanged(playState);
+    protected void onPlayerStateChanged(int playState) {
+        super.onPlayerStateChanged(playState);
         switch (playState) {
             //调用release方法会回到此状态
             case VideoView.STATE_IDLE:

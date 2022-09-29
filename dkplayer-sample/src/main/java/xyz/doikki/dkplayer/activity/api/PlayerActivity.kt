@@ -24,7 +24,6 @@ import xyz.doikki.videocontroller.StandardVideoController
 import xyz.doikki.videocontroller.component.*
 import xyz.doikki.videoplayer.VideoView
 import xyz.doikki.videoplayer.render.AspectRatioType
-import xyz.doikki.videoplayer.render.ScreenMode
 import xyz.doikki.videoplayer.util.L
 
 /**
@@ -46,7 +45,7 @@ class PlayerActivity : BaseActivity<VideoView>() {
         intent?.let {
             controller = StandardVideoController(this)
             //根据屏幕方向自动进入/退出全屏
-            controller.setEnableOrientation(true)
+            controller.setEnableOrientationSensor(true)
             val prepareView = PrepareView(this) //准备播放界面
             prepareView.setClickStart()
             val thumb = prepareView.findViewById<ImageView>(R.id.thumb) //封面图
@@ -166,7 +165,7 @@ class PlayerActivity : BaseActivity<VideoView>() {
     private val mOnStateChangeListener: VideoView.OnStateChangeListener =
         object : VideoView.OnStateChangeListener {
 
-            override fun onPlayStateChanged(playState: Int) {
+            override fun onPlayerStateChanged(playState: Int) {
                 when (playState) {
                     VideoView.STATE_IDLE -> {
                     }
@@ -208,11 +207,11 @@ class PlayerActivity : BaseActivity<VideoView>() {
             R.id.speed_1_0 -> mVideoView!!.speed = 1.0f
             R.id.speed_1_5 -> mVideoView!!.speed = 1.5f
             R.id.speed_2_0 -> mVideoView!!.speed = 2.0f
-            R.id.rotate90 ->controller.controlWrapper.setRotation(90f)
-            R.id.rotate180 ->controller.controlWrapper.setRotation(180f)
-            R.id.rotate270 ->controller.controlWrapper.setRotation(270f)
-            R.id.rotate60 ->controller.controlWrapper.setRotation(60f)
-            R.id.rotate0 ->controller.controlWrapper.setRotation(0f)
+            R.id.rotate90 ->controller.controlWrapper.setRotation(90)
+            R.id.rotate180 ->controller.controlWrapper.setRotation(180)
+            R.id.rotate270 ->controller.controlWrapper.setRotation(270)
+            R.id.rotate60 ->controller.controlWrapper.setRotation(60)
+            R.id.rotate0 ->controller.controlWrapper.setRotation(0)
             R.id.screen_shot -> {
                 val imageView = findViewById<ImageView>(R.id.iv_screen_shot)
                 mVideoView!!.screenshot {

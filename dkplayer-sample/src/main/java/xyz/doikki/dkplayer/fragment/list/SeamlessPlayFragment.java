@@ -51,7 +51,7 @@ public class SeamlessPlayFragment extends RecyclerViewAutoPlayFragment {
                 //无需无缝播放，把相应数据传到详情页
                 mVideoView.release();
                 //需要把控制器还原
-                mController.setPlayState(VideoView.STATE_IDLE);
+                mController.setPlayerState(VideoView.STATE_IDLE);
                 bundle.putBoolean(IntentKeys.SEAMLESS_PLAY, false);
                 bundle.putString(IntentKeys.URL, videoBean.getUrl());
                 bundle.putString(IntentKeys.TITLE, videoBean.getTitle());
@@ -139,7 +139,7 @@ public class SeamlessPlayFragment extends RecyclerViewAutoPlayFragment {
         viewHolder.mPlayerContainer.addView(mVideoView, 0);
         // 请点进去看isDissociate的解释
         mController.addControlComponent(viewHolder.mPrepareView, true);
-        mController.setPlayState(mVideoView.getCurrentPlayState());
+        mController.setPlayerState(mVideoView.getCurrentPlayState());
         mController.setScreenMode(mVideoView.getScreenMode());
 
         mRecyclerView.postDelayed(new Runnable() {

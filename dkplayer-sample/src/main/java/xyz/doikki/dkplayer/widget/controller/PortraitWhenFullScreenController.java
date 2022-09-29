@@ -50,12 +50,12 @@ public class PortraitWhenFullScreenController extends StandardVideoController {
     public void setMediaPlayer(VideoViewControl mediaPlayer) {
         super.setMediaPlayer(mediaPlayer);
         //不监听设备方向
-        mOrientationHelper.setDeviceOrientationChangedListener(null);
+        setEnableOrientationSensor(false);
     }
 
     @Override
-    protected void toggleFullScreen() {
-        if (mActivity == null) return;
+    public boolean toggleFullScreen() {
+        if (mActivity == null) return false;
         int o = mActivity.getRequestedOrientation();
         if (o == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
             mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -64,12 +64,13 @@ public class PortraitWhenFullScreenController extends StandardVideoController {
         }
         mFullScreen.setSelected(o != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         adjustView();
+        return true;
     }
 
     @Override
     public boolean onSingleTapConfirmed(MotionEvent e) {
         if (!mControlWrapper.isFullScreen()) {
-            mControlWrapper.startFullScreen();
+            mControlWrapper.startVideoViewFullScreen();
             return true;
         }
         mControlWrapper.toggleShowState();
@@ -77,9 +78,9 @@ public class PortraitWhenFullScreenController extends StandardVideoController {
     }
 
     @Override
-    protected void onPlayerStateChanged(int playerState) {
-        super.onPlayerStateChanged(playerState);
-        if (playerState == ScreenMode.FULL) {
+    protected void onScreenModeChanged(int screenMode) {
+        super.onScreenModeChanged(screenMode);
+        if (screenMode == ScreenMode.FULL) {
             mFullScreen.setSelected(false);
         } else {
             hide();
@@ -114,10 +115,10 @@ public class PortraitWhenFullScreenController extends StandardVideoController {
             stopFullScreen();
         } else if (i == R.id.thumb) {
             mControlWrapper.start();
-            mControlWrapper.startFullScreen();
+            mControlWrapper.startVideoViewFullScreen();
         } else if (i == R.id.iv_replay) {
             mControlWrapper.replay(true);
-            mControlWrapper.startFullScreen();
+            mControlWrapper.startVideoViewFullScreen();
         }
     }
 }

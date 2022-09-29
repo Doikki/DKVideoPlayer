@@ -29,7 +29,6 @@ import xyz.doikki.videocontroller.component.VodControlView;
 import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.render.AspectRatioType;
 import xyz.doikki.videoplayer.render.Render;
-import xyz.doikki.videoplayer.render.ScreenMode;
 import xyz.doikki.videoplayer.util.L;
 
 /**
@@ -63,7 +62,7 @@ public class PlayerActivityJava extends BaseActivity<VideoView> {
         if (intent != null) {
             StandardVideoController controller = new StandardVideoController(this);
             //根据屏幕方向自动进入/退出全屏
-            controller.setEnableOrientation(true);
+            controller.setEnableOrientationSensor(true);
 
             PrepareView prepareView = new PrepareView(this);//准备播放界面
             prepareView.setClickStart();
@@ -170,7 +169,7 @@ public class PlayerActivityJava extends BaseActivity<VideoView> {
     private VideoView.OnStateChangeListener mOnStateChangeListener = new VideoView.OnStateChangeListener() {
 
         @Override
-        public void onPlayStateChanged(int playState) {
+        public void onPlayerStateChanged(int playState) {
             switch (playState) {
                 case VideoView.STATE_IDLE:
                     break;

@@ -1,6 +1,5 @@
 package xyz.doikki.videoplayer.controller.component;
 
-import xyz.doikki.videoplayer.controller.component.ControlComponent;
 
 /**
  * 与手势操作相关的控制组件
@@ -17,7 +16,7 @@ public interface GestureControlComponent extends ControlComponent {
     void onStopSlide();
 
     /**
-     * 滑动调整进度
+     * 滑动调整进度        
      * @param slidePosition 滑动进度
      * @param currentPosition 当前播放进度
      * @param duration 视频总长度

@@ -5,7 +5,7 @@ import android.view.animation.Animation;
 
 import androidx.annotation.NonNull;
 
-import xyz.doikki.dkplayer.util.Utils;
+import xyz.doikki.videoplayer.Utils;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
 import xyz.doikki.videoplayer.controller.component.ControlComponent;
 import xyz.doikki.videoplayer.util.L;
@@ -35,8 +35,8 @@ public class PlayerMonitor implements ControlComponent {
     }
 
     @Override
-    public void onPlayerStateChanged(int playerState) {
-        L.d("onPlayerStateChanged: " + Utils.playerState2str(playerState));
+    public void onScreenModeChanged(int screenMode) {
+        L.d("onPlayerStateChanged: " + Utils.screenMode2str(screenMode));
     }
 
     @Override

@@ -106,7 +106,7 @@ public class AndroidOPiPActivity extends AppCompatActivity {
         mVideoView.start();
         mVideoView.addOnStateChangeListener(new VideoView.OnStateChangeListener() {
             @Override
-            public void onPlayStateChanged(int playState) {
+            public void onPlayerStateChanged(int playState) {
                 switch (playState) {
                     case VideoView.STATE_PAUSED:
                         updatePictureInPictureActions(

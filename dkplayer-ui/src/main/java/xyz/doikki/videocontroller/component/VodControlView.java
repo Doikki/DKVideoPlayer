@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -32,17 +31,15 @@ import xyz.doikki.videoplayer.util.PlayerUtils;
 /**
  * 点播底部控制栏
  */
-public class VodControlView extends FrameLayout implements ControlComponent, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
-    
-    protected ControlWrapper mControlWrapper;
+public class VodControlView extends BaseControlComponent implements ControlComponent, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
-    private final TextView mTotalTime;
-    private final TextView mCurrTime;
-    private final ImageView mFullScreen;
-    private final LinearLayout mBottomContainer;
-    private final SeekBar mVideoProgress;
-    private final ProgressBar mBottomProgress;
-    private final ImageView mPlayButton;
+    private TextView mTotalTime;
+    private TextView mCurrTime;
+    private ImageView mFullScreen;
+    private LinearLayout mBottomContainer;
+    private SeekBar mVideoProgress;
+    private ProgressBar mBottomProgress;
+    private ImageView mPlayButton;
 
     private boolean mIsDragging;
 
@@ -53,15 +50,15 @@ public class VodControlView extends FrameLayout implements ControlComponent, Vie
     }
 
     public VodControlView(@NonNull Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
     }
 
     public VodControlView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
-    
-    
-    {
+
+    @Override
+    protected void setupViews() {
         setVisibility(GONE);
         LayoutInflater.from(getContext()).inflate(getLayoutId(), this, true);
         mFullScreen = findViewById(R.id.fullscreen);
@@ -81,6 +78,7 @@ public class VodControlView extends FrameLayout implements ControlComponent, Vie
         }
     }
 
+
     protected int getLayoutId() {
         return R.layout.dkplayer_layout_vod_control_view;
     }
@@ -90,16 +88,6 @@ public class VodControlView extends FrameLayout implements ControlComponent, Vie
      */
     public void showBottomProgress(boolean isShow) {
         mIsShowBottomProgress = isShow;
-    }
-
-    @Override
-    public void attach(@NonNull ControlWrapper controlWrapper) {
-        mControlWrapper = controlWrapper;
-    }
-
-    @Override
-    public View getView() {
-        return this;
     }
 
     @Override
@@ -158,7 +146,7 @@ public class VodControlView extends FrameLayout implements ControlComponent, Vie
                 }
                 setVisibility(VISIBLE);
                 //开始刷新进度
-                mControlWrapper.startProgress();
+                mControlWrapper.startUpdateProgress();
                 break;
             case VideoView.STATE_PAUSED:
                 mPlayButton.setSelected(false);
@@ -166,19 +154,19 @@ public class VodControlView extends FrameLayout implements ControlComponent, Vie
             case VideoView.STATE_BUFFERING:
                 mPlayButton.setSelected(mControlWrapper.isPlaying());
                 // 停止刷新进度
-                mControlWrapper.stopProgress();
+                mControlWrapper.stopUpdateProgress();
                 break;
             case VideoView.STATE_BUFFERED:
                 mPlayButton.setSelected(mControlWrapper.isPlaying());
                 //开始刷新进度
-                mControlWrapper.startProgress();
+                mControlWrapper.startUpdateProgress();
                 break;
         }
     }
 
     @Override
-    public void onPlayerStateChanged(int playerState) {
-        switch (playerState) {
+    public void onScreenModeChanged(int screenMode) {
+        switch (screenMode) {
             case ScreenMode.NORMAL:
                 mFullScreen.setSelected(false);
                 break;
@@ -254,8 +242,7 @@ public class VodControlView extends FrameLayout implements ControlComponent, Vie
      * 横竖屏切换
      */
     private void toggleFullScreen() {
-        Activity activity = PlayerUtils.scanForActivity(getContext());
-        mControlWrapper.toggleFullScreen(activity);
+        mControlWrapper.toggleFullScreen();
         // 下面方法会根据适配宽高决定是否旋转屏幕
 //        mControlWrapper.toggleFullScreenByVideoSize(activity);
     }
@@ -263,7 +250,7 @@ public class VodControlView extends FrameLayout implements ControlComponent, Vie
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
         mIsDragging = true;
-        mControlWrapper.stopProgress();
+        mControlWrapper.stopUpdateProgress();
         mControlWrapper.stopFadeOut();
     }
 
@@ -273,7 +260,7 @@ public class VodControlView extends FrameLayout implements ControlComponent, Vie
         long newPosition = (duration * seekBar.getProgress()) / mVideoProgress.getMax();
         mControlWrapper.seekTo((int) newPosition);
         mIsDragging = false;
-        mControlWrapper.startProgress();
+        mControlWrapper.startUpdateProgress();
         mControlWrapper.startFadeOut();
     }
 

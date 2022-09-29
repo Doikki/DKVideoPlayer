@@ -74,7 +74,7 @@ public class GestureView extends FrameLayout implements GestureControlComponent 
     }
 
     @Override
-    public void onPlayerStateChanged(int playerState) {
+    public void onScreenModeChanged(int screenMode) {
 
     }
 

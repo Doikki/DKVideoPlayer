@@ -7,7 +7,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import xyz.doikki.videoplayer.VideoView;
+import xyz.doikki.videoplayer.VideoViewManager;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
+import xyz.doikki.videoplayer.render.ScreenMode;
 
 /**
  * 控制器中的控制组件
@@ -17,14 +19,39 @@ public interface ControlComponent {
     /**
      * 将 ControlWrapper 传递到当前 ControlComponent 中
      */
-    void attach(@NonNull ControlWrapper controlWrapper);
+    void attach(@NonNull ControlWrapper controlHolder);
 
     /**
-     * 如果 ControlComponent 是 View，返回当前控件（this）即可
-     * 如果不是，返回null
+     * 如果 ControlComponent 是 View，返回当前控件（this）即可；如果不是，返回null
      */
     @Nullable
     View getView();
+
+    /**
+     * 是否采用焦点模式：用于处理Component内部控件的操作模式
+     *
+     * @return
+     */
+    default boolean isFocusUiMode() {
+        return VideoViewManager.isFocusInTouchMode();
+    }
+
+    /**
+     * 播放器界面模式发生了变化；如果你只是单纯的想监听此状态，建议使用 {@link VideoView#addOnStateChangeListener(VideoView.OnStateChangeListener)}监听
+     *
+     * @param screenMode 播放器界面模式：竖屏、全屏、小窗口
+     */
+    default void onScreenModeChanged(@ScreenMode int screenMode) {
+    }
+
+    /**
+     * 回调控制器是否被锁定，锁定后会产生如下影响：
+     * 无法响应滑动手势，双击事件，点击显示和隐藏控制UI，跟随重力感应切换横竖屏
+     *
+     * @param isLocked true:锁定
+     */
+    default void onLockStateChanged(boolean isLocked) {
+    }
 
     /**
      * 回调控制器显示和隐藏状态，
@@ -33,23 +60,16 @@ public interface ControlComponent {
      * @param isVisible true 代表要显示， false 代表要隐藏
      * @param anim      显示和隐藏的动画，是一个补间Alpha动画
      */
-    void onVisibilityChanged(boolean isVisible, Animation anim);
+    default void onVisibilityChanged(boolean isVisible, Animation anim) {
+    }
 
     /**
      * 回调播放器的播放器状态变更；如果只是单纯的想监听状态变更，可以通过{@link VideoView#addOnStateChangeListener(VideoView.OnStateChangeListener)}方法增加监听
      *
      * @param playState 播放状态
      */
-    void onPlayStateChanged(int playState);
-
-    /**
-     * 回调播放器的状态，如果你只是单纯的想监听此状态，建议使用
-     * {@link VideoView} 中的
-     * addOnStateChangeListener 方法
-     *
-     * @param playerState 播放器状态
-     */
-    void onPlayerStateChanged(int playerState);
+    default void onPlayStateChanged(int playState) {
+    }
 
     /**
      * 回调播放进度，1秒回调一次
@@ -57,14 +77,6 @@ public interface ControlComponent {
      * @param duration 视频总时长
      * @param position 播放进度
      */
-    void onProgressChanged(int duration, int position);
-
-    /**
-     * 回调控制器是否被锁定，锁定后会产生如下影响：
-     * 无法响应滑动手势，双击事件，点击显示和隐藏控制UI，跟随重力感应切换横竖屏
-     *
-     * @param isLocked 是否锁定
-     */
-    void onLockStateChanged(boolean isLocked);
-
+    default void onProgressChanged(int duration, int position) {
+    }
 }

@@ -7,7 +7,6 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -17,20 +16,19 @@ import androidx.annotation.Nullable;
 import xyz.doikki.videocontroller.R;
 import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.controller.component.ControlComponent;
-import xyz.doikki.videoplayer.controller.ControlWrapper;
 import xyz.doikki.videoplayer.render.ScreenMode;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
 /**
  * 直播底部控制栏
+ * <p>
+ * 此控件不适配TV模式
  */
-public class LiveControlView extends FrameLayout implements ControlComponent, View.OnClickListener {
+public class LiveControlView extends BaseControlComponent implements ControlComponent, View.OnClickListener {
 
-    private ControlWrapper mControlWrapper;
-
-    private final ImageView mFullScreen;
-    private final LinearLayout mBottomContainer;
-    private final ImageView mPlayButton;
+    private ImageView mFullScreen;
+    private LinearLayout mBottomContainer;
+    private ImageView mPlayButton;
 
     public LiveControlView(@NonNull Context context) {
         super(context);
@@ -43,9 +41,9 @@ public class LiveControlView extends FrameLayout implements ControlComponent, Vi
     public LiveControlView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
-    
-    
-    {
+
+    @Override
+    protected void setupViews() {
         setVisibility(GONE);
         LayoutInflater.from(getContext()).inflate(R.layout.dkplayer_layout_live_control_view, this, true);
         mFullScreen = findViewById(R.id.fullscreen);
@@ -55,16 +53,6 @@ public class LiveControlView extends FrameLayout implements ControlComponent, Vi
         mPlayButton.setOnClickListener(this);
         ImageView refresh = findViewById(R.id.iv_refresh);
         refresh.setOnClickListener(this);
-    }
-
-    @Override
-    public void attach(@NonNull ControlWrapper controlWrapper) {
-        mControlWrapper = controlWrapper;
-    }
-
-    @Override
-    public View getView() {
-        return this;
     }
 
     @Override
@@ -111,8 +99,8 @@ public class LiveControlView extends FrameLayout implements ControlComponent, Vi
     }
 
     @Override
-    public void onPlayerStateChanged(int playerState) {
-        switch (playerState) {
+    public void onScreenModeChanged(int screenMode) {
+        switch (screenMode) {
             case ScreenMode.NORMAL:
                 mFullScreen.setSelected(false);
                 break;
@@ -136,11 +124,6 @@ public class LiveControlView extends FrameLayout implements ControlComponent, Vi
     }
 
     @Override
-    public void onProgressChanged(int duration, int position) {
-
-    }
-
-    @Override
     public void onLockStateChanged(boolean isLocked) {
         onVisibilityChanged(!isLocked, null);
     }
@@ -149,19 +132,11 @@ public class LiveControlView extends FrameLayout implements ControlComponent, Vi
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.fullscreen) {
-            toggleFullScreen();
+            mControlWrapper.toggleFullScreen();
         } else if (id == R.id.iv_play) {
             mControlWrapper.togglePlay();
         } else if (id == R.id.iv_refresh) {
             mControlWrapper.replay(true);
         }
-    }
-
-    /**
-     * 横竖屏切换
-     */
-    private void toggleFullScreen() {
-        Activity activity = PlayerUtils.scanForActivity(getContext());
-        mControlWrapper.toggleFullScreen(activity);
     }
 }

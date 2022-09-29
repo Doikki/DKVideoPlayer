@@ -130,7 +130,7 @@ public class PipControlView extends FrameLayout implements ControlComponent, Vie
     }
 
     @Override
-    public void onPlayerStateChanged(int playerState) {
+    public void onScreenModeChanged(int screenMode) {
 
     }
 

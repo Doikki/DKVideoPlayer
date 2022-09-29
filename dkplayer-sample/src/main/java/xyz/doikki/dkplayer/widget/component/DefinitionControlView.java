@@ -25,7 +25,6 @@ import java.util.Map;
 
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.videocontroller.component.VodControlView;
-import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.render.ScreenMode;
 import xyz.doikki.videoplayer.util.L;
 import xyz.doikki.videoplayer.util.PlayerUtils;
@@ -92,9 +91,9 @@ public class DefinitionControlView extends VodControlView {
     }
 
     @Override
-    public void onPlayerStateChanged(int playerState) {
-        super.onPlayerStateChanged(playerState);
-        if (playerState == ScreenMode.FULL) {
+    public void onScreenModeChanged(int screenMode) {
+        super.onScreenModeChanged(screenMode);
+        if (screenMode == ScreenMode.FULL) {
             mDefinition.setVisibility(VISIBLE);
         } else {
             mDefinition.setVisibility(GONE);
@@ -143,7 +142,7 @@ public class DefinitionControlView extends VodControlView {
 
     private void switchDefinition(String s) {
         mControlWrapper.hide();
-        mControlWrapper.stopProgress();
+        mControlWrapper.stopUpdateProgress();
         String url = mMultiRateData.get(s);
         if (mOnRateSwitchListener != null)
             mOnRateSwitchListener.onRateChange(url);

@@ -3,4 +3,6 @@
     <color name="dkplayer_theme_color">#39C5BB</color>
     <color name="dkplayer_theme_color_translucent">#9939C5BB</color>
     <color name="dkplayer_background_color">#4D000000</color>
+
+    <color name="dkplayer_control_component_container_color">@android:color/black</color>
 </resources>

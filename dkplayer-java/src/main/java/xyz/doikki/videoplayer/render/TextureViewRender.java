@@ -20,6 +20,9 @@ import xyz.doikki.videoplayer.VideoViewManager;
  * 经查看{@link TextureView}源码，发现在{@link #onDetachedFromWindow()}的时候，
  * 会先回调{@link TextureView.SurfaceTextureListener#onSurfaceTextureDestroyed}并释放{@link SurfaceTexture},
  * 在需要{@link SurfaceTexture}时会重新构建并回调{@link TextureView.SurfaceTextureListener#onSurfaceTextureAvailable}
+ *
+ * @see #attachToPlayer 绑定播放器
+ * @see #setVideoSize(int, int) 设置画面大小：通常由{@link AVPlayer.EventListener#onVideoSizeChanged(int, int)}回调之后设置
  */
 @SuppressLint("ViewConstructor")
 public class TextureViewRender extends TextureView implements Render, TextureView.SurfaceTextureListener {
@@ -116,6 +119,34 @@ public class TextureViewRender extends TextureView implements Render, TextureVie
         }
     }
 
+    @Override
+    public void setVideoRotation(int degree) {
+        mMeasureHelper.setVideoRotationDegree(degree);
+        setRotation(degree);
+        requestLayout();
+    }
+
+    @Override
+    public void setMirrorRotation(boolean enable) {
+        setScaleX(enable ? -1 : 1);
+    }
+
+    @Override
+    public void setAspectRatioType(int scaleType) {
+        mMeasureHelper.setAspectRatioType(scaleType);
+        requestLayout();
+    }
+
+    @Override
+    public void release() {
+        if (mSurface != null)
+            mSurface.release();
+
+        if (mSurfaceTexture != null)
+            mSurfaceTexture.release();
+    }
+
+
     /*************END Render 实现逻辑***********************/
 
     /*************START TextureView.SurfaceTextureListener 实现逻辑***********************/
@@ -187,32 +218,9 @@ public class TextureViewRender extends TextureView implements Render, TextureVie
     /*************END TextureView.SurfaceTextureListener 实现逻辑***********************/
 
     @Override
-    public void setVideoRotation(int degree) {
-        mMeasureHelper.setVideoRotationDegree(degree);
-        setRotation(degree);
-        requestLayout();
-    }
-
-    @Override
-    public void setAspectRatioType(int scaleType) {
-        mMeasureHelper.setAspectRatioType(scaleType);
-        requestLayout();
-    }
-
-    @Override
-    public void release() {
-        if (mSurface != null)
-            mSurface.release();
-
-        if (mSurfaceTexture != null)
-            mSurfaceTexture.release();
-    }
-
-    @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         mMeasureHelper.doMeasure(widthMeasureSpec, heightMeasureSpec);
         setMeasuredDimension(mMeasureHelper.getMeasuredWidth(), mMeasureHelper.getMeasuredHeight());
     }
-
 
 }

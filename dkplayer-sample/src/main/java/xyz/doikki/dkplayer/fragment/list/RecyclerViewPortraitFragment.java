@@ -18,7 +18,7 @@ public class RecyclerViewPortraitFragment extends RecyclerViewAutoPlayFragment {
         mVideoView = new VideoView(getActivity());
         mVideoView.addOnStateChangeListener(new VideoView.OnStateChangeListener() {
             @Override
-            public void onPlayStateChanged(int playState) {
+            public void onPlayerStateChanged(int playState) {
                 if (playState == VideoView.STATE_IDLE) {
                     Utils.removeViewFormParent(mVideoView);
                     mLastPos = mCurPos;
@@ -34,13 +34,13 @@ public class RecyclerViewPortraitFragment extends RecyclerViewAutoPlayFragment {
         mTitleView = new TitleView(getActivity());
         mController.addControlComponent(mTitleView);
         mController.addControlComponent(new GestureView(getActivity()));
-        mController.setEnableOrientation(true);
+        mController.setEnableOrientationSensor(true);
         mVideoView.setVideoController(mController);
     }
 
     @Override
     public void onItemChildClick(int position) {
-        mVideoView.startFullScreen();
+        mVideoView.startVideoViewFullScreen();
         super.onItemChildClick(position);
     }
 }

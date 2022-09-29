@@ -1,8 +1,8 @@
 package xyz.doikki.videoplayer.controller;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +12,7 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.AttrRes;
 import androidx.annotation.CallSuper;
+import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -30,12 +31,31 @@ import xyz.doikki.videoplayer.util.PlayerUtils;
 
 /**
  * 控制器基类
+ * 对外提供可以控制的方法
+ *
+ * @see #show() 显示控制器
+ * @see #hide() 隐藏控制器
+ * @see #startFadeOut() 开启超时自动隐藏控制器
+ * @see #stopFadeOut() 移除自动隐藏控制器计时
+ * @see #setFadeOutTime(int) 设置自动隐藏倒计时持续的时间
+ * @see #setLocked(boolean) 修改锁定状态
+ * @see #setEnableOrientationSensor(boolean) 设置是否启用设备旋转监听控制横竖屏切换，默认不开启
+ * @see #toggleFullScreen() 横竖屏切换
+ * @see #startFullScreen() 开始全屏
+ * @see #stopFullScreen() 结束全屏
+ * @see #setAdaptCutout(boolean) 是否适配刘海
+ * @see #hasCutout() 是否有刘海
+ * @see #getCutoutHeight() 刘海高度
+ * <p>
+ * 对子类提供的可以重写的功能
+ * @see #onVisibilityChanged(boolean, Animation) 控制器可见状态发生了变化
+ * @see #onLockStateChanged(boolean) 锁定状态改变
+ * @see #onScreenModeChanged(int) 屏幕模式改变
+ * @see #onProgressChanged(int, int)  播放进度发生了变化
+ *
+ * <p>
  * 此类集成各种事件的处理逻辑，包括
- * 1.播放器状态改变: {@link #handlePlayerStateChanged(int)}
- * 2.播放状态改变: {@link #setPlayState(int)} {@link #onPlayerStateChanged(int)}
- * 3.控制视图的显示和隐藏: {@link #handleVisibilityChanged(boolean, Animation)}
- * 4.播放进度改变: {@link #handleSetProgress(int, int)}
- * 5.锁定状态改变: {@link #handleLockStateChanged(boolean)}
+ * 2.播放状态改变: {@link #setPlayerState(int)} {@link #onScreenModeChanged(int)}
  * 6.设备方向监听: {@link #onDeviceDirectionChanged(int)}
  * Created by Doikki on 2017/4/12.
  */
@@ -47,44 +67,106 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
     protected LinkedHashMap<ControlComponent, Boolean> mControlComponents = new LinkedHashMap<>();
 
     /**
+     * 绑定的播放器
+     */
+    private VideoViewControl mPlayer;
+
+    /**
+     * 是否处于锁定状态
+     */
+    private boolean mLocked;
+
+    /**
      * 当前播放器状态
      */
     @VideoView.PlayerState
     private int mPlayerState;
 
+    /**
+     * 显示动画
+     */
+    private Animation mShowAnim;
 
-    //播放器包装类，集合了MediaPlayerControl的api和IVideoController的api
-    protected ControlWrapper mControlWrapper;
+    /**
+     * 隐藏动画
+     */
+    private Animation mHideAnim;
+
+    /**
+     * 控制器显示超时时间：即显示超过该时间后自动隐藏
+     */
+    private int mDefaultTimeout = 4000;
+
+    /**
+     * 自动隐藏的Runnable
+     */
+    protected final Runnable mFadeOut = new Runnable() {
+        @Override
+        public void run() {
+            hide();
+        }
+    };
+
+    /**
+     * 是否开始刷新进度
+     */
+    private boolean mProgressRefreshing;
+
+    /**
+     * 刷新进度Runnable
+     */
+    protected Runnable mShowProgress = new Runnable() {
+        @Override
+        public void run() {
+            int pos = updateProgress();
+            if (mPlayer.isPlaying()) {
+                postDelayed(this, (long) ((1000 - pos % 1000) / mPlayer.getSpeed()));
+            } else {
+                mProgressRefreshing = false;
+            }
+        }
+    };
+
+    /**
+     * 屏幕角度传感器监听
+     */
+    private DeviceOrientationSensorHelper mOrientationSensorHelper;
+
+    /**
+     * 是否开启根据传感器获得的屏幕方向进入/退出全屏
+     */
+    private boolean mEnableOrientationSensor;
+
+    /**
+     * 用户设置是否适配刘海屏
+     */
+    private boolean mAdaptCutout;
+
+    /**
+     * 是否有刘海
+     */
+    private Boolean mHasCutout;
+
+    /**
+     * 刘海的高度
+     */
+    private int mCutoutHeight;
+
+    /**
+     * 控制器是否处于显示状态
+     */
+    protected boolean mShowing;
 
     @Nullable
     protected Activity mActivity;
 
-    //控制器是否处于显示状态
-    protected boolean mShowing;
+    //播放器包装类，集合了MediaPlayerControl的api和IVideoController的api
 
-    //是否处于锁定状态
-    protected boolean mIsLocked;
+    /**
+     * 此类过于臃肿，想改善这个类
+     */
+    protected ControlWrapper mControlWrapper;
 
-    //播放视图隐藏超时
-    protected int mDefaultTimeout = 4000;
-
-    //是否开启根据屏幕方向进入/退出全屏
-    private boolean mEnableOrientation;
-    //屏幕方向监听辅助类
-    protected DeviceOrientationSensorHelper mOrientationHelper;
-
-    //用户设置是否适配刘海屏
-    private boolean mAdaptCutout;
-    //是否有刘海
-    private Boolean mHasCutout;
-    //刘海的高度
-    private int mCutoutHeight;
-
-    //是否开始刷新进度
-    private boolean mIsStartProgress;
-
-    private Animation mShowAnim;
-    private Animation mHideAnim;
 
     public MediaController(@NonNull Context context) {
         this(context, null);
@@ -103,19 +185,26 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
         if (getLayoutId() != 0) {
             LayoutInflater.from(getContext()).inflate(getLayoutId(), this, true);
         }
-        mOrientationHelper = new DeviceOrientationSensorHelper(getContext().getApplicationContext());
-        mOrientationHelper.attachActivity(PlayerUtils.scanForActivity(getContext()));
-        mEnableOrientation = VideoViewManager.getConfig().mEnableOrientation;
-        mAdaptCutout = VideoViewManager.getConfig().mAdaptCutout;
+        mOrientationSensorHelper = new DeviceOrientationSensorHelper(getContext().getApplicationContext(), PlayerUtils.scanForActivity(getContext()));
+        //开始监听设备方向
+        mOrientationSensorHelper.setDeviceOrientationChangedListener(this);
+        setEnableOrientationSensor(VideoViewManager.getConfig().enableOrientationSensor);
+        mAdaptCutout = VideoViewManager.getConfig().adaptCutout;
 
         mShowAnim = new AlphaAnimation(0f, 1f);
         mShowAnim.setDuration(300);
         mHideAnim = new AlphaAnimation(1f, 0f);
         mHideAnim.setDuration(300);
 
-        mActivity = PlayerUtils.scanForActivity(getContext());
+        mActivity = getPreferredActivity();
     }
 
+    protected Activity getPreferredActivity() {
+        if (mActivity == null) {
+            mActivity = PlayerUtils.scanForActivity(getContext());
+        }
+        return mActivity;
+    }
 
     public ControlWrapper getControlWrapper() {
         return mControlWrapper;
@@ -132,7 +221,7 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
      * @return
      */
     protected boolean isInPlaybackState() {
-        return mControlWrapper != null
+        return mPlayer != null
                 && mPlayerState != VideoView.STATE_ERROR
                 && mPlayerState != VideoView.STATE_IDLE
                 && mPlayerState != VideoView.STATE_PREPARING
@@ -148,13 +237,12 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
     @CallSuper
     public void setMediaPlayer(VideoViewControl mediaPlayer) {
         mControlWrapper = new ControlWrapper(mediaPlayer, this);
+        mPlayer = mediaPlayer;
         //绑定ControlComponent和Controller
         for (Map.Entry<ControlComponent, Boolean> next : mControlComponents.entrySet()) {
             ControlComponent component = next.getKey();
             component.attach(mControlWrapper);
         }
-        //开始监听设备方向
-        mOrientationHelper.setDeviceOrientationChangedListener(this);
     }
 
     /***********START 关键方法代码************/
@@ -243,72 +331,111 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
 
     /***********START 关键方法代码************/
 
+    @Override
+    public boolean isFullScreen() {
+        return mPlayer.isFullScreen();
+    }
+
+    /**
+     * 横竖屏切换
+     */
+    @Override
+    public boolean toggleFullScreen() {
+        return mPlayer.toggleFullScreen();
+    }
+
+    @Override
+    public boolean startFullScreen(boolean isLandscapeReversed) {
+        return mPlayer.startFullScreen(isLandscapeReversed);
+    }
+
+    /**
+     * 子类中请使用此方法来退出全屏
+     *
+     * @return 是否成功退出全屏
+     */
+    @Override
+    public boolean stopFullScreen() {
+        return mPlayer.stopFullScreen();
+    }
+
+
+    /**
+     * 设置锁定状态
+     *
+     * @param locked 是否锁定
+     */
+    @Override
+    public void setLocked(boolean locked) {
+        mLocked = locked;
+        notifyLockStateChanged(locked);
+    }
+
+    /**
+     * 判断是否锁定
+     *
+     * @return true:当前已锁定界面
+     */
+    @Override
+    public boolean isLocked() {
+        return mLocked;
+    }
+
+    /**
+     * 启用设备角度传感器(用于自动横竖屏切换),默认不启用
+     */
+    @Override
+    public void setEnableOrientationSensor(boolean enableOrientation) {
+        mEnableOrientationSensor = enableOrientation;
+    }
+
+    /**
+     * 设置当前{@link VideoView}界面模式：竖屏、全屏、小窗模式等
+     * 是当{@link VideoView}修改视图之后，调用此方法向控制器同步状态
+     */
+    @CallSuper
+    public void setScreenMode(@ScreenMode int screenMode) {
+        notifyScreenModeChanged(screenMode);
+    }
+
     /**
      * call by {@link VideoView},设置播放器当前播放状态
      */
+    @SuppressLint("SwitchIntDef")
     @CallSuper
-    public void setPlayState(@VideoView.PlayerState int playState) {
+    public void setPlayerState(@VideoView.PlayerState int playState) {
         mPlayerState = playState;
         for (Map.Entry<ControlComponent, Boolean> next : mControlComponents.entrySet()) {
             next.getKey().onPlayStateChanged(playState);
         }
-        onPlayStateChanged(playState);
-    }
-
-    /**
-     * 通知播放器状态发生了变化
-     * 子类重写此方法并在其中更新控制器在不同播放状态下的ui
-     */
-    @CallSuper
-    protected void onPlayStateChanged(@VideoView.PlayerState int playState) {
         switch (playState) {
             case VideoView.STATE_IDLE:
-                mOrientationHelper.disable();
-
-                mIsLocked = false;
+                mOrientationSensorHelper.disable();
+                mLocked = false;
                 mShowing = false;
                 //由于游离组件是独立于控制器存在的，
                 //所以在播放器release的时候需要移除
                 removeAllDissociateComponents();
                 break;
             case VideoView.STATE_PLAYBACK_COMPLETED:
-                mIsLocked = false;
+                mLocked = false;
                 mShowing = false;
                 break;
             case VideoView.STATE_ERROR:
                 mShowing = false;
                 break;
         }
-    }
-
-
-    /**
-     * {@link VideoView}调用此方法向控制器设置播放器状态
-     */
-    @CallSuper
-    public void setScreenMode(@ScreenMode int screenMode) {
-        handlePlayerStateChanged(screenMode);
+        onPlayerStateChanged(playState);
     }
 
     /**
-     * 设置播放视图自动隐藏超时
-     */
-    public void setDismissTimeout(int timeout) {
-        if (timeout > 0) {
-            mDefaultTimeout = timeout;
-        }
-    }
-
-    /**
-     * 隐藏播放视图
+     * 控制器是否已隐藏
+     *
+     * @return
      */
     @Override
-    public void hide() {
-        if (mShowing) {
-            stopFadeOut();
-            handleVisibilityChanged(false, mHideAnim);
-            mShowing = false;
-        }
+    public boolean isShowing() {
+        return mShowing;
     }
 
     /**
@@ -316,20 +443,39 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
      */
     @Override
     public void show() {
-        if (!mShowing) {
-            handleVisibilityChanged(true, mShowAnim);
-            startFadeOut();
-            mShowing = true;
-        }
-    }
-
-    @Override
-    public boolean isShowing() {
-        return mShowing;
+        if (mShowing)
+            return;
+        handleVisibilityChanged(true, mShowAnim);
+        startFadeOut();
+        mShowing = true;
     }
 
     /**
-     * 开始计时
+     * 隐藏播放视图
+     */
+    @Override
+    public void hide() {
+        if (!mShowing)
+            return;
+        stopFadeOut();
+        handleVisibilityChanged(false, mHideAnim);
+        mShowing = false;
+    }
+
+    /**
+     * 设置自动隐藏倒计时持续的时间
+     *
+     * @param timeout 默认4000，比如大于0才会生效
+     */
+    @Override
+    public void setFadeOutTime(@IntRange(from = 1) int timeout) {
+        if (timeout > 0) {
+            mDefaultTimeout = timeout;
+        }
+    }
+
+    /**
+     * 开始倒计时隐藏控制器
      */
     @Override
     public void startFadeOut() {
@@ -339,7 +485,7 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
     }
 
     /**
-     * 取消计时
+     * 移除控制器隐藏倒计时
      */
     @Override
     public void stopFadeOut() {
@@ -347,74 +493,50 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
     }
 
     /**
-     * 隐藏播放视图Runnable
-     */
-    protected final Runnable mFadeOut = new Runnable() {
-        @Override
-        public void run() {
-            hide();
-        }
-    };
-
-    @Override
-    public void setLocked(boolean locked) {
-        mIsLocked = locked;
-        handleLockStateChanged(locked);
-    }
-
-    @Override
-    public boolean isLocked() {
-        return mIsLocked;
-    }
-
-    /**
      * 开始刷新进度，注意：需在STATE_PLAYING时调用才会开始刷新进度
      */
     @Override
-    public void startProgress() {
-        if (mIsStartProgress) return;
+    public void startUpdateProgress() {
+        if (mProgressRefreshing) return;
         post(mShowProgress);
-        mIsStartProgress = true;
+        mProgressRefreshing = true;
     }
 
     /**
      * 停止刷新进度
      */
     @Override
-    public void stopProgress() {
-        if (!mIsStartProgress) return;
+    public void stopUpdateProgress() {
+        if (!mProgressRefreshing) return;
         removeCallbacks(mShowProgress);
-        mIsStartProgress = false;
-    }
-
-    /**
-     * 刷新进度Runnable
-     */
-    protected Runnable mShowProgress = new Runnable() {
-        @Override
-        public void run() {
-            int pos = setProgress();
-            if (mControlWrapper.isPlaying()) {
-                postDelayed(this, (long) ((1000 - pos % 1000) / mControlWrapper.getSpeed()));
-            } else {
-                mIsStartProgress = false;
-            }
-        }
-    };
-
-    private int setProgress() {
-        int position = (int) mControlWrapper.getCurrentPosition();
-        int duration = (int) mControlWrapper.getDuration();
-        handleSetProgress(duration, position);
-        return position;
+        mProgressRefreshing = false;
     }
 
     /**
      * 设置是否适配刘海屏
      */
+    @Override
     public void setAdaptCutout(boolean adaptCutout) {
         mAdaptCutout = adaptCutout;
     }
+
+    /**
+     * 是否有刘海屏
+     */
+    @Override
+    public boolean hasCutout() {
+        return mHasCutout != null && mHasCutout;
+    }
+
+    /**
+     * 刘海的高度
+     */
+    @Override
+    public int getCutoutHeight() {
+        return mCutoutHeight;
+    }
+
+
 
     @Override
     protected void onAttachedToWindow() {
@@ -438,22 +560,6 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
     }
 
     /**
-     * 是否有刘海屏
-     */
-    @Override
-    public boolean hasCutout() {
-        return mHasCutout != null && mHasCutout;
-    }
-
-    /**
-     * 刘海的高度
-     */
-    @Override
-    public int getCutoutHeight() {
-        return mCutoutHeight;
-    }
-
-    /**
      * 显示移动网络播放提示
      *
      * @return 返回显示移动网络播放提示的条件，false:不显示, true显示
@@ -471,36 +577,6 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
         mControlWrapper.togglePlay();
     }
 
-    /**
-     * 横竖屏切换
-     */
-    protected void toggleFullScreen() {
-        mControlWrapper.toggleFullScreen(mActivity);
-    }
-
-    /**
-     * 子类中请使用此方法来进入全屏
-     *
-     * @return 是否成功进入全屏
-     */
-    protected boolean startFullScreen() {
-        if (mActivity == null || mActivity.isFinishing()) return false;
-        mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        mControlWrapper.startFullScreen();
-        return true;
-    }
-
-    /**
-     * 子类中请使用此方法来退出全屏
-     *
-     * @return 是否成功退出全屏
-     */
-    protected boolean stopFullScreen() {
-        if (mActivity == null || mActivity.isFinishing()) return false;
-        mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        mControlWrapper.stopFullScreen();
-        return true;
-    }
 
     /**
      * 改变返回键逻辑，用于activity
@@ -512,79 +588,42 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
     @Override
     public void onWindowFocusChanged(boolean hasWindowFocus) {
         super.onWindowFocusChanged(hasWindowFocus);
-        if (mControlWrapper.isPlaying()
-                && (mEnableOrientation || mControlWrapper.isFullScreen())) {
+        if (mPlayer.isPlaying() && (mEnableOrientationSensor || mPlayer.isFullScreen())) {
             if (hasWindowFocus) {
                 postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        mOrientationHelper.enable();
+                        mOrientationSensorHelper.enable();
                     }
                 }, 800);
             } else {
-                mOrientationHelper.disable();
+                mOrientationSensorHelper.disable();
             }
         }
     }
 
-    /**
-     * 是否自动旋转， 默认不自动旋转
-     */
-    public void setEnableOrientation(boolean enableOrientation) {
-        mEnableOrientation = enableOrientation;
-    }
 
     @CallSuper
     @Override
     public void onDeviceDirectionChanged(@DeviceOrientationSensorHelper.DeviceDirection int direction) {
-        if(direction == DeviceOrientationSensorHelper.DEVICE_DIRECTION_PORTRAIT){
-            onOrientationPortrait(mActivity);
-        }else if(direction == DeviceOrientationSensorHelper.DEVICE_DIRECTION_LANDSCAPE){
-            onOrientationLandscape(mActivity);
-        }else if(direction == DeviceOrientationSensorHelper.DEVICE_DIRECTION_LANDSCAPE_REVERSED){
-            onOrientationReverseLandscape(mActivity);
-        }
-    }
-    /**
-     * 竖屏
-     */
-    protected void onOrientationPortrait(Activity activity) {
-        //屏幕锁定的情况
-        if (mIsLocked) return;
-        //没有开启设备方向监听的情况
-        if (!mEnableOrientation) return;
-        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        mControlWrapper.stopFullScreen();
-    }
-
-    /**
-     * 横屏
-     */
-    protected void onOrientationLandscape(Activity activity) {
-        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        if (mControlWrapper.isFullScreen()) {
-            handlePlayerStateChanged(ScreenMode.FULL);
-        } else {
-            mControlWrapper.startFullScreen();
-        }
-    }
-
-    /**
-     * 反向横屏
-     */
-    protected void onOrientationReverseLandscape(Activity activity) {
-        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
-        if (mControlWrapper.isFullScreen()) {
-            handlePlayerStateChanged(ScreenMode.FULL);
-        } else {
-            mControlWrapper.startFullScreen();
+        if (direction == DeviceOrientationSensorHelper.DEVICE_DIRECTION_PORTRAIT) {
+            //切换为竖屏
+            //屏幕锁定的情况
+            if (mLocked) return;
+            //没有开启设备方向监听的情况
+            if (!mEnableOrientationSensor) return;
+            mPlayer.stopFullScreen();
+        } else if (direction == DeviceOrientationSensorHelper.DEVICE_DIRECTION_LANDSCAPE) {
+            mPlayer.startFullScreen();
+        } else if (direction == DeviceOrientationSensorHelper.DEVICE_DIRECTION_LANDSCAPE_REVERSED) {
+            mPlayer.startFullScreen(true);
         }
     }
 
     //------------------------ start handle event change ------------------------//
 
     private void handleVisibilityChanged(boolean isVisible, Animation anim) {
-        if (!mIsLocked) { //没锁住时才向ControlComponent下发此事件
+        if (!mLocked) { //没锁住时才向ControlComponent下发此事件
             for (Map.Entry<ControlComponent, Boolean> next
                     : mControlComponents.entrySet()) {
                 ControlComponent component = next.getKey();
@@ -604,27 +643,80 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
 
     }
 
-
-    private void handlePlayerStateChanged(int playerState) {
-        for (Map.Entry<ControlComponent, Boolean> next
-                : mControlComponents.entrySet()) {
-            ControlComponent component = next.getKey();
-            component.onPlayerStateChanged(playerState);
-        }
-        onPlayerStateChanged(playerState);
+    /**
+     * 用于子类重写
+     * 刷新进度回调，子类可在此方法监听进度刷新，然后更新ui
+     *
+     * @param duration 视频总时长
+     * @param position 视频当前播放位置
+     */
+    protected void onProgressChanged(int duration, int position) {
     }
 
     /**
-     * 子类重写此方法并在其中更新控制器在不同播放器状态下的ui
+     * 用于子类重写
      */
     @CallSuper
-    protected void onPlayerStateChanged(int playerState) {
-        switch (playerState) {
+    protected void onScreenModeChanged(int screenMode) {
+    }
+
+    /**
+     * 用于子类重写
+     */
+    @CallSuper
+    protected void onPlayerStateChanged(@VideoView.PlayerState int playState) {
+    }
+
+    /**
+     * 用于子类重写
+     */
+    protected void onLockStateChanged(boolean isLocked) {
+    }
+
+    /**
+     * 更新当前播放进度
+     *
+     * @return 当前播放位置
+     */
+    private int updateProgress() {
+        int position = (int) mPlayer.getCurrentPosition();
+        int duration = (int) mPlayer.getDuration();
+        for (Map.Entry<ControlComponent, Boolean> next : mControlComponents.entrySet()) {
+            ControlComponent component = next.getKey();
+            component.onProgressChanged(duration, position);
+        }
+        onProgressChanged(duration, position);
+        return position;
+    }
+
+    /**
+     * 通知界面模式发生改变
+     *
+     * @param screenMode
+     */
+    private void notifyScreenModeChanged(@ScreenMode int screenMode) {
+        for (Map.Entry<ControlComponent, Boolean> next
+                : mControlComponents.entrySet()) {
+            ControlComponent component = next.getKey();
+            component.onScreenModeChanged(screenMode);
+        }
+        setupOrientationSensorAndCutoutOnScreenModeChanged(screenMode);
+        onScreenModeChanged(screenMode);
+    }
+
+    /**
+     * 在屏幕模式改变了的情况下，调整传感器和刘海屏
+     *
+     * @param screenMode
+     */
+    private void setupOrientationSensorAndCutoutOnScreenModeChanged(@ScreenMode int screenMode) {
+        //修改传感器
+        switch (screenMode) {
             case ScreenMode.NORMAL:
-                if (mEnableOrientation) {
-                    mOrientationHelper.enable();
+                if (mEnableOrientationSensor) {
+                    mOrientationSensorHelper.enable();
                 } else {
-                    mOrientationHelper.disable();
+                    mOrientationSensorHelper.disable();
                 }
                 if (hasCutout()) {
                     CutoutUtil.adaptCutoutAboveAndroidP(getContext(), false);
@@ -632,50 +724,26 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
                 break;
             case ScreenMode.FULL:
                 //在全屏时强制监听设备方向
-                mOrientationHelper.enable();
+                mOrientationSensorHelper.enable();
                 if (hasCutout()) {
                     CutoutUtil.adaptCutoutAboveAndroidP(getContext(), true);
                 }
                 break;
             case ScreenMode.TINY:
-                mOrientationHelper.disable();
+                mOrientationSensorHelper.disable();
                 break;
         }
     }
 
-    private void handleSetProgress(int duration, int position) {
-        for (Map.Entry<ControlComponent, Boolean> next
-                : mControlComponents.entrySet()) {
-            ControlComponent component = next.getKey();
-            component.onProgressChanged(duration, position);
-        }
-        setProgress(duration, position);
-    }
-
     /**
-     * 刷新进度回调，子类可在此方法监听进度刷新，然后更新ui
-     *
-     * @param duration 视频总时长
-     * @param position 视频当前时长
+     * 通知锁定状态发生了变化
      */
-    protected void setProgress(int duration, int position) {
-
-    }
-
-    private void handleLockStateChanged(boolean isLocked) {
-        for (Map.Entry<ControlComponent, Boolean> next
-                : mControlComponents.entrySet()) {
+    private void notifyLockStateChanged(boolean isLocked) {
+        for (Map.Entry<ControlComponent, Boolean> next : mControlComponents.entrySet()) {
             ControlComponent component = next.getKey();
             component.onLockStateChanged(isLocked);
         }
         onLockStateChanged(isLocked);
-    }
-
-    /**
-     * 子类可重写此方法监听锁定状态发生改变，然后更新ui
-     */
-    protected void onLockStateChanged(boolean isLocked) {
-
     }
 
     //------------------------ end handle event change ------------------------//

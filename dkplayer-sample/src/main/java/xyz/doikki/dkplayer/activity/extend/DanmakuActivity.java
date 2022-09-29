@@ -43,7 +43,7 @@ public class DanmakuActivity extends BaseActivity<VideoView> {
 
         mVideoView.addOnStateChangeListener(new VideoView.OnStateChangeListener() {
             @Override
-            public void onPlayStateChanged(int playState) {
+            public void onPlayerStateChanged(int playState) {
                 if (playState == VideoView.STATE_PREPARED) {
                     simulateDanmu();
                 } else if (playState == VideoView.STATE_PLAYBACK_COMPLETED) {
