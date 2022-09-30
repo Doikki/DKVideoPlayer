@@ -4,8 +4,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
-import xyz.doikki.videoplayer.AVPlayer;
-import xyz.doikki.videoplayer.VideoView;
+import xyz.doikki.videoplayer.DKPlayer;
 import xyz.doikki.videoplayer.render.AspectRatioType;
 import xyz.doikki.videoplayer.render.Render;
 
@@ -22,8 +21,8 @@ public class TikTokRenderView implements Render {
     }
 
     @Override
-    public void attachToPlayer(@NonNull AVPlayer player) {
-        mProxyRenderView.attachToPlayer(player);
+    public void attachPlayer(@NonNull DKPlayer player) {
+        mProxyRenderView.attachPlayer(player);
     }
 
     @Override
@@ -51,7 +50,7 @@ public class TikTokRenderView implements Render {
     }
 
     @Override
-    public void setAspectRatioType(int scaleType) {
+    public void setAspectRatioType(int aspectRatioType) {
         // 置空，不要让外部去设置ScaleType
     }
 
@@ -69,4 +68,5 @@ public class TikTokRenderView implements Render {
     public void release() {
         mProxyRenderView.release();
     }
+
 }

@@ -2,7 +2,7 @@ package xyz.doikki.videoplayer.util;
 
 import android.util.Log;
 
-import xyz.doikki.videoplayer.VideoViewManager;
+import xyz.doikki.videoplayer.DKManager;
 
 /**
  * 日志类
@@ -16,7 +16,7 @@ public final class L {
 
     private static final String TAG = "DKPlayer";
 
-    private static boolean isDebug = VideoViewManager.getConfig().mIsEnableLog;
+    private static boolean isDebug = DKManager.isDebuggable();
 
 
     public static void d(String msg) {

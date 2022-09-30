@@ -10,6 +10,13 @@ import xyz.doikki.videoplayer.util.L;
 public class RenderLayoutMeasure {
 
     /**
+     * 视频旋转角度
+     * （外层Render在接收到视频带有旋转信息时已经调用了{@link View#setRotation(float)}），所以当时的View已经旋转了
+     */
+    @IntRange(from = 0, to = 360)
+    public int videoRotationDegree = 0;
+
+    /**
      * 视频宽
      */
     private int mVideoWidth;
@@ -19,15 +26,11 @@ public class RenderLayoutMeasure {
      */
     private int mVideoHeight;
 
-    /**
-     * 视频旋转角度
-     * （外层Render在接收到视频带有旋转信息时已经调用了{@link View#setRotation(float)}），所以当时的View已经旋转了
-     */
-    private int mVideoRotationDegree;
 
     /**
      * 缩放类型
      */
+    @AspectRatioType
     private int mAspectRatioType;
 
     /**
@@ -70,15 +73,6 @@ public class RenderLayoutMeasure {
     }
 
     /**
-     * 设置视频旋转角度
-     *
-     * @param videoRotationDegree 旋转角度
-     */
-    public void setVideoRotationDegree(@IntRange(from = 0, to = 360) int videoRotationDegree) {
-        mVideoRotationDegree = videoRotationDegree;
-    }
-
-    /**
      * 设置界面缩放类型
      *
      * @param aspectRatioType
@@ -87,13 +81,18 @@ public class RenderLayoutMeasure {
         mAspectRatioType = aspectRatioType;
     }
 
+    @AspectRatioType
+    public int getAspectRatioType() {
+        return mAspectRatioType;
+    }
+
     /**
      * 注意：VideoView的宽高一定要定死，否者以下算法不成立
      *
      * @param rotationDegree 旋转角度，{@link View#getRotation()}
      */
     public void doMeasure(int widthMeasureSpec, int heightMeasureSpec, @IntRange(from = 0, to = 360) int rotationDegree) {
-        setVideoRotationDegree(rotationDegree);
+        videoRotationDegree = rotationDegree;
         doMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
@@ -102,7 +101,7 @@ public class RenderLayoutMeasure {
      */
     public void doMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         //测量参数是否已旋转
-        boolean isMeasureRotated = mVideoRotationDegree == 90 || mVideoRotationDegree == 270;
+        boolean isMeasureRotated = videoRotationDegree == 90 || videoRotationDegree == 270;
         //相对的宽 MeasureSpec
         int relateWidthMeasureSpec;
         //相对的高 MeasureSpec

@@ -1,6 +1,6 @@
 package xyz.doikki.videoplayer.controller;
 
-import xyz.doikki.videoplayer.VideoView;
+import xyz.doikki.videoplayer.DKVideoView;
 
 /**
  * 全屏、小窗口、自动横屏等 屏幕相关操作所需接口
@@ -18,15 +18,15 @@ public interface ScreenModeControl {
 
     /**
      * 开始全屏;
-     * 屏幕切换之后会回调{@link xyz.doikki.videoplayer.VideoView.OnStateChangeListener#onScreenModeChanged(int)}
+     * 屏幕切换之后会回调{@link DKVideoView.OnStateChangeListener#onScreenModeChanged(int)}
      * @param isLandscapeReversed 是否是反向横屏
-     * @see xyz.doikki.videoplayer.VideoView#addOnStateChangeListener(VideoView.OnStateChangeListener)
+     * @see DKVideoView#addOnStateChangeListener(DKVideoView.OnStateChangeListener)
      */
     boolean startFullScreen(boolean isLandscapeReversed);
 
     /**
      * 结束全屏
-     * 屏幕切换之后会回调{@link xyz.doikki.videoplayer.VideoView.OnStateChangeListener#onScreenModeChanged(int)}
+     * 屏幕切换之后会回调{@link DKVideoView.OnStateChangeListener#onScreenModeChanged(int)}
      */
     boolean stopFullScreen();
 
@@ -55,13 +55,13 @@ public interface ScreenModeControl {
 
     /**
      * 开始小窗播放
-     * 屏幕切换之后会回调{@link xyz.doikki.videoplayer.VideoView.OnStateChangeListener#onScreenModeChanged(int)}
+     * 屏幕切换之后会回调{@link DKVideoView.OnStateChangeListener#onScreenModeChanged(int)}
      */
     void startTinyScreen();
 
     /**
      * 结束小窗播放
-     * 屏幕切换之后会回调{@link xyz.doikki.videoplayer.VideoView.OnStateChangeListener#onScreenModeChanged(int)}
+     * 屏幕切换之后会回调{@link DKVideoView.OnStateChangeListener#onScreenModeChanged(int)}
      */
     void stopTinyScreen();
 

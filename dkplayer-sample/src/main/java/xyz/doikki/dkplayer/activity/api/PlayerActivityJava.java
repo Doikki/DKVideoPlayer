@@ -26,7 +26,7 @@ import xyz.doikki.videocontroller.component.LiveControlView;
 import xyz.doikki.videocontroller.component.PrepareView;
 import xyz.doikki.videocontroller.component.TitleView;
 import xyz.doikki.videocontroller.component.VodControlView;
-import xyz.doikki.videoplayer.VideoView;
+import xyz.doikki.videoplayer.DKVideoView;
 import xyz.doikki.videoplayer.render.AspectRatioType;
 import xyz.doikki.videoplayer.render.Render;
 import xyz.doikki.videoplayer.util.L;
@@ -36,7 +36,7 @@ import xyz.doikki.videoplayer.util.L;
  * Created by Doikki on 2017/4/7.
  */
 
-public class PlayerActivityJava extends BaseActivity<VideoView> {
+public class PlayerActivityJava extends BaseActivity<DKVideoView> {
 
     private static final String THUMB = "https://cms-bucket.nosdn.127.net/eb411c2810f04ffa8aaafc42052b233820180418095416.jpeg";
 
@@ -166,32 +166,33 @@ public class PlayerActivityJava extends BaseActivity<VideoView> {
         });
     }
 
-    private VideoView.OnStateChangeListener mOnStateChangeListener = new VideoView.OnStateChangeListener() {
+    private DKVideoView.OnStateChangeListener mOnStateChangeListener = new DKVideoView.OnStateChangeListener() {
+
 
         @Override
         public void onPlayerStateChanged(int playState) {
             switch (playState) {
-                case VideoView.STATE_IDLE:
+                case DKVideoView.STATE_IDLE:
                     break;
-                case VideoView.STATE_PREPARING:
+                case DKVideoView.STATE_PREPARING:
                     break;
-                case VideoView.STATE_PREPARED:
+                case DKVideoView.STATE_PREPARED:
                     break;
-                case VideoView.STATE_PLAYING:
+                case DKVideoView.STATE_PLAYING:
                     //需在此时获取视频宽高
                     int[] videoSize = mVideoView.getVideoSize();
                     L.d("视频宽：" + videoSize[0]);
                     L.d("视频高：" + videoSize[1]);
                     break;
-                case VideoView.STATE_PAUSED:
+                case DKVideoView.STATE_PAUSED:
                     break;
-                case VideoView.STATE_BUFFERING:
+                case DKVideoView.STATE_BUFFERING:
                     break;
-                case VideoView.STATE_BUFFERED:
+                case DKVideoView.STATE_BUFFERED:
                     break;
-                case VideoView.STATE_PLAYBACK_COMPLETED:
+                case DKVideoView.STATE_PLAYBACK_COMPLETED:
                     break;
-                case VideoView.STATE_ERROR:
+                case DKVideoView.STATE_ERROR:
                     break;
             }
         }
@@ -263,7 +264,7 @@ public class PlayerActivityJava extends BaseActivity<VideoView> {
         super.onPause();
         //如果视频还在准备就 activity 就进入了后台，建议直接将 VideoView release
         //防止进入后台后视频还在播放
-        if (mVideoView.getCurrentPlayState() == VideoView.STATE_PREPARING) {
+        if (mVideoView.getCurrentPlayState() == DKVideoView.STATE_PREPARING) {
             mVideoView.release();
         }
     }

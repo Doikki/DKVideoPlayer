@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import xyz.doikki.dkplayer.widget.render.gl2.chooser.GLConfigChooser;
 import xyz.doikki.dkplayer.widget.render.gl2.contextfactory.GLContextFactory;
 import xyz.doikki.dkplayer.widget.render.gl2.filter.GlFilter;
-import xyz.doikki.videoplayer.AVPlayer;
+import xyz.doikki.videoplayer.DKPlayer;
 import xyz.doikki.videoplayer.render.Render;
 import xyz.doikki.videoplayer.render.RenderLayoutMeasure;
 
@@ -33,7 +33,7 @@ public class GLSurfaceRenderView2 extends GLSurfaceView implements Render {
     private final RenderLayoutMeasure mMeasureHelper = new RenderLayoutMeasure();
 
     @Override
-    public void attachToPlayer(@NonNull AVPlayer player) {
+    public void attachPlayer(@NonNull DKPlayer player) {
         this.renderer.setPlayer(player);
     }
 
@@ -48,13 +48,13 @@ public class GLSurfaceRenderView2 extends GLSurfaceView implements Render {
 
     @Override
     public void setVideoRotation(int degree) {
-        mMeasureHelper.setVideoRotationDegree(degree);
+        mMeasureHelper.videoRotationDegree = degree;
         setRotation(degree);
     }
 
     @Override
-    public void setAspectRatioType(int scaleType) {
-        mMeasureHelper.setAspectRatioType(scaleType);
+    public void setAspectRatioType(int aspectRatioType) {
+        mMeasureHelper.setAspectRatioType(aspectRatioType);
         requestLayout();
     }
 

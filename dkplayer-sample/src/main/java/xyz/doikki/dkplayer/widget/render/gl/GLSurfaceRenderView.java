@@ -38,7 +38,7 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 import javax.microedition.khronos.opengles.GL10;
 
-import xyz.doikki.videoplayer.AVPlayer;
+import xyz.doikki.videoplayer.DKPlayer;
 import xyz.doikki.videoplayer.render.Render;
 import xyz.doikki.videoplayer.render.RenderLayoutMeasure;
 
@@ -58,10 +58,10 @@ public final class GLSurfaceRenderView extends GLSurfaceView implements Render {
 
     private final RenderLayoutMeasure mMeasureHelper = new RenderLayoutMeasure();
 
-    private AVPlayer player;
+    private DKPlayer player;
 
     @Override
-    public void attachToPlayer(@NonNull AVPlayer player) {
+    public void attachPlayer(@NonNull DKPlayer player) {
         this.player = player;
         setVideoRenderer(new BitmapOverlayVideoProcessor(getContext()), false);
     }
@@ -81,13 +81,13 @@ public final class GLSurfaceRenderView extends GLSurfaceView implements Render {
 
     @Override
     public void setVideoRotation(int degree) {
-        mMeasureHelper.setVideoRotationDegree(degree);
+        mMeasureHelper.videoRotationDegree = degree;
         setRotation(degree);
     }
 
     @Override
-    public void setAspectRatioType(int scaleType) {
-        mMeasureHelper.setAspectRatioType(scaleType);
+    public void setAspectRatioType(int aspectRatioType) {
+        mMeasureHelper.setAspectRatioType(aspectRatioType);
         requestLayout();
     }
 

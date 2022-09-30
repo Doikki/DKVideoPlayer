@@ -2,9 +2,9 @@ package xyz.doikki.dkplayer.widget.player;
 
 import android.content.Context;
 
-import xyz.doikki.videoplayer.ijk.IjkAVPlayer;
+import xyz.doikki.videoplayer.ijk.IjkDKPlayer;
 
-public class CustomIjkMediaPlayer extends IjkAVPlayer {
+public class CustomIjkMediaPlayer extends IjkDKPlayer {
 
     public CustomIjkMediaPlayer(Context context) {
         super(context);

@@ -14,7 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import xyz.doikki.videocontroller.R;
-import xyz.doikki.videoplayer.VideoView;
+import xyz.doikki.videoplayer.DKVideoView;
 import xyz.doikki.videoplayer.controller.component.ControlComponent;
 import xyz.doikki.videoplayer.render.ScreenMode;
 import xyz.doikki.videoplayer.util.PlayerUtils;
@@ -77,22 +77,22 @@ public class LiveControlView extends BaseControlComponent implements ControlComp
     @Override
     public void onPlayStateChanged(int playState) {
         switch (playState) {
-            case VideoView.STATE_IDLE:
-            case VideoView.STATE_START_ABORT:
-            case VideoView.STATE_PREPARING:
-            case VideoView.STATE_PREPARED:
-            case VideoView.STATE_ERROR:
-            case VideoView.STATE_PLAYBACK_COMPLETED:
+            case DKVideoView.STATE_IDLE:
+            case DKVideoView.STATE_START_ABORT:
+            case DKVideoView.STATE_PREPARING:
+            case DKVideoView.STATE_PREPARED:
+            case DKVideoView.STATE_ERROR:
+            case DKVideoView.STATE_PLAYBACK_COMPLETED:
                 setVisibility(GONE);
                 break;
-            case VideoView.STATE_PLAYING:
+            case DKVideoView.STATE_PLAYING:
                 mPlayButton.setSelected(true);
                 break;
-            case VideoView.STATE_PAUSED:
+            case DKVideoView.STATE_PAUSED:
                 mPlayButton.setSelected(false);
                 break;
-            case VideoView.STATE_BUFFERING:
-            case VideoView.STATE_BUFFERED:
+            case DKVideoView.STATE_BUFFERING:
+            case DKVideoView.STATE_BUFFERED:
                 mPlayButton.setSelected(mControlWrapper.isPlaying());
                 break;
         }

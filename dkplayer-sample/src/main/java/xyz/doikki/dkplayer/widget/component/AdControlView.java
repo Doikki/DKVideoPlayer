@@ -1,6 +1,5 @@
 package xyz.doikki.dkplayer.widget.component;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -14,11 +13,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import xyz.doikki.dkplayer.R;
-import xyz.doikki.videoplayer.VideoView;
+import xyz.doikki.videoplayer.DKVideoView;
 import xyz.doikki.videoplayer.controller.component.ControlComponent;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
 import xyz.doikki.videoplayer.render.ScreenMode;
-import xyz.doikki.videoplayer.util.PlayerUtils;
 
 public class AdControlView extends FrameLayout implements ControlComponent, View.OnClickListener {
 
@@ -82,11 +80,11 @@ public class AdControlView extends FrameLayout implements ControlComponent, View
     @Override
     public void onPlayStateChanged(int playState) {
         switch (playState) {
-            case VideoView.STATE_PLAYING:
+            case DKVideoView.STATE_PLAYING:
                 mControlWrapper.startUpdateProgress();
                 mPlayButton.setSelected(true);
                 break;
-            case VideoView.STATE_PAUSED:
+            case DKVideoView.STATE_PAUSED:
                 mPlayButton.setSelected(false);
                 break;
         }

@@ -22,7 +22,7 @@ import xyz.doikki.videocontroller.component.LiveControlView;
 import xyz.doikki.videocontroller.component.PrepareView;
 import xyz.doikki.videocontroller.component.TitleView;
 import xyz.doikki.videocontroller.component.VodControlView;
-import xyz.doikki.videoplayer.VideoView;
+import xyz.doikki.videoplayer.DKVideoView;
 import xyz.doikki.videoplayer.controller.GestureVideoController;
 import xyz.doikki.videoplayer.render.ScreenMode;
 import xyz.doikki.videoplayer.util.PlayerUtils;
@@ -169,30 +169,30 @@ public class StandardVideoController extends GestureVideoController implements V
         super.onPlayerStateChanged(playState);
         switch (playState) {
             //调用release方法会回到此状态
-            case VideoView.STATE_IDLE:
+            case DKVideoView.STATE_IDLE:
                 mLockButton.setSelected(false);
                 mLoadingProgress.setVisibility(GONE);
                 break;
-            case VideoView.STATE_PLAYING:
-            case VideoView.STATE_PAUSED:
-            case VideoView.STATE_PREPARED:
-            case VideoView.STATE_ERROR:
-            case VideoView.STATE_BUFFERED:
-                if (playState == VideoView.STATE_BUFFERED) {
+            case DKVideoView.STATE_PLAYING:
+            case DKVideoView.STATE_PAUSED:
+            case DKVideoView.STATE_PREPARED:
+            case DKVideoView.STATE_ERROR:
+            case DKVideoView.STATE_BUFFERED:
+                if (playState == DKVideoView.STATE_BUFFERED) {
                     isBuffering = false;
                 }
                 if (!isBuffering) {
                     mLoadingProgress.setVisibility(GONE);
                 }
                 break;
-            case VideoView.STATE_PREPARING:
-            case VideoView.STATE_BUFFERING:
+            case DKVideoView.STATE_PREPARING:
+            case DKVideoView.STATE_BUFFERING:
                 mLoadingProgress.setVisibility(VISIBLE);
-                if (playState == VideoView.STATE_BUFFERING) {
+                if (playState == DKVideoView.STATE_BUFFERING) {
                     isBuffering = true;
                 }
                 break;
-            case VideoView.STATE_PLAYBACK_COMPLETED:
+            case DKVideoView.STATE_PLAYBACK_COMPLETED:
                 mLoadingProgress.setVisibility(GONE);
                 mLockButton.setVisibility(GONE);
                 mLockButton.setSelected(false);

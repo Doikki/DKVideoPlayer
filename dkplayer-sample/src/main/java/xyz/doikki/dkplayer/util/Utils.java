@@ -11,31 +11,12 @@ import android.widget.FrameLayout;
 
 import java.lang.reflect.Field;
 
-import xyz.doikki.videoplayer.VideoView;
+import xyz.doikki.videoplayer.DKVideoView;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
-import xyz.doikki.videoplayer.VideoViewConfig;
-import xyz.doikki.videoplayer.VideoViewManager;
 
 public final class Utils {
 
     private Utils() {
-    }
-
-
-    /**
-     * 获取当前的播放核心
-     */
-    public static Object getCurrentPlayerFactory() {
-        VideoViewConfig config = VideoViewManager.getConfig();
-        Object playerFactory = null;
-        try {
-            Field mPlayerFactoryField = config.getClass().getDeclaredField("mPlayerFactory");
-            mPlayerFactoryField.setAccessible(true);
-            playerFactory = mPlayerFactoryField.get(config);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return playerFactory;
     }
 
     public static Object getCurrentPlayerFactoryInVideoView(ControlWrapper controlWrapper) {
@@ -44,8 +25,8 @@ public final class Utils {
             Field mPlayerControlField = controlWrapper.getClass().getDeclaredField("mPlayerControl");
             mPlayerControlField.setAccessible(true);
             Object playerControl = mPlayerControlField.get(controlWrapper);
-            if (playerControl instanceof VideoView) {
-                playerFactory = getCurrentPlayerFactoryInVideoView((VideoView) playerControl);
+            if (playerControl instanceof DKVideoView) {
+                playerFactory = getCurrentPlayerFactoryInVideoView((DKVideoView) playerControl);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -53,7 +34,7 @@ public final class Utils {
         return playerFactory;
     }
 
-    public static Object getCurrentPlayerFactoryInVideoView(VideoView videoView) {
+    public static Object getCurrentPlayerFactoryInVideoView(DKVideoView videoView) {
         Object playerFactory = null;
         try {
             Field mPlayerFactoryField = videoView.getClass().getDeclaredField("mPlayerFactory");

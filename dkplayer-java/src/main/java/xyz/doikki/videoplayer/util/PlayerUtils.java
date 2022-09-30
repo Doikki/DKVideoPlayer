@@ -28,7 +28,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import xyz.doikki.videoplayer.VideoView;
+import xyz.doikki.videoplayer.DKVideoView;
 
 /**
  * 播放器相关工具类
@@ -294,12 +294,12 @@ public final class PlayerUtils {
      *
      * @return
      */
-    public static boolean isPlayingState(@VideoView.PlayerState int state) {
-        return state != VideoView.STATE_ERROR
-                && state != VideoView.STATE_IDLE
-                && state != VideoView.STATE_PREPARING
-                && state != VideoView.STATE_PREPARED
-                && state != VideoView.STATE_START_ABORT
-                && state != VideoView.STATE_PLAYBACK_COMPLETED;
+    public static boolean isPlayingState(@DKVideoView.PlayerState int state) {
+        return state != DKVideoView.STATE_ERROR
+                && state != DKVideoView.STATE_IDLE
+                && state != DKVideoView.STATE_PREPARING
+                && state != DKVideoView.STATE_PREPARED
+                && state != DKVideoView.STATE_START_ABORT
+                && state != DKVideoView.STATE_PLAYBACK_COMPLETED;
     }
 }

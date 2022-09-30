@@ -13,7 +13,7 @@ import java.util.List;
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.util.DataUtil;
 import xyz.doikki.videocontroller.StandardVideoController;
-import xyz.doikki.videoplayer.VideoView;
+import xyz.doikki.videoplayer.DKVideoView;
 
 /**
  * 多开
@@ -23,7 +23,7 @@ public class ParallelPlayActivity extends AppCompatActivity {
     private static final String VOD_URL_1 = "http://vfx.mtime.cn/Video/2019/03/18/mp4/190318231014076505.mp4";
     private static final String VOD_URL_2 = DataUtil.SAMPLE_URL;
 
-    private List<VideoView> mVideoViews = new ArrayList<>();
+    private List<DKVideoView> mVideoViews = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,7 +36,7 @@ public class ParallelPlayActivity extends AppCompatActivity {
         }
 
 
-        VideoView player1 = findViewById(R.id.player_1);
+        DKVideoView player1 = findViewById(R.id.player_1);
         player1.setDataSource(VOD_URL_1);
 
         //必须设置
@@ -46,7 +46,7 @@ public class ParallelPlayActivity extends AppCompatActivity {
         player1.setVideoController(controller1);
         mVideoViews.add(player1);
 
-        VideoView player2 = findViewById(R.id.player_2);
+        DKVideoView player2 = findViewById(R.id.player_2);
         player2.setDataSource(VOD_URL_2);
         //必须设置
         player2.setEnableAudioFocus(false);
@@ -67,7 +67,7 @@ public class ParallelPlayActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        for (VideoView vv : mVideoViews) {
+        for (DKVideoView vv : mVideoViews) {
             vv.pause();
         }
     }
@@ -75,7 +75,7 @@ public class ParallelPlayActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        for (VideoView vv : mVideoViews) {
+        for (DKVideoView vv : mVideoViews) {
             vv.resume();
         }
     }
@@ -83,14 +83,14 @@ public class ParallelPlayActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        for (VideoView vv : mVideoViews) {
+        for (DKVideoView vv : mVideoViews) {
             vv.release();
         }
     }
 
     @Override
     public void onBackPressed() {
-        for (VideoView vv : mVideoViews) {
+        for (DKVideoView vv : mVideoViews) {
             if (vv.onBackPressed())
                 return;
         }

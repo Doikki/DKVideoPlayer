@@ -6,8 +6,8 @@ import android.view.animation.Animation;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import xyz.doikki.videoplayer.VideoView;
-import xyz.doikki.videoplayer.VideoViewManager;
+import xyz.doikki.videoplayer.DKVideoView;
+import xyz.doikki.videoplayer.DKManager;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
 import xyz.doikki.videoplayer.render.ScreenMode;
 
@@ -33,11 +33,11 @@ public interface ControlComponent {
      * @return
      */
     default boolean isFocusUiMode() {
-        return VideoViewManager.isFocusInTouchMode();
+        return DKManager.isFocusInTouchMode();
     }
 
     /**
-     * 播放器界面模式发生了变化；如果你只是单纯的想监听此状态，建议使用 {@link VideoView#addOnStateChangeListener(VideoView.OnStateChangeListener)}监听
+     * 播放器界面模式发生了变化；如果你只是单纯的想监听此状态，建议使用 {@link DKVideoView#addOnStateChangeListener(DKVideoView.OnStateChangeListener)}监听
      *
      * @param screenMode 播放器界面模式：竖屏、全屏、小窗口
      */
@@ -64,7 +64,7 @@ public interface ControlComponent {
     }
 
     /**
-     * 回调播放器的播放器状态变更；如果只是单纯的想监听状态变更，可以通过{@link VideoView#addOnStateChangeListener(VideoView.OnStateChangeListener)}方法增加监听
+     * 回调播放器的播放器状态变更；如果只是单纯的想监听状态变更，可以通过{@link DKVideoView#addOnStateChangeListener(DKVideoView.OnStateChangeListener)}方法增加监听
      *
      * @param playState 播放状态
      */

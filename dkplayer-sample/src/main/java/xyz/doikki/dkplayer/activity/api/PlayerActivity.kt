@@ -22,7 +22,7 @@ import xyz.doikki.dkplayer.widget.render.gl2.filter.GlSharpenFilter
 import xyz.doikki.dkplayer.widget.render.gl2.filter.GlWatermarkFilter
 import xyz.doikki.videocontroller.StandardVideoController
 import xyz.doikki.videocontroller.component.*
-import xyz.doikki.videoplayer.VideoView
+import xyz.doikki.videoplayer.DKVideoView
 import xyz.doikki.videoplayer.render.AspectRatioType
 import xyz.doikki.videoplayer.util.L
 
@@ -30,7 +30,7 @@ import xyz.doikki.videoplayer.util.L
  * 播放器演示
  * Created by Doikki on 2017/4/7.
  */
-class PlayerActivity : BaseActivity<VideoView>() {
+class PlayerActivity : BaseActivity<DKVideoView>() {
 
     private lateinit var controller:StandardVideoController
     private val renderView by lazy {
@@ -162,32 +162,32 @@ class PlayerActivity : BaseActivity<VideoView>() {
         }
     }
 
-    private val mOnStateChangeListener: VideoView.OnStateChangeListener =
-        object : VideoView.OnStateChangeListener {
+    private val mOnStateChangeListener: DKVideoView.OnStateChangeListener =
+        object : DKVideoView.OnStateChangeListener {
 
             override fun onPlayerStateChanged(playState: Int) {
                 when (playState) {
-                    VideoView.STATE_IDLE -> {
+                    DKVideoView.STATE_IDLE -> {
                     }
-                    VideoView.STATE_PREPARING -> {
+                    DKVideoView.STATE_PREPARING -> {
                     }
-                    VideoView.STATE_PREPARED -> {
+                    DKVideoView.STATE_PREPARED -> {
                     }
-                    VideoView.STATE_PLAYING -> {
+                    DKVideoView.STATE_PLAYING -> {
                         //需在此时获取视频宽高
                         val videoSize = mVideoView!!.videoSize
                         L.d("视频宽：" + videoSize[0])
                         L.d("视频高：" + videoSize[1])
                     }
-                    VideoView.STATE_PAUSED -> {
+                    DKVideoView.STATE_PAUSED -> {
                     }
-                    VideoView.STATE_BUFFERING -> {
+                    DKVideoView.STATE_BUFFERING -> {
                     }
-                    VideoView.STATE_BUFFERED -> {
+                    DKVideoView.STATE_BUFFERED -> {
                     }
-                    VideoView.STATE_PLAYBACK_COMPLETED -> {
+                    DKVideoView.STATE_PLAYBACK_COMPLETED -> {
                     }
-                    VideoView.STATE_ERROR -> {
+                    DKVideoView.STATE_ERROR -> {
                     }
                 }
             }
@@ -231,7 +231,7 @@ class PlayerActivity : BaseActivity<VideoView>() {
         super.onPause()
         //如果视频还在准备就 activity 就进入了后台，建议直接将 VideoView release
         //防止进入后台后视频还在播放
-        if (mVideoView!!.currentPlayState == VideoView.STATE_PREPARING) {
+        if (mVideoView!!.currentPlayState == DKVideoView.STATE_PREPARING) {
             mVideoView!!.release()
         }
     }

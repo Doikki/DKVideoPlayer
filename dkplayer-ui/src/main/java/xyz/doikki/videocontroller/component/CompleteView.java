@@ -14,7 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import xyz.doikki.videocontroller.R;
-import xyz.doikki.videoplayer.VideoView;
+import xyz.doikki.videoplayer.DKVideoView;
 import xyz.doikki.videoplayer.controller.component.ControlComponent;
 import xyz.doikki.videoplayer.render.ScreenMode;
 
@@ -91,7 +91,7 @@ public class CompleteView extends BaseControlComponent implements ControlCompone
 
     @Override
     public void onPlayStateChanged(int playState) {
-        if (playState == VideoView.STATE_PLAYBACK_COMPLETED) {
+        if (playState == DKVideoView.STATE_PLAYBACK_COMPLETED) {
             setVisibility(VISIBLE);
             mStopFullscreen.setVisibility(mControlWrapper.isFullScreen() ? VISIBLE : GONE);
             bringToFront();

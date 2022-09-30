@@ -2,7 +2,7 @@ package xyz.doikki.videoplayer.render;
 
 import android.view.View;
 
-import xyz.doikki.videoplayer.VideoView;
+import xyz.doikki.videoplayer.DKVideoView;
 
 /**
  * 库里最早测量方法
@@ -58,7 +58,7 @@ public class MeasureHelper {
 
         //如果设置了比例
         switch (mCurrentScreenScale) {
-            case VideoView.SCREEN_ASPECT_RATIO_DEFAULT:
+            case DKVideoView.SCREEN_ASPECT_RATIO_DEFAULT:
             default:
                 if (mVideoWidth * height < width * mVideoHeight) {
                     width = height * mVideoWidth / mVideoHeight;
@@ -66,29 +66,29 @@ public class MeasureHelper {
                     height = width * mVideoHeight / mVideoWidth;
                 }
                 break;
-            case VideoView.SCREEN_ASPECT_RATIO_SCALE_ORIGINAL:
+            case DKVideoView.SCREEN_ASPECT_RATIO_SCALE_ORIGINAL:
                 width = mVideoWidth;
                 height = mVideoHeight;
                 break;
-            case VideoView.SCREEN_ASPECT_RATIO_SCALE_16_9:
+            case DKVideoView.SCREEN_ASPECT_RATIO_SCALE_16_9:
                 if (height > width / 16 * 9) {
                     height = width / 16 * 9;
                 } else {
                     width = height / 9 * 16;
                 }
                 break;
-            case VideoView.SCREEN_ASPECT_RATIO_SCALE_4_3:
+            case DKVideoView.SCREEN_ASPECT_RATIO_SCALE_4_3:
                 if (height > width / 4 * 3) {
                     height = width / 4 * 3;
                 } else {
                     width = height / 3 * 4;
                 }
                 break;
-            case VideoView.SCREEN_ASPECT_RATIO_MATCH_PARENT:
+            case DKVideoView.SCREEN_ASPECT_RATIO_MATCH_PARENT:
                 width = widthMeasureSpec;
                 height = heightMeasureSpec;
                 break;
-            case VideoView.SCREEN_ASPECT_RATIO_CENTER_CROP:
+            case DKVideoView.SCREEN_ASPECT_RATIO_CENTER_CROP:
                 if (mVideoWidth * height > width * mVideoHeight) {
                     width = height * mVideoWidth / mVideoHeight;
                 } else {

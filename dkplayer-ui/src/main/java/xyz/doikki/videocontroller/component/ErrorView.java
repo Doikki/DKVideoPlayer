@@ -10,7 +10,7 @@ import android.view.ViewConfiguration;
 import androidx.annotation.Nullable;
 
 import xyz.doikki.videocontroller.R;
-import xyz.doikki.videoplayer.VideoView;
+import xyz.doikki.videoplayer.DKVideoView;
 
 /**
  * 播放出错提示界面
@@ -63,10 +63,10 @@ public class ErrorView extends BaseControlComponent {
 
     @Override
     public void onPlayStateChanged(int playState) {
-        if (playState == VideoView.STATE_ERROR) {
+        if (playState == DKVideoView.STATE_ERROR) {
             bringToFront();
             setVisibility(VISIBLE);
-        } else if (playState == VideoView.STATE_IDLE) {
+        } else if (playState == DKVideoView.STATE_IDLE) {
             setVisibility(GONE);
         }
     }

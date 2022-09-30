@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import xyz.doikki.videoplayer.render.ScreenMode;
 
+@Deprecated
 public class Utils {
 
     /**
@@ -25,31 +26,31 @@ public class Utils {
         String playStateString;
         switch (state) {
             default:
-            case VideoView.STATE_IDLE:
+            case DKVideoView.STATE_IDLE:
                 playStateString = "idle";
                 break;
-            case VideoView.STATE_PREPARING:
+            case DKVideoView.STATE_PREPARING:
                 playStateString = "preparing";
                 break;
-            case VideoView.STATE_PREPARED:
+            case DKVideoView.STATE_PREPARED:
                 playStateString = "prepared";
                 break;
-            case VideoView.STATE_PLAYING:
+            case DKVideoView.STATE_PLAYING:
                 playStateString = "playing";
                 break;
-            case VideoView.STATE_PAUSED:
+            case DKVideoView.STATE_PAUSED:
                 playStateString = "pause";
                 break;
-            case VideoView.STATE_BUFFERING:
+            case DKVideoView.STATE_BUFFERING:
                 playStateString = "buffering";
                 break;
-            case VideoView.STATE_BUFFERED:
+            case DKVideoView.STATE_BUFFERED:
                 playStateString = "buffered";
                 break;
-            case VideoView.STATE_PLAYBACK_COMPLETED:
+            case DKVideoView.STATE_PLAYBACK_COMPLETED:
                 playStateString = "playback completed";
                 break;
-            case VideoView.STATE_ERROR:
+            case DKVideoView.STATE_ERROR:
                 playStateString = "error";
                 break;
         }

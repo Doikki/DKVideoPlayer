@@ -20,8 +20,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import xyz.doikki.videoplayer.VideoView;
-import xyz.doikki.videoplayer.VideoViewManager;
+import xyz.doikki.videoplayer.DKVideoView;
+import xyz.doikki.videoplayer.DKManager;
 import xyz.doikki.videoplayer.controller.component.ControlComponent;
 import xyz.doikki.videoplayer.player.DeviceOrientationSensorHelper;
 import xyz.doikki.videoplayer.render.ScreenMode;
@@ -79,7 +79,7 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
     /**
      * 当前播放器状态
      */
-    @VideoView.PlayerState
+    @DKVideoView.PlayerState
     private int mPlayerState;
 
     /**
@@ -188,8 +188,8 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
         mOrientationSensorHelper = new DeviceOrientationSensorHelper(getContext().getApplicationContext(), PlayerUtils.scanForActivity(getContext()));
         //开始监听设备方向
         mOrientationSensorHelper.setDeviceOrientationChangedListener(this);
-        setEnableOrientationSensor(VideoViewManager.getConfig().enableOrientationSensor);
-        mAdaptCutout = VideoViewManager.getConfig().adaptCutout;
+        setEnableOrientationSensor(DKManager.isOrientationSensorEnabled());
+        mAdaptCutout = DKManager.isAdaptCutout();
 
         mShowAnim = new AlphaAnimation(0f, 1f);
         mShowAnim.setDuration(300);
@@ -222,17 +222,17 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
      */
     protected boolean isInPlaybackState() {
         return mPlayer != null
-                && mPlayerState != VideoView.STATE_ERROR
-                && mPlayerState != VideoView.STATE_IDLE
-                && mPlayerState != VideoView.STATE_PREPARING
-                && mPlayerState != VideoView.STATE_PREPARED
-                && mPlayerState != VideoView.STATE_START_ABORT
-                && mPlayerState != VideoView.STATE_PLAYBACK_COMPLETED;
+                && mPlayerState != DKVideoView.STATE_ERROR
+                && mPlayerState != DKVideoView.STATE_IDLE
+                && mPlayerState != DKVideoView.STATE_PREPARING
+                && mPlayerState != DKVideoView.STATE_PREPARED
+                && mPlayerState != DKVideoView.STATE_START_ABORT
+                && mPlayerState != DKVideoView.STATE_PLAYBACK_COMPLETED;
     }
 
 
     /**
-     * 重要：此方法用于将{@link VideoView} 和控制器绑定
+     * 重要：此方法用于将{@link DKVideoView} 和控制器绑定
      */
     @CallSuper
     public void setMediaPlayer(VideoViewControl mediaPlayer) {
@@ -390,8 +390,8 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
     }
 
     /**
-     * 设置当前{@link VideoView}界面模式：竖屏、全屏、小窗模式等
-     * 是当{@link VideoView}修改视图之后，调用此方法向控制器同步状态
+     * 设置当前{@link DKVideoView}界面模式：竖屏、全屏、小窗模式等
+     * 是当{@link DKVideoView}修改视图之后，调用此方法向控制器同步状态
      */
     @CallSuper
     public void setScreenMode(@ScreenMode int screenMode) {
@@ -399,17 +399,17 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
     }
 
     /**
-     * call by {@link VideoView},设置播放器当前播放状态
+     * call by {@link DKVideoView},设置播放器当前播放状态
      */
     @SuppressLint("SwitchIntDef")
     @CallSuper
-    public void setPlayerState(@VideoView.PlayerState int playState) {
+    public void setPlayerState(@DKVideoView.PlayerState int playState) {
         mPlayerState = playState;
         for (Map.Entry<ControlComponent, Boolean> next : mControlComponents.entrySet()) {
             next.getKey().onPlayStateChanged(playState);
         }
         switch (playState) {
-            case VideoView.STATE_IDLE:
+            case DKVideoView.STATE_IDLE:
                 mOrientationSensorHelper.disable();
                 mLocked = false;
                 mShowing = false;
@@ -417,11 +417,11 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
                 //所以在播放器release的时候需要移除
                 removeAllDissociateComponents();
                 break;
-            case VideoView.STATE_PLAYBACK_COMPLETED:
+            case DKVideoView.STATE_PLAYBACK_COMPLETED:
                 mLocked = false;
                 mShowing = false;
                 break;
-            case VideoView.STATE_ERROR:
+            case DKVideoView.STATE_ERROR:
                 mShowing = false;
                 break;
         }
@@ -567,7 +567,7 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
      */
     public boolean showNetWarning() {
         return PlayerUtils.getNetworkType(getContext()) == PlayerUtils.NETWORK_MOBILE
-                && !VideoViewManager.instance().playOnMobileNetwork();
+                && !DKManager.isPlayOnMobileNetwork();
     }
 
     /**
@@ -664,7 +664,7 @@ public abstract class MediaController extends FrameLayout implements VideoViewCo
      * 用于子类重写
      */
     @CallSuper
-    protected void onPlayerStateChanged(@VideoView.PlayerState int playState) {
+    protected void onPlayerStateChanged(@DKVideoView.PlayerState int playState) {
     }
 
     /**

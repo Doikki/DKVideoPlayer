@@ -9,14 +9,14 @@ import xyz.doikki.dkplayer.util.DataUtil;
 import xyz.doikki.dkplayer.util.cache.ProxyVideoCacheManager;
 import xyz.doikki.dkplayer.widget.component.AdControlView;
 import xyz.doikki.videocontroller.StandardVideoController;
-import xyz.doikki.videoplayer.VideoView;
+import xyz.doikki.videoplayer.DKVideoView;
 
 /**
  * 广告
  * Created by Doikki on 2017/4/7.
  */
 
-public class ADActivity extends BaseActivity<VideoView> {
+public class ADActivity extends BaseActivity<DKVideoView> {
 
     private static final String URL_AD = "https://gslb.miaopai.com/stream/IR3oMYDhrON5huCmf7sHCfnU5YKEkgO2.mp4";
 
@@ -57,10 +57,10 @@ public class ADActivity extends BaseActivity<VideoView> {
         mVideoView.setVideoController(mController);
 
         //监听播放结束
-        mVideoView.addOnStateChangeListener(new VideoView.OnStateChangeListener() {
+        mVideoView.addOnStateChangeListener(new DKVideoView.OnStateChangeListener() {
             @Override
             public void onPlayerStateChanged(int playState) {
-                if (playState == VideoView.STATE_PLAYBACK_COMPLETED) {
+                if (playState == DKVideoView.STATE_PLAYBACK_COMPLETED) {
                     playVideo();
                 }
             }

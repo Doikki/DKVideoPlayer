@@ -15,12 +15,12 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import java.util.Map;
 
 import xyz.doikki.dkplayer.widget.player.CustomExoMediaPlayer;
-import xyz.doikki.videoplayer.AVPlayer;
-import xyz.doikki.videoplayer.AVPlayerFactory;
-import xyz.doikki.videoplayer.VideoView;
+import xyz.doikki.videoplayer.DKPlayer;
+import xyz.doikki.videoplayer.DKPlayerFactory;
+import xyz.doikki.videoplayer.DKVideoView;
 import xyz.doikki.videoplayer.exo.ExoMediaSourceHelper;
 
-public class ExoVideoView extends VideoView {
+public class ExoVideoView extends DKVideoView {
 
     private MediaSource mMediaSource;
 
@@ -46,7 +46,7 @@ public class ExoVideoView extends VideoView {
 
     {
         //由于传递了泛型，必须将CustomExoMediaPlayer设置进来，否者报错
-        setPlayerFactory(new AVPlayerFactory<CustomExoMediaPlayer>() {
+        setPlayerFactory(new DKPlayerFactory<CustomExoMediaPlayer>() {
             @Override
             public CustomExoMediaPlayer create(Context context) {
                 return new CustomExoMediaPlayer(context);
@@ -56,11 +56,11 @@ public class ExoVideoView extends VideoView {
     }
 
     private CustomExoMediaPlayer mediaPlayer() {
-        return (CustomExoMediaPlayer) mMediaPlayer;
+        return (CustomExoMediaPlayer) mPlayer;
     }
 
     @Override
-    protected void onMediaPlayerCreate(AVPlayer mediaPlayer) {
+    protected void onMediaPlayerCreate(DKPlayer mediaPlayer) {
         super.onMediaPlayerCreate(mediaPlayer);
         CustomExoMediaPlayer mp = (CustomExoMediaPlayer) mediaPlayer;
         mp.setLoadControl(mLoadControl);

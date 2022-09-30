@@ -14,7 +14,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 
 import xyz.doikki.videoplayer.Utils;
-import xyz.doikki.videoplayer.VideoView;
+import xyz.doikki.videoplayer.DKVideoView;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
 import xyz.doikki.videoplayer.controller.component.ControlComponent;
 
@@ -73,7 +73,7 @@ public class DebugInfoView extends AppCompatTextView implements ControlComponent
      */
     protected String getDebugString(int playState) {
         int[] videoSize = mControlWrapper.getPlayer().getVideoSize();
-        VideoView videoView = (VideoView) mControlWrapper.getPlayer();
+        DKVideoView videoView = (DKVideoView) mControlWrapper.getPlayer();
         StringBuilder sb = new StringBuilder();
         sb.append("player:").append(videoView.getPlayerName()).append("   ")
                 .append("render:").append(videoView.getRenderName()).append("\n");

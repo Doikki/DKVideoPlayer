@@ -12,8 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import xyz.doikki.videocontroller.R;
-import xyz.doikki.videoplayer.VideoView;
-import xyz.doikki.videoplayer.VideoViewManager;
+import xyz.doikki.videoplayer.DKVideoView;
+import xyz.doikki.videoplayer.DKManager;
 import xyz.doikki.videoplayer.controller.component.ControlComponent;
 
 /**
@@ -57,7 +57,7 @@ public class PrepareView extends BaseControlComponent implements ControlComponen
             @Override
             public void onClick(View v) {
                 mNetWarning.setVisibility(GONE);
-                VideoViewManager.instance().setPlayOnMobileNetwork(true);
+                DKManager.setPlayOnMobileNetwork(true);
                 mControlWrapper.start();
             }
         });
@@ -83,22 +83,22 @@ public class PrepareView extends BaseControlComponent implements ControlComponen
     @Override
     public void onPlayStateChanged(int playState) {
         switch (playState) {
-            case VideoView.STATE_PREPARING:
+            case DKVideoView.STATE_PREPARING:
                 bringToFront();
                 setVisibility(VISIBLE);
                 mStartPlay.setVisibility(View.GONE);
                 mNetWarning.setVisibility(GONE);
                 mLoading.setVisibility(View.VISIBLE);
                 break;
-            case VideoView.STATE_PLAYING:
-            case VideoView.STATE_PAUSED:
-            case VideoView.STATE_ERROR:
-            case VideoView.STATE_BUFFERING:
-            case VideoView.STATE_BUFFERED:
-            case VideoView.STATE_PLAYBACK_COMPLETED:
+            case DKVideoView.STATE_PLAYING:
+            case DKVideoView.STATE_PAUSED:
+            case DKVideoView.STATE_ERROR:
+            case DKVideoView.STATE_BUFFERING:
+            case DKVideoView.STATE_BUFFERED:
+            case DKVideoView.STATE_PLAYBACK_COMPLETED:
                 setVisibility(GONE);
                 break;
-            case VideoView.STATE_IDLE:
+            case DKVideoView.STATE_IDLE:
                 setVisibility(VISIBLE);
                 bringToFront();
                 mLoading.setVisibility(View.GONE);
@@ -106,7 +106,7 @@ public class PrepareView extends BaseControlComponent implements ControlComponen
                 mStartPlay.setVisibility(View.VISIBLE);
                 mThumb.setVisibility(View.VISIBLE);
                 break;
-            case VideoView.STATE_START_ABORT:
+            case DKVideoView.STATE_START_ABORT:
                 setVisibility(VISIBLE);
                 mNetWarning.setVisibility(VISIBLE);
                 mNetWarning.bringToFront();

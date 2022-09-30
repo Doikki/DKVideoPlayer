@@ -26,7 +26,7 @@ import xyz.doikki.videocontroller.component.ErrorView;
 import xyz.doikki.videocontroller.component.GestureView;
 import xyz.doikki.videocontroller.component.TitleView;
 import xyz.doikki.videocontroller.component.VodControlView;
-import xyz.doikki.videoplayer.VideoView;
+import xyz.doikki.videoplayer.DKVideoView;
 
 /**
  * RecyclerView demo
@@ -38,7 +38,7 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
     protected RecyclerView mRecyclerView;
     protected LinearLayoutManager mLinearLayoutManager;
 
-    protected VideoView mVideoView;
+    protected DKVideoView mVideoView;
     protected StandardVideoController mController;
     protected ErrorView mErrorView;
     protected CompleteView mCompleteView;
@@ -99,12 +99,12 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
     }
 
     protected void initVideoView() {
-        mVideoView = new VideoView(getActivity());
-        mVideoView.addOnStateChangeListener(new VideoView.OnStateChangeListener() {
+        mVideoView = new DKVideoView(getActivity());
+        mVideoView.addOnStateChangeListener(new DKVideoView.OnStateChangeListener() {
             @Override
             public void onPlayerStateChanged(int playState) {
                 //监听VideoViewManager释放，重置状态
-                if (playState == VideoView.STATE_IDLE) {
+                if (playState == DKVideoView.STATE_IDLE) {
                     Utils.removeViewFormParent(mVideoView);
                     mLastPos = mCurPos;
                     mCurPos = -1;
