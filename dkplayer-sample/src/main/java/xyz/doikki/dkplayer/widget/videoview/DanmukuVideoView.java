@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat;
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.widget.CenteredImageSpan;
 import xyz.doikki.videoplayer.DKVideoView;
+import xyz.doikki.videoplayer.controller.MediaController;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 import xyz.doikki.videoplayer.BuildConfig;
 
@@ -69,8 +70,9 @@ public class DanmukuVideoView extends DKVideoView {
         layoutParams.topMargin = (int) PlayerUtils.getStatusBarHeight(getContext());
         playerContainer.addView(mDanmakuView, layoutParams);
         //将控制器提到最顶层，如果有的话
-        if (mVideoController != null) {
-            mVideoController.bringToFront();
+        MediaController controller = getVideoController();
+        if (controller != null) {
+            controller.bringToFront();
         }
     }
 

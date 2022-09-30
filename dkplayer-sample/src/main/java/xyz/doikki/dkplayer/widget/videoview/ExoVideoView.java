@@ -56,7 +56,7 @@ public class ExoVideoView extends DKVideoView {
     }
 
     private CustomExoMediaPlayer mediaPlayer() {
-        return (CustomExoMediaPlayer) mPlayer;
+        return (CustomExoMediaPlayer) getPlayer();
     }
 
     @Override

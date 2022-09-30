@@ -6,7 +6,7 @@ import androidx.annotation.IntRange;
  * 作为一个基本播放器控制器需要持有的功能
  * 是播放器去实现的接口（类似VideoView），然后再将这个接口的实现传递给Controller
  */
-public interface MediaPlayerControl {
+public interface DKPlayerControl {
 
     /**
      * 开始播放

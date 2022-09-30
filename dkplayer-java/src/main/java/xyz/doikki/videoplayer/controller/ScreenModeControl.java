@@ -8,6 +8,20 @@ import xyz.doikki.videoplayer.DKVideoView;
 public interface ScreenModeControl {
 
     /**
+     * 是否是全屏状态
+     *
+     * @return
+     */
+    boolean isFullScreen();
+
+    /**
+     * 当前是否是小窗播放状态
+     *
+     * @return
+     */
+    boolean isTinyScreen();
+
+    /**
      * 横竖屏切换
      */
     boolean toggleFullScreen();
@@ -47,13 +61,6 @@ public interface ScreenModeControl {
     boolean stopVideoViewFullScreen();
 
     /**
-     * 是否是全屏状态
-     *
-     * @return
-     */
-    boolean isFullScreen();
-
-    /**
      * 开始小窗播放
      * 屏幕切换之后会回调{@link DKVideoView.OnStateChangeListener#onScreenModeChanged(int)}
      */
@@ -64,12 +71,5 @@ public interface ScreenModeControl {
      * 屏幕切换之后会回调{@link DKVideoView.OnStateChangeListener#onScreenModeChanged(int)}
      */
     void stopTinyScreen();
-
-    /**
-     * 当前是否是小窗播放状态
-     *
-     * @return
-     */
-    boolean isTinyScreen();
 
 }

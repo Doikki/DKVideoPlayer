@@ -69,7 +69,7 @@ public class DetailActivity extends BaseActivity<DKVideoView> {
         controller.addDefaultControlComponent(title, false);
         if (seamlessPlay) {
             //无缝播放需还原Controller状态
-            controller.setPlayerState(mVideoView.getCurrentPlayState());
+            controller.setPlayerState(mVideoView.getPlayerState());
             controller.setScreenMode(mVideoView.getScreenMode());
         } else {
             //不是无缝播放的情况

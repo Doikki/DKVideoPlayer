@@ -264,7 +264,7 @@ public class PlayerActivityJava extends BaseActivity<DKVideoView> {
         super.onPause();
         //如果视频还在准备就 activity 就进入了后台，建议直接将 VideoView release
         //防止进入后台后视频还在播放
-        if (mVideoView.getCurrentPlayState() == DKVideoView.STATE_PREPARING) {
+        if (mVideoView.getPlayerState() == DKVideoView.STATE_PREPARING) {
             mVideoView.release();
         }
     }

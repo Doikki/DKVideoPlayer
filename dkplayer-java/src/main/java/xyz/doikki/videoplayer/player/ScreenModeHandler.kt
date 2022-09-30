@@ -1,65 +1,53 @@
-package xyz.doikki.videoplayer.player;
+package xyz.doikki.videoplayer.player
 
-import android.app.Activity;
-import android.os.Build;
-import android.view.Gravity;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.FrameLayout;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.Px;
-
-import xyz.doikki.videoplayer.R;
+import android.app.Activity
+import android.os.Build
+import android.view.Gravity
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.FrameLayout
+import androidx.annotation.Px
+import xyz.doikki.videoplayer.R
+import xyz.doikki.videoplayer.contentView
+import xyz.doikki.videoplayer.decorView
+import xyz.doikki.videoplayer.removeFromParent
 
 /**
  * 处理播放器屏幕切换
  *
- * @see #startFullScreen(Activity, View) 全屏显示指定的view
- * @see #stopFullScreen(Activity, View) 退出全屏
- * @see #startTinyScreen(Activity, View) 小窗显示
- * @see #stopTinyScreen(View) 小窗显示回到正常显示
- * @see #setTinyScreenSize 设置小窗大小
+ * @see .startFullScreen
+ * @see .stopFullScreen
+ * @see .startTinyScreen
+ * @see .stopTinyScreen
+ * @see .setTinyScreenSize 设置小窗大小
  */
-public class ScreenModeHandler {
+class ScreenModeHandler {
 
     /**
-     * 正常显示情况下的容器
-     */
-    private final ViewGroup mNormalContainer;
-
-    /**
+     * / **
      * 小屏窗口大小
      */
-    private final int[] mTinyScreenSize = {0, 0};
+    private val mTinyScreenSize = intArrayOf(0, 0)
 
     /**
      * 推荐的小窗宽度
      */
     @Px
-    private int mPreferredTinyScreenWidth = 0;
+    private var mPreferredTinyScreenWidth = 0
 
     /**
      * 推荐的小窗高度
      */
     @Px
-    private int mPreferredTinyScreenHeight = 0;
-
-    /**
-     * @param normalContainer 正常显示时控件所在的容器
-     */
-    public ScreenModeHandler(@NonNull ViewGroup normalContainer) {
-        mNormalContainer = normalContainer;
-    }
+    private var mPreferredTinyScreenHeight = 0
 
     /**
      * 设置小屏的宽高
      */
-    public void setTinyScreenSize(int width, int height) {
-        mTinyScreenSize[0] = width;
-        mTinyScreenSize[1] = height;
+    fun setTinyScreenSize(width: Int, height: Int) {
+        mTinyScreenSize[0] = width
+        mTinyScreenSize[1] = height
     }
 
     /**
@@ -67,34 +55,31 @@ public class ScreenModeHandler {
      *
      * @param view 用于全屏展示的view
      */
-    public boolean startFullScreen(@NonNull Activity activity, View view) {
-        ViewGroup decorView = getDecorView(activity);
-        if (decorView == null)
-            return false;
+    fun startFullScreen(activity: Activity, view: View): Boolean {
+        val decorView = activity.decorView ?: return false
         //隐藏NavigationBar和StatusBar
-        hideSystemBar(activity, decorView);
+        hideSystemBar(activity, decorView)
         //从parent中移除指定view
-        removeFromParent(view);
+        view.removeFromParent()
         //将视图添加到DecorView中即实现了全屏展示该控件
-        decorView.addView(view);
-        return true;
+        decorView.addView(view)
+        return true
     }
 
     /**
      * 退出全屏
      *
-     * @param view 全屏展示的view ： 本身这个参数可以不传，但是还是保留，这样更明确逻辑
+     * @param container view退出全屏之后的容器
+     * @param view      全屏展示的view ： 本身这个参数可以不传，但是还是保留，这样更明确逻辑
      */
-    public boolean stopFullScreen(Activity activity, View view) {
-        ViewGroup decorView = getDecorView(activity);
-        if (decorView != null) {
+    fun stopFullScreen(activity: Activity, container: ViewGroup, view: View): Boolean {
+        activity.decorView?.let {
             //显示状态栏
-            showSystemBar(activity, decorView);
+            showSystemBar(activity, it)
         }
-        removeFromParent(view);
-        mNormalContainer.addView(view);
-
-        return true;
+        view.removeFromParent()
+        container.addView(view)
+        return true
     }
 
     /**
@@ -102,150 +87,123 @@ public class ScreenModeHandler {
      *
      * @param view 在小窗口中显示的View
      */
-    public boolean startTinyScreen(Activity activity, View view) {
-        ViewGroup contentView = getContentView(activity);
-        if (contentView == null) return false;
-        removeFromParent(view);
-
+    fun startTinyScreen(activity: Activity, view: View): Boolean {
+        val contentView = activity.contentView ?: return false
+        view.removeFromParent()
         //缓存原来的布局参数
-        ViewGroup.LayoutParams layoutParamsCache = view.getLayoutParams();
-        view.setTag(R.id.screen_mode_layout_params, layoutParamsCache);
-
-        int width = getTinyScreenWidth(activity);
-        int height = getTinyScreenHeight(activity);
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(width, height);
-        params.gravity = Gravity.BOTTOM | Gravity.END;
-
-        contentView.addView(view, params);
-        return true;
+        val layoutParamsCache = view.layoutParams
+        view.setTag(R.id.screen_mode_layout_params, layoutParamsCache)
+        val width = getTinyScreenWidth(activity)
+        val height = getTinyScreenHeight(activity)
+        val params = FrameLayout.LayoutParams(width, height)
+        params.gravity = Gravity.BOTTOM or Gravity.END
+        contentView.addView(view, params)
+        return true
     }
 
     /**
      * 退出小屏
      *
-     * @param view 在小窗口中显示的view：本身这个参数可以不传，但是还是保留，这样更明确逻辑
+     * @param container 用于添加view
+     * @param view      在小窗口中显示的view：本身这个参数可以不传，但是还是保留，这样更明确逻辑
      */
-    public boolean stopTinyScreen(View view) {
-        removeFromParent(view);
-        ViewGroup.LayoutParams lp = (ViewGroup.LayoutParams) view.getTag(R.id.screen_mode_layout_params);
+    fun stopTinyScreen(container: ViewGroup, view: View): Boolean {
+        view.removeFromParent()
+        var lp = view.getTag(R.id.screen_mode_layout_params) as? ViewGroup.LayoutParams
         if (lp == null) {
-            lp = new ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT);
+            lp = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
         }
-        mNormalContainer.addView(view, lp);
-        return true;
+        container.addView(view, lp)
+        return true
     }
 
     /**
      * 获取小窗宽度
      */
     @Px
-    private int getTinyScreenWidth(@NonNull Activity activity) {
-        int width = mTinyScreenSize[0];
-        if (width > 0)
-            return width;
-        setupPreferredTinyScreenSize(activity);
-        return mPreferredTinyScreenWidth;
+    private fun getTinyScreenWidth(activity: Activity): Int {
+        val width = mTinyScreenSize[0]
+        if (width > 0) return width
+        setupPreferredTinyScreenSize(activity)
+        return mPreferredTinyScreenWidth
     }
 
     /**
      * 获取小窗高度
      */
     @Px
-    private int getTinyScreenHeight(@NonNull Activity activity) {
-        int height = mTinyScreenSize[1];
-        if (height > 0)
-            return height;
-        return mPreferredTinyScreenHeight;
+    private fun getTinyScreenHeight(activity: Activity): Int {
+        val height = mTinyScreenSize[1]
+        return if (height > 0) height else mPreferredTinyScreenHeight
     }
 
     /**
      * 初始化默认的小窗大小
      */
-    private void setupPreferredTinyScreenSize(Activity activity) {
-        if (mPreferredTinyScreenWidth > 0)
-            return;
-        mPreferredTinyScreenWidth = activity.getResources().getDisplayMetrics().widthPixels / 2;
-        mPreferredTinyScreenHeight = mPreferredTinyScreenWidth * 9 / 16;
+    private fun setupPreferredTinyScreenSize(activity: Activity) {
+        if (mPreferredTinyScreenWidth > 0) return
+        mPreferredTinyScreenWidth = activity.resources.displayMetrics.widthPixels / 2
+        mPreferredTinyScreenHeight = mPreferredTinyScreenWidth * 9 / 16
     }
 
-    /**
-     * 显示系统状态栏(NavigationBar和StatusBar)
-     */
-    public static void showSystemBar(Activity activity) {
-        ViewGroup decorView = getDecorView(activity);
-        if (decorView == null)
-            return;
-        showSystemBar(activity, decorView);
-    }
 
-    /**
-     * 显示系统状态栏(NavigationBar和StatusBar)
-     */
-    public static void showSystemBar(Activity activity, ViewGroup decorView) {
-        int uiOptions = decorView.getSystemUiVisibility();
-        uiOptions &= ~View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            uiOptions &= ~View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+
+    companion object {
+
+        /**
+         * 显示系统状态栏(NavigationBar和StatusBar)
+         */
+        @JvmStatic
+        fun showSystemBar(activity: Activity) {
+            val decorView = activity.decorView ?: return
+            showSystemBar(activity, decorView)
         }
-        decorView.setSystemUiVisibility(uiOptions);
-        activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-    }
 
-    /**
-     * 隐藏系统状态栏(NavigationBar和StatusBar)
-     *
-     * @param activity
-     */
-    public static void hideSystemBar(Activity activity) {
-        ViewGroup decorView = getDecorView(activity);
-        if (decorView == null)
-            return;
-        hideSystemBar(activity, decorView);
-    }
-
-    /**
-     * 隐藏系统状态栏(NavigationBar和StatusBar)
-     *
-     * @param activity
-     */
-    public static void hideSystemBar(Activity activity, ViewGroup decorView) {
-        int uiOptions = decorView.getSystemUiVisibility();
-        uiOptions |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            uiOptions |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        /**
+         * 显示系统状态栏(NavigationBar和StatusBar)
+         */
+        @JvmStatic
+        fun showSystemBar(activity: Activity, decorView: ViewGroup) {
+            var uiOptions = decorView.systemUiVisibility
+            uiOptions = uiOptions and View.SYSTEM_UI_FLAG_HIDE_NAVIGATION.inv()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                uiOptions = uiOptions and View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY.inv()
+            }
+            decorView.systemUiVisibility = uiOptions
+            activity.window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         }
-        decorView.setSystemUiVisibility(uiOptions);
-        activity.getWindow().setFlags(
+
+        /**
+         * 隐藏系统状态栏(NavigationBar和StatusBar)
+         *
+         * @param activity
+         */
+        @JvmStatic
+        fun hideSystemBar(activity: Activity) {
+            val decorView = activity.decorView ?: return
+            hideSystemBar(activity, decorView)
+        }
+
+        /**
+         * 隐藏系统状态栏(NavigationBar和StatusBar)
+         *
+         * @param activity
+         */
+        @JvmStatic
+        fun hideSystemBar(activity: Activity, decorView: ViewGroup) {
+            var uiOptions = decorView.systemUiVisibility
+            uiOptions = uiOptions or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                uiOptions = uiOptions or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+            }
+            decorView.systemUiVisibility = uiOptions
+            activity.window.setFlags(
                 WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-    }
-
-    /**
-     * 从Parent中移除自己
-     */
-    private static void removeFromParent(View view) {
-        ViewGroup parent = (ViewGroup) view.getParent();
-        if (parent != null) {
-            parent.removeView(view);
+                WindowManager.LayoutParams.FLAG_FULLSCREEN
+            )
         }
     }
-
-    /**
-     * 获取DecorView
-     */
-    @Nullable
-    private static ViewGroup getDecorView(@NonNull Activity activity) {
-        return (ViewGroup) activity.getWindow().getDecorView();
-    }
-
-    /**
-     * 获取activity中的content view,其id为android.R.id.content
-     */
-    @Nullable
-    protected ViewGroup getContentView(@NonNull Activity activity) {
-        return activity.findViewById(android.R.id.content);
-    }
-
 }

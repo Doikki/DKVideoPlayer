@@ -129,7 +129,7 @@ public class TinyScreenActivity extends BaseActivity<DKVideoView> implements OnI
         if (itemView == null) return;
         //注意：要先设置控制才能去设置控制器的状态。
         mVideoView.setVideoController(mController);
-        mController.setPlayerState(mVideoView.getCurrentPlayState());
+        mController.setPlayerState(mVideoView.getPlayerState());
 
         VideoRecyclerViewAdapter.VideoHolder viewHolder = (VideoRecyclerViewAdapter.VideoHolder) itemView.getTag();
         //把列表中预置的PrepareView添加到控制器中，注意isDissociate此处只能为true。请点进去看isDissociate的解释

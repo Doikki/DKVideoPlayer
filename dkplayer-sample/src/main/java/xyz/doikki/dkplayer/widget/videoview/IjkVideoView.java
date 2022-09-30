@@ -37,7 +37,7 @@ public class IjkVideoView extends DKVideoView {
     }
 
     private CustomIjkMediaPlayer mediaPlayer(){
-        return (CustomIjkMediaPlayer) mPlayer;
+        return (CustomIjkMediaPlayer) getPlayer();
     }
 
     @Override
