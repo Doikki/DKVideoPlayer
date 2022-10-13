@@ -25,7 +25,8 @@ import java.util.Map;
 
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.videocontroller.component.VodControlView;
-import xyz.doikki.videoplayer.render.ScreenMode;
+
+import xyz.doikki.videoplayer.DKVideoView;
 import xyz.doikki.videoplayer.util.L;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
@@ -93,7 +94,7 @@ public class DefinitionControlView extends VodControlView {
     @Override
     public void onScreenModeChanged(int screenMode) {
         super.onScreenModeChanged(screenMode);
-        if (screenMode == ScreenMode.FULL) {
+        if (screenMode == DKVideoView.SCREEN_MODE_FULL) {
             mDefinition.setVisibility(VISIBLE);
         } else {
             mDefinition.setVisibility(GONE);

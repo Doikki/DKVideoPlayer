@@ -8,11 +8,11 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * 视频区域的显示比例
  * <p>
- * {@link AspectRatioType#SCALE} & {@link AspectRatioType#SCALE_ORIGINAL}& {@link AspectRatioType#CENTER_CROP} 都是按照图像比例进行缩放或者裁剪
- * {@link AspectRatioType#SCALE}
+ * {@link AspectRatioType#DEFAULT_SCALE} & {@link AspectRatioType#SCALE_ORIGINAL}& {@link AspectRatioType#CENTER_CROP} 都是按照图像比例进行缩放或者裁剪
+ * {@link AspectRatioType#DEFAULT_SCALE}
  * {@link AspectRatioType#MATCH_PARENT} 是占满父级控件，所以不保证图像比例，可能会导致图像变形
  */
-@IntDef({AspectRatioType.SCALE,
+@IntDef({AspectRatioType.DEFAULT_SCALE,
         AspectRatioType.SCALE_16_9,
         AspectRatioType.SCALE_18_9,
         AspectRatioType.SCALE_4_3,
@@ -22,12 +22,11 @@ import java.lang.annotation.RetentionPolicy;
 public @interface AspectRatioType {
 
     /**
-     * 将图像等比例缩放，适配(图像的)最长边，缩放后的宽和高都不会超过显示区域，居中显示，画面（上下或者左右）可能会与父级控件留有空隙
      * 默认采用该模式
-     *
+     * 将图像等比例缩放，适配(图像的)最长边，缩放后的宽和高都不会超过显示区域，居中显示，画面（上下或者左右）可能会与父级控件留有空隙
      * @see android.widget.ImageView.ScaleType#FIT_CENTER
      */
-    int SCALE = 0;
+    int DEFAULT_SCALE = 0;
 
     /**
      * 按4:3 缩放（可能导致上下或者左右留有黑边）
@@ -46,7 +45,7 @@ public @interface AspectRatioType {
 
     /**
      * 按照图像原始大小（不超过显示区域）显示；（可能导致上下或者左右甚至四周留有黑边）
-     * 当图像比显示区域大时，该模式效果类似于{@link #SCALE}
+     * 当图像比显示区域大时，该模式效果类似于{@link #DEFAULT_SCALE}
      * 当图像比显示区域小时，会以图片原始大小显示
      */
     int SCALE_ORIGINAL = 4;

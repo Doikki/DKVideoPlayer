@@ -6,6 +6,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -21,12 +22,12 @@ import androidx.annotation.Nullable;
 import xyz.doikki.videocontroller.R;
 import xyz.doikki.videoplayer.DKVideoView;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
-import xyz.doikki.videoplayer.controller.component.GestureControlComponent;
+import xyz.doikki.videoplayer.controller.component.KeyControlComponent;
 
 /**
  * 手势控制
  */
-public class GestureView extends FrameLayout implements GestureControlComponent {
+public class GestureView extends FrameLayout implements KeyControlComponent {
 
     public GestureView(@NonNull Context context) {
         super(context);
@@ -79,6 +80,21 @@ public class GestureView extends FrameLayout implements GestureControlComponent 
     }
 
     @Override
+    public void onStartLeftOrRightKeyPressed(@NonNull KeyEvent event) {
+        onStartSlide();
+    }
+
+    @Override
+    public void onStopLeftOrRightKeyPressed(@NonNull KeyEvent event) {
+        onStopSlide();
+    }
+
+    @Override
+    public void onCancelLeftOrRightKeyPressed(@NonNull KeyEvent keyEvent) {
+        onStopSlide();
+    }
+
+    @Override
     public void onStartSlide() {
         mControlWrapper.hide();
         mCenterContainer.setVisibility(VISIBLE);
@@ -105,8 +121,10 @@ public class GestureView extends FrameLayout implements GestureControlComponent 
         mProgressPercent.setVisibility(GONE);
         if (slidePosition > currentPosition) {
             mIcon.setImageResource(R.drawable.dkplayer_ic_action_fast_forward);
-        } else {
+        } else if (slidePosition < currentPosition) {
             mIcon.setImageResource(R.drawable.dkplayer_ic_action_fast_rewind);
+        } else {
+            //相等的情况不处理，避免最大最小位置图标错乱
         }
         mTextPercent.setText(String.format("%s/%s", stringForTime(slidePosition), stringForTime(duration)));
     }

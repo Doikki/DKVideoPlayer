@@ -2,8 +2,6 @@ package xyz.doikki.videoplayer;
 
 import java.util.Collection;
 
-import xyz.doikki.videoplayer.render.ScreenMode;
-
 @Deprecated
 public class Utils {
 
@@ -60,17 +58,17 @@ public class Utils {
     /**
      * Returns a string containing player state debugging information.
      */
-    public static String screenMode2str(@ScreenMode int mode) {
+    public static String screenMode2str(@DKVideoView.ScreenMode int mode) {
         String playerStateString;
         switch (mode) {
             default:
-            case ScreenMode.NORMAL:
+            case DKVideoView.SCREEN_MODE_NORMAL:
                 playerStateString = "normal";
                 break;
-            case ScreenMode.FULL:
+            case DKVideoView.SCREEN_MODE_FULL:
                 playerStateString = "full screen";
                 break;
-            case ScreenMode.TINY:
+            case DKVideoView.SCREEN_MODE_TINY:
                 playerStateString = "tiny screen";
                 break;
         }

@@ -28,6 +28,9 @@
 -dontwarn tv.danmaku.ijk.**
 -keep class xyz.doikki.videoplayer.** { *; }
 -dontwarn xyz.doikki.videoplayer.**
+#
+-keep class xyz.doikki.videoplayer.ijk.** { *; }
+
 
 -keep class com.google.android.exoplayer2.** { *; }
 -dontwarn com.google.android.exoplayer2.**

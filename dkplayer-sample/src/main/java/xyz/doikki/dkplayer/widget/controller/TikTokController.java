@@ -33,10 +33,6 @@ public class TikTokController extends MediaController {
         addControlComponent(new DebugInfoView(getContext()));
     }
 
-    @Override
-    protected int getLayoutId() {
-        return 0;
-    }
 
     @Override
     public boolean showNetWarning() {

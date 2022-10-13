@@ -34,7 +34,7 @@ public class TikTokRenderView implements Render {
                 mProxyRenderView.setAspectRatioType(AspectRatioType.CENTER_CROP);
             } else {
                 //横屏视频，使用默认模式
-                mProxyRenderView.setAspectRatioType(AspectRatioType.SCALE);
+                mProxyRenderView.setAspectRatioType(AspectRatioType.DEFAULT_SCALE);
             }
         }
     }

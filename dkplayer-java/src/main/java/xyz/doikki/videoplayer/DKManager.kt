@@ -3,7 +3,6 @@ package xyz.doikki.videoplayer
 import android.app.Application
 import android.content.Context
 import xyz.doikki.videoplayer.render.AspectRatioType
-import xyz.doikki.videoplayer.render.Render
 import xyz.doikki.videoplayer.render.RenderFactory
 import xyz.doikki.videoplayer.util.L
 
@@ -21,13 +20,13 @@ object DKManager {
      * 影响一些组件的日志输出
      */
     @JvmStatic
-    var isDebuggable: Boolean = false;
+    var isDebuggable: Boolean = false
 
     /**
      * 播放器内核工厂
      */
     @JvmStatic
-    var playerFactory: DKPlayerFactory<*> = DKPlayerFactory.DEFAULT
+    var playerFactory: DKPlayerFactory<*> = DKPlayerFactory.systemMediaPlayerFactory()
 
     /**
      * Render工厂
@@ -55,7 +54,8 @@ object DKManager {
      * 是否采用焦点模式：用于TV项目采用按键操作,开启此选项会改变部分Controller&controlComponent的操作方式
      */
     @JvmStatic
-    var isFocusInTouchMode = false
+    @NewFunc
+    var isFocusInTouchMode = true
 
     /**
      * 是否启用了音频焦点处理；默认开启
@@ -81,6 +81,7 @@ object DKManager {
      * 默认开启
      */
     @JvmStatic
+    @NewFunc
     var isTextureViewRenderOptimizationEnabled = true
 
     /**
@@ -95,8 +96,14 @@ object DKManager {
      */
     @JvmStatic
     @AspectRatioType
-    var screenAspectRatioType: Int = AspectRatioType.SCALE
+    var screenAspectRatioType: Int = AspectRatioType.DEFAULT_SCALE
 
+    /**
+     * RenderView 是否重用（即在播放器调用播放或者重新播放的时候，是否重用已有的RenderView：以前的版本是每次都会创建一个新的RenderView）
+     */
+    @JvmStatic
+    @NewFunc
+    var isRenderReusable: Boolean = true
 
     /**
      * 创建播放器
@@ -108,17 +115,6 @@ object DKManager {
     @JvmStatic
     fun createMediaPlayer(context: Context, customFactory: DKPlayerFactory<*>?): DKPlayer {
         return customFactory.orDefault(playerFactory).create(context)
-    }
-
-    /**
-     * 创建视图层
-     *
-     * @param customFactory 自定义工厂，如果为null，则使用全局配置的工厂创建
-     * @return
-     */
-    @JvmStatic
-    fun createRender(context: Context, customFactory: RenderFactory?): Render {
-        return customFactory.orDefault(renderFactory).create(context)
     }
 
     /**

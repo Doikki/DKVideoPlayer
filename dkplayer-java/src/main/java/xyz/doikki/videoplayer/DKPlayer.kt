@@ -11,6 +11,7 @@ import androidx.annotation.IntRange
  * 备注：本类的职责应该完全定位在播放器的“能力”上，因此只考虑播放相关的逻辑（不包括UI层面）
  * Created by Doikki on 2017/12/21.
  * update by luochao on 2022/9/16. 调整部分代码及结构
+ * @see AbstractDKPlayer
  */
 interface DKPlayer {
 
@@ -143,7 +144,7 @@ interface DKPlayer {
     fun stop()
 
     /**
-     * todo：重置播放器
+     * todo：重置播放器 此方法按道理是重置播放器之后可以重复使用
      */
     fun reset()
 
@@ -165,6 +166,7 @@ interface DKPlayer {
 
     /**
      * 设置播放器事件监听
+     * todo 想把这里改成add的逻辑。。。。（或者还是由VideoView来提供？），如果是set方式，那么如果player对外可见了该方法，对于videoview内部set的对象会不会被覆盖
      */
     fun setEventListener(eventListener: EventListener?)
 
@@ -180,10 +182,30 @@ interface DKPlayer {
      * 事件监听器
      */
     interface EventListener {
+
+        /**
+         * 播放就绪
+         */
         fun onPrepared() {}
+
+        /**
+         * 播放信息
+         */
         fun onInfo(what: Int, extra: Int) {}
+
+        /**
+         * 视频大小发生变化
+         */
         fun onVideoSizeChanged(width: Int, height: Int) {}
+
+        /**
+         * 播放完成
+         */
         fun onCompletion() {}
+
+        /**
+         * 播放错误
+         */
         fun onError(e: Throwable) {}
     }
 

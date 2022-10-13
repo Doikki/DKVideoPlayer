@@ -16,7 +16,7 @@ import xyz.doikki.dkplayer.R;
 import xyz.doikki.videoplayer.DKVideoView;
 import xyz.doikki.videoplayer.controller.component.ControlComponent;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
-import xyz.doikki.videoplayer.render.ScreenMode;
+
 
 public class AdControlView extends FrameLayout implements ControlComponent, View.OnClickListener {
 
@@ -93,11 +93,11 @@ public class AdControlView extends FrameLayout implements ControlComponent, View
     @Override
     public void onScreenModeChanged(int screenMode) {
         switch (screenMode) {
-            case ScreenMode.NORMAL:
+            case DKVideoView.SCREEN_MODE_NORMAL:
                 mBack.setVisibility(GONE);
                 mFullScreen.setSelected(false);
                 break;
-            case ScreenMode.FULL:
+            case DKVideoView.SCREEN_MODE_FULL:
                 mBack.setVisibility(VISIBLE);
                 mFullScreen.setSelected(true);
                 break;

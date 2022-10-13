@@ -21,9 +21,11 @@ import xyz.doikki.dkplayer.widget.render.gl2.filter.GlSepiaFilter
 import xyz.doikki.dkplayer.widget.render.gl2.filter.GlSharpenFilter
 import xyz.doikki.dkplayer.widget.render.gl2.filter.GlWatermarkFilter
 import xyz.doikki.videocontroller.StandardVideoController
+import xyz.doikki.videocontroller.TVVideoController
 import xyz.doikki.videocontroller.component.*
 import xyz.doikki.videoplayer.DKVideoView
 import xyz.doikki.videoplayer.render.AspectRatioType
+import xyz.doikki.videoplayer.render.RenderFactory
 import xyz.doikki.videoplayer.util.L
 
 /**
@@ -32,7 +34,7 @@ import xyz.doikki.videoplayer.util.L
  */
 class PlayerActivity : BaseActivity<DKVideoView>() {
 
-    private lateinit var controller:StandardVideoController
+    private lateinit var controller: StandardVideoController
     private val renderView by lazy {
         GLSurfaceRenderView2(this)
     }
@@ -41,9 +43,21 @@ class PlayerActivity : BaseActivity<DKVideoView>() {
 
     override fun initView() {
         super.initView()
+        findViewById<View>(R.id.root).let {
+            it.isFocusable = true
+            it.isFocusableInTouchMode = true
+            it.requestFocus()
+            it.setOnClickListener {
+                mVideoView.startFullScreen()
+                controller.requestFocus()
+            }
+        }
         mVideoView = findViewById(R.id.player)
         intent?.let {
-            controller = StandardVideoController(this)
+            controller = TVVideoController(this)
+//            controller.post {
+//                controller.requestFocus()
+//            }
             //根据屏幕方向自动进入/退出全屏
             controller.setEnableOrientationSensor(true)
             val prepareView = PrepareView(this) //准备播放界面
@@ -69,10 +83,10 @@ class PlayerActivity : BaseActivity<DKVideoView>() {
             val gestureControlView = GestureView(this) //滑动控制视图
             controller.addControlComponent(gestureControlView)
             //根据是否为直播决定是否需要滑动调节进度
-            controller.setCanChangePosition(!isLive)
+            controller.seekEnabled = !isLive
 
             MediaPlayer()
-      
+
             //设置标题
             val title = it.getStringExtra(IntentKeys.TITLE)
             titleView.setTitle(title)
@@ -195,7 +209,7 @@ class PlayerActivity : BaseActivity<DKVideoView>() {
     private var i = 0
     fun onButtonClick(view: View) {
         when (view.id) {
-            R.id.scale_default -> mVideoView!!.setScreenAspectRatioType(AspectRatioType.SCALE)
+            R.id.scale_default -> mVideoView!!.setScreenAspectRatioType(AspectRatioType.DEFAULT_SCALE)
             R.id.scale_189 -> mVideoView!!.setScreenAspectRatioType(AspectRatioType.SCALE_18_9)
             R.id.scale_169 -> mVideoView!!.setScreenAspectRatioType(AspectRatioType.SCALE_16_9)
             R.id.scale_43 -> mVideoView!!.setScreenAspectRatioType(AspectRatioType.SCALE_4_3)
@@ -207,11 +221,11 @@ class PlayerActivity : BaseActivity<DKVideoView>() {
             R.id.speed_1_0 -> mVideoView!!.speed = 1.0f
             R.id.speed_1_5 -> mVideoView!!.speed = 1.5f
             R.id.speed_2_0 -> mVideoView!!.speed = 2.0f
-            R.id.rotate90 ->controller.controlWrapper.setRotation(90)
-            R.id.rotate180 ->controller.controlWrapper.setRotation(180)
-            R.id.rotate270 ->controller.controlWrapper.setRotation(270)
-            R.id.rotate60 ->controller.controlWrapper.setRotation(60)
-            R.id.rotate0 ->controller.controlWrapper.setRotation(0)
+            R.id.rotate90 -> controller.setRotation(90)
+            R.id.rotate180 -> controller.setRotation(180)
+            R.id.rotate270 -> controller.setRotation(270)
+            R.id.rotate60 -> controller.setRotation(60)
+            R.id.rotate0 -> controller.setRotation(0)
             R.id.screen_shot -> {
                 val imageView = findViewById<ImageView>(R.id.iv_screen_shot)
                 mVideoView!!.screenshot {
@@ -222,6 +236,12 @@ class PlayerActivity : BaseActivity<DKVideoView>() {
             R.id.mirror_rotate -> {
                 mVideoView!!.setMirrorRotation(i % 2 == 0)
                 i++
+            }
+            R.id.surface_render->{
+                mVideoView!!.setRenderViewFactory(RenderFactory.surfaceViewRenderFactory())
+            }
+            R.id.texture_render->{
+                mVideoView!!.setRenderViewFactory(RenderFactory.textureViewRenderFactory())
             }
             R.id.btn_mute -> mVideoView!!.isMute = !mVideoView!!.isMute
         }

@@ -6,7 +6,7 @@ import xyz.doikki.videoplayer.DKVideoView;
 
 /**
  * 库里最早测量方法
- * @deprecated  请使用 {@link RenderLayoutMeasure}
+ * @deprecated  请使用 {@link RenderMeasure}
  */
 @Deprecated
 public class MeasureHelper {

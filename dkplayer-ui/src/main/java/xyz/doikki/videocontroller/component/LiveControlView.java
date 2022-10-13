@@ -16,7 +16,6 @@ import androidx.annotation.Nullable;
 import xyz.doikki.videocontroller.R;
 import xyz.doikki.videoplayer.DKVideoView;
 import xyz.doikki.videoplayer.controller.component.ControlComponent;
-import xyz.doikki.videoplayer.render.ScreenMode;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
 /**
@@ -101,10 +100,10 @@ public class LiveControlView extends BaseControlComponent implements ControlComp
     @Override
     public void onScreenModeChanged(int screenMode) {
         switch (screenMode) {
-            case ScreenMode.NORMAL:
+            case DKVideoView.SCREEN_MODE_NORMAL:
                 mFullScreen.setSelected(false);
                 break;
-            case ScreenMode.FULL:
+            case DKVideoView.SCREEN_MODE_FULL:
                 mFullScreen.setSelected(true);
                 break;
         }

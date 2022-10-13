@@ -9,7 +9,6 @@ import androidx.annotation.Nullable;
 import xyz.doikki.videoplayer.DKVideoView;
 import xyz.doikki.videoplayer.DKManager;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
-import xyz.doikki.videoplayer.render.ScreenMode;
 
 /**
  * 控制器中的控制组件
@@ -41,7 +40,7 @@ public interface ControlComponent {
      *
      * @param screenMode 播放器界面模式：竖屏、全屏、小窗口
      */
-    default void onScreenModeChanged(@ScreenMode int screenMode) {
+    default void onScreenModeChanged(@DKVideoView.ScreenMode int screenMode) {
     }
 
     /**

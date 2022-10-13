@@ -19,6 +19,7 @@ android {
 
         ndk {
             //使用abiFilters筛选你需要的so
+            abiFilters "armeabi-v7a"
 //            abiFilters 'arm64-v8a'
         }
         multiDexEnabled true

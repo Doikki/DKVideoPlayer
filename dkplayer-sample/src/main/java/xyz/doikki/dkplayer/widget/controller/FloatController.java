@@ -19,20 +19,16 @@ public class FloatController extends GestureVideoController {
 
     public FloatController(@NonNull Context context) {
         super(context);
+        initView();
     }
 
     public FloatController(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        initView();
     }
 
-    @Override
-    protected int getLayoutId() {
-        return 0;
-    }
 
-    @Override
     protected void initView() {
-        super.initView();
         addControlComponent(new CompleteView(getContext()));
         addControlComponent(new ErrorView(getContext()));
         addControlComponent(new PipControlView(getContext()));

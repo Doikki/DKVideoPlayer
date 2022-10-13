@@ -40,7 +40,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import xyz.doikki.videoplayer.DKPlayer;
 import xyz.doikki.videoplayer.render.Render;
-import xyz.doikki.videoplayer.render.RenderLayoutMeasure;
+import xyz.doikki.videoplayer.render.RenderMeasure;
 
 /**
  * {@link GLSurfaceView} that creates a GL context (optionally for protected content) and passes
@@ -56,7 +56,7 @@ import xyz.doikki.videoplayer.render.RenderLayoutMeasure;
  */
 public final class GLSurfaceRenderView extends GLSurfaceView implements Render {
 
-    private final RenderLayoutMeasure mMeasureHelper = new RenderLayoutMeasure();
+    private final RenderMeasure mMeasureHelper = new RenderMeasure();
 
     private DKPlayer player;
 

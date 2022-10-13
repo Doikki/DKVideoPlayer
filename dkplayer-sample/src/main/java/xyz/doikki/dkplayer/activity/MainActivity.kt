@@ -23,7 +23,7 @@ import xyz.doikki.videoplayer.DKPlayerFactory
 import xyz.doikki.videoplayer.DKVideoView
 import xyz.doikki.videoplayer.exo.ExoMediaPlayerFactory
 import xyz.doikki.videoplayer.ijk.IjkPlayerFactory
-import xyz.doikki.videoplayer.sys.SysMediaPlayerFactory
+import xyz.doikki.videoplayer.sys.SysDKPlayerFactory
 import java.io.*
 
 class MainActivity : BaseActivity<DKVideoView>(), NavigationBarView.OnItemSelectedListener {
@@ -51,7 +51,7 @@ class MainActivity : BaseActivity<DKVideoView>(), NavigationBarView.OnItemSelect
             is IjkPlayerFactory -> {
                 setTitle(resources.getString(R.string.app_name) + " (IjkPlayer)")
             }
-            is SysMediaPlayerFactory -> {
+            is SysDKPlayerFactory -> {
                 setTitle(resources.getString(R.string.app_name) + " (MediaPlayer)")
             }
             else -> {
@@ -92,10 +92,10 @@ class MainActivity : BaseActivity<DKVideoView>(), NavigationBarView.OnItemSelect
                         setTitle(resources.getString(R.string.app_name) + " (ExoPlayer)")
                     }
                     R.id.media -> {
-                        playerFactory = SysMediaPlayerFactory.create()
+                        playerFactory = DKPlayerFactory.systemMediaPlayerFactory()
                         setTitle(resources.getString(R.string.app_name) + " (MediaPlayer)")
                     }
-                    else->{
+                    else -> {
                         playerFactory = IjkPlayerFactory.create()
                         setTitle(resources.getString(R.string.app_name) + " (IjkPlayer)")
                     }

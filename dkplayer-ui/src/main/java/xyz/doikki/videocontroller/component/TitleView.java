@@ -22,7 +22,6 @@ import androidx.annotation.Nullable;
 import xyz.doikki.videocontroller.R;
 import xyz.doikki.videoplayer.DKVideoView;
 import xyz.doikki.videoplayer.controller.component.ControlComponent;
-import xyz.doikki.videoplayer.render.ScreenMode;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
 /**
@@ -149,7 +148,7 @@ public class TitleView extends BaseControlComponent implements ControlComponent 
 
     @Override
     public void onScreenModeChanged(int screenMode) {
-        if (screenMode == ScreenMode.FULL) {
+        if (screenMode == DKVideoView.SCREEN_MODE_FULL) {
             if (mControlWrapper.isShowing() && !mControlWrapper.isLocked()) {
                 setVisibility(VISIBLE);
                 mSysTime.setText(PlayerUtils.getCurrentSystemTime());

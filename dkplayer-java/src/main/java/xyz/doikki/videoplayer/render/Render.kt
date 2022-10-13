@@ -7,6 +7,7 @@ import android.view.Surface
 import android.view.View
 import androidx.annotation.IntRange
 import xyz.doikki.videoplayer.DKPlayer
+import xyz.doikki.videoplayer.PartialFunc
 
 interface Render {
 
@@ -45,19 +46,23 @@ interface Render {
      *
      * @param degree 角度值
      */
-    fun setVideoRotation(@IntRange(from = 0, to = 360) degree: Int)
+    @PartialFunc(message = "TextureView才支持")
+    fun setVideoRotation(@IntRange(from = 0, to = 360) degree: Int){
+        //默认不支持镜像旋转;只有TextureView才支持
+    }
 
     /**
      * 设置镜像旋转
      *
      * @param enable
      */
+    @PartialFunc(message = "TextureView才支持")
     fun setMirrorRotation(enable: Boolean) {
         //默认不支持镜像旋转;只有TextureView才支持
     }
 
     /**
-     * 设置视频宽高
+     * 设置视频宽高：用于测量控件的尺寸和比例（通常是Player的回调中调用该方法设置）
      *
      * @param videoWidth  宽
      * @param videoHeight 高

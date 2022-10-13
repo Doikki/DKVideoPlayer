@@ -24,7 +24,6 @@ import xyz.doikki.videoplayer.render.AspectRatioType
 import xyz.doikki.videoplayer.render.Render
 import xyz.doikki.videoplayer.render.Render.ScreenShotCallback
 import xyz.doikki.videoplayer.render.RenderFactory
-import xyz.doikki.videoplayer.render.ScreenMode
 import xyz.doikki.videoplayer.util.L
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -108,6 +107,16 @@ open class DKVideoView @JvmOverloads constructor(
     annotation class PlayerState
 
     /**
+     * 屏幕模式
+     */
+    @IntDef(
+        SCREEN_MODE_NORMAL, SCREEN_MODE_FULL, SCREEN_MODE_TINY
+    )
+    @Retention(AnnotationRetention.SOURCE)
+    annotation class ScreenMode
+
+
+    /**
      * 播放器内核
      */
     protected var player: DKPlayer? = null
@@ -120,7 +129,7 @@ open class DKVideoView @JvmOverloads constructor(
     val playerName: String
         get() {
             val className = mPlayerFactory.orDefault(DKManager.playerFactory).javaClass.name
-            return className.substring(className.lastIndexOf("."))
+            return className.substring(className.lastIndexOf(".") + 1)
         }
 
     /**
@@ -137,14 +146,15 @@ open class DKVideoView @JvmOverloads constructor(
         private set(@PlayerState state) {
             field = state
             notifyPlayerStateChanged()
+
         }
 
     /**
      * 当前屏幕模式：普通、全屏、小窗口
      */
-    @ScreenMode
-    var screenMode: Int = ScreenMode.NORMAL
-        private set(@ScreenMode screenMode) {
+    @DKVideoView.ScreenMode
+    var screenMode: Int = SCREEN_MODE_NORMAL
+        private set(@DKVideoView.ScreenMode screenMode) {
             field = screenMode
             notifyScreenModeChanged(screenMode)
         }
@@ -279,7 +289,7 @@ open class DKVideoView @JvmOverloads constructor(
         }
         mCurrentPosition = getSavedPlayedProgress()
         setupMediaPlayer()
-        playerContainer.setupRenderView(player!!)
+        playerContainer.attachPlayer(player!!)
         startPrepare(false)
         return true
     }
@@ -295,7 +305,7 @@ open class DKVideoView @JvmOverloads constructor(
      * 初始化播放器
      */
     protected open fun setupMediaPlayer() {
-        if(player != null)
+        if (player != null)
             return
         player = createMediaPlayer().also {
             it.setEventListener(this)
@@ -432,6 +442,7 @@ open class DKVideoView @JvmOverloads constructor(
         mLooping = looping
         player?.setLooping(looping)
     }
+
     /**
      * 是否开启AudioFocus监听， 默认开启，用于监听其它地方是否获取音频焦点，如果有其它地方获取了
      * 音频焦点，此播放器将做出相应反应，具体实现见[AudioFocusHelper]
@@ -450,7 +461,7 @@ open class DKVideoView @JvmOverloads constructor(
     /**
      * 自定义RenderView，继承[RenderFactory]实现自己的RenderView
      */
-    fun setRenderViewFactory(renderViewFactory: RenderFactory) {
+    fun setRenderViewFactory(renderViewFactory: RenderFactory?) {
         playerContainer.setRenderViewFactory(renderViewFactory)
     }
 
@@ -601,8 +612,8 @@ open class DKVideoView @JvmOverloads constructor(
         if (resetPosition) {
             mCurrentPosition = 0
         }
-        playerContainer.setupRenderView(player!!)
         startPrepare(true)
+        playerContainer.attachPlayer(player!!)
     }
 
     /**
@@ -849,7 +860,7 @@ open class DKVideoView @JvmOverloads constructor(
      * 通知当前界面模式发生了变化
      */
     @CallSuper
-    protected fun notifyScreenModeChanged(@ScreenMode screenMode: Int) {
+    protected fun notifyScreenModeChanged(@DKVideoView.ScreenMode screenMode: Int) {
         //todo 既然通过通知对外发布了screenmode的改变，是否就不应该再主动
         videoController?.setScreenMode(screenMode)
         mStateChangedListeners.forEach {
@@ -883,7 +894,7 @@ open class DKVideoView @JvmOverloads constructor(
 
     interface OnStateChangeListener {
 
-        fun onScreenModeChanged(@ScreenMode screenMode: Int) {}
+        fun onScreenModeChanged(@DKVideoView.ScreenMode screenMode: Int) {}
 
         /**
          * 播放器播放状态发生了变化
@@ -992,7 +1003,7 @@ open class DKVideoView @JvmOverloads constructor(
         /**
          * 屏幕比例类型
          */
-        const val SCREEN_ASPECT_RATIO_DEFAULT = AspectRatioType.SCALE
+        const val SCREEN_ASPECT_RATIO_DEFAULT = AspectRatioType.DEFAULT_SCALE
         const val SCREEN_ASPECT_RATIO_SCALE_18_9 = AspectRatioType.SCALE_18_9
         const val SCREEN_ASPECT_RATIO_SCALE_16_9 = AspectRatioType.SCALE_16_9
         const val SCREEN_ASPECT_RATIO_SCALE_4_3 = AspectRatioType.SCALE_4_3

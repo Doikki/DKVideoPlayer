@@ -91,7 +91,7 @@ public class PlayerActivityJava extends BaseActivity<DKVideoView> {
             GestureView gestureControlView = new GestureView(this);//滑动控制视图
             controller.addControlComponent(gestureControlView);
             //根据是否为直播决定是否需要滑动调节进度
-            controller.setCanChangePosition(!isLive);
+            controller.setSeekEnabled(!isLive);
 
             //设置标题
             String title = intent.getStringExtra(IntentKeys.TITLE);
@@ -204,7 +204,7 @@ public class PlayerActivityJava extends BaseActivity<DKVideoView> {
         int id = view.getId();
         switch (id) {
             case R.id.scale_default:
-                mVideoView.setScreenAspectRatioType(AspectRatioType.SCALE);
+                mVideoView.setScreenAspectRatioType(AspectRatioType.DEFAULT_SCALE);
                 break;
             case R.id.scale_169:
                 mVideoView.setScreenAspectRatioType(AspectRatioType.SCALE_16_9);

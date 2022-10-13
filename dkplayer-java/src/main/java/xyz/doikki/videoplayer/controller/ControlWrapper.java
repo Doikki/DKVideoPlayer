@@ -162,10 +162,6 @@ public class ControlWrapper implements VideoViewControl, VideoViewController {
         }
     }
 
-
-
-
-
     @Override
     public void setAdaptCutout(boolean adaptCutout) {
 
@@ -318,14 +314,12 @@ public class ControlWrapper implements VideoViewControl, VideoViewController {
         mController.show();
     }
 
-
     /**
      * 切换锁定状态
      */
     public void toggleLockState() {
         setLocked(!isLocked());
     }
-
 
     /**
      * 切换显示/隐藏状态

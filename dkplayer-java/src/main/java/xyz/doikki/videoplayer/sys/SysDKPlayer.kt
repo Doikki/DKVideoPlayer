@@ -20,7 +20,7 @@ import kotlin.concurrent.thread
  * 基于系统[android.media.MediaPlayer]封装
  * 注意：不推荐，兼容性差，建议使用IJK或者Exo播放器
  */
-class SysMediaPlayer(context: Context) : AbstractDKPlayer(),
+class SysDKPlayer(context: Context) : AbstractDKPlayer(),
     MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnInfoListener,
     MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnPreparedListener,
     MediaPlayer.OnVideoSizeChangedListener {
