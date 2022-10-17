@@ -11,6 +11,8 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import androidx.annotation.AttrRes
 import xyz.doikki.videocontroller.component.*
+import xyz.doikki.videoplayer.DKManager
+import xyz.doikki.videoplayer.DKPlayerConfig
 import xyz.doikki.videoplayer.DKVideoView
 import xyz.doikki.videoplayer.controller.GestureVideoController
 import xyz.doikki.videoplayer.util.orDefault
@@ -75,6 +77,10 @@ open class StandardVideoController @JvmOverloads constructor(
         }
     }
 
+    override fun abortPlay(): Boolean {
+        return (PlayerUtils.getNetworkType(context) == PlayerUtils.NETWORK_MOBILE && !DKPlayerConfig.isPlayOnMobileNetwork)
+    }
+
     override fun onLockStateChanged(isLocked: Boolean) {
         if (isLocked) {
             lockButton.isSelected = true
@@ -86,7 +92,7 @@ open class StandardVideoController @JvmOverloads constructor(
     }
 
     override fun onVisibilityChanged(isVisible: Boolean, anim: Animation?) {
-        if (mPlayer?.isFullScreen.orDefault()) {
+        if (player?.isFullScreen == true) {
             if (isVisible) {
                 if (lockButton.visibility == GONE) {
                     lockButton.visibility = VISIBLE
@@ -119,8 +125,9 @@ open class StandardVideoController @JvmOverloads constructor(
                 lockButton.visibility = GONE
             }
         }
-        if (mActivity != null && hasCutout()) {
-            val orientation = mActivity!!.requestedOrientation
+        val activity = PlayerUtils.scanForActivity(context)
+        if (activity != null && hasCutout == true) {
+            val orientation = activity.requestedOrientation
             val dp24 = PlayerUtils.dp2px(context, 24f)
             val cutoutHeight = cutoutHeight
             when (orientation) {

@@ -40,7 +40,7 @@ public class ParallelPlayActivity extends AppCompatActivity {
         player1.setDataSource(VOD_URL_1);
 
         //必须设置
-        player1.setEnableAudioFocus(false);
+//        player1.setEnableAudioFocus(false);
         StandardVideoController controller1 = new StandardVideoController(this);
         controller1.addDefaultControlComponent(getString(R.string.str_multi_player), false);
         player1.setVideoController(controller1);
@@ -49,7 +49,7 @@ public class ParallelPlayActivity extends AppCompatActivity {
         DKVideoView player2 = findViewById(R.id.player_2);
         player2.setDataSource(VOD_URL_2);
         //必须设置
-        player2.setEnableAudioFocus(false);
+//        player2.setEnableAudioFocus(false);
         StandardVideoController controller2 = new StandardVideoController(this);
         controller2.addDefaultControlComponent(getString(R.string.str_multi_player), false);
         player2.setVideoController(controller2);

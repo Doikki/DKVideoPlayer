@@ -52,7 +52,7 @@ public class PipControlView extends BaseControlComponent implements View.OnClick
             PIPManager.getInstance().stopFloatWindow();
             PIPManager.getInstance().reset();
         } else if (id == R.id.start_play) {
-            getMController().togglePlay();
+            getController().togglePlay();
         } else if (id == R.id.btn_skip) {
             if (PIPManager.getInstance().getActClass() != null) {
                 Intent intent = new Intent(getContext(), PIPManager.getInstance().getActClass());

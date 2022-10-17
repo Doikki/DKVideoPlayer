@@ -8,6 +8,7 @@ import com.danikula.videocache.Logger;
 
 import xyz.doikki.videoplayer.BuildConfig;
 import xyz.doikki.videoplayer.DKManager;
+import xyz.doikki.videoplayer.DKPlayerConfig;
 import xyz.doikki.videoplayer.ijk.IjkPlayerFactory;
 import xyz.doikki.videoplayer.render.RenderFactory;
 
@@ -25,10 +26,10 @@ public class MyApplication extends MultiDexApplication {
         super.onCreate();
         instance = this;
         //播放器配置，注意：此为全局配置，按需开启
-        DKManager.setDebuggable(BuildConfig.DEBUG);
-        DKManager.setRenderFactory(RenderFactory.textureViewRenderFactory());
+        DKPlayerConfig.setDebuggable(BuildConfig.DEBUG);
+        DKPlayerConfig.setRenderFactory(RenderFactory.textureViewRenderFactory());
 //        DKManager.setRenderFactory(RenderFactory.surfaceViewRenderFactory());
-        DKManager.setPlayerFactory(IjkPlayerFactory.create());
+        DKPlayerConfig.setPlayerFactory(IjkPlayerFactory.create());
 
 //        DKManager.setConfig(VideoViewConfig.newBuilder()
 //                .setLogEnabled(BuildConfig.DEBUG) //调试的时候请打开日志，方便排错

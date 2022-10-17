@@ -7,7 +7,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.ProgressBar
 import xyz.doikki.videocontroller.R
-import xyz.doikki.videoplayer.DKManager.isPlayOnMobileNetwork
+import xyz.doikki.videoplayer.DKPlayerConfig
 import xyz.doikki.videoplayer.DKVideoView
 
 /**
@@ -29,7 +29,7 @@ class PrepareView @JvmOverloads constructor(
         if (isTelevisionUiMode()) {
             setViewInFocusMode(this)
         }
-        setOnClickListener { mController?.playerControl?.start() }
+        setOnClickListener { controller?.playerControl?.start() }
     }
 
     override fun onPlayStateChanged(playState: Int) {
@@ -72,8 +72,8 @@ class PrepareView @JvmOverloads constructor(
         }
         btnInWarning.setOnClickListener {
             mNetWarning.visibility = GONE
-            isPlayOnMobileNetwork = true
-            mController?.playerControl?.start()
+            DKPlayerConfig.isPlayOnMobileNetwork = true
+            controller?.playerControl?.start()
         }
     }
 }

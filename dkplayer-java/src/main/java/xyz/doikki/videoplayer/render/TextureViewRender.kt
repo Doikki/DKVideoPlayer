@@ -10,6 +10,7 @@ import android.view.TextureView
 import android.view.View
 import xyz.doikki.videoplayer.DKManager
 import xyz.doikki.videoplayer.DKPlayer
+import xyz.doikki.videoplayer.DKPlayerConfig
 import xyz.doikki.videoplayer.render.Render.Companion.createShotBitmap
 import xyz.doikki.videoplayer.render.Render.ScreenShotCallback
 import xyz.doikki.videoplayer.render.Render.SurfaceListener
@@ -39,7 +40,7 @@ class TextureViewRender : TextureView, Render {
     private var mSurface: Surface? = null
     private var mSurfaceListener: SurfaceListener? = null
 
-    private val isEnableRenderOptimization: Boolean = DKManager.isTextureViewRenderOptimizationEnabled
+    private val isEnableRenderOptimization: Boolean = DKPlayerConfig.isTextureViewRenderOptimizationEnabled
 
     private val mSTCallback: SurfaceTextureListener = object : SurfaceTextureListener {
 

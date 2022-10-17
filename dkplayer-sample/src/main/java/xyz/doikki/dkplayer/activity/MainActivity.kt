@@ -19,6 +19,7 @@ import xyz.doikki.dkplayer.util.PIPManager
 import xyz.doikki.dkplayer.util.Tag
 import xyz.doikki.dkplayer.util.cache.ProxyVideoCacheManager
 import xyz.doikki.videoplayer.DKManager
+import xyz.doikki.videoplayer.DKPlayerConfig
 import xyz.doikki.videoplayer.DKPlayerFactory
 import xyz.doikki.videoplayer.DKVideoView
 import xyz.doikki.videoplayer.exo.ExoMediaPlayerFactory
@@ -44,7 +45,7 @@ class MainActivity : BaseActivity<DKVideoView>(), NavigationBarView.OnItemSelect
             requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 10000)
         }
         //检测当前是用的哪个播放器
-        when (DKManager.playerFactory) {
+        when (DKPlayerConfig.playerFactory) {
             is ExoMediaPlayerFactory -> {
                 setTitle(resources.getString(R.string.app_name) + " (ExoPlayer)")
             }
@@ -85,7 +86,7 @@ class MainActivity : BaseActivity<DKVideoView>(), NavigationBarView.OnItemSelect
         if (itemId == R.id.ijk || itemId == R.id.exo || itemId == R.id.media) {
             //切换播放核心，不推荐这么做，我这么写只是为了方便测试
             try {
-                val playerFactory: DKPlayerFactory<*>
+                val playerFactory: DKPlayerFactory
                 when (itemId) {
                     R.id.exo -> {
                         playerFactory = ExoMediaPlayerFactory.create()
@@ -100,7 +101,7 @@ class MainActivity : BaseActivity<DKVideoView>(), NavigationBarView.OnItemSelect
                         setTitle(resources.getString(R.string.app_name) + " (IjkPlayer)")
                     }
                 }
-                DKManager.playerFactory = playerFactory
+                DKPlayerConfig.playerFactory = playerFactory
             } catch (e: Exception) {
                 e.printStackTrace()
             }

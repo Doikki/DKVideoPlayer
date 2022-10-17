@@ -16,8 +16,8 @@ import com.google.android.exoplayer2.util.Clock
 import com.google.android.exoplayer2.util.EventLogger
 import com.google.android.exoplayer2.video.VideoSize
 import xyz.doikki.videoplayer.AbstractDKPlayer
-import xyz.doikki.videoplayer.DKManager.isDebuggable
 import xyz.doikki.videoplayer.DKPlayer
+import xyz.doikki.videoplayer.DKPlayerConfig
 import xyz.doikki.videoplayer.internal.DKPlayerException
 
 open class ExoMediaPlayer(context: Context) : AbstractDKPlayer(), Player.Listener {
@@ -51,7 +51,7 @@ open class ExoMediaPlayer(context: Context) : AbstractDKPlayer(), Player.Listene
         mInternalPlayer!!.playWhenReady = true
 
         //播放器日志
-        if (isDebuggable && mTrackSelector is MappingTrackSelector) {
+        if (DKPlayerConfig.isDebuggable && mTrackSelector is MappingTrackSelector) {
             mInternalPlayer!!.addAnalyticsListener(
                 EventLogger(
                     mTrackSelector as MappingTrackSelector?,

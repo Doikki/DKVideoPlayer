@@ -13,7 +13,6 @@ import xyz.doikki.videocontroller.R
 import xyz.doikki.videoplayer.DKVideoView
 import xyz.doikki.videoplayer.controller.component.KeyControlComponent
 import xyz.doikki.videoplayer.util.PlayerUtils
-import xyz.doikki.videoplayer.util.layoutInflater
 
 /**
  * 手势控制
@@ -40,7 +39,7 @@ class GestureView @JvmOverloads constructor(
     }
 
     override fun onStartSlide() {
-        mController?.hide()
+        controller?.hide()
         mCenterContainer.visibility = VISIBLE
         mCenterContainer.alpha = 1f
     }

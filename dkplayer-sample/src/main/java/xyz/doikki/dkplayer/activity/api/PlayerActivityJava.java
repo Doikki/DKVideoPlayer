@@ -23,6 +23,7 @@ import xyz.doikki.videocontroller.component.CompleteView;
 import xyz.doikki.videocontroller.component.ErrorView;
 import xyz.doikki.videocontroller.component.GestureView;
 import xyz.doikki.videocontroller.component.LiveControlView;
+import xyz.doikki.videocontroller.component.DeviceOrientationSensorMonitor;
 import xyz.doikki.videocontroller.component.PrepareView;
 import xyz.doikki.videocontroller.component.TitleView;
 import xyz.doikki.videocontroller.component.VodControlView;
@@ -61,9 +62,7 @@ public class PlayerActivityJava extends BaseActivity<DKVideoView> {
         Intent intent = getIntent();
         if (intent != null) {
             StandardVideoController controller = new StandardVideoController(this);
-            //根据屏幕方向自动进入/退出全屏
-            controller.setEnableOrientationSensor(true);
-
+            controller.addControlComponent(new DeviceOrientationSensorMonitor(this));
             PrepareView prepareView = new PrepareView(this);//准备播放界面
             prepareView.setClickStart();
             ImageView thumb = prepareView.findViewById(R.id.thumb);//封面图

@@ -31,7 +31,7 @@ import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.widget.CenteredImageSpan;
 import xyz.doikki.videoplayer.BuildConfig;
 import xyz.doikki.videoplayer.DKVideoView;
-import xyz.doikki.videoplayer.controller.MediaController;
+import xyz.doikki.videoplayer.controller.VideoController;
 import xyz.doikki.videoplayer.controller.component.ControlComponent;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
@@ -220,7 +220,7 @@ public class MyDanmakuView extends DanmakuView implements ControlComponent {
     }
 
     @Override
-    public void attachController(@NonNull MediaController controller) {
+    public void attachController(@NonNull VideoController controller) {
 
     }
 

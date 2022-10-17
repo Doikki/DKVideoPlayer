@@ -5,17 +5,17 @@ import android.view.animation.Animation;
 
 import androidx.annotation.NonNull;
 
-import xyz.doikki.videoplayer.controller.MediaController;
+import xyz.doikki.videoplayer.controller.VideoController;
 import xyz.doikki.videoplayer.controller.component.ControlComponent;
 import xyz.doikki.videoplayer.util.L;
 import xyz.doikki.videoplayer.util.UtilsKt;
 
 public class PlayerMonitor implements ControlComponent {
 
-    private MediaController mControlWrapper;
+    private VideoController mControlWrapper;
 
     @Override
-    public void attachController(@NonNull MediaController controller) {
+    public void attachController(@NonNull VideoController controller) {
         mControlWrapper = controller;
     }
 

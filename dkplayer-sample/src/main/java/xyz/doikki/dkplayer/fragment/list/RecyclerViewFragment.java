@@ -24,6 +24,7 @@ import xyz.doikki.videocontroller.StandardVideoController;
 import xyz.doikki.videocontroller.component.CompleteView;
 import xyz.doikki.videocontroller.component.ErrorView;
 import xyz.doikki.videocontroller.component.GestureView;
+import xyz.doikki.videocontroller.component.DeviceOrientationSensorMonitor;
 import xyz.doikki.videocontroller.component.TitleView;
 import xyz.doikki.videocontroller.component.VodControlView;
 import xyz.doikki.videoplayer.DKVideoView;
@@ -120,7 +121,7 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
         mController.addControlComponent(mTitleView);
         mController.addControlComponent(new VodControlView(getActivity()));
         mController.addControlComponent(new GestureView(getActivity()));
-        mController.setEnableOrientationSensor(true);
+        mController.addControlComponent(new DeviceOrientationSensorMonitor(getActivity()));
         mVideoView.setVideoController(mController);
     }
 

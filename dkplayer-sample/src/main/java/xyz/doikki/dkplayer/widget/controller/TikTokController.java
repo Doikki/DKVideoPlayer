@@ -7,14 +7,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import xyz.doikki.dkplayer.widget.component.DebugInfoView;
-import xyz.doikki.videoplayer.controller.MediaController;
+import xyz.doikki.videoplayer.controller.VideoController;
 
 /**
  * 抖音
  * Created by Doikki on 2018/1/6.
  */
 
-public class TikTokController extends MediaController {
+public class TikTokController extends VideoController {
 
     public TikTokController(@NonNull Context context) {
         super(context);
@@ -31,12 +31,5 @@ public class TikTokController extends MediaController {
     {
         //显示调试信息
         addControlComponent(new DebugInfoView(getContext()));
-    }
-
-
-    @Override
-    public boolean showNetWarning() {
-        //不显示移动网络播放警告
-        return false;
     }
 }

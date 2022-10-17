@@ -33,7 +33,7 @@ public class IjkVideoView extends DKVideoView {
     }
 
     {
-        setPlayerFactory((DKPlayerFactory<CustomIjkMediaPlayer>) context -> new CustomIjkMediaPlayer(context));
+        setPlayerFactory((DKPlayerFactory) CustomIjkMediaPlayer::new);
     }
 
     private CustomIjkMediaPlayer mediaPlayer(){

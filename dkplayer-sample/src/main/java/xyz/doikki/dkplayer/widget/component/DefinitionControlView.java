@@ -26,7 +26,7 @@ import java.util.Map;
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.videocontroller.component.VodControlView;
 import xyz.doikki.videoplayer.DKVideoView;
-import xyz.doikki.videoplayer.controller.MediaController;
+import xyz.doikki.videoplayer.controller.VideoController;
 import xyz.doikki.videoplayer.util.L;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
@@ -142,7 +142,7 @@ public class DefinitionControlView extends VodControlView {
     };
 
     private void switchDefinition(String s) {
-        MediaController controller = getMController();
+        VideoController controller = getController();
         if (controller != null) {
             controller.hide();
             controller.stopUpdateProgress();

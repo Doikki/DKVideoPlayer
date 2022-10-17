@@ -91,7 +91,7 @@ public class TikTok3Activity extends BaseActivity<DKVideoView> {
         mVideoView = new DKVideoView(this);
         mVideoView.setLooping(true);
         //以下只能二选一，看你的需求
-        mVideoView.setRenderViewFactory(TikTokRenderViewFactory.create());
+        mVideoView.setRenderFactory(TikTokRenderViewFactory.create());
 //        mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_CENTER_CROP);
 
         mController = new TikTokController(this);

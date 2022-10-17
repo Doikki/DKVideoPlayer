@@ -3,8 +3,9 @@ package xyz.doikki.videoplayer.controller.component
 import android.view.View
 import android.view.animation.Animation
 import xyz.doikki.videoplayer.DKManager
-import xyz.doikki.videoplayer.DKVideoView.ScreenMode
-import xyz.doikki.videoplayer.controller.MediaController
+import xyz.doikki.videoplayer.DKPlayerConfig
+import xyz.doikki.videoplayer.DKVideoView
+import xyz.doikki.videoplayer.controller.VideoController
 import xyz.doikki.videoplayer.controller.VideoViewControl
 
 /**
@@ -14,8 +15,9 @@ interface ControlComponent {
 
     /**
      * 将 控制器 传递到当前 ControlComponent 中
+     * 注意：如需在此方法中访问 VideoViewControl 中的api，则需要确保 VideoController 已经设置到 VideoView 上
      */
-    fun attachController(controller: MediaController)
+    fun attachController(controller: VideoController)
 
     /**
      * 绑定了播放器:用于先绑定controller之后，再绑定的播放器情况
@@ -33,7 +35,7 @@ interface ControlComponent {
      * @return
      */
     fun isTelevisionUiMode(): Boolean {
-        return DKManager.isTelevisionUiMode
+        return DKPlayerConfig.isTelevisionUiMode
     }
 
     /**
@@ -41,7 +43,7 @@ interface ControlComponent {
      *
      * @param screenMode 播放器界面模式：竖屏、全屏、小窗口
      */
-    fun onScreenModeChanged(@ScreenMode screenMode: Int) {}
+    fun onScreenModeChanged(@DKVideoView.ScreenMode screenMode: Int) {}
 
     /**
      * 回调控制器是否被锁定，锁定后会产生如下影响：
@@ -65,7 +67,7 @@ interface ControlComponent {
      *
      * @param playState 播放状态
      */
-    fun onPlayStateChanged(playState: Int) {}
+    fun onPlayStateChanged(@DKVideoView.PlayerState playState: Int) {}
 
     /**
      * 回调播放进度，1秒回调一次

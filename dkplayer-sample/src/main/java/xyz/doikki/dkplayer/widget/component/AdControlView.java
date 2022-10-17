@@ -62,7 +62,7 @@ public class AdControlView extends BaseControlComponent implements View.OnClickL
     public void onPlayStateChanged(int playState) {
         switch (playState) {
             case DKVideoView.STATE_PLAYING:
-                getMController().startUpdateProgress();
+                getController().startUpdateProgress();
                 mPlayButton.setSelected(true);
                 break;
             case DKVideoView.STATE_PAUSED:
@@ -110,7 +110,7 @@ public class AdControlView extends BaseControlComponent implements View.OnClickL
         } else if (id == R.id.ad_time) {
             if (mListener != null) mListener.onSkipAd();
         } else if (id == R.id.iv_play) {
-            getMController().togglePlay();
+            getController().togglePlay();
         }
     }
 
@@ -124,7 +124,7 @@ public class AdControlView extends BaseControlComponent implements View.OnClickL
      * 横竖屏切换
      */
     private void toggleFullScreen() {
-        getMController().toggleFullScreen();
+        getController().toggleFullScreen();
     }
 
     public void setListener(AdControlListener listener) {

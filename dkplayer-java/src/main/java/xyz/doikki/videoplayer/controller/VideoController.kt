@@ -1,9 +1,7 @@
 package xyz.doikki.videoplayer.controller
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
-import android.content.pm.ActivityInfo
 import android.util.AttributeSet
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
@@ -14,151 +12,92 @@ import androidx.annotation.IntRange
 import xyz.doikki.videoplayer.*
 import xyz.doikki.videoplayer.DKVideoView.PlayerState
 import xyz.doikki.videoplayer.controller.component.ControlComponent
-import xyz.doikki.videoplayer.internal.DeviceOrientationSensorHelper
-import xyz.doikki.videoplayer.internal.DeviceOrientationSensorHelper.DeviceDirection
-import xyz.doikki.videoplayer.internal.DeviceOrientationSensorHelper.DeviceOrientationChangedListener
 import xyz.doikki.videoplayer.util.*
 
 /**
  * 控制器基类
  * 对外提供可以控制的方法
- *
- * @see .show
- * @see .hide
- * @see .startFadeOut
- * @see .stopFadeOut
- * @see .setFadeOutTime
- * @see .setLocked
- * @see .setEnableOrientationSensor
- * @see .toggleFullScreen
- * @see .startFullScreen
- * @see .stopFullScreen
- * @see .setAdaptCutout
- * @see .hasCutout
- * @see .getCutoutHeight
- * @see .onVisibilityChanged
- * @see .onLockStateChanged
- * @see .onScreenModeChanged
- * @see .onProgressChanged
  */
-open class MediaController @JvmOverloads constructor(
+open class VideoController @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, @AttrRes defStyleAttr: Int = 0
-) : FrameLayout(context, attrs, defStyleAttr),
-    VideoViewController,
-    DeviceOrientationChangedListener {
+) : FrameLayout(context, attrs, defStyleAttr), VideoViewController {
 
     /**
      * 当前控制器中保存的所有控制组件
      */
     @JvmField
-    protected val mControlComponents = LinkedHashMap<ControlComponent, Boolean>()
+    protected val controlComponents = LinkedHashMap<ControlComponent, Boolean>()
 
     /**
      * 绑定的播放器
      */
-    protected var mPlayer: VideoViewControl? = null
-
-    /**
-     * 是否处于锁定状态
-     */
-    private var mLocked = false
+    protected var player: VideoViewControl? = null
 
     /**
      * 当前播放器状态
      */
     @PlayerState
-    private var mPlayerState = 0
+    private var playerState = DKVideoView.STATE_IDLE
 
     /**
      * 显示动画
      */
-    private val mShowAnim: Animation
+    private val showAnim by lazy {
+        AlphaAnimation(0f, 1f).apply {
+            duration = 300
+        }
+    }
 
     /**
      * 隐藏动画
      */
-    private val mHideAnim: Animation
+    private val hideAnim by lazy {
+        AlphaAnimation(1f, 0f).apply {
+            duration = 300
+        }
+    }
 
     /**
      * 控制器显示超时时间：即显示超过该时间后自动隐藏
      */
-    private var mDefaultTimeout = 4000L
+    private var defaultTimeout = 4000L
 
     /**
      * 自动隐藏的Runnable
      */
-    private val mFadeOut = Runnable { hide() }
+    private val fadeOut = Runnable { hide() }
 
     /**
      * 是否开始刷新进度
      */
-    private var mProgressRefreshing = false
+    private var progressRefreshing = false
 
     /**
      * 刷新进度Runnable
      */
-    private val progressUpdateRunnable: Runnable = object : Runnable {
+    private val progressUpdateRunnable = object : Runnable {
         override fun run() {
             val pos = updateProgress()
-            if (mPlayer?.isPlaying.orDefault()) {
-                postDelayed(this, ((1000 - pos % 1000) / mPlayer?.speed.orDefault(1f)).toLong())
+            val player = player ?: return
+            if (player.isPlaying) {
+                postDelayed(this, ((1000 - pos % 1000) / player.speed).toLong())
             } else {
-                mProgressRefreshing = false
+                progressRefreshing = false
             }
         }
     }
 
     /**
-     * 屏幕角度传感器监听
-     */
-    private val mOrientationSensorHelper: DeviceOrientationSensorHelper
-
-    /**
-     * 是否开启根据传感器获得的屏幕方向进入/退出全屏
-     */
-    private var mEnableOrientationSensor = false
-
-    /**
      * 用户设置是否适配刘海屏
      */
-    private var mAdaptCutout = false
+    override var adaptCutout = DKPlayerConfig.isAdaptCutout
 
     /**
-     * 是否有刘海
+     * 是否有刘海, null未知 true有 false没有
      */
-    private var mHasCutout: Boolean? = null
+    override var hasCutout: Boolean? = null
 
-    /**
-     * 刘海的高度
-     */
-    private var mCutoutHeight = 0
-
-    /**
-     * 控制器是否处于显示状态
-     */
-    protected var mShowing = false
-
-    @JvmField
-    protected var mActivity: Activity? = null
-
-    val playerControl: VideoViewControl? get() = mPlayer
-
-    init {
-        mOrientationSensorHelper = DeviceOrientationSensorHelper(
-            context.applicationContext, PlayerUtils.scanForActivity(context)
-        ).also {
-            //开始监听设备方向
-            it.setDeviceOrientationChangedListener(this)
-        }
-
-        mEnableOrientationSensor = DKManager.isOrientationSensorEnabled
-        mAdaptCutout = DKManager.isAdaptCutout
-        mShowAnim = AlphaAnimation(0f, 1f)
-        mShowAnim.setDuration(300)
-        mHideAnim = AlphaAnimation(1f, 0f)
-        mHideAnim.setDuration(300)
-        mActivity = PlayerUtils.scanForActivity(context)
-    }
+    val playerControl: VideoViewControl? get() = player
 
     /**
      * 是否处于播放状态
@@ -166,24 +105,29 @@ open class MediaController @JvmOverloads constructor(
      * @return
      */
     protected val isInPlaybackState: Boolean
-        get() = mPlayer != null && mPlayerState != DKVideoView.STATE_ERROR && mPlayerState != DKVideoView.STATE_IDLE && mPlayerState != DKVideoView.STATE_PREPARING && mPlayerState != DKVideoView.STATE_PREPARED && mPlayerState != DKVideoView.STATE_START_ABORT && mPlayerState != DKVideoView.STATE_PLAYBACK_COMPLETED
+        get() = playerState != DKVideoView.STATE_ERROR
+                && playerState != DKVideoView.STATE_IDLE
+                && playerState != DKVideoView.STATE_PREPARING
+                && playerState != DKVideoView.STATE_PREPARED
+                && playerState != DKVideoView.STATE_START_ABORT
+                && playerState != DKVideoView.STATE_PLAYBACK_COMPLETED
 
-    protected val isInCompleteState: Boolean get() = mPlayerState == DKVideoView.STATE_PLAYBACK_COMPLETED
+    protected val isInCompleteState: Boolean get() = playerState == DKVideoView.STATE_PLAYBACK_COMPLETED
 
-    protected val isInErrorState: Boolean get() = mPlayerState == DKVideoView.STATE_ERROR
+    protected val isInErrorState: Boolean get() = playerState == DKVideoView.STATE_ERROR
 
     /**
      * 重要：此方法用于将[DKVideoView] 和控制器绑定
      */
     @CallSuper
     open fun setMediaPlayer(mediaPlayer: VideoViewControl) {
-        mPlayer = mediaPlayer
+        player = mediaPlayer
         //绑定ControlComponent和Controller
-        for ((component) in mControlComponents) {
+        for ((component) in controlComponents) {
             component.onPlayerAttached(mediaPlayer)
         }
     }
-    /***********START 关键方法代码 */
+
     /**
      * 添加控制组件，最后面添加的在最下面，合理组织添加顺序，可让ControlComponent位于不同的层级
      */
@@ -210,7 +154,7 @@ open class MediaController @JvmOverloads constructor(
      * 并将 isDissociate 设置为 true 来实现这种效果。
      */
     fun addControlComponent(component: ControlComponent, isDissociate: Boolean) {
-        mControlComponents[component] = isDissociate
+        controlComponents[component] = isDissociate
         component.attachController(this)
         val view = component.getView()
         if (view != null && !isDissociate) {
@@ -223,17 +167,17 @@ open class MediaController @JvmOverloads constructor(
      */
     fun removeControlComponent(component: ControlComponent) {
         removeControlComponentView(component)
-        mControlComponents.remove(component)
+        controlComponents.remove(component)
     }
 
     /**
      * 移除所有控制组件
      */
     fun removeAllControlComponent() {
-        for ((key) in mControlComponents) {
+        for ((key) in controlComponents) {
             removeControlComponentView(key)
         }
-        mControlComponents.clear()
+        controlComponents.clear()
     }
 
     /**
@@ -241,18 +185,9 @@ open class MediaController @JvmOverloads constructor(
      * 关于游离控制组件的定义请看 [.addControlComponent] 关于 isDissociate 的解释
      */
     fun removeAllDissociateComponents() {
-        mControlComponents.removeAllByValue {
+        controlComponents.removeAllByValue {
             it
         }
-//
-//        val it: MutableIterator<Map.Entry<ControlComponent, Boolean>> =
-//            mControlComponents.entries.iterator()
-//        while (it.hasNext()) {
-//            val (_, value) = it.next()
-//            if (value) {
-//                it.remove()
-//            }
-//        }
     }
 
     /**
@@ -264,61 +199,35 @@ open class MediaController @JvmOverloads constructor(
         val view = component.getView() ?: return
         removeView(view)
     }
-    /***********END 关键方法代码 */
 
-    /***********START 关键方法代码 */
-    override fun isFullScreen(): Boolean {
-        return invokeOnPlayerAttached {
-            it.isFullScreen
-        }.orDefault()
-    }
+    override val isFullScreen: Boolean
+        get() = invokeOnPlayerAttached { it.isFullScreen }.orDefault()
 
     /**
      * 横竖屏切换
      */
     override fun toggleFullScreen(): Boolean {
-        return invokeOnPlayerAttached {
-            it.toggleFullScreen()
-        }.orDefault()
+        return invokeOnPlayerAttached { it.toggleFullScreen() }.orDefault()
     }
 
     override fun startFullScreen(isLandscapeReversed: Boolean): Boolean {
-        return invokeOnPlayerAttached {
-            it.startFullScreen(isLandscapeReversed)
-        }.orDefault()
+        return invokeOnPlayerAttached { it.startFullScreen(isLandscapeReversed) }.orDefault()
     }
 
     override fun stopFullScreen(): Boolean {
-        return invokeOnPlayerAttached {
-            it.stopFullScreen()
-        }.orDefault()
+        return invokeOnPlayerAttached { it.stopFullScreen() }.orDefault()
     }
 
     /**
-     * 设置锁定状态
-     *
-     * @param locked 是否锁定
+     * 锁定
      */
-    override fun setLocked(locked: Boolean) {
-        mLocked = locked
-        notifyLockStateChanged(locked)
-    }
-
-    /**
-     * 判断是否锁定
-     *
-     * @return true:当前已锁定界面
-     */
-    override fun isLocked(): Boolean {
-        return mLocked
-    }
-
-    /**
-     * 启用设备角度传感器(用于自动横竖屏切换),默认不启用
-     */
-    override fun setEnableOrientationSensor(enableOrientation: Boolean) {
-        mEnableOrientationSensor = enableOrientation
-    }
+    override var isLocked: Boolean = false
+        set(value) {
+            if (field != value) {
+                notifyLockStateChanged(value)
+            }
+            field = value
+        }
 
     /**
      * 设置当前[DKVideoView]界面模式：竖屏、全屏、小窗模式等
@@ -335,45 +244,40 @@ open class MediaController @JvmOverloads constructor(
     @SuppressLint("SwitchIntDef")
     @CallSuper
     fun setPlayerState(@PlayerState playState: Int) {
-        mPlayerState = playState
-        for ((key) in mControlComponents) {
+        playerState = playState
+        for ((key) in controlComponents) {
             key.onPlayStateChanged(playState)
         }
         when (playState) {
             DKVideoView.STATE_IDLE -> {
-                mOrientationSensorHelper.disable()
-                mLocked = false
-                mShowing = false
+                isLocked = false
+                isShowing = false
                 //由于游离组件是独立于控制器存在的，
                 //所以在播放器release的时候需要移除
                 removeAllDissociateComponents()
             }
             DKVideoView.STATE_PLAYBACK_COMPLETED -> {
-                mLocked = false
-                mShowing = false
+                isLocked = false
+                isShowing = false
             }
-            DKVideoView.STATE_ERROR -> mShowing = false
+            DKVideoView.STATE_ERROR -> isShowing = false
         }
         onPlayerStateChanged(playState)
     }
 
     /**
-     * 控制器是否已隐藏
-     *
-     * @return
+     * 控制器是否处于显示状态
      */
-    override fun isShowing(): Boolean {
-        return mShowing
-    }
+    override var isShowing: Boolean = false
 
     /**
      * 显示播放视图
      */
     override fun show() {
         startFadeOut()
-        if (mShowing) return
-        handleVisibilityChanged(true, mShowAnim)
-        mShowing = true
+        if (isShowing) return
+        handleVisibilityChanged(true, showAnim)
+        isShowing = true
     }
 
     /**
@@ -381,9 +285,9 @@ open class MediaController @JvmOverloads constructor(
      */
     override fun hide() {
         stopFadeOut()
-        if (!mShowing) return
-        handleVisibilityChanged(false, mHideAnim)
-        mShowing = false
+        if (!isShowing) return
+        handleVisibilityChanged(false, hideAnim)
+        isShowing = false
     }
 
     /**
@@ -393,7 +297,7 @@ open class MediaController @JvmOverloads constructor(
      */
     override fun setFadeOutTime(@IntRange(from = 1) timeout: Int) {
         if (timeout > 0) {
-            mDefaultTimeout = timeout.toLong()
+            defaultTimeout = timeout.toLong()
         }
     }
 
@@ -403,54 +307,38 @@ open class MediaController @JvmOverloads constructor(
     override fun startFadeOut() {
         //重新开始计时
         stopFadeOut()
-        postDelayed(mFadeOut, mDefaultTimeout)
+        postDelayed(fadeOut, defaultTimeout)
     }
 
     /**
      * 移除控制器隐藏倒计时
      */
     override fun stopFadeOut() {
-        removeCallbacks(mFadeOut)
+        removeCallbacks(fadeOut)
     }
 
     /**
      * 开始刷新进度，注意：需在STATE_PLAYING时调用才会开始刷新进度
      */
     override fun startUpdateProgress() {
-        if (mProgressRefreshing) return
+        if (progressRefreshing) return
         post(progressUpdateRunnable)
-        mProgressRefreshing = true
+        progressRefreshing = true
     }
 
     /**
      * 停止刷新进度
      */
     override fun stopUpdateProgress() {
-        if (!mProgressRefreshing) return
+        if (!progressRefreshing) return
         removeCallbacks(progressUpdateRunnable)
-        mProgressRefreshing = false
-    }
-
-    /**
-     * 设置是否适配刘海屏
-     */
-    override fun setAdaptCutout(adaptCutout: Boolean) {
-        mAdaptCutout = adaptCutout
-    }
-
-    /**
-     * 是否有刘海屏
-     */
-    override fun hasCutout(): Boolean {
-        return mHasCutout.orDefault()
+        progressRefreshing = false
     }
 
     /**
      * 刘海的高度
      */
-    override fun getCutoutHeight(): Int {
-        return mCutoutHeight
-    }
+    override var cutoutHeight: Int = 0
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -461,26 +349,24 @@ open class MediaController @JvmOverloads constructor(
      * 检查是否需要适配刘海
      */
     private fun checkCutout() {
-        if (!mAdaptCutout) return
-
-        if (mActivity != null && mHasCutout == null) {
-            mHasCutout = CutoutUtil.allowDisplayToCutout(mActivity)
-            if (mHasCutout.orDefault()) {
+        if (!adaptCutout) return
+        val activity = PlayerUtils.scanForActivity(context)
+        if (activity != null && hasCutout == null) {
+            hasCutout = CutoutUtil.allowDisplayToCutout(activity)
+            if (hasCutout == true) {
                 //竖屏下的状态栏高度可认为是刘海的高度
-                mCutoutHeight = PlayerUtils.getStatusBarHeightPortrait(mActivity).toInt()
+                cutoutHeight = PlayerUtils.getStatusBarHeightPortrait(activity).toInt()
             }
         }
-        L.d("hasCutout: $mHasCutout cutout height: $mCutoutHeight")
+        L.d("hasCutout: $hasCutout cutout height: $cutoutHeight")
     }
 
     /**
-     * 显示移动网络播放提示
-     *
-     * @return 返回显示移动网络播放提示的条件，false:不显示, true显示
-     * 此处默认根据手机网络类型来决定是否显示，开发者可以重写相关逻辑
+     * 中断开始播放流程
+     * @return 返回是否要中断播放流程，false:不中断, true中断
      */
-    open fun showNetWarning(): Boolean {
-        return (PlayerUtils.getNetworkType(context) == PlayerUtils.NETWORK_MOBILE && !DKManager.isPlayOnMobileNetwork)
+    open fun abortPlay(): Boolean {
+        return false
     }
 
     /**
@@ -500,51 +386,14 @@ open class MediaController @JvmOverloads constructor(
      * @return true:调用了重播方法，false则表示未处理任何
      */
     fun replay(resetPosition: Boolean = true): Boolean {
-        return invokeOnPlayerAttached {
-            it.replay(resetPosition)
-            true
-        }.orDefault(false)
-    }
-
-    override fun onWindowFocusChanged(hasWindowFocus: Boolean) {
-        super.onWindowFocusChanged(hasWindowFocus)
-        val player = mPlayer ?: return
-        if (player.isPlaying && (mEnableOrientationSensor || player.isFullScreen)) {
-            if (hasWindowFocus) {
-                postDelayed({ mOrientationSensorHelper.enable() }, 800)
-            } else {
-                mOrientationSensorHelper.disable()
-            }
-        }
-    }
-
-    @CallSuper
-    override fun onDeviceDirectionChanged(@DeviceDirection direction: Int) {
-        when (direction) {
-            DeviceOrientationSensorHelper.DEVICE_DIRECTION_PORTRAIT -> {
-                //切换为竖屏
-                //屏幕锁定的情况
-                if (mLocked) return
-                //没有开启设备方向监听的情况
-                if (!mEnableOrientationSensor) return
-                mPlayer?.stopFullScreen()
-            }
-            DeviceOrientationSensorHelper.DEVICE_DIRECTION_LANDSCAPE -> {
-                mPlayer?.startFullScreen()
-            }
-            DeviceOrientationSensorHelper.DEVICE_DIRECTION_LANDSCAPE_REVERSED -> {
-                mPlayer?.startFullScreen(true)
-            }
-            DeviceOrientationSensorHelper.DEVICE_DIRECTION_UNKNOWN -> {
-            }
-        }
+        return invokeOnPlayerAttached { it.replay(resetPosition); true }.orDefault(false)
     }
 
     //------------------------ start handle event change ------------------------//
 
     private fun handleVisibilityChanged(isVisible: Boolean, anim: Animation?) {
-        if (!mLocked) { //没锁住时才向ControlComponent下发此事件
-            for ((component) in mControlComponents) {
+        if (!isLocked) { //没锁住时才向ControlComponent下发此事件
+            for ((component) in controlComponents) {
                 component.onVisibilityChanged(isVisible, anim)
             }
         }
@@ -556,10 +405,10 @@ open class MediaController @JvmOverloads constructor(
      * @return 当前播放位置
      */
     private fun updateProgress(): Int {
-        val player = mPlayer ?: return 0
+        val player = player ?: return 0
         val position = player.currentPosition.toInt()
         val duration = player.duration.toInt()
-        for ((component) in mControlComponents) {
+        for ((component) in controlComponents) {
             component.onProgressChanged(duration, position)
         }
         onProgressChanged(duration, position)
@@ -572,39 +421,30 @@ open class MediaController @JvmOverloads constructor(
      * @param screenMode
      */
     private fun notifyScreenModeChanged(@DKVideoView.ScreenMode screenMode: Int) {
-        for ((component) in mControlComponents) {
+        for ((component) in controlComponents) {
             component.onScreenModeChanged(screenMode)
         }
-        setupOrientationSensorAndCutoutOnScreenModeChanged(screenMode)
+        setupCutoutOnScreenModeChanged(screenMode)
         onScreenModeChanged(screenMode)
     }
 
     /**
-     * 在屏幕模式改变了的情况下，调整传感器和刘海屏
+     * 在屏幕模式改变了的情况下，调整刘海屏
      *
      * @param screenMode
      */
-    private fun setupOrientationSensorAndCutoutOnScreenModeChanged(@DKVideoView.ScreenMode screenMode: Int) {
-        //修改传感器
+    private fun setupCutoutOnScreenModeChanged(@DKVideoView.ScreenMode screenMode: Int) {
         when (screenMode) {
-            DKVideoView.SCREEN_MODE_NORMAL -> {
-                if (mEnableOrientationSensor) {
-                    mOrientationSensorHelper.enable()
-                } else {
-                    mOrientationSensorHelper.disable()
-                }
-                if (hasCutout()) {
+            DKVideoView.SCREEN_MODE_NORMAL, DKVideoView.SCREEN_MODE_TINY -> {
+                if (hasCutout == true) {
                     CutoutUtil.adaptCutoutAboveAndroidP(context, false)
                 }
             }
             DKVideoView.SCREEN_MODE_FULL -> {
-                //在全屏时强制监听设备方向
-                mOrientationSensorHelper.enable()
-                if (hasCutout()) {
+                if (hasCutout == true) {
                     CutoutUtil.adaptCutoutAboveAndroidP(context, true)
                 }
             }
-            DKVideoView.SCREEN_MODE_TINY -> mOrientationSensorHelper.disable()
         }
     }
 
@@ -612,7 +452,7 @@ open class MediaController @JvmOverloads constructor(
      * 通知锁定状态发生了变化
      */
     private fun notifyLockStateChanged(isLocked: Boolean) {
-        for ((component) in mControlComponents) {
+        for ((component) in controlComponents) {
             component.onLockStateChanged(isLocked)
         }
         onLockStateChanged(isLocked)
@@ -681,21 +521,13 @@ open class MediaController @JvmOverloads constructor(
      * @param degree 角度 0-360
      */
     fun setRotation(@IntRange(from = 0, to = 360) degree: Int) {
-        invokeOnPlayerAttached {
-            it.setRotation(degree)
-        }
+        invokeOnPlayerAttached { it.setRotation(degree) }
     }
 
     protected inline fun <R> invokeOnPlayerAttached(
-        showToast: Boolean = true,
         block: (VideoViewControl) -> R
-    ): R? {
-        val player = mPlayer
-        if (player == null) {
-            if (showToast)
-                toast("请先调用setMediaPlayer方法绑定播放器.")
-            return null
-        }
+    ): R {
+        val player = player ?: throw RuntimeException("Set current VideoController to VideoView first.")
         return block.invoke(player)
     }
 

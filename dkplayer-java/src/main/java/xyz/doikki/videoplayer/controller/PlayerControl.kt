@@ -1,79 +1,72 @@
-package xyz.doikki.videoplayer.controller;
+package xyz.doikki.videoplayer.controller
 
-import androidx.annotation.IntRange;
+import androidx.annotation.IntRange
 
 /**
  * 作为一个基本播放器控制器需要持有的功能
  * 是播放器去实现的接口（类似VideoView），然后再将这个接口的实现传递给Controller
  */
-public interface PlayerControl {
-
+interface PlayerControl {
     /**
      * 开始播放
      */
-    void start();
+    fun start()
 
     /**
      * 重新播放
      *
      * @param resetPosition 是否重置播放位置；通常有以下情况不用应该不重置播放位置：1、播放失败之后重新播放 2、清晰度切换之后重新播放
      */
-    void replay(boolean resetPosition);
+    fun replay(resetPosition: Boolean)
 
     /**
      * 暂停
      */
-    void pause();
+    fun pause()
 
     /**
      * 播放时长
      *
      * @return
      */
-    long getDuration();
+    val duration: Long
 
     /**
      * 当前播放位置
      *
      * @return
      */
-    long getCurrentPosition();
+    val currentPosition: Long
 
     /**
      * 调整播放位置
      *
-     * @param msec the offset in milliseconds from the start to seek to;偏移位置（毫秒）
+     * @param position the offset in milliseconds from the start to seek to;偏移位置（毫秒）
      */
-    void seekTo(long msec);
+    fun seekTo(position: Long)
 
     /**
      * 是否正在播放
      *
      * @return
      */
-    boolean isPlaying();
+    val isPlaying: Boolean
 
     /**
      * 获取缓冲百分比
      */
-    @IntRange(from = 0, to = 100)
-    int getBufferedPercentage();
-
-
+    @get:IntRange(from = 0, to = 100)
+    val bufferedPercentage: Int
     /*以下是扩展的播放器功能代码*/
-
-    /**
-     * 设置播放速度
-     *
-     * @param speed 0.5f：表示0.5倍数 2f:表示2倍速
-     */
-    void setSpeed(float speed);
-
     /**
      * 获取播放速度
      *
      * @return
      */
-    float getSpeed();
-
+    /**
+     * 设置播放速度
+     *
+     * @param speed 0.5f：表示0.5倍数 2f:表示2倍速
+     */
+    var speed: Float
 }

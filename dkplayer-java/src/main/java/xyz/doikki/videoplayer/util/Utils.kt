@@ -12,7 +12,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.StringRes
 import xyz.doikki.videoplayer.DKVideoView
-import xyz.doikki.videoplayer.DKVideoView.ScreenMode
 
 /**
  * 等同于[trySilent]，只是本方法没有对结果进行装箱处理（即没有产生[Result]中间对象）
@@ -140,7 +139,7 @@ val View.canTakeFocus: Boolean
 /**
  * Returns a string containing player state debugging information.
  */
-fun screenMode2str(@ScreenMode mode: Int): String? {
+fun screenMode2str(@DKVideoView.ScreenMode mode: Int): String {
     val playerStateString: String = when (mode) {
         DKVideoView.SCREEN_MODE_NORMAL -> "normal"
         DKVideoView.SCREEN_MODE_FULL -> "full screen"
@@ -154,7 +153,7 @@ fun screenMode2str(@ScreenMode mode: Int): String? {
 /**
  * Returns a string containing player state debugging information.
  */
-fun playState2str(state: Int): String? {
+fun playState2str(state: Int): String {
     val playStateString: String = when (state) {
         DKVideoView.STATE_IDLE -> "idle"
         DKVideoView.STATE_PREPARING -> "preparing"

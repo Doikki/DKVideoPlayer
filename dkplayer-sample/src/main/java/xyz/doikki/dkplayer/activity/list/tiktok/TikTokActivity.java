@@ -61,7 +61,7 @@ public class TikTokActivity extends BaseActivity<DKVideoView> {
         setStatusBarTransparent();
         mVideoView = new DKVideoView(this);
         //以下只能二选一，看你的需求
-        mVideoView.setRenderViewFactory(TikTokRenderViewFactory.create());
+        mVideoView.setRenderFactory(TikTokRenderViewFactory.create());
 //        mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_CENTER_CROP);
         mVideoView.setLooping(true);
         mController = new TikTokController(this);

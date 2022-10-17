@@ -4,7 +4,7 @@ import android.content.Context;
 
 import xyz.doikki.videoplayer.DKPlayerFactory;
 
-public class IjkPlayerFactory implements DKPlayerFactory<IjkDKPlayer> {
+public class IjkPlayerFactory implements DKPlayerFactory {
 
     public static IjkPlayerFactory create() {
         return new IjkPlayerFactory();

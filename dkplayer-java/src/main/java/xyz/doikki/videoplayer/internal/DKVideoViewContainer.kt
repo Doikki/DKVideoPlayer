@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import xyz.doikki.videoplayer.*
-import xyz.doikki.videoplayer.controller.MediaController
+import xyz.doikki.videoplayer.controller.VideoController
 import xyz.doikki.videoplayer.render.AspectRatioType
 import xyz.doikki.videoplayer.render.Render
 import xyz.doikki.videoplayer.render.RenderFactory
@@ -23,25 +23,31 @@ internal class DKVideoViewContainer @JvmOverloads constructor(
 ) : FrameLayout(context, attrs) {
 
     /**
-     * 控制器
-     */
-    var videoController: MediaController? = null
-        private set
-
-    /**
      * render是否可以重用
      */
-    private var mRenderReusable = DKManager.isRenderReusable
+    private var renderReusable = DKPlayerConfig.isRenderReusable
 
     /**
      * 渲染视图
      */
-    private var mRender: Render? = null
+    private var render: Render? = null
 
     /**
-     * 自定义Render工厂
+     * 自定义RenderView，继承[RenderFactory]实现自己的RenderView,设置为null则会使用[DKManager.renderFactory]
      */
-    private var mRenderFactory: RenderFactory = DKManager.renderFactory
+    var renderFactory = DKPlayerConfig.renderFactory
+        set(value) {
+            if (field == value) {
+                // 当前工厂并没有发生任何变化，不作任何处理
+                return
+            }
+            field = value.orDefault(DKPlayerConfig.renderFactory)
+
+            // 如果之前已存在render，则将以前的render移除释放并重新创建
+            if (render != null) {
+                setupRender(true)
+            }
+        }
 
     /**
      * 渲染视图纵横比
@@ -55,85 +61,55 @@ internal class DKVideoViewContainer @JvmOverloads constructor(
     private val mVideoSize = intArrayOf(0, 0)
 
     /**
-     * 获取渲染视图的名字
-     * @return
-     */
-    val renderName: String
-        get() {
-            return if (mRender != null) {
-                val className = mRender!!.javaClass.name
-                className.substring(className.lastIndexOf(".") + 1)
-            } else {
-                val className = mRenderFactory.javaClass.name
-                className.substring(className.lastIndexOf(".") + 1)
-            }
-        }
-
-    /**
      * 视频画面大小
      * todo 直接返回数组对象是否欠妥
      */
     val videoSize: IntArray = mVideoSize
 
-    private var mAttachedPlayer: DKPlayer? = null
+    private var attachedPlayer: DKPlayer? = null
 
     /**
      * 设置控制器，传null表示移除控制器
      */
-    fun setVideoController(mediaController: MediaController?) {
-        videoController?.let {//移除之前已添加的控制器
-            removeView(it)
+    var videoController: VideoController? = null
+        set(value) {
+            field?.let { // 移除之前已添加的控制器
+                removeView(it)
+            }
+            field = value
+            value?.let { controller ->
+                //添加控制器
+                val params = LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
+                addView(controller, params)
+            }
         }
-        videoController = mediaController
-        mediaController?.let { controller ->
-            //添加控制器
-            val params = LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-            )
-            addView(controller, params)
-        }
-    }
 
     /**
      * 初始化视频渲染View
      */
     fun attachPlayer(player: DKPlayer) {
-        if (mRender == null || !mRenderReusable) {
+        if (render == null || !renderReusable) {
             setupRender()
         }
-        mAttachedPlayer = player
-        mRender!!.attachPlayer(player)
-    }
-
-    /**
-     * 自定义RenderView，继承[RenderFactory]实现自己的RenderView,设置为null则会使用[DKManager.renderFactory]
-     */
-    fun setRenderViewFactory(factory: RenderFactory?) {
-        if (mRenderFactory == factory || (factory == null && mRenderFactory == DKManager.renderFactory)) {
-            //与当前工厂相同或者与全局工厂相同,即当前工厂并没有发生任何变化，不作任何处理
-            return
-        }
-        mRenderFactory = factory.orDefault(DKManager.renderFactory)
-
-        //如果之前已存在render，则将以前的render移除释放并重新创建
-        if (mRender != null) {
-            setupRender(true)
-        }
+        attachedPlayer = player
+        render!!.attachPlayer(player)
     }
 
     /**
      * render是否可以重用
      */
     fun setRenderReusable(reusable: Boolean) {
-        mRenderReusable = reusable
+        renderReusable = reusable
     }
 
     private fun setupRender(removePrevious: Boolean = true) {
         if (removePrevious) {
             removeRenderIfAdded()
         }
-        mRender = mRenderFactory.create(context).also { render ->
+        render = renderFactory.create(context).also { render ->
             val params = LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -147,7 +123,7 @@ internal class DKVideoViewContainer @JvmOverloads constructor(
             addView(render.view, 0, params)
 
             //播放器不为空说明是中途切换的renderFactory
-            mAttachedPlayer?.let { player ->
+            attachedPlayer?.let { player ->
                 render.attachPlayer(player)
             }
         }
@@ -155,11 +131,11 @@ internal class DKVideoViewContainer @JvmOverloads constructor(
 
     fun setScreenAspectRatioType(@AspectRatioType aspectRatioType: Int) {
         mScreenAspectRatioType = aspectRatioType
-        mRender?.setAspectRatioType(aspectRatioType)
+        render?.setAspectRatioType(aspectRatioType)
     }
 
     fun screenshot(highQuality: Boolean, callback: Render.ScreenShotCallback) {
-        val render = mRender
+        val render = render
         if (render != null) {
             render.screenshot(highQuality, callback)
             return
@@ -174,14 +150,14 @@ internal class DKVideoViewContainer @JvmOverloads constructor(
      * @param degree 旋转角度
      */
     fun setVideoRotation(degree: Int) {
-        mRender?.setVideoRotation(degree)
+        render?.setVideoRotation(degree)
     }
 
     /**
      * 设置镜像旋转，暂不支持SurfaceView
      */
     fun setVideoMirrorRotation(enable: Boolean) {
-        mRender?.setMirrorRotation(enable)
+        render?.setMirrorRotation(enable)
     }
 
     /**
@@ -190,7 +166,7 @@ internal class DKVideoViewContainer @JvmOverloads constructor(
     fun onVideoSizeChanged(videoWidth: Int, videoHeight: Int) {
         mVideoSize[0] = videoWidth
         mVideoSize[1] = videoHeight
-        mRender?.setVideoSize(videoWidth, videoHeight)
+        render?.setVideoSize(videoWidth, videoHeight)
     }
 
     /**
@@ -221,11 +197,11 @@ internal class DKVideoViewContainer @JvmOverloads constructor(
 
     //释放renderView
     private fun removeRenderIfAdded() {
-        mRender?.let {
+        render?.let {
             removeView(it.view)
             it.release()
         }
-        mRender = null
+        render = null
     }
 
     override fun addFocusables(views: ArrayList<View>, direction: Int) {

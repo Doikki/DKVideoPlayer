@@ -12,38 +12,11 @@ import android.widget.FrameLayout;
 import java.lang.reflect.Field;
 
 import xyz.doikki.videoplayer.DKVideoView;
-import xyz.doikki.videoplayer.controller.MediaController;
+import xyz.doikki.videoplayer.controller.VideoController;
 
 public final class Utils {
 
     private Utils() {
-    }
-
-    public static Object getCurrentPlayerFactoryInVideoView(MediaController controlWrapper) {
-        Object playerFactory = null;
-        try {
-            Field mPlayerControlField = controlWrapper.getClass().getDeclaredField("mPlayer");
-            mPlayerControlField.setAccessible(true);
-            Object playerControl = mPlayerControlField.get(controlWrapper);
-            if (playerControl instanceof DKVideoView) {
-                playerFactory = getCurrentPlayerFactoryInVideoView((DKVideoView) playerControl);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return playerFactory;
-    }
-
-    public static Object getCurrentPlayerFactoryInVideoView(DKVideoView videoView) {
-        Object playerFactory = null;
-        try {
-            Field mPlayerFactoryField = videoView.getClass().getDeclaredField("mPlayerFactory");
-            mPlayerFactoryField.setAccessible(true);
-            playerFactory = mPlayerFactoryField.get(videoView);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return playerFactory;
     }
 
     /**

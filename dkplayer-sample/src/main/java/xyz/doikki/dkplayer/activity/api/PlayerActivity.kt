@@ -58,8 +58,8 @@ class PlayerActivity : BaseActivity<DKVideoView>() {
 //            controller.post {
 //                controller.requestFocus()
 //            }
-            //根据屏幕方向自动进入/退出全屏
-            controller.setEnableOrientationSensor(true)
+            // 重力感应进入/退出全屏。不需要次功能不添加即可
+            controller.addControlComponent(DeviceOrientationSensorMonitor(this))
             val prepareView = PrepareView(this) //准备播放界面
             prepareView.setClickStart()
             val thumb = prepareView.findViewById<ImageView>(R.id.thumb) //封面图
@@ -114,7 +114,7 @@ class PlayerActivity : BaseActivity<DKVideoView>() {
             controller.addControlComponent(PlayerMonitor())
 
             //如果你不想要UI，不要设置控制器即可
-            mVideoView.setVideoController(controller)
+            mVideoView.videoController = controller
             var url = it.getStringExtra(IntentKeys.URL)
 
             //点击文件管理器中的视频，选择DKPlayer打开，将会走以下代码
@@ -135,7 +135,7 @@ class PlayerActivity : BaseActivity<DKVideoView>() {
             // 临时切换RenderView, 如需全局请通过VideoConfig配置，详见MyApplication
             if (intent.getBooleanExtra(IntentKeys.CUSTOM_RENDER, false)) {
 //                mVideoView.setRenderViewFactory(GLSurfaceRenderViewFactory.create())
-                mVideoView.setRenderViewFactory { renderView }
+                mVideoView.renderFactory = RenderFactory { renderView }
                 // 设置滤镜
                 renderView.setGlFilter(
                     GlFilterGroup(
@@ -184,6 +184,7 @@ class PlayerActivity : BaseActivity<DKVideoView>() {
                     DKVideoView.STATE_IDLE -> {
                     }
                     DKVideoView.STATE_PREPARING -> {
+                        mVideoView.removeOnStateChangeListener(this)
                     }
                     DKVideoView.STATE_PREPARED -> {
                     }
@@ -238,10 +239,10 @@ class PlayerActivity : BaseActivity<DKVideoView>() {
                 i++
             }
             R.id.surface_render->{
-                mVideoView!!.setRenderViewFactory(RenderFactory.surfaceViewRenderFactory())
+                mVideoView!!.renderFactory = RenderFactory.surfaceViewRenderFactory()
             }
             R.id.texture_render->{
-                mVideoView!!.setRenderViewFactory(RenderFactory.textureViewRenderFactory())
+                mVideoView!!.renderFactory = RenderFactory.textureViewRenderFactory()
             }
             R.id.btn_mute -> mVideoView!!.isMute = !mVideoView!!.isMute
         }

@@ -38,7 +38,7 @@ class CompleteView @JvmOverloads constructor(
     override fun onPlayStateChanged(playState: Int) {
         if (playState == DKVideoView.STATE_PLAYBACK_COMPLETED) {
             visibility = VISIBLE
-            mStopFullscreen.isVisible = mController?.isFullScreen.orDefault()
+            mStopFullscreen.isVisible = controller?.isFullScreen.orDefault()
             bringToFront()
         } else {
             visibility = GONE
@@ -52,9 +52,9 @@ class CompleteView @JvmOverloads constructor(
         } else if (screenMode == DKVideoView.SCREEN_MODE_NORMAL) {
             mStopFullscreen.visibility = GONE
         }
-        mController?.let { controller ->
+        controller?.let { controller ->
             val activity = activity
-            if (activity != null && controller.hasCutout()) {
+            if (activity != null && controller.hasCutout == true) {
                 val orientation = activity.requestedOrientation
                 val cutoutHeight = controller.cutoutHeight
                 val sflp = mStopFullscreen.layoutParams as LayoutParams
@@ -88,11 +88,11 @@ class CompleteView @JvmOverloads constructor(
         }
 
         replyAct.setOnClickListener { //重新播放
-            mController?.replay(true)
+            controller?.replay(true)
         }
         mStopFullscreen = findViewById(R.id.stop_fullscreen)
         mStopFullscreen.setOnClickListener {
-            mController?.let { controller ->
+            controller?.let { controller ->
                 if (controller.isFullScreen) {
                     val activity = activity
                     if (activity != null && !activity.isFinishing) {

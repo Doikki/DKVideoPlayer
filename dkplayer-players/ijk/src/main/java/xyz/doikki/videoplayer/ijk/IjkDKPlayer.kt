@@ -26,7 +26,7 @@ open class IjkDKPlayer(private val appContext: Context) : AbstractDKPlayer(),
 
     private var bufferedPercent = 0
 
-    private fun createKernel():IjkMediaPlayer{
+    private fun createKernel(): IjkMediaPlayer {
         return IjkMediaPlayer().also {
             it.setOnErrorListener(this)
             it.setOnCompletionListener(this)
@@ -170,8 +170,8 @@ open class IjkDKPlayer(private val appContext: Context) : AbstractDKPlayer(),
         kernel!!.setDisplay(holder)
     }
 
-    override fun setVolume(v1: Float, v2: Float) {
-        kernel!!.setVolume(v1, v2)
+    override fun setVolume(leftVolume: Float, rightVolume: Float) {
+        kernel!!.setVolume(leftVolume, rightVolume)
     }
 
     override fun setLooping(isLooping: Boolean) {
@@ -222,7 +222,7 @@ open class IjkDKPlayer(private val appContext: Context) : AbstractDKPlayer(),
     }
 
     private val isVideo: Boolean
-        private get() {
+        get() {
             val trackInfo = kernel!!.trackInfo ?: return false
             for (info in trackInfo) {
                 if (info.trackType == ITrackInfo.MEDIA_TRACK_TYPE_VIDEO) {

@@ -45,7 +45,7 @@ public class TikTokView extends BaseControlComponent {
         setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                getMController().togglePlay();
+                getController().togglePlay();
             }
         });
         mScaledTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();

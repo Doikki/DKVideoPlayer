@@ -46,12 +46,7 @@ public class ExoVideoView extends DKVideoView {
 
     {
         //由于传递了泛型，必须将CustomExoMediaPlayer设置进来，否者报错
-        setPlayerFactory(new DKPlayerFactory<CustomExoMediaPlayer>() {
-            @Override
-            public CustomExoMediaPlayer create(Context context) {
-                return new CustomExoMediaPlayer(context);
-            }
-        });
+        setPlayerFactory(CustomExoMediaPlayer::new);
         mHelper = ExoMediaSourceHelper.getInstance(getContext());
     }
 
@@ -60,8 +55,8 @@ public class ExoVideoView extends DKVideoView {
     }
 
     @Override
-    protected void onMediaPlayerCreate(DKPlayer mediaPlayer) {
-        super.onMediaPlayerCreate(mediaPlayer);
+    protected void onMediaPlayerCreated(DKPlayer mediaPlayer) {
+        super.onMediaPlayerCreated(mediaPlayer);
         CustomExoMediaPlayer mp = (CustomExoMediaPlayer) mediaPlayer;
         mp.setLoadControl(mLoadControl);
         mp.setRenderersFactory(mRenderersFactory);

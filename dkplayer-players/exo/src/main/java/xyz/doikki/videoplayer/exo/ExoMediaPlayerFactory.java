@@ -4,7 +4,7 @@ import android.content.Context;
 
 import xyz.doikki.videoplayer.DKPlayerFactory;
 
-public class ExoMediaPlayerFactory implements DKPlayerFactory<ExoMediaPlayer> {
+public class ExoMediaPlayerFactory implements DKPlayerFactory {
 
     public static ExoMediaPlayerFactory create() {
         return new ExoMediaPlayerFactory();

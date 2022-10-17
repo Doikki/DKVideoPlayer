@@ -1,6 +1,5 @@
 package xyz.doikki.videoplayer.controller.component
 
-import xyz.doikki.videoplayer.controller.component.ControlComponent
 
 /**
  * 与手势操作相关的控制组件

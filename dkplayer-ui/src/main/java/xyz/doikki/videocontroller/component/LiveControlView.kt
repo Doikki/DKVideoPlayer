@@ -48,7 +48,7 @@ class LiveControlView @JvmOverloads constructor(
             DKVideoView.STATE_PLAYING -> mPlayButton.isSelected = true
             DKVideoView.STATE_PAUSED -> mPlayButton.isSelected = false
             DKVideoView.STATE_BUFFERING, DKVideoView.STATE_BUFFERED -> mPlayButton.isSelected =
-                mController?.playerControl?.isPlaying.orDefault()
+                controller?.playerControl?.isPlaying.orDefault()
         }
     }
 
@@ -59,8 +59,8 @@ class LiveControlView @JvmOverloads constructor(
             DKVideoView.SCREEN_MODE_FULL -> mFullScreen.isSelected = true
         }
         val activity = PlayerUtils.scanForActivity(context)
-        val controller = mController
-        if (activity != null && controller != null && controller.hasCutout()) {
+        val controller = controller
+        if (activity != null && controller != null && controller.hasCutout == true) {
             val orientation = activity.requestedOrientation
             val cutoutHeight = controller.cutoutHeight
             when (orientation) {
@@ -82,7 +82,7 @@ class LiveControlView @JvmOverloads constructor(
     }
 
     override fun onClick(v: View) {
-        mController?.let { controller ->
+        controller?.let { controller ->
             when (v.id) {
                 R.id.fullscreen -> {
                     controller.toggleFullScreen()

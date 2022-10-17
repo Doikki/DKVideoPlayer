@@ -96,7 +96,7 @@ open class VodControlView @JvmOverloads constructor(
             DKVideoView.STATE_PLAYING -> {
                 mPlayButton?.isSelected = true
                 if (showBottomProgress) {
-                    if (mController?.isShowing.orDefault()) {
+                    if (controller?.isShowing.orDefault()) {
                         mBottomProgress?.visibility = GONE
                         mBottomContainer?.visibility = VISIBLE
                     } else {
@@ -108,18 +108,18 @@ open class VodControlView @JvmOverloads constructor(
                 }
                 visibility = VISIBLE
                 //开始刷新进度
-                mController?.startUpdateProgress()
+                controller?.startUpdateProgress()
             }
             DKVideoView.STATE_PAUSED -> mPlayButton?.isSelected = false
             DKVideoView.STATE_BUFFERING -> {
                 mPlayButton?.isSelected = player?.isPlaying.orDefault()
                 // 停止刷新进度
-                mController?.stopUpdateProgress()
+                controller?.stopUpdateProgress()
             }
             DKVideoView.STATE_BUFFERED -> {
                 mPlayButton?.isSelected = player?.isPlaying.orDefault()
                 //开始刷新进度
-                mController?.startUpdateProgress()
+                controller?.startUpdateProgress()
             }
         }
     }
@@ -131,10 +131,10 @@ open class VodControlView @JvmOverloads constructor(
             DKVideoView.SCREEN_MODE_FULL -> mFullScreen?.isSelected = true
         }
         val activity = this.activity ?: return
-        val controller = mController ?: return
+        val controller = controller ?: return
         val bottomContainer = mBottomContainer ?: return
         val bottomProgress = mBottomProgress ?: return
-        if (controller.hasCutout()) {
+        if (controller.hasCutout == true) {
             val orientation = activity.requestedOrientation
             val cutoutHeight = controller.cutoutHeight
             when (orientation) {
@@ -164,7 +164,7 @@ open class VodControlView @JvmOverloads constructor(
         if (id == R.id.fullscreen) {
             toggleFullScreen()
         } else if (id == R.id.iv_play) {
-            mController?.togglePlay()
+            controller?.togglePlay()
         }
     }
 
@@ -172,14 +172,14 @@ open class VodControlView @JvmOverloads constructor(
      * 横竖屏切换
      */
     private fun toggleFullScreen() {
-        mController?.toggleFullScreen()
+        controller?.toggleFullScreen()
         // 下面方法会根据适配宽高决定是否旋转屏幕
 //        mControlWrapper.toggleFullScreenByVideoSize(activity);
     }
 
     override fun onStartTrackingTouch(seekBar: SeekBar) {
         mTrackingTouch = true
-        mController?.let {
+        controller?.let {
             it.stopUpdateProgress()
             it.stopFadeOut()
         }
@@ -187,7 +187,7 @@ open class VodControlView @JvmOverloads constructor(
 
     override fun onStopTrackingTouch(seekBar: SeekBar) {
         try {
-            mController?.let { controller ->
+            controller?.let { controller ->
                 val player = this.player ?: return@let
                 val duration = player.duration
                 val newPosition = duration * seekBar.progress / mVideoProgress!!.max
@@ -233,7 +233,7 @@ open class VodControlView @JvmOverloads constructor(
         if (!fromUser) {
             return
         }
-        mController?.playerControl?.let { player ->
+        controller?.playerControl?.let { player ->
             val duration = player.duration
             val newPosition = duration * progress / mVideoProgress?.max.orDefault(100)
             mCurrTime?.text = PlayerUtils.stringForTime(newPosition.toInt())

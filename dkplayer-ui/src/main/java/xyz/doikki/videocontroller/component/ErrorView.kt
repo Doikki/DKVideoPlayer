@@ -77,7 +77,7 @@ class ErrorView @JvmOverloads constructor(
         }
         statusBtn.setOnClickListener {
             visibility = GONE
-            mController?.replay(false)
+            controller?.replay(false)
         }
     }
 }

@@ -21,22 +21,32 @@ import kotlin.math.abs
  */
 abstract class GestureVideoController @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, @AttrRes defStyleAttr: Int = 0
-) : MediaController(context, attrs, defStyleAttr),
+) : VideoController(context, attrs, defStyleAttr),
     GestureDetector.OnGestureListener,
     GestureDetector.OnDoubleTapListener,
     OnTouchListener {
 
-    private val mGestureDetector: GestureDetector
-    private val mAudioManager: AudioManager
+    private val gestureDetector by lazy {
+        GestureDetector(context, this)
+    }
+    private val audioManager by lazy {
+        context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+    }
 
-    //竖屏模式是否启用手势操作
-    private var mGestureInPortraitEnabled = false
+    /**
+     * 是否在竖屏模式下开始手势控制，默认关闭
+     */
+    var gestureInPortraitEnabled = false
 
-    //是否启用手势操作
-    private var mGestureEnabled = true
+    /**
+     * 是否开启手势控制，默认开启，关闭之后，手势调节进度，音量，亮度功能将关闭
+     */
+    var gestureEnabled = true
 
-    //是否启用双击切换播放/暂停
-    private var mDoubleTapTogglePlayEnabled = true
+    /**
+     * 是否开启双击播放/暂停，默认开启
+     */
+    var doubleTapTogglePlayEnabled = true
 
     /**
      * 设置是否可以滑动调节进度，默认可以
@@ -44,57 +54,34 @@ abstract class GestureVideoController @JvmOverloads constructor(
     var seekEnabled = true
 
     //是否可以滑动：滑动调节音量或者亮度
-    private var mCanSlide = false
+    private var canSlide = false
 
     //待处理的seek position：通常由于手势滑动或者按键引起的位置变动
     protected var pendingSeekPosition: Int = INVALIDATE_SEEK_POSITION
 
-    private var mStreamVolume = 0
-    private var mBrightness = 0f
+    private var streamVolume = 0
+    private var brightness = 0f
 
-    private var mFirstTouch = false
-    private var mChangePosition = false
-    private var mChangeBrightness = false
-    private var mChangeVolume = false
+    private var firstTouch = false
+    private var changePosition = false
+    private var changeBrightness = false
+    private var changeVolume = false
 
     init {
-        mAudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        mGestureDetector = GestureDetector(context, this)
         setOnTouchListener(this)
     }
 
-    /**
-     * 是否在竖屏模式下开始手势控制，默认关闭
-     */
-    fun setGestureInPortraitEnabled(enableInNormal: Boolean) {
-        mGestureInPortraitEnabled = enableInNormal
-    }
-
-    /**
-     * 是否开启手势控制，默认开启，关闭之后，手势调节进度，音量，亮度功能将关闭
-     */
-    fun setGestureEnabled(gestureEnabled: Boolean) {
-        mGestureEnabled = gestureEnabled
-    }
-
-    /**
-     * 是否开启双击播放/暂停，默认开启
-     */
-    fun setDoubleTapTogglePlayEnabled(enabled: Boolean) {
-        mDoubleTapTogglePlayEnabled = enabled
-    }
-
-    override fun setScreenMode(@DKVideoView.ScreenMode playerState: Int) {
-        super.setScreenMode(playerState)
-        if (playerState == DKVideoView.SCREEN_MODE_NORMAL) {
-            mCanSlide = mGestureInPortraitEnabled
-        } else if (playerState == DKVideoView.SCREEN_MODE_FULL) {
-            mCanSlide = true
+    override fun setScreenMode(@DKVideoView.ScreenMode screenMode: Int) {
+        super.setScreenMode(screenMode)
+        if (screenMode == DKVideoView.SCREEN_MODE_NORMAL) {
+            canSlide = gestureInPortraitEnabled
+        } else if (screenMode == DKVideoView.SCREEN_MODE_FULL) {
+            canSlide = true
         }
     }
 
     override fun onTouch(v: View, event: MotionEvent): Boolean {
-        return mGestureDetector.onTouchEvent(event)
+        return gestureDetector.onTouchEvent(event)
     }
 
     /**
@@ -102,17 +89,17 @@ abstract class GestureVideoController @JvmOverloads constructor(
      */
     override fun onDown(e: MotionEvent): Boolean {
         if (!isInPlaybackState //不处于播放状态
-            || !mGestureEnabled //关闭了手势
-            || PlayerUtils.isEdge(context, e)
-        ) //处于屏幕边沿
+            || !gestureEnabled //关闭了手势
+            || PlayerUtils.isEdge(context, e) //处于屏幕边沿
+        )
             return true
-        mStreamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+        streamVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
         val activity = context.getActivityContext()
-        mBrightness = activity?.window?.attributes?.screenBrightness ?: 0f
-        mFirstTouch = true
-        mChangePosition = false
-        mChangeBrightness = false
-        mChangeVolume = false
+        brightness = activity?.window?.attributes?.screenBrightness ?: 0f
+        firstTouch = true
+        changePosition = false
+        changeBrightness = false
+        changeVolume = false
         return true
     }
 
@@ -127,7 +114,7 @@ abstract class GestureVideoController @JvmOverloads constructor(
      * 双击
      */
     override fun onDoubleTap(e: MotionEvent): Boolean {
-        if (mDoubleTapTogglePlayEnabled && !isLocked && isInPlaybackState) togglePlay()
+        if (doubleTapTogglePlayEnabled && !isLocked && isInPlaybackState) togglePlay()
         return true
     }
 
@@ -141,43 +128,43 @@ abstract class GestureVideoController @JvmOverloads constructor(
         distanceY: Float
     ): Boolean {
         if (!isInPlaybackState //不处于播放状态
-            || !mGestureEnabled //关闭了手势
-            || !mCanSlide //关闭了滑动手势
+            || !gestureEnabled //关闭了手势
+            || !canSlide //关闭了滑动手势
             || isLocked //锁住了屏幕
-            || PlayerUtils.isEdge(context, e1)
-        ) //处于屏幕边沿
+            || PlayerUtils.isEdge(context, e1) //处于屏幕边沿
+        )
             return true
         val deltaX = e1.x - e2.x
         val deltaY = e1.y - e2.y
-        if (mFirstTouch) {
-            mChangePosition = abs(distanceX) >= abs(distanceY)
-            if (!mChangePosition) {
+        if (firstTouch) {
+            changePosition = abs(distanceX) >= abs(distanceY)
+            if (!changePosition) {
                 //半屏宽度
                 val halfScreen = PlayerUtils.getScreenWidth(context, true) / 2
                 if (e2.x > halfScreen) {
-                    mChangeVolume = true
+                    changeVolume = true
                 } else {
-                    mChangeBrightness = true
+                    changeBrightness = true
                 }
             }
-            if (mChangePosition) {
+            if (changePosition) {
                 //根据用户设置是否可以滑动调节进度来决定最终是否可以滑动调节进度
-                mChangePosition = seekEnabled
+                changePosition = seekEnabled
             }
-            if (mChangePosition || mChangeBrightness || mChangeVolume) {
-                for ((component) in mControlComponents) {
+            if (changePosition || changeBrightness || changeVolume) {
+                for ((component) in controlComponents) {
                     if (component is GestureControlComponent) {
                         component.onStartSlide()
                     }
                 }
             }
-            mFirstTouch = false
+            firstTouch = false
         }
-        if (mChangePosition) {
+        if (changePosition) {
             slideToChangePosition(deltaX)
-        } else if (mChangeBrightness) {
+        } else if (changeBrightness) {
             slideToChangeBrightness(deltaY)
-        } else if (mChangeVolume) {
+        } else if (changeVolume) {
             slideToChangeVolume(deltaY)
         }
         return true
@@ -204,8 +191,8 @@ abstract class GestureVideoController @JvmOverloads constructor(
         val window = activity.window
         val attributes = window.attributes
         val height = measuredHeight
-        if (mBrightness == -1.0f) mBrightness = 0.5f
-        var brightness = deltaY * 2 / height + mBrightness
+        if (brightness == -1.0f) brightness = 0.5f
+        var brightness = deltaY * 2 / height + brightness
         if (brightness < 0) {
             brightness = 0f
         }
@@ -213,7 +200,7 @@ abstract class GestureVideoController @JvmOverloads constructor(
         val percent = (brightness * 100).toInt()
         attributes.screenBrightness = brightness
         window.attributes = attributes
-        for ((component) in mControlComponents) {
+        for ((component) in controlComponents) {
             if (component is GestureControlComponent) {
                 component.onBrightnessChange(percent)
             }
@@ -221,15 +208,15 @@ abstract class GestureVideoController @JvmOverloads constructor(
     }
 
     protected fun slideToChangeVolume(deltaY: Float) {
-        val streamMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+        val streamMaxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
         val height = measuredHeight
         val deltaV = deltaY * 2 / height * streamMaxVolume
-        var index = mStreamVolume + deltaV
+        var index = streamVolume + deltaV
         if (index > streamMaxVolume) index = streamMaxVolume.toFloat()
         if (index < 0) index = 0f
         val percent = (index / streamMaxVolume * 100).toInt()
-        mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, index.toInt(), 0)
-        for ((component) in mControlComponents) {
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, index.toInt(), 0)
+        for ((component) in controlComponents) {
             if (component is GestureControlComponent) {
                 component.onVolumeChange(percent)
             }
@@ -238,7 +225,7 @@ abstract class GestureVideoController @JvmOverloads constructor(
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         //滑动结束时事件处理
-        if (!mGestureDetector.onTouchEvent(event)) {
+        if (!gestureDetector.onTouchEvent(event)) {
             when (event.action) {
                 MotionEvent.ACTION_UP -> {
                     stopSlide()
@@ -258,7 +245,7 @@ abstract class GestureVideoController @JvmOverloads constructor(
         currentPosition: Int,
         duration: Int
     ) {
-        for ((component) in mControlComponents) {
+        for ((component) in controlComponents) {
             if (component is GestureControlComponent) {
                 component.onPositionChange(position, currentPosition, duration)
             }
@@ -280,7 +267,7 @@ abstract class GestureVideoController @JvmOverloads constructor(
     }
 
     private fun stopSlide() {
-        for ((component) in mControlComponents) {
+        for ((component) in controlComponents) {
             if (component is GestureControlComponent) {
                 component.onStopSlide()
             }

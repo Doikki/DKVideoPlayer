@@ -43,7 +43,7 @@ public class PlayRawAssetsActivity extends BaseActivity<DKVideoView> {
 
     public void onButtonClick(View view) {
         mVideoView.release();
-        Object playerFactory = Utils.getCurrentPlayerFactoryInVideoView(mVideoView);
+        Object playerFactory = mVideoView.getRenderFactory();
 
         switch (view.getId()) {
             case R.id.btn_raw:

@@ -13,8 +13,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 
+import xyz.doikki.dkplayer.util.Utils;
 import xyz.doikki.videoplayer.DKVideoView;
-import xyz.doikki.videoplayer.controller.MediaController;
+import xyz.doikki.videoplayer.controller.VideoController;
 import xyz.doikki.videoplayer.controller.VideoViewControl;
 import xyz.doikki.videoplayer.controller.component.ControlComponent;
 import xyz.doikki.videoplayer.util.UtilsKt;
@@ -24,7 +25,7 @@ import xyz.doikki.videoplayer.util.UtilsKt;
  */
 public class DebugInfoView extends AppCompatTextView implements ControlComponent {
 
-    private MediaController mController;
+    private VideoController mController;
 
     public DebugInfoView(Context context) {
         super(context);
@@ -73,8 +74,8 @@ public class DebugInfoView extends AppCompatTextView implements ControlComponent
         int[] videoSize = control.getVideoSize();
         DKVideoView videoView = (DKVideoView) mController.getPlayerControl();
         StringBuilder sb = new StringBuilder();
-        sb.append("player:").append(videoView.getPlayerName()).append("   ")
-                .append("render:").append(videoView.getRenderName()).append("\n");
+        sb.append("player:").append(videoView.getPlayerFactory().getClass().getSimpleName()).append("   ")
+                .append("render:").append(videoView.getRenderFactory().getClass().getSimpleName()).append("\n");
         sb.append(UtilsKt.playState2str(playState)).append("  ")
                 .append("video width:").append(videoSize[0])
                 .append(",height:").append(videoSize[1]);
@@ -97,7 +98,7 @@ public class DebugInfoView extends AppCompatTextView implements ControlComponent
     }
 
     @Override
-    public void attachController(@NonNull MediaController controller) {
+    public void attachController(@NonNull VideoController controller) {
         this.mController = controller;
     }
 }

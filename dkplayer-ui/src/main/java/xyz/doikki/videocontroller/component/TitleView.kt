@@ -59,7 +59,7 @@ class TitleView @JvmOverloads constructor(
 
     override fun onVisibilityChanged(isVisible: Boolean, anim: Animation?) {
         //只在全屏时才有效
-        if (!mController?.isFullScreen.orDefault()) return
+        if (!controller?.isFullScreen.orDefault()) return
         if (isVisible) {
             if (visibility == GONE) {
                 mSysTime.text = PlayerUtils.getCurrentSystemTime()
@@ -84,7 +84,7 @@ class TitleView @JvmOverloads constructor(
 
     @SuppressLint("SwitchIntDef")
     override fun onScreenModeChanged(screenMode: Int) {
-        val controller = this.mController
+        val controller = this.controller
         if (screenMode == DKVideoView.SCREEN_MODE_FULL) {
             if (controller != null && controller.isShowing && !controller.isLocked) {
                 visibility = VISIBLE
@@ -96,7 +96,7 @@ class TitleView @JvmOverloads constructor(
             mTitle.isSelected = false
         }
         val activity = this.activity
-        if (activity != null && controller != null && controller.hasCutout()) {
+        if (activity != null && controller != null && controller.hasCutout == true) {
             val orientation = activity.requestedOrientation
             val cutoutHeight = controller.cutoutHeight
             when (orientation) {
@@ -145,8 +145,8 @@ class TitleView @JvmOverloads constructor(
             layoutInflater.inflate(R.layout.dkplayer_layout_title_view, this)
             findViewById<ImageView>(R.id.back).setOnClickListener {
                 val activity = activity
-                if (activity != null && mController?.isFullScreen.orDefault()) {
-                    mController?.stopFullScreen()
+                if (activity != null && controller?.isFullScreen.orDefault()) {
+                    controller?.stopFullScreen()
                 }
             }
             //电量

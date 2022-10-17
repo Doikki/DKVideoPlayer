@@ -5,6 +5,7 @@ import xyz.doikki.dkplayer.widget.controller.PortraitWhenFullScreenController;
 import xyz.doikki.videocontroller.component.CompleteView;
 import xyz.doikki.videocontroller.component.ErrorView;
 import xyz.doikki.videocontroller.component.GestureView;
+import xyz.doikki.videocontroller.component.DeviceOrientationSensorMonitor;
 import xyz.doikki.videocontroller.component.TitleView;
 import xyz.doikki.videoplayer.DKVideoView;
 
@@ -34,7 +35,7 @@ public class RecyclerViewPortraitFragment extends RecyclerViewAutoPlayFragment {
         mTitleView = new TitleView(getActivity());
         mController.addControlComponent(mTitleView);
         mController.addControlComponent(new GestureView(getActivity()));
-        mController.setEnableOrientationSensor(true);
+        mController.addControlComponent(new DeviceOrientationSensorMonitor(getActivity()));
         mVideoView.setVideoController(mController);
     }
 

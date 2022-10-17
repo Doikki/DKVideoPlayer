@@ -144,7 +144,7 @@ interface DKPlayer {
     fun stop()
 
     /**
-     * todo：重置播放器 此方法按道理是重置播放器之后可以重复使用
+     * 重置播放器
      */
     fun reset()
 
@@ -166,7 +166,6 @@ interface DKPlayer {
 
     /**
      * 设置播放器事件监听
-     * todo 想把这里改成add的逻辑。。。。（或者还是由VideoView来提供？），如果是set方式，那么如果player对外可见了该方法，对于videoview内部set的对象会不会被覆盖
      */
     fun setEventListener(eventListener: EventListener?)
 

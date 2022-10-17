@@ -10,6 +10,7 @@ import xyz.doikki.videocontroller.StandardVideoController
 import xyz.doikki.videocontroller.component.VodControlView
 import xyz.doikki.videoplayer.DKVideoView
 import xyz.doikki.videoplayer.controller.VideoViewControl
+import xyz.doikki.videoplayer.util.PlayerUtils
 
 class PortraitWhenFullScreenController @JvmOverloads constructor(
     context: Context,
@@ -27,14 +28,8 @@ class PortraitWhenFullScreenController @JvmOverloads constructor(
         addControlComponent(vodControlView)
     }
 
-    override fun setMediaPlayer(mediaPlayer: VideoViewControl) {
-        super.setMediaPlayer(mediaPlayer)
-        //不监听设备方向
-        setEnableOrientationSensor(false)
-    }
-
     override fun toggleFullScreen(): Boolean {
-        val activity = mActivity ?: return false
+        val activity = PlayerUtils.scanForActivity(context) ?: return false
         val o = activity.requestedOrientation
         if (o == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
             activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -47,8 +42,8 @@ class PortraitWhenFullScreenController @JvmOverloads constructor(
     }
 
     override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-        if (!mPlayer!!.isFullScreen) {
-            mPlayer!!.startVideoViewFullScreen()
+        if (!player!!.isFullScreen) {
+            player!!.startVideoViewFullScreen()
             return true
         }
         toggleShowState()
@@ -66,8 +61,9 @@ class PortraitWhenFullScreenController @JvmOverloads constructor(
     }
 
     private fun adjustView() {
-        if (mActivity != null && hasCutout()) {
-            val orientation = mActivity!!.requestedOrientation
+        val activity = PlayerUtils.scanForActivity(context)
+        if (activity != null && hasCutout == true) {
+            val orientation = activity.requestedOrientation
             val cutoutHeight = cutoutHeight
             if (orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
                 setPadding(0, cutoutHeight, 0, 0)
@@ -88,11 +84,11 @@ class PortraitWhenFullScreenController @JvmOverloads constructor(
         } else if (i == R.id.back) {
             stopFullScreen()
         } else if (i == R.id.thumb) {
-            mPlayer!!.start()
-            mPlayer!!.startVideoViewFullScreen()
+            player!!.start()
+            player!!.startVideoViewFullScreen()
         } else if (i == R.id.iv_replay) {
-            mPlayer!!.replay(true)
-            mPlayer!!.startVideoViewFullScreen()
+            player!!.replay(true)
+            player!!.startVideoViewFullScreen()
         }
     }
 }
