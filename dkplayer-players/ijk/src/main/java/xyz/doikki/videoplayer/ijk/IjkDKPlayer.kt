@@ -12,9 +12,8 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer
 import tv.danmaku.ijk.media.player.IjkMediaPlayer.OnNativeInvokeListener
 import tv.danmaku.ijk.media.player.misc.ITrackInfo
 import xyz.doikki.videoplayer.AbstractDKPlayer
-import xyz.doikki.videoplayer.DKManager.isDebuggable
 import xyz.doikki.videoplayer.DKPlayer
-import xyz.doikki.videoplayer.player.AndroidMediaPlayerException
+import xyz.doikki.videoplayer.internal.DKPlayerException
 
 open class IjkDKPlayer(private val appContext: Context) : AbstractDKPlayer(),
     IMediaPlayer.OnErrorListener, IMediaPlayer.OnCompletionListener, IMediaPlayer.OnInfoListener,
@@ -26,10 +25,8 @@ open class IjkDKPlayer(private val appContext: Context) : AbstractDKPlayer(),
 
     private var bufferedPercent = 0
 
-    override fun init() {
-        //native日志 todo  java.lang.UnsatisfiedLinkError: No implementation found for void tv.danmaku.ijk.media.player.IjkMediaPlayer.native_setLogLevel(int)
-//        IjkMediaPlayer.native_setLogLevel(if (isDebuggable) IjkMediaPlayer.IJK_LOG_INFO else IjkMediaPlayer.IJK_LOG_SILENT)
-        kernel = IjkMediaPlayer().also {
+    private fun createKernel():IjkMediaPlayer{
+        return IjkMediaPlayer().also {
             it.setOnErrorListener(this)
             it.setOnCompletionListener(this)
             it.setOnInfoListener(this)
@@ -38,6 +35,12 @@ open class IjkDKPlayer(private val appContext: Context) : AbstractDKPlayer(),
             it.setOnVideoSizeChangedListener(this)
             it.setOnNativeInvokeListener(this)
         }
+    }
+
+    override fun init() {
+        //native日志 todo  java.lang.UnsatisfiedLinkError: No implementation found for void tv.danmaku.ijk.media.player.IjkMediaPlayer.native_setLogLevel(int)
+//        IjkMediaPlayer.native_setLogLevel(if (isDebuggable) IjkMediaPlayer.IJK_LOG_INFO else IjkMediaPlayer.IJK_LOG_SILENT)
+        kernel = createKernel()
     }
 
     override fun setDataSource(path: String, headers: Map<String, String>?) {
@@ -132,15 +135,18 @@ open class IjkDKPlayer(private val appContext: Context) : AbstractDKPlayer(),
         kernel!!.setOnBufferingUpdateListener(null)
         kernel!!.setOnPreparedListener(null)
         kernel!!.setOnVideoSizeChangedListener(null)
+
+        val temp = kernel!!
         object : Thread() {
             override fun run() {
                 try {
-                    kernel!!.release()
+                    temp.release()
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
             }
         }.start()
+        kernel = null
     }
 
     override fun getCurrentPosition(): Long {
@@ -184,7 +190,12 @@ open class IjkDKPlayer(private val appContext: Context) : AbstractDKPlayer(),
     }
 
     override fun onError(mp: IMediaPlayer, what: Int, extra: Int): Boolean {
-        eventListener!!.onError(AndroidMediaPlayerException(what, extra))
+        eventListener!!.onError(
+            DKPlayerException(
+                what,
+                extra
+            )
+        )
         return true
     }
 

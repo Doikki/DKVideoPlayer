@@ -5,6 +5,7 @@ import android.content.Context
 import xyz.doikki.videoplayer.render.AspectRatioType
 import xyz.doikki.videoplayer.render.RenderFactory
 import xyz.doikki.videoplayer.util.L
+import xyz.doikki.videoplayer.util.orDefault
 
 /**
  * 视频播放器管理器，管理当前正在播放的VideoView，以及播放器配置
@@ -55,7 +56,7 @@ object DKManager {
      */
     @JvmStatic
     @NewFunc
-    var isFocusInTouchMode = true
+    var isFocusUiMode = true
 
     /**
      * 是否启用了音频焦点处理；默认开启
@@ -103,7 +104,7 @@ object DKManager {
      */
     @JvmStatic
     @NewFunc
-    var isRenderReusable: Boolean = true
+    var isRenderReusable: Boolean = false
 
     /**
      * 创建播放器

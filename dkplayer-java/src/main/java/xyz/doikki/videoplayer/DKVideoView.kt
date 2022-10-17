@@ -10,7 +10,6 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Parcelable
 import android.util.AttributeSet
-import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.annotation.CallSuper
 import androidx.annotation.FloatRange
@@ -18,13 +17,16 @@ import androidx.annotation.IntDef
 import xyz.doikki.videoplayer.controller.MediaController
 import xyz.doikki.videoplayer.controller.VideoViewControl
 import xyz.doikki.videoplayer.internal.DKVideoViewContainer
-import xyz.doikki.videoplayer.player.AudioFocusHelper
-import xyz.doikki.videoplayer.player.ScreenModeHandler
+import xyz.doikki.videoplayer.internal.AudioFocusHelper
+import xyz.doikki.videoplayer.internal.ScreenModeHandler
 import xyz.doikki.videoplayer.render.AspectRatioType
 import xyz.doikki.videoplayer.render.Render
 import xyz.doikki.videoplayer.render.Render.ScreenShotCallback
 import xyz.doikki.videoplayer.render.RenderFactory
 import xyz.doikki.videoplayer.util.L
+import xyz.doikki.videoplayer.util.getActivityContext
+import xyz.doikki.videoplayer.util.orDefault
+import xyz.doikki.videoplayer.util.tryIgnore
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
@@ -159,11 +161,6 @@ open class DKVideoView @JvmOverloads constructor(
             notifyScreenModeChanged(screenMode)
         }
 
-    /**
-     * 控制器
-     */
-    protected var videoController: MediaController? = null
-        private set
 
     /**
      * 真正承载播放器视图的容器
@@ -263,6 +260,8 @@ open class DKVideoView @JvmOverloads constructor(
             return false
         }
 
+    protected val videoController: MediaController? get() = playerContainer.videoController
+
     /**
      * 是否显示移动网络提示，可在Controller中配置
      * 非本地数据源并且控制器需要显示网络提示
@@ -285,7 +284,8 @@ open class DKVideoView @JvmOverloads constructor(
         //todo 此处存在问题就是如果在中途修改了mEnableAudioFocus为false，并且之前已初始化了mAudioFocusHelper，则会导致问题，不过该问题并不太可能出现
         //监听音频焦点改变
         if (mEnableAudioFocus && mAudioFocusHelper == null) {
-            mAudioFocusHelper = AudioFocusHelper(this)
+            mAudioFocusHelper =
+                AudioFocusHelper(this)
         }
         mCurrentPosition = getSavedPlayedProgress()
         setupMediaPlayer()
@@ -305,8 +305,8 @@ open class DKVideoView @JvmOverloads constructor(
      * 初始化播放器
      */
     protected open fun setupMediaPlayer() {
-        if (player != null)
-            return
+//        if (player != null)
+//            return
         player = createMediaPlayer().also {
             it.setEventListener(this)
             it.init()
@@ -504,16 +504,8 @@ open class DKVideoView @JvmOverloads constructor(
      * 设置控制器，传null表示移除控制器
      */
     fun setVideoController(mediaController: MediaController?) {
-        playerContainer.removeView(videoController)
-        videoController = mediaController
-        mediaController?.let { controller ->
-            controller.setMediaPlayer(this)
-            val params = LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-            )
-            playerContainer.addView(controller, params)
-        }
+        mediaController?.setMediaPlayer(this)
+        playerContainer.setVideoController(mediaController)
     }
 
     /*************START 代理MediaPlayer的方法 */
@@ -883,8 +875,8 @@ open class DKVideoView @JvmOverloads constructor(
         }
     }
 
-    override fun onVideoSizeChanged(videoWidth: Int, videoHeight: Int) {
-        playerContainer.onVideoSizeChanged(videoWidth, videoHeight)
+    override fun onVideoSizeChanged(width: Int, height: Int) {
+        playerContainer.onVideoSizeChanged(width, height)
     }
 
     /**
@@ -908,7 +900,7 @@ open class DKVideoView @JvmOverloads constructor(
      * 改变返回键逻辑，用于activity
      */
     fun onBackPressed(): Boolean {
-        return videoController != null && videoController!!.onBackPressed()
+        return playerContainer.onBackPressed()
     }
 
     override fun onSaveInstanceState(): Parcelable? {

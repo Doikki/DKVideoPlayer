@@ -1,6 +1,6 @@
 @file:JvmName("UtilsKt")
 
-package xyz.doikki.videoplayer
+package xyz.doikki.videoplayer.util
 
 import android.app.Activity
 import android.content.Context
@@ -11,20 +11,31 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.StringRes
-import xyz.doikki.videoplayer.util.L
+import xyz.doikki.videoplayer.DKVideoView
+import xyz.doikki.videoplayer.DKVideoView.ScreenMode
 
+/**
+ * 等同于[trySilent]，只是本方法没有对结果进行装箱处理（即没有产生[Result]中间对象）
+ */
+inline fun <T> T.tryIgnore(action: T.() -> Unit): Throwable? {
+    return try {
+        action(this)
+        null
+    } catch (e: Throwable) {
+        L.w("error on ${Thread.currentThread().stackTrace[2].methodName} method invoke.but throwable is ignored.")
+        e.printStackTrace()
+        e
+    }
+}
 
 inline fun Boolean?.orDefault(def: Boolean = false): Boolean {
     return this ?: def
 }
-
 inline fun Int?.orDefault(def: Int = 0) = this ?: def
 inline fun Float?.orDefault(def: Float = 0f) = this ?: def
 inline fun Long?.orDefault(def: Long = 0) = this ?: def
 inline fun Double?.orDefault(def: Double = 0.0) = this ?: def
-
 inline fun <T> T?.orDefault(default: T): T = this ?: default
-
 inline fun <T> T?.orDefault(initializer: () -> T): T = this ?: initializer()
 
 inline fun <reified K> Map<*, *>.loopKeyWhen(block: (K) -> Unit) {
@@ -62,22 +73,6 @@ inline fun <V> MutableMap<*, V>.removeAllByValue(filter: (V) -> Boolean) {
         }
     }
 }
-
-
-/**
- * 等同于[trySilent]，只是本方法没有对结果进行装箱处理（即没有产生[Result]中间对象）
- */
-inline fun <T> T.tryIgnore(action: T.() -> Unit): Throwable? {
-    return try {
-        action(this)
-        null
-    } catch (e: Throwable) {
-        L.w("error on ${Thread.currentThread().stackTrace[2].methodName} method invoke.but throwable is ignored.")
-        e.printStackTrace()
-        e
-    }
-}
-
 
 /**
  * 从Parent中移除自己
@@ -128,7 +123,42 @@ val KeyEvent.isUniqueDown: Boolean get() = action == KeyEvent.ACTION_DOWN && rep
 
 const val INVALIDATE_SEEK_POSITION = -1
 
-inline fun Int?.avoidZeroDividend(): Int = if (this == null || this == 0) 1 else this
-inline fun Float?.avoidZeroDividend(): Float = if (this == null || this == 0f) 1f else this
-inline fun Long?.avoidZeroDividend(): Long = if (this == null || this == 0L) 1L else this
-inline fun Double?.avoidZeroDividend(): Double = if (this == null || this == 0.0) 1.0 else this
+/**
+ * 能否获取焦点
+ */
+val View.canTakeFocus: Boolean
+    get() = isFocusable && this.visibility == View.VISIBLE && isEnabled
+
+
+/**
+ * Returns a string containing player state debugging information.
+ */
+fun screenMode2str(@ScreenMode mode: Int): String? {
+    val playerStateString: String = when (mode) {
+        DKVideoView.SCREEN_MODE_NORMAL -> "normal"
+        DKVideoView.SCREEN_MODE_FULL -> "full screen"
+        DKVideoView.SCREEN_MODE_TINY -> "tiny screen"
+        else -> "normal"
+    }
+    return String.format("screenMode: %s", playerStateString)
+}
+
+
+/**
+ * Returns a string containing player state debugging information.
+ */
+fun playState2str(state: Int): String? {
+    val playStateString: String = when (state) {
+        DKVideoView.STATE_IDLE -> "idle"
+        DKVideoView.STATE_PREPARING -> "preparing"
+        DKVideoView.STATE_PREPARED -> "prepared"
+        DKVideoView.STATE_PLAYING -> "playing"
+        DKVideoView.STATE_PAUSED -> "pause"
+        DKVideoView.STATE_BUFFERING -> "buffering"
+        DKVideoView.STATE_BUFFERED -> "buffered"
+        DKVideoView.STATE_PLAYBACK_COMPLETED -> "playback completed"
+        DKVideoView.STATE_ERROR -> "error"
+        else -> "idle"
+    }
+    return String.format("playState: %s", playStateString)
+}

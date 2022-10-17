@@ -5,10 +5,10 @@ import android.view.animation.Animation;
 
 import androidx.annotation.NonNull;
 
-import xyz.doikki.videoplayer.Utils;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
 import xyz.doikki.videoplayer.controller.component.ControlComponent;
 import xyz.doikki.videoplayer.util.L;
+import xyz.doikki.videoplayer.util.UtilsKt;
 
 public class PlayerMonitor implements ControlComponent {
 
@@ -31,12 +31,12 @@ public class PlayerMonitor implements ControlComponent {
 
     @Override
     public void onPlayStateChanged(int playState) {
-        L.d("onPlayStateChanged: " + Utils.playState2str(playState));
+        L.d("onPlayStateChanged: " + UtilsKt.playState2str(playState));
     }
 
     @Override
     public void onScreenModeChanged(int screenMode) {
-        L.d("onPlayerStateChanged: " + Utils.screenMode2str(screenMode));
+        L.d("onPlayerStateChanged: " + UtilsKt.screenMode2str(screenMode));
     }
 
     @Override

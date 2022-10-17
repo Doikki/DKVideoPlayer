@@ -13,10 +13,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 
-import xyz.doikki.videoplayer.Utils;
 import xyz.doikki.videoplayer.DKVideoView;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
 import xyz.doikki.videoplayer.controller.component.ControlComponent;
+import xyz.doikki.videoplayer.util.UtilsKt;
 
 /**
  * 调试信息
@@ -77,7 +77,7 @@ public class DebugInfoView extends AppCompatTextView implements ControlComponent
         StringBuilder sb = new StringBuilder();
         sb.append("player:").append(videoView.getPlayerName()).append("   ")
                 .append("render:").append(videoView.getRenderName()).append("\n");
-        sb.append(Utils.playState2str(playState)).append("  ")
+        sb.append(UtilsKt.playState2str(playState)).append("  ")
                 .append("video width:").append(videoSize[0])
                 .append(",height:").append(videoSize[1]);
         return sb.toString();

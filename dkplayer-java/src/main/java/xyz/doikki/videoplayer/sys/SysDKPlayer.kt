@@ -10,9 +10,9 @@ import android.view.Surface
 import android.view.SurfaceHolder
 import xyz.doikki.videoplayer.AbstractDKPlayer
 import xyz.doikki.videoplayer.DKPlayer
-import xyz.doikki.videoplayer.orDefault
-import xyz.doikki.videoplayer.player.AndroidMediaPlayerException
-import xyz.doikki.videoplayer.tryIgnore
+import xyz.doikki.videoplayer.util.orDefault
+import xyz.doikki.videoplayer.internal.DKPlayerException
+import xyz.doikki.videoplayer.util.tryIgnore
 import xyz.doikki.videoplayer.util.L
 import kotlin.concurrent.thread
 
@@ -242,7 +242,12 @@ class SysDKPlayer(context: Context) : AbstractDKPlayer(),
 //    }
 
     override fun onError(mp: MediaPlayer, what: Int, extra: Int): Boolean {
-        eventListener?.onError(AndroidMediaPlayerException(what, extra))
+        eventListener?.onError(
+            DKPlayerException(
+                what,
+                extra
+            )
+        )
         return true
     }
 

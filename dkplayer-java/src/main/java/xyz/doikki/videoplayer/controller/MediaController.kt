@@ -13,12 +13,10 @@ import androidx.annotation.IntRange
 import xyz.doikki.videoplayer.*
 import xyz.doikki.videoplayer.DKVideoView.PlayerState
 import xyz.doikki.videoplayer.controller.component.ControlComponent
-import xyz.doikki.videoplayer.player.DeviceOrientationSensorHelper
-import xyz.doikki.videoplayer.player.DeviceOrientationSensorHelper.DeviceDirection
-import xyz.doikki.videoplayer.player.DeviceOrientationSensorHelper.DeviceOrientationChangedListener
-import xyz.doikki.videoplayer.util.CutoutUtil
-import xyz.doikki.videoplayer.util.L
-import xyz.doikki.videoplayer.util.PlayerUtils
+import xyz.doikki.videoplayer.internal.DeviceOrientationSensorHelper
+import xyz.doikki.videoplayer.internal.DeviceOrientationSensorHelper.DeviceDirection
+import xyz.doikki.videoplayer.internal.DeviceOrientationSensorHelper.DeviceOrientationChangedListener
+import xyz.doikki.videoplayer.util.*
 
 /**
  * 控制器基类
@@ -173,6 +171,8 @@ open class MediaController @JvmOverloads constructor(
     protected val isInPlaybackState: Boolean
         get() = mPlayer != null && mPlayerState != DKVideoView.STATE_ERROR && mPlayerState != DKVideoView.STATE_IDLE && mPlayerState != DKVideoView.STATE_PREPARING && mPlayerState != DKVideoView.STATE_PREPARED && mPlayerState != DKVideoView.STATE_START_ABORT && mPlayerState != DKVideoView.STATE_PLAYBACK_COMPLETED
 
+    protected val isInCompleteState: Boolean get() = mPlayerState == DKVideoView.STATE_PLAYBACK_COMPLETED
+
     /**
      * 重要：此方法用于将[DKVideoView] 和控制器绑定
      */
@@ -216,7 +216,7 @@ open class MediaController @JvmOverloads constructor(
         controlWrapper?.let {
             component.attach(it)
         }
-        val view = component.view
+        val view = component.getView()
         if (view != null && !isDissociate) {
             addView(view, 0)
         }
@@ -265,7 +265,7 @@ open class MediaController @JvmOverloads constructor(
      * @param component
      */
     private fun removeControlComponentView(component: ControlComponent) {
-        val view = component.view ?: return
+        val view = component.getView() ?: return
         removeView(view)
     }
     /***********END 关键方法代码 */
@@ -498,6 +498,16 @@ open class MediaController @JvmOverloads constructor(
                 it.start()
             }
         }
+    }
+
+    /**
+     * @return true:调用了重播方法，false则表示未处理任何
+     */
+    protected fun replay(resetPosition: Boolean = true): Boolean {
+        return invokeOnPlayerAttached {
+            it.replay(resetPosition)
+            true
+        }.orDefault(false)
     }
 
     override fun onWindowFocusChanged(hasWindowFocus: Boolean) {

@@ -1,5 +1,6 @@
 package xyz.doikki.videocontroller.component
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.graphics.Color
@@ -9,9 +10,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import xyz.doikki.videocontroller.R
 import xyz.doikki.videoplayer.DKVideoView
-import xyz.doikki.videoplayer.controller.component.ControlComponent
-import xyz.doikki.videoplayer.layoutInflater
-import xyz.doikki.videoplayer.orDefault
+import xyz.doikki.videoplayer.util.layoutInflater
+import xyz.doikki.videoplayer.util.orDefault
 
 /**
  * 自动播放完成界面
@@ -21,7 +21,7 @@ import xyz.doikki.videoplayer.orDefault
  */
 class CompleteView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
-) : BaseControlComponent(context, attrs), ControlComponent {
+) : BaseControlComponent(context, attrs) {
 
     private lateinit var mStopFullscreen: ImageView
 
@@ -31,7 +31,7 @@ class CompleteView @JvmOverloads constructor(
         //在xml中去除了一个布局层级，因此xml中的背景色改为代码设置在当前布局中
         setBackgroundColor(Color.parseColor("#33000000"))
         val replyAct = findViewById<View>(R.id.replay_layout)
-        if (isFocusUiMode) {
+        if (isFocusUiMode()) {
             replyAct.isClickable = true
             setViewInFocusMode(replyAct)
         } else {
@@ -67,21 +67,22 @@ class CompleteView @JvmOverloads constructor(
     override fun onPlayStateChanged(playState: Int) {
         if (playState == DKVideoView.STATE_PLAYBACK_COMPLETED) {
             visibility = VISIBLE
-            mStopFullscreen.visibility = if (mControlWrapper?.isFullScreen.orDefault()) VISIBLE else GONE
+            mStopFullscreen.visibility =
+                if (mControlWrapper?.isFullScreen.orDefault()) VISIBLE else GONE
             bringToFront()
         } else {
             visibility = GONE
         }
     }
 
+    @SuppressLint("SwitchIntDef")
     override fun onScreenModeChanged(screenMode: Int) {
         if (screenMode == DKVideoView.SCREEN_MODE_FULL) {
             mStopFullscreen.visibility = VISIBLE
         } else if (screenMode == DKVideoView.SCREEN_MODE_NORMAL) {
             mStopFullscreen.visibility = GONE
         }
-        mControlWrapper?.let {
-            controller->
+        mControlWrapper?.let { controller ->
             val activity = activity
             if (activity != null && controller.hasCutout()) {
                 val orientation = activity.requestedOrientation

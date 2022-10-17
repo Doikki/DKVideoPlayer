@@ -4,15 +4,16 @@ import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
 import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import xyz.doikki.videoplayer.DKManager
-import xyz.doikki.videoplayer.DKPlayer
-import xyz.doikki.videoplayer.DKVideoView
-import xyz.doikki.videoplayer.orDefault
+import xyz.doikki.videoplayer.*
+import xyz.doikki.videoplayer.controller.MediaController
 import xyz.doikki.videoplayer.render.AspectRatioType
 import xyz.doikki.videoplayer.render.Render
 import xyz.doikki.videoplayer.render.RenderFactory
+import xyz.doikki.videoplayer.util.canTakeFocus
+import xyz.doikki.videoplayer.util.orDefault
 
 /**
  * 真正的容器：内部包含了Render
@@ -20,6 +21,12 @@ import xyz.doikki.videoplayer.render.RenderFactory
 internal class DKVideoViewContainer @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
 ) : FrameLayout(context, attrs) {
+
+    /**
+     * 控制器
+     */
+    var videoController: MediaController? = null
+        private set
 
     /**
      * render是否可以重用
@@ -69,6 +76,24 @@ internal class DKVideoViewContainer @JvmOverloads constructor(
     val videoSize: IntArray = mVideoSize
 
     private var mAttachedPlayer: DKPlayer? = null
+
+    /**
+     * 设置控制器，传null表示移除控制器
+     */
+    fun setVideoController(mediaController: MediaController?) {
+        videoController?.let {//移除之前已添加的控制器
+            removeView(it)
+        }
+        videoController = mediaController
+        mediaController?.let { controller ->
+            //添加控制器
+            val params = LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            addView(controller, params)
+        }
+    }
 
     /**
      * 初始化视频渲染View
@@ -187,6 +212,13 @@ internal class DKVideoViewContainer @JvmOverloads constructor(
         this.keepScreenOn = false
     }
 
+    /**
+     * 改变返回键逻辑，用于activity
+     */
+    fun onBackPressed(): Boolean {
+        return videoController?.onBackPressed().orDefault()
+    }
+
     //释放renderView
     private fun removeRenderIfAdded() {
         mRender?.let {
@@ -194,5 +226,14 @@ internal class DKVideoViewContainer @JvmOverloads constructor(
             it.release()
         }
         mRender = null
+    }
+
+    override fun addFocusables(views: ArrayList<View>, direction: Int) {
+        val controller = videoController
+        if (controller != null && controller.canTakeFocus) {
+            views.add(controller)//controller能够获取焦点的情况下，优先只让controller获取焦点
+            return
+        }
+        super.addFocusables(views, direction)
     }
 }

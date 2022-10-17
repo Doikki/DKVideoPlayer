@@ -9,9 +9,9 @@ import android.view.View
 import android.view.View.OnTouchListener
 import androidx.annotation.AttrRes
 import xyz.doikki.videoplayer.DKVideoView
-import xyz.doikki.videoplayer.INVALIDATE_SEEK_POSITION
+import xyz.doikki.videoplayer.util.INVALIDATE_SEEK_POSITION
 import xyz.doikki.videoplayer.controller.component.GestureControlComponent
-import xyz.doikki.videoplayer.getActivityContext
+import xyz.doikki.videoplayer.util.getActivityContext
 import xyz.doikki.videoplayer.util.PlayerUtils
 import kotlin.math.abs
 

@@ -18,7 +18,7 @@ import com.google.android.exoplayer2.video.VideoSize
 import xyz.doikki.videoplayer.AbstractDKPlayer
 import xyz.doikki.videoplayer.DKManager.isDebuggable
 import xyz.doikki.videoplayer.DKPlayer
-import xyz.doikki.videoplayer.player.AndroidMediaPlayerException
+import xyz.doikki.videoplayer.internal.DKPlayerException
 
 open class ExoMediaPlayer(context: Context) : AbstractDKPlayer(), Player.Listener {
     protected var mAppContext: Context
@@ -218,7 +218,11 @@ open class ExoMediaPlayer(context: Context) : AbstractDKPlayer(), Player.Listene
 
     override fun onPlayerError(error: PlaybackException) {
         if (eventListener != null) {
-            eventListener!!.onError(AndroidMediaPlayerException(error))
+            eventListener!!.onError(
+                DKPlayerException(
+                    error
+                )
+            )
         }
     }
 

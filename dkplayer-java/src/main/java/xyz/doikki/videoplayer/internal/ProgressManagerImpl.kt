@@ -2,7 +2,7 @@ package xyz.doikki.videoplayer.internal
 
 import android.util.LruCache
 import xyz.doikki.videoplayer.ProgressManager
-import xyz.doikki.videoplayer.orDefault
+import xyz.doikki.videoplayer.util.orDefault
 
 class ProgressManagerImpl : ProgressManager {
 

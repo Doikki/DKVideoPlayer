@@ -8,14 +8,7 @@ import xyz.doikki.videoplayer.DKManager;
  * 视图控制器
  */
 public interface VideoViewController {
-
-//    /**
-//     * 是否采用焦点模式
-//     */
-//    default boolean isFocusUiMode() {
-//        return DKManager.isFocusInTouchMode();
-//    }
-
+    
     /**
      * 控制视图是否处于显示状态
      */

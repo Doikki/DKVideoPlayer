@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.KeyEvent
 import xyz.doikki.videoplayer.controller.component.KeyControlComponent
-import xyz.doikki.videoplayer.loopKeyWhen
+import xyz.doikki.videoplayer.util.loopKeyWhen
 import kotlin.math.ceil
 
 open class TVVideoController @JvmOverloads constructor(
@@ -67,11 +67,16 @@ open class TVVideoController @JvmOverloads constructor(
             KeyEvent.KEYCODE_HEADSETHOOK,
             KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE,
             KeyEvent.KEYCODE_SPACE,
+            KeyEvent.KEYCODE_ENTER,
             KeyEvent.KEYCODE_DPAD_CENTER
             -> {//播放/暂停切换键
-                if (uniqueDown) {
-                    //如果是第一次按下Ok键/播放暂停键/空格键 等，则在播放和暂停之间进行切换
-                    togglePlay()
+                if (uniqueDown) {  //第一次按下Ok键/播放暂停键/空格键
+                    if (isInPlaybackState) {
+                        //正在播放过程中，则切换播放
+                        togglePlay()
+                    } else if (isInCompleteState) {
+                        replay(resetPosition = true)
+                    }
                     show()
                 }
                 return true
@@ -149,7 +154,7 @@ open class TVVideoController @JvmOverloads constructor(
                     mHasDispatchPendingSeek = true
                     mCurrentPendingSeekPosition = currentPosition
                     mControlComponents.loopKeyWhen<KeyControlComponent> {
-                        it.onStartLeftOrRightKeyPressed(event)
+                        it.onStartLeftOrRightKeyPressedForSeeking(event)
                     }
                     seekCalculator.prepareCalculate(event, currentPosition, duration, width)
                 }
@@ -225,7 +230,7 @@ open class TVVideoController @JvmOverloads constructor(
     private fun cancelPendingSeekPosition(event: KeyEvent) {
         cancelPendingSeekPosition()
         mControlComponents.loopKeyWhen<KeyControlComponent> {
-            it.onCancelLeftOrRightKeyPressed(event)
+            it.onCancelLeftOrRightKeyPressedForSeeking(event)
         }
     }
 
@@ -235,7 +240,7 @@ open class TVVideoController @JvmOverloads constructor(
     private fun handlePendingSeekPosition(event: KeyEvent) {
         //先做stop，再seek，避免loading指示器和seek指示器同时显示
         mControlComponents.loopKeyWhen<KeyControlComponent> {
-            it.onStopLeftOrRightKeyPressed(event)
+            it.onStopLeftOrRightKeyPressedForSeeking(event)
         }
         handlePendingSeekPosition()
     }

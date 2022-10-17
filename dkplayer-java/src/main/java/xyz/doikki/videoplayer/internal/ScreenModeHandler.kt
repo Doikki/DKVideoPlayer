@@ -1,4 +1,4 @@
-package xyz.doikki.videoplayer.player
+package xyz.doikki.videoplayer.internal
 
 import android.app.Activity
 import android.os.Build
@@ -9,9 +9,9 @@ import android.view.WindowManager
 import android.widget.FrameLayout
 import androidx.annotation.Px
 import xyz.doikki.videoplayer.R
-import xyz.doikki.videoplayer.contentView
-import xyz.doikki.videoplayer.decorView
-import xyz.doikki.videoplayer.removeFromParent
+import xyz.doikki.videoplayer.util.contentView
+import xyz.doikki.videoplayer.util.decorView
+import xyz.doikki.videoplayer.util.removeFromParent
 
 /**
  * 处理播放器屏幕切换

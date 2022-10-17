@@ -203,14 +203,11 @@ public class ControlWrapper implements VideoViewControl, VideoViewController {
         return mPlayerControl.stopVideoViewFullScreen();
     }
 
-
-
     @Keep
     @Override
     public void hide() {
         mController.hide();
     }
-
 
     @Override
     public long getCurrentPosition() {

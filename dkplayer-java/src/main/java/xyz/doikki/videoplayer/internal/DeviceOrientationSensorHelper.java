@@ -1,4 +1,4 @@
-package xyz.doikki.videoplayer.player;
+package xyz.doikki.videoplayer.internal;
 
 import android.app.Activity;
 import android.content.Context;

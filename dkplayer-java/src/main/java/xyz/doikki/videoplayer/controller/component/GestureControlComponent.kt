@@ -1,37 +1,38 @@
-package xyz.doikki.videoplayer.controller.component;
+package xyz.doikki.videoplayer.controller.component
 
+import xyz.doikki.videoplayer.controller.component.ControlComponent
 
 /**
  * 与手势操作相关的控制组件
  */
-public interface GestureControlComponent extends ControlComponent {
+interface GestureControlComponent : ControlComponent {
     /**
      * 开始滑动
      */
-    void onStartSlide();
+    fun onStartSlide()
 
     /**
      * 结束滑动
      */
-    void onStopSlide();
+    fun onStopSlide()
 
     /**
-     * 滑动调整进度        
+     * 滑动调整进度
      * @param slidePosition 滑动进度
      * @param currentPosition 当前播放进度
      * @param duration 视频总长度
      */
-    void onPositionChange(int slidePosition, int currentPosition, int duration);
+    fun onPositionChange(slidePosition: Int, currentPosition: Int, duration: Int)
 
     /**
      * 滑动调整亮度
      * @param percent 亮度百分比
      */
-    void onBrightnessChange(int percent);
+    fun onBrightnessChange(percent: Int)
 
     /**
      * 滑动调整音量
      * @param percent 音量百分比
      */
-    void onVolumeChange(int percent);
+    fun onVolumeChange(percent: Int)
 }

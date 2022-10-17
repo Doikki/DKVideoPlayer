@@ -23,6 +23,15 @@
 ## 4. MediaPlayer + TextureView 在一款湖南的盒子（4.4系统）上使用进行播放，有声音无画面
 
 备注：MediaPlayer + SurfaceView在该设备上能够播放 解决办法：在5.0以前的系统默认使用SurfaceView，5.0及以后的系统使用TextureView
+详细说明：MediaPlayer + TextureView 在湖南的某一款盒子（手上就这一款盒子）上运行，Application开启了硬件加速，但是还是有声音无画面
+
+试了以下两个资料提及的办法均无效：
+TextureView有声音没画面&onSurfaceTextureAvailable没调用：https://blog.csdn.net/qugengting/article/details/105271008
+即：在博主（反正在我的小米手机android 10系统上）的手机上没有回调onSurfaceTextureAvailable，但是回调了update，因此利用了update的逻辑。
+
+Textureview+Mediplay 播放视频时无画面有声音 https://blog.csdn.net/feifan12311/article/details/119332973
+尝试结果：我通过反射参照文档所说进行设置，但是发现通过反射方法设置的属性无法生效（设置后重新读取得到的结果还是之前的结果），多半需要系统的配置设置才行。
 
 ## 5. IJK 重新播放（调用reset在重新设置数据源）的情况下，先于reset之前设置的surface会无效
+
 解决办法：整个DKVideoView的reply逻辑应该是先reset->set option -> set render -> setDatasource

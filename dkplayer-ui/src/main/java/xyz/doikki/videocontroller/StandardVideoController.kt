@@ -13,8 +13,8 @@ import androidx.annotation.AttrRes
 import xyz.doikki.videocontroller.component.*
 import xyz.doikki.videoplayer.DKVideoView
 import xyz.doikki.videoplayer.controller.GestureVideoController
-import xyz.doikki.videoplayer.orDefault
-import xyz.doikki.videoplayer.toast
+import xyz.doikki.videoplayer.util.orDefault
+import xyz.doikki.videoplayer.util.toast
 import xyz.doikki.videoplayer.util.PlayerUtils
 
 /**
@@ -75,8 +75,6 @@ open class StandardVideoController @JvmOverloads constructor(
         }
     }
 
-
-
     override fun onLockStateChanged(isLocked: Boolean) {
         if (isLocked) {
             lockButton.isSelected = true
@@ -125,15 +123,19 @@ open class StandardVideoController @JvmOverloads constructor(
             val orientation = mActivity!!.requestedOrientation
             val dp24 = PlayerUtils.dp2px(context, 24f)
             val cutoutHeight = cutoutHeight
-            if (orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-                val lblp = lockButton!!.layoutParams as LayoutParams
-                lblp.setMargins(dp24, 0, dp24, 0)
-            } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-                val layoutParams = lockButton!!.layoutParams as LayoutParams
-                layoutParams.setMargins(dp24 + cutoutHeight, 0, dp24 + cutoutHeight, 0)
-            } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
-                val layoutParams = lockButton!!.layoutParams as LayoutParams
-                layoutParams.setMargins(dp24, 0, dp24, 0)
+            when (orientation) {
+                ActivityInfo.SCREEN_ORIENTATION_PORTRAIT -> {
+                    val lblp = lockButton.layoutParams as LayoutParams
+                    lblp.setMargins(dp24, 0, dp24, 0)
+                }
+                ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE -> {
+                    val layoutParams = lockButton.layoutParams as LayoutParams
+                    layoutParams.setMargins(dp24 + cutoutHeight, 0, dp24 + cutoutHeight, 0)
+                }
+                ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE -> {
+                    val layoutParams = lockButton.layoutParams as LayoutParams
+                    layoutParams.setMargins(dp24, 0, dp24, 0)
+                }
             }
         }
     }
@@ -142,27 +144,27 @@ open class StandardVideoController @JvmOverloads constructor(
         super.onPlayerStateChanged(playState)
         when (playState) {
             DKVideoView.STATE_IDLE -> {
-                lockButton!!.isSelected = false
-                loadingIndicator!!.visibility = GONE
+                lockButton.isSelected = false
+                loadingIndicator.visibility = GONE
             }
             DKVideoView.STATE_PLAYING, DKVideoView.STATE_PAUSED, DKVideoView.STATE_PREPARED, DKVideoView.STATE_ERROR, DKVideoView.STATE_BUFFERED -> {
                 if (playState == DKVideoView.STATE_BUFFERED) {
                     isBuffering = false
                 }
                 if (!isBuffering) {
-                    loadingIndicator!!.visibility = GONE
+                    loadingIndicator.visibility = GONE
                 }
             }
             DKVideoView.STATE_PREPARING, DKVideoView.STATE_BUFFERING -> {
-                loadingIndicator!!.visibility = VISIBLE
+                loadingIndicator.visibility = VISIBLE
                 if (playState == DKVideoView.STATE_BUFFERING) {
                     isBuffering = true
                 }
             }
             DKVideoView.STATE_PLAYBACK_COMPLETED -> {
-                loadingIndicator!!.visibility = GONE
-                lockButton!!.visibility = GONE
-                lockButton!!.isSelected = false
+                loadingIndicator.visibility = GONE
+                lockButton.visibility = GONE
+                lockButton.isSelected = false
             }
         }
     }
