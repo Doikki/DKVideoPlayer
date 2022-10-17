@@ -5,18 +5,18 @@ import android.view.animation.Animation;
 
 import androidx.annotation.NonNull;
 
-import xyz.doikki.dkplayer.util.Utils;
-import xyz.doikki.videoplayer.controller.ControlWrapper;
-import xyz.doikki.videoplayer.controller.IControlComponent;
+import xyz.doikki.videoplayer.controller.MediaController;
+import xyz.doikki.videoplayer.controller.component.ControlComponent;
 import xyz.doikki.videoplayer.util.L;
+import xyz.doikki.videoplayer.util.UtilsKt;
 
-public class PlayerMonitor implements IControlComponent {
+public class PlayerMonitor implements ControlComponent {
 
-    private ControlWrapper mControlWrapper;
+    private MediaController mControlWrapper;
 
     @Override
-    public void attach(@NonNull ControlWrapper controlWrapper) {
-        mControlWrapper = controlWrapper;
+    public void attachController(@NonNull MediaController controller) {
+        mControlWrapper = controller;
     }
 
     @Override
@@ -31,22 +31,24 @@ public class PlayerMonitor implements IControlComponent {
 
     @Override
     public void onPlayStateChanged(int playState) {
-        L.d("onPlayStateChanged: " + Utils.playState2str(playState));
+        L.d("onPlayStateChanged: " + UtilsKt.playState2str(playState));
     }
 
     @Override
-    public void onPlayerStateChanged(int playerState) {
-        L.d("onPlayerStateChanged: " + Utils.playerState2str(playerState));
+    public void onScreenModeChanged(int screenMode) {
+        L.d("onPlayerStateChanged: " + UtilsKt.screenMode2str(screenMode));
     }
 
     @Override
-    public void setProgress(int duration, int position) {
-        L.d("setProgress: duration: " + duration + " position: " + position + " buffered percent: " + mControlWrapper.getBufferedPercentage());
-        L.d("network speed: " + mControlWrapper.getTcpSpeed());
+    public void onProgressChanged(int duration, int position) {
+        L.d("setProgress: duration: " + duration + " position: " + position + " buffered percent: " + mControlWrapper.getPlayerControl().getBufferedPercentage());
+        L.d("network speed: " + mControlWrapper.getPlayerControl().getTcpSpeed());
     }
 
     @Override
     public void onLockStateChanged(boolean isLocked) {
         L.d("onLockStateChanged: " + isLocked);
     }
+
+
 }

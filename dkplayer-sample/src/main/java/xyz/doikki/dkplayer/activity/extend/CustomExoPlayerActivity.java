@@ -12,13 +12,13 @@ import xyz.doikki.dkplayer.widget.videoview.ExoVideoView;
 import xyz.doikki.videocontroller.StandardVideoController;
 import xyz.doikki.videoplayer.exo.ExoMediaPlayer;
 import xyz.doikki.videoplayer.exo.ExoMediaSourceHelper;
-import xyz.doikki.videoplayer.player.AbstractPlayer;
+import xyz.doikki.videoplayer.DKPlayer;
 
 /**
  * 自定义MediaPlayer，有多种情形：
  * 第一：继承某个现成的MediaPlayer，对其功能进行扩展，此demo就演示了通过继承{@link ExoMediaPlayer}
  * 对其功能进行扩展。
- * 第二：通过继承{@link AbstractPlayer}扩展一些其他的播放器。
+ * 第二：通过继承{@link DKPlayer}扩展一些其他的播放器。
  */
 public class CustomExoPlayerActivity extends BaseActivity<ExoVideoView> {
 
@@ -45,7 +45,7 @@ public class CustomExoPlayerActivity extends BaseActivity<ExoVideoView> {
         switch (view.getId()) {
             case R.id.btn_cache: {
                 mVideoView.setCacheEnabled(true);
-                mVideoView.setUrl("http://playertest.longtailvideo.com/adaptive/bipbop/gear4/prog_index.m3u8");
+                mVideoView.setDataSource("http://playertest.longtailvideo.com/adaptive/bipbop/gear4/prog_index.m3u8");
                 break;
             }
             case R.id.btn_concat: {
@@ -68,11 +68,11 @@ public class CustomExoPlayerActivity extends BaseActivity<ExoVideoView> {
                 break;
             }
             case R.id.btn_dash: {
-                mVideoView.setUrl("http://www.bok.net/dash/tears_of_steel/cleartext/stream.mpd");
+                mVideoView.setDataSource("http://www.bok.net/dash/tears_of_steel/cleartext/stream.mpd");
                 break;
             }
             case R.id.btn_rtsp: {
-                mVideoView.setUrl("rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov");
+                mVideoView.setDataSource("rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov");
                 break;
             }
         }

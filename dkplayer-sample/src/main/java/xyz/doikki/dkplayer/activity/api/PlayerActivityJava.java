@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import androidx.annotation.Nullable;
+
 import com.bumptech.glide.Glide;
 
 import xyz.doikki.dkplayer.R;
@@ -24,7 +26,9 @@ import xyz.doikki.videocontroller.component.LiveControlView;
 import xyz.doikki.videocontroller.component.PrepareView;
 import xyz.doikki.videocontroller.component.TitleView;
 import xyz.doikki.videocontroller.component.VodControlView;
-import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.DKVideoView;
+import xyz.doikki.videoplayer.render.AspectRatioType;
+import xyz.doikki.videoplayer.render.Render;
 import xyz.doikki.videoplayer.util.L;
 
 /**
@@ -32,7 +36,7 @@ import xyz.doikki.videoplayer.util.L;
  * Created by Doikki on 2017/4/7.
  */
 
-public class PlayerActivityJava extends BaseActivity<VideoView> {
+public class PlayerActivityJava extends BaseActivity<DKVideoView> {
 
     private static final String THUMB = "https://cms-bucket.nosdn.127.net/eb411c2810f04ffa8aaafc42052b233820180418095416.jpeg";
 
@@ -58,7 +62,7 @@ public class PlayerActivityJava extends BaseActivity<VideoView> {
         if (intent != null) {
             StandardVideoController controller = new StandardVideoController(this);
             //根据屏幕方向自动进入/退出全屏
-            controller.setEnableOrientation(true);
+            controller.setEnableOrientationSensor(true);
 
             PrepareView prepareView = new PrepareView(this);//准备播放界面
             prepareView.setClickStart();
@@ -87,7 +91,7 @@ public class PlayerActivityJava extends BaseActivity<VideoView> {
             GestureView gestureControlView = new GestureView(this);//滑动控制视图
             controller.addControlComponent(gestureControlView);
             //根据是否为直播决定是否需要滑动调节进度
-            controller.setCanChangePosition(!isLive);
+            controller.setSeekEnabled(!isLive);
 
             //设置标题
             String title = intent.getStringExtra(IntentKeys.TITLE);
@@ -126,7 +130,7 @@ public class PlayerActivityJava extends BaseActivity<VideoView> {
                 //获取intent中的视频地址
                 url = Utils.getFileFromContentUri(this, intent.getData());
             }
-            mVideoView.setUrl(url);
+            mVideoView.setDataSource(url);
 
             //保存播放进度
 //            mVideoView.setProgressManager(new ProgressManagerImpl());
@@ -156,47 +160,39 @@ public class PlayerActivityJava extends BaseActivity<VideoView> {
             @Override
             public void onClick(View v) {
                 mVideoView.release();
-                mVideoView.setUrl(etOtherVideo.getText().toString());
+                mVideoView.setDataSource(etOtherVideo.getText().toString());
                 mVideoView.start();
             }
         });
     }
 
-    private VideoView.OnStateChangeListener mOnStateChangeListener = new VideoView.SimpleOnStateChangeListener() {
-        @Override
-        public void onPlayerStateChanged(int playerState) {
-            switch (playerState) {
-                case VideoView.PLAYER_NORMAL://小屏
-                    break;
-                case VideoView.PLAYER_FULL_SCREEN://全屏
-                    break;
-            }
-        }
+    private DKVideoView.OnStateChangeListener mOnStateChangeListener = new DKVideoView.OnStateChangeListener() {
+
 
         @Override
-        public void onPlayStateChanged(int playState) {
+        public void onPlayerStateChanged(int playState) {
             switch (playState) {
-                case VideoView.STATE_IDLE:
+                case DKVideoView.STATE_IDLE:
                     break;
-                case VideoView.STATE_PREPARING:
+                case DKVideoView.STATE_PREPARING:
                     break;
-                case VideoView.STATE_PREPARED:
+                case DKVideoView.STATE_PREPARED:
                     break;
-                case VideoView.STATE_PLAYING:
+                case DKVideoView.STATE_PLAYING:
                     //需在此时获取视频宽高
                     int[] videoSize = mVideoView.getVideoSize();
                     L.d("视频宽：" + videoSize[0]);
                     L.d("视频高：" + videoSize[1]);
                     break;
-                case VideoView.STATE_PAUSED:
+                case DKVideoView.STATE_PAUSED:
                     break;
-                case VideoView.STATE_BUFFERING:
+                case DKVideoView.STATE_BUFFERING:
                     break;
-                case VideoView.STATE_BUFFERED:
+                case DKVideoView.STATE_BUFFERED:
                     break;
-                case VideoView.STATE_PLAYBACK_COMPLETED:
+                case DKVideoView.STATE_PLAYBACK_COMPLETED:
                     break;
-                case VideoView.STATE_ERROR:
+                case DKVideoView.STATE_ERROR:
                     break;
             }
         }
@@ -208,22 +204,22 @@ public class PlayerActivityJava extends BaseActivity<VideoView> {
         int id = view.getId();
         switch (id) {
             case R.id.scale_default:
-                mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_DEFAULT);
+                mVideoView.setScreenAspectRatioType(AspectRatioType.DEFAULT_SCALE);
                 break;
             case R.id.scale_169:
-                mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_16_9);
+                mVideoView.setScreenAspectRatioType(AspectRatioType.SCALE_16_9);
                 break;
             case R.id.scale_43:
-                mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_4_3);
+                mVideoView.setScreenAspectRatioType(AspectRatioType.SCALE_4_3);
                 break;
             case R.id.scale_original:
-                mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_ORIGINAL);
+                mVideoView.setScreenAspectRatioType(AspectRatioType.SCALE_ORIGINAL);
                 break;
             case R.id.scale_match_parent:
-                mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_MATCH_PARENT);
+                mVideoView.setScreenAspectRatioType(AspectRatioType.MATCH_PARENT);
                 break;
             case R.id.scale_center_crop:
-                mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_CENTER_CROP);
+                mVideoView.setScreenAspectRatioType(AspectRatioType.CENTER_CROP);
                 break;
 
             case R.id.speed_0_5:
@@ -244,8 +240,13 @@ public class PlayerActivityJava extends BaseActivity<VideoView> {
 
             case R.id.screen_shot:
                 ImageView imageView = findViewById(R.id.iv_screen_shot);
-                Bitmap bitmap = mVideoView.doScreenShot();
-                imageView.setImageBitmap(bitmap);
+                 mVideoView.screenshot(new Render.ScreenShotCallback() {
+                    @Override
+                    public void onScreenShotResult(@Nullable Bitmap bmp) {
+                        imageView.setImageBitmap(bmp);
+                    }
+                });
+
                 break;
 
             case R.id.mirror_rotate:
@@ -263,7 +264,7 @@ public class PlayerActivityJava extends BaseActivity<VideoView> {
         super.onPause();
         //如果视频还在准备就 activity 就进入了后台，建议直接将 VideoView release
         //防止进入后台后视频还在播放
-        if (mVideoView.getCurrentPlayState() == VideoView.STATE_PREPARING) {
+        if (mVideoView.getPlayerState() == DKVideoView.STATE_PREPARING) {
             mVideoView.release();
         }
     }

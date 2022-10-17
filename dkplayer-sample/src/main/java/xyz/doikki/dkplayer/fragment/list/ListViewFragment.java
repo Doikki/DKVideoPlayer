@@ -23,7 +23,7 @@ import xyz.doikki.videocontroller.component.ErrorView;
 import xyz.doikki.videocontroller.component.GestureView;
 import xyz.doikki.videocontroller.component.TitleView;
 import xyz.doikki.videocontroller.component.VodControlView;
-import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.DKVideoView;
 
 /**
  * ListView demo，不推荐，建议使用{@link RecyclerViewFragment}
@@ -33,7 +33,7 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
     private List<VideoBean> mVideos = new ArrayList<>();
     private VideoListViewAdapter mAdapter;
 
-    private VideoView mVideoView;
+    private DKVideoView mVideoView;
     private StandardVideoController mController;
     private int mCurPosition = -1;
     private TitleView mTitleView;
@@ -46,11 +46,11 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
     @Override
     protected void initView() {
         super.initView();
-        mVideoView = new VideoView(getActivity());
-        mVideoView.setOnStateChangeListener(new VideoView.SimpleOnStateChangeListener() {
+        mVideoView = new DKVideoView(getActivity());
+        mVideoView.addOnStateChangeListener(new DKVideoView.OnStateChangeListener() {
             @Override
-            public void onPlayStateChanged(int playState) {
-                if (playState == VideoView.STATE_IDLE) {
+            public void onPlayerStateChanged(int playState) {
+                if (playState == DKVideoView.STATE_IDLE) {
                     Utils.removeViewFormParent(mVideoView);
                     mCurPosition = -1;
                 }
@@ -63,7 +63,7 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
         mTitleView = new TitleView(getActivity());
         mController.addControlComponent(mTitleView);
         mController.addControlComponent(new VodControlView(getActivity()));
-        mController.setEnableOrientation(true);
+        mController.setEnableOrientationSensor(true);
         mVideoView.setVideoController(mController);
 
         ListView listView = findViewById(R.id.lv);
@@ -158,7 +158,7 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
             releaseVideoView();
         }
         VideoBean videoBean = mVideos.get(position);
-        mVideoView.setUrl(videoBean.getUrl());
+        mVideoView.setDataSource(videoBean.getUrl());
         mTitleView.setTitle(videoBean.getTitle());
         View itemView = mAdapter.getItemView(position);
         VideoListViewAdapter.ViewHolder viewHolder = (VideoListViewAdapter.ViewHolder) itemView.getTag();
@@ -175,7 +175,7 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
     private void releaseVideoView() {
         mVideoView.release();
         if (mVideoView.isFullScreen()) {
-            mVideoView.stopFullScreen();
+            mVideoView.stopVideoViewFullScreen();
         }
         if(getActivity().getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);

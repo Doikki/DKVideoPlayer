@@ -1,12 +1,9 @@
 package xyz.doikki.dkplayer.widget.component;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.animation.Animation;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,18 +11,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import xyz.doikki.dkplayer.R;
-import xyz.doikki.videoplayer.controller.IControlComponent;
-import xyz.doikki.videoplayer.controller.ControlWrapper;
-import xyz.doikki.videoplayer.player.VideoView;
-import xyz.doikki.videoplayer.util.PlayerUtils;
+import xyz.doikki.videocontroller.component.BaseControlComponent;
+import xyz.doikki.videoplayer.DKVideoView;
 
-public class AdControlView extends FrameLayout implements IControlComponent, View.OnClickListener {
+
+public class AdControlView extends BaseControlComponent implements View.OnClickListener {
 
     protected TextView mAdTime, mAdDetail;
     protected ImageView mBack, mVolume, mFullScreen, mPlayButton;
     protected AdControlListener mListener;
-
-    private ControlWrapper mControlWrapper;
 
     public AdControlView(@NonNull Context context) {
         super(context);
@@ -63,42 +57,28 @@ public class AdControlView extends FrameLayout implements IControlComponent, Vie
         });
     }
 
-    @Override
-    public void attach(@NonNull ControlWrapper controlWrapper) {
-        mControlWrapper = controlWrapper;
-    }
-
-    @Override
-    public View getView() {
-        return this;
-    }
-
-    @Override
-    public void onVisibilityChanged(boolean isVisible, Animation anim) {
-
-    }
 
     @Override
     public void onPlayStateChanged(int playState) {
         switch (playState) {
-            case VideoView.STATE_PLAYING:
-                mControlWrapper.startProgress();
+            case DKVideoView.STATE_PLAYING:
+                getMController().startUpdateProgress();
                 mPlayButton.setSelected(true);
                 break;
-            case VideoView.STATE_PAUSED:
+            case DKVideoView.STATE_PAUSED:
                 mPlayButton.setSelected(false);
                 break;
         }
     }
 
     @Override
-    public void onPlayerStateChanged(int playerState) {
-        switch (playerState) {
-            case VideoView.PLAYER_NORMAL:
+    public void onScreenModeChanged(int screenMode) {
+        switch (screenMode) {
+            case DKVideoView.SCREEN_MODE_NORMAL:
                 mBack.setVisibility(GONE);
                 mFullScreen.setSelected(false);
                 break;
-            case VideoView.PLAYER_FULL_SCREEN:
+            case DKVideoView.SCREEN_MODE_FULL:
                 mBack.setVisibility(VISIBLE);
                 mFullScreen.setSelected(true);
                 break;
@@ -108,7 +88,7 @@ public class AdControlView extends FrameLayout implements IControlComponent, Vie
     }
 
     @Override
-    public void setProgress(int duration, int position) {
+    public void onProgressChanged(int duration, int position) {
         if (mAdTime != null)
             mAdTime.setText(String.format("%s | 跳过", (duration - position) / 1000));
     }
@@ -130,21 +110,21 @@ public class AdControlView extends FrameLayout implements IControlComponent, Vie
         } else if (id == R.id.ad_time) {
             if (mListener != null) mListener.onSkipAd();
         } else if (id == R.id.iv_play) {
-            mControlWrapper.togglePlay();
+            getMController().togglePlay();
         }
     }
 
     private void doMute() {
-        mControlWrapper.setMute(!mControlWrapper.isMute());
-        mVolume.setImageResource(mControlWrapper.isMute() ? R.drawable.dkplayer_ic_action_volume_up : R.drawable.dkplayer_ic_action_volume_off);
+
+        getPlayer().setMute(!getPlayer().isMute());
+        mVolume.setImageResource(getPlayer().isMute() ? R.drawable.dkplayer_ic_action_volume_up : R.drawable.dkplayer_ic_action_volume_off);
     }
 
     /**
      * 横竖屏切换
      */
     private void toggleFullScreen() {
-        Activity activity = PlayerUtils.scanForActivity(getContext());
-        mControlWrapper.toggleFullScreen(activity);
+        getMController().toggleFullScreen();
     }
 
     public void setListener(AdControlListener listener) {

@@ -13,14 +13,14 @@ import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.activity.BaseActivity;
 import xyz.doikki.dkplayer.util.Utils;
 import xyz.doikki.videocontroller.StandardVideoController;
+import xyz.doikki.videoplayer.DKVideoView;
 import xyz.doikki.videoplayer.exo.ExoMediaPlayerFactory;
-import xyz.doikki.videoplayer.player.VideoView;
 
 /**
  * 播放raw/assets视频
  */
 
-public class PlayRawAssetsActivity extends BaseActivity<VideoView> {
+public class PlayRawAssetsActivity extends BaseActivity<DKVideoView> {
 
     @Override
     protected int getLayoutResId() {
@@ -56,15 +56,15 @@ public class PlayRawAssetsActivity extends BaseActivity<VideoView> {
                         e.printStackTrace();
                     }
                     String url = rawResourceDataSource.getUri().toString();
-                    mVideoView.setUrl(url);
+                    mVideoView.setDataSource(url);
                 } else { //MediaPlayer,IjkPlayer
                     String url = "android.resource://" + getPackageName() + "/" + R.raw.movie;
-                    mVideoView.setUrl(url);
+                    mVideoView.setDataSource(url);
                 }
                 break;
             case R.id.btn_assets:
                 if (playerFactory instanceof ExoMediaPlayerFactory) { //ExoPlayer
-                    mVideoView.setUrl("file:///android_asset/" + "test.mp4");
+                    mVideoView.setDataSource("file:///android_asset/" + "test.mp4");
                 } else { //MediaPlayer,IjkPlayer
                     AssetManager am = getResources().getAssets();
                     AssetFileDescriptor afd = null;
@@ -73,7 +73,7 @@ public class PlayRawAssetsActivity extends BaseActivity<VideoView> {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    mVideoView.setAssetFileDescriptor(afd);
+                    mVideoView.setDataSource(afd);
                 }
                 break;
         }

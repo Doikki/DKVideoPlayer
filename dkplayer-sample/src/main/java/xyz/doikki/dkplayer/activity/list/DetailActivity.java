@@ -15,9 +15,9 @@ import xyz.doikki.dkplayer.util.IntentKeys;
 import xyz.doikki.dkplayer.util.Tag;
 import xyz.doikki.dkplayer.util.Utils;
 import xyz.doikki.videocontroller.StandardVideoController;
-import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.DKVideoView;
 
-public class DetailActivity extends BaseActivity<VideoView> {
+public class DetailActivity extends BaseActivity<DKVideoView> {
 
     private FrameLayout mPlayerContainer;
 
@@ -69,12 +69,12 @@ public class DetailActivity extends BaseActivity<VideoView> {
         controller.addDefaultControlComponent(title, false);
         if (seamlessPlay) {
             //无缝播放需还原Controller状态
-            controller.setPlayState(mVideoView.getCurrentPlayState());
-            controller.setPlayerState(mVideoView.getCurrentPlayerState());
+            controller.setPlayerState(mVideoView.getPlayerState());
+            controller.setScreenMode(mVideoView.getScreenMode());
         } else {
             //不是无缝播放的情况
             String url = intent.getStringExtra(IntentKeys.URL);
-            mVideoView.setUrl(url);
+            mVideoView.setDataSource(url);
             mVideoView.start();
         }
     }

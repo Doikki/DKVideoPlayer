@@ -13,19 +13,18 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 
-import xyz.doikki.dkplayer.util.Utils;
-import xyz.doikki.videoplayer.controller.ControlWrapper;
-import xyz.doikki.videoplayer.controller.IControlComponent;
-import xyz.doikki.videoplayer.exo.ExoMediaPlayerFactory;
-import xyz.doikki.videoplayer.ijk.IjkPlayerFactory;
-import xyz.doikki.videoplayer.player.AndroidMediaPlayerFactory;
+import xyz.doikki.videoplayer.DKVideoView;
+import xyz.doikki.videoplayer.controller.MediaController;
+import xyz.doikki.videoplayer.controller.VideoViewControl;
+import xyz.doikki.videoplayer.controller.component.ControlComponent;
+import xyz.doikki.videoplayer.util.UtilsKt;
 
 /**
  * 调试信息
  */
-public class DebugInfoView extends AppCompatTextView implements IControlComponent {
+public class DebugInfoView extends AppCompatTextView implements ControlComponent {
 
-    private ControlWrapper mControlWrapper;
+    private MediaController mController;
 
     public DebugInfoView(Context context) {
         super(context);
@@ -48,12 +47,6 @@ public class DebugInfoView extends AppCompatTextView implements IControlComponen
         setLayoutParams(lp);
     }
 
-
-    @Override
-    public void attach(@NonNull ControlWrapper controlWrapper) {
-        mControlWrapper = controlWrapper;
-    }
-
     @Override
     public View getView() {
         return this;
@@ -74,37 +67,37 @@ public class DebugInfoView extends AppCompatTextView implements IControlComponen
      * Returns the debugging information string to be shown by the target {@link TextView}.
      */
     protected String getDebugString(int playState) {
-        return getCurrentPlayer() + Utils.playState2str(playState) + "\n"
-                + "video width: " + mControlWrapper.getVideoSize()[0] + " , height: " + mControlWrapper.getVideoSize()[1];
-    }
-
-    protected String getCurrentPlayer() {
-        String player;
-        Object playerFactory = Utils.getCurrentPlayerFactoryInVideoView(mControlWrapper);
-        if (playerFactory instanceof ExoMediaPlayerFactory) {
-            player = "ExoPlayer";
-        } else if (playerFactory instanceof IjkPlayerFactory) {
-            player = "IjkPlayer";
-        } else if (playerFactory instanceof AndroidMediaPlayerFactory) {
-            player = "MediaPlayer";
-        } else {
-            player = "unknown";
-        }
-        return String.format("player: %s ", player);
+        VideoViewControl control = mController.getPlayerControl();
+        if (control == null)
+            return "";
+        int[] videoSize = control.getVideoSize();
+        DKVideoView videoView = (DKVideoView) mController.getPlayerControl();
+        StringBuilder sb = new StringBuilder();
+        sb.append("player:").append(videoView.getPlayerName()).append("   ")
+                .append("render:").append(videoView.getRenderName()).append("\n");
+        sb.append(UtilsKt.playState2str(playState)).append("  ")
+                .append("video width:").append(videoSize[0])
+                .append(",height:").append(videoSize[1]);
+        return sb.toString();
     }
 
     @Override
-    public void onPlayerStateChanged(int playerState) {
+    public void onScreenModeChanged(int screenMode) {
         bringToFront();
     }
 
     @Override
-    public void setProgress(int duration, int position) {
+    public void onProgressChanged(int duration, int position) {
 
     }
 
     @Override
     public void onLockStateChanged(boolean isLocked) {
 
+    }
+
+    @Override
+    public void attachController(@NonNull MediaController controller) {
+        this.mController = controller;
     }
 }

@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import xyz.doikki.videoplayer.player.VideoViewManager;
+import xyz.doikki.videoplayer.DKManager;
 import xyz.doikki.videoplayer.util.L;
 
 /**
@@ -91,7 +91,7 @@ public abstract class BaseFragment extends Fragment {
     /**
      * 子类可通过此方法直接拿到VideoViewManager
      */
-    protected VideoViewManager getVideoViewManager() {
-        return VideoViewManager.instance();
+    protected DKManager getVideoViewManager() {
+        return DKManager.INSTANCE;
     }
 }

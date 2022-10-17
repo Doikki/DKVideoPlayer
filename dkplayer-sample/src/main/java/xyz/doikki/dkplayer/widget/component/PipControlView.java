@@ -6,7 +6,6 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
@@ -15,13 +14,10 @@ import androidx.annotation.Nullable;
 
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.util.PIPManager;
-import xyz.doikki.videoplayer.controller.IControlComponent;
-import xyz.doikki.videoplayer.controller.ControlWrapper;
-import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videocontroller.component.BaseControlComponent;
+import xyz.doikki.videoplayer.DKVideoView;
 
-public class PipControlView extends FrameLayout implements IControlComponent, View.OnClickListener {
-
-    private ControlWrapper mControlWrapper;
+public class PipControlView extends BaseControlComponent implements View.OnClickListener {
 
     private final ImageView mPlay;
     private final ImageView mClose;
@@ -56,7 +52,7 @@ public class PipControlView extends FrameLayout implements IControlComponent, Vi
             PIPManager.getInstance().stopFloatWindow();
             PIPManager.getInstance().reset();
         } else if (id == R.id.start_play) {
-            mControlWrapper.togglePlay();
+            getMController().togglePlay();
         } else if (id == R.id.btn_skip) {
             if (PIPManager.getInstance().getActClass() != null) {
                 Intent intent = new Intent(getContext(), PIPManager.getInstance().getActClass());
@@ -64,16 +60,6 @@ public class PipControlView extends FrameLayout implements IControlComponent, Vi
                 getContext().startActivity(intent);
             }
         }
-    }
-
-    @Override
-    public void attach(@NonNull ControlWrapper controlWrapper) {
-        mControlWrapper = controlWrapper;
-    }
-
-    @Override
-    public View getView() {
-        return this;
     }
 
     @Override
@@ -93,49 +79,49 @@ public class PipControlView extends FrameLayout implements IControlComponent, Vi
     @Override
     public void onPlayStateChanged(int playState) {
         switch (playState) {
-            case VideoView.STATE_IDLE:
-            case VideoView.STATE_PAUSED:
+            case DKVideoView.STATE_IDLE:
+            case DKVideoView.STATE_PAUSED:
                 mPlay.setSelected(false);
                 mPlay.setVisibility(VISIBLE);
                 mLoading.setVisibility(GONE);
                 break;
-            case VideoView.STATE_PLAYING:
+            case DKVideoView.STATE_PLAYING:
                 mPlay.setSelected(true);
                 mPlay.setVisibility(GONE);
                 mLoading.setVisibility(GONE);
                 break;
-            case VideoView.STATE_PREPARING:
-            case VideoView.STATE_BUFFERING:
+            case DKVideoView.STATE_PREPARING:
+            case DKVideoView.STATE_BUFFERING:
                 mPlay.setVisibility(GONE);
                 mLoading.setVisibility(VISIBLE);
                 break;
-            case VideoView.STATE_PREPARED:
+            case DKVideoView.STATE_PREPARED:
                 mPlay.setVisibility(GONE);
                 mLoading.setVisibility(GONE);
                 break;
-            case VideoView.STATE_ERROR:
+            case DKVideoView.STATE_ERROR:
                 mLoading.setVisibility(GONE);
                 mPlay.setVisibility(GONE);
                 bringToFront();
                 break;
-            case VideoView.STATE_BUFFERED:
+            case DKVideoView.STATE_BUFFERED:
                 mPlay.setVisibility(GONE);
                 mLoading.setVisibility(GONE);
-                mPlay.setSelected(mControlWrapper.isPlaying());
+                mPlay.setSelected(getPlayer().isPlaying());
                 break;
-            case VideoView.STATE_PLAYBACK_COMPLETED:
+            case DKVideoView.STATE_PLAYBACK_COMPLETED:
                 bringToFront();
                 break;
         }
     }
 
     @Override
-    public void onPlayerStateChanged(int playerState) {
+    public void onScreenModeChanged(int screenMode) {
 
     }
 
     @Override
-    public void setProgress(int duration, int position) {
+    public void onProgressChanged(int duration, int position) {
 
     }
 

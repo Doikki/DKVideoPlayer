@@ -19,7 +19,7 @@ import xyz.doikki.dkplayer.util.Utils;
 import xyz.doikki.dkplayer.util.cache.PreloadManager;
 import xyz.doikki.dkplayer.widget.controller.TikTokController;
 import xyz.doikki.dkplayer.widget.render.TikTokRenderViewFactory;
-import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.DKVideoView;
 import xyz.doikki.videoplayer.util.L;
 
 /**
@@ -28,7 +28,7 @@ import xyz.doikki.videoplayer.util.L;
  * @deprecated 推荐 {@link TikTok2Activity}
  */
 @Deprecated
-public class TikTokActivity extends BaseActivity<VideoView> {
+public class TikTokActivity extends BaseActivity<DKVideoView> {
 
     private TikTokController mController;
     private int mCurPos;
@@ -59,7 +59,7 @@ public class TikTokActivity extends BaseActivity<VideoView> {
     protected void initView() {
         super.initView();
         setStatusBarTransparent();
-        mVideoView = new VideoView(this);
+        mVideoView = new DKVideoView(this);
         //以下只能二选一，看你的需求
         mVideoView.setRenderViewFactory(TikTokRenderViewFactory.create());
 //        mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_CENTER_CROP);
@@ -114,7 +114,7 @@ public class TikTokActivity extends BaseActivity<VideoView> {
         TiktokBean item = mVideoList.get(position);
         String playUrl = PreloadManager.getInstance(this).getPlayUrl(item.videoDownloadUrl);
         L.i("startPlay: " + "position: " + position + "  url: " + playUrl);
-        mVideoView.setUrl(playUrl);
+        mVideoView.setDataSource(playUrl);
         //请点进去看isDissociate的解释
         mController.addControlComponent(viewHolder.mTikTokView, true);
         viewHolder.mPlayerContainer.addView(mVideoView, 0);

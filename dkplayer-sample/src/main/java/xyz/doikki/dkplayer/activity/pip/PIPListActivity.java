@@ -29,7 +29,7 @@ import xyz.doikki.videocontroller.component.ErrorView;
 import xyz.doikki.videocontroller.component.GestureView;
 import xyz.doikki.videocontroller.component.TitleView;
 import xyz.doikki.videocontroller.component.VodControlView;
-import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.DKVideoView;
 
 /**
  * 悬浮播放终极版
@@ -39,7 +39,7 @@ import xyz.doikki.videoplayer.player.VideoView;
 public class PIPListActivity extends BaseActivity implements OnItemChildClickListener {
 
     private PIPManager mPIPManager;
-    private VideoView mVideoView;
+    private DKVideoView mVideoView;
     private StandardVideoController mController;
     private List<VideoBean> mVideos;
     private LinearLayoutManager mLinearLayoutManager;
@@ -98,7 +98,7 @@ public class PIPListActivity extends BaseActivity implements OnItemChildClickLis
                 int position = holder.mPosition;
                 if (position == mPIPManager.getPlayingPosition()) {
                     startFloatWindow();
-                    mController.setPlayState(VideoView.STATE_IDLE);
+                    mController.setPlayerState(DKVideoView.STATE_IDLE);
                 }
             }
         });
@@ -165,13 +165,13 @@ public class PIPListActivity extends BaseActivity implements OnItemChildClickLis
             releaseVideoView();
         }
         VideoBean videoBean = mVideos.get(position);
-        mVideoView.setUrl(videoBean.getUrl());
+        mVideoView.setDataSource(videoBean.getUrl());
         mTitleView.setTitle(videoBean.getTitle());
         View itemView = mLinearLayoutManager.findViewByPosition(position);
         if (itemView == null) return;
         //注意：要先设置控制才能去设置控制器的状态。
         mVideoView.setVideoController(mController);
-        mController.setPlayState(mVideoView.getCurrentPlayState());
+        mController.setPlayerState(mVideoView.getPlayerState());
 
         VideoRecyclerViewAdapter.VideoHolder viewHolder = (VideoRecyclerViewAdapter.VideoHolder) itemView.getTag();
         //把列表中预置的PrepareView添加到控制器中，注意isDissociate此处只能为true。请点进去看isDissociate的解释
@@ -185,7 +185,7 @@ public class PIPListActivity extends BaseActivity implements OnItemChildClickLis
     private void releaseVideoView() {
         mVideoView.release();
         if (mVideoView.isFullScreen()) {
-            mVideoView.stopFullScreen();
+            mVideoView.stopVideoViewFullScreen();
         }
         if (getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);

@@ -21,7 +21,7 @@ import xyz.doikki.dkplayer.util.DataUtil;
 import xyz.doikki.dkplayer.util.PIPManager;
 import xyz.doikki.dkplayer.util.Tag;
 import xyz.doikki.videocontroller.StandardVideoController;
-import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.DKVideoView;
 
 public class PIPActivity extends BaseActivity {
 
@@ -38,14 +38,14 @@ public class PIPActivity extends BaseActivity {
         }
         FrameLayout playerContainer = findViewById(R.id.player_container);
         mPIPManager = PIPManager.getInstance();
-        VideoView videoView = getVideoViewManager().get(Tag.PIP);
+        DKVideoView videoView = getVideoViewManager().get(Tag.PIP);
         StandardVideoController controller = new StandardVideoController(this);
         controller.addDefaultControlComponent(getString(R.string.str_pip), false);
         videoView.setVideoController(controller);
         if (mPIPManager.isStartFloatWindow()) {
             mPIPManager.stopFloatWindow();
-            controller.setPlayerState(videoView.getCurrentPlayerState());
-            controller.setPlayState(videoView.getCurrentPlayState());
+            controller.setScreenMode(videoView.getScreenMode());
+            controller.setPlayerState(videoView.getPlayerState());
         } else {
             mPIPManager.setActClass(PIPActivity.class);
             ImageView thumb = controller.findViewById(R.id.thumb);
@@ -53,7 +53,7 @@ public class PIPActivity extends BaseActivity {
                     .load("http://sh.people.com.cn/NMediaFile/2016/0112/LOCAL201601121344000138197365721.jpg")
                     .placeholder(android.R.color.darker_gray)
                     .into(thumb);
-            videoView.setUrl(DataUtil.SAMPLE_URL);
+            videoView.setDataSource(DataUtil.SAMPLE_URL);
         }
         playerContainer.addView(videoView);
     }

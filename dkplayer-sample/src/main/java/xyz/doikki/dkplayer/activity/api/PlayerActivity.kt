@@ -3,6 +3,7 @@ package xyz.doikki.dkplayer.activity.api
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.media.MediaPlayer
 import android.text.TextUtils
 import android.view.View
 import android.widget.EditText
@@ -20,19 +21,20 @@ import xyz.doikki.dkplayer.widget.render.gl2.filter.GlSepiaFilter
 import xyz.doikki.dkplayer.widget.render.gl2.filter.GlSharpenFilter
 import xyz.doikki.dkplayer.widget.render.gl2.filter.GlWatermarkFilter
 import xyz.doikki.videocontroller.StandardVideoController
+import xyz.doikki.videocontroller.TVVideoController
 import xyz.doikki.videocontroller.component.*
-import xyz.doikki.videoplayer.player.BaseVideoView
-import xyz.doikki.videoplayer.player.VideoView
-import xyz.doikki.videoplayer.render.IRenderView
-import xyz.doikki.videoplayer.render.RenderViewFactory
+import xyz.doikki.videoplayer.DKVideoView
+import xyz.doikki.videoplayer.render.AspectRatioType
+import xyz.doikki.videoplayer.render.RenderFactory
 import xyz.doikki.videoplayer.util.L
 
 /**
  * 播放器演示
  * Created by Doikki on 2017/4/7.
  */
-class PlayerActivity : BaseActivity<VideoView>() {
+class PlayerActivity : BaseActivity<DKVideoView>() {
 
+    private lateinit var controller: StandardVideoController
     private val renderView by lazy {
         GLSurfaceRenderView2(this)
     }
@@ -41,11 +43,23 @@ class PlayerActivity : BaseActivity<VideoView>() {
 
     override fun initView() {
         super.initView()
+        findViewById<View>(R.id.root).let {
+            it.isFocusable = true
+            it.isFocusableInTouchMode = true
+            it.requestFocus()
+            it.setOnClickListener {
+                mVideoView.startFullScreen()
+                controller.requestFocus()
+            }
+        }
         mVideoView = findViewById(R.id.player)
         intent?.let {
-            val controller = StandardVideoController(this)
+            controller = TVVideoController(this)
+//            controller.post {
+//                controller.requestFocus()
+//            }
             //根据屏幕方向自动进入/退出全屏
-            controller.setEnableOrientation(true)
+            controller.setEnableOrientationSensor(true)
             val prepareView = PrepareView(this) //准备播放界面
             prepareView.setClickStart()
             val thumb = prepareView.findViewById<ImageView>(R.id.thumb) //封面图
@@ -69,7 +83,9 @@ class PlayerActivity : BaseActivity<VideoView>() {
             val gestureControlView = GestureView(this) //滑动控制视图
             controller.addControlComponent(gestureControlView)
             //根据是否为直播决定是否需要滑动调节进度
-            controller.setCanChangePosition(!isLive)
+            controller.seekEnabled = !isLive
+
+            MediaPlayer()
 
             //设置标题
             val title = it.getStringExtra(IntentKeys.TITLE)
@@ -109,7 +125,7 @@ class PlayerActivity : BaseActivity<VideoView>() {
                 url = Utils.getFileFromContentUri(this, it.data)
             }
 //            val header = hashMapOf("User-Agent" to "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36")
-            mVideoView.setUrl(url)
+            mVideoView.setDataSource(url!!)
 
             //保存播放进度
 //            mVideoView.setProgressManager(ProgressManagerImpl())
@@ -119,18 +135,21 @@ class PlayerActivity : BaseActivity<VideoView>() {
             // 临时切换RenderView, 如需全局请通过VideoConfig配置，详见MyApplication
             if (intent.getBooleanExtra(IntentKeys.CUSTOM_RENDER, false)) {
 //                mVideoView.setRenderViewFactory(GLSurfaceRenderViewFactory.create())
-                mVideoView.setRenderViewFactory(object : RenderViewFactory() {
-                    override fun createRenderView(context: Context?): IRenderView {
-                        return renderView
-                    }
-                })
+                mVideoView.setRenderViewFactory { renderView }
                 // 设置滤镜
-                renderView.setGlFilter(GlFilterGroup(
-                    // 水印
-                    GlWatermarkFilter(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher)),
-                    GlSepiaFilter(),
-                    GlSharpenFilter()
-                ))
+                renderView.setGlFilter(
+                    GlFilterGroup(
+                        // 水印
+                        GlWatermarkFilter(
+                            BitmapFactory.decodeResource(
+                                resources,
+                                R.mipmap.ic_launcher
+                            )
+                        ),
+                        GlSepiaFilter(),
+                        GlSharpenFilter()
+                    )
+                )
             }
             //临时切换播放核心，如需全局请通过VideoConfig配置，详见MyApplication
             //使用IjkPlayer解码
@@ -152,45 +171,37 @@ class PlayerActivity : BaseActivity<VideoView>() {
         val etOtherVideo = findViewById<EditText>(R.id.et_other_video)
         findViewById<View>(R.id.btn_start_play).setOnClickListener {
             mVideoView.release()
-            mVideoView.setUrl(etOtherVideo.text.toString())
+            mVideoView.setDataSource(etOtherVideo.text.toString())
             mVideoView.start()
         }
     }
 
-    private val mOnStateChangeListener: BaseVideoView.OnStateChangeListener =
-        object : BaseVideoView.SimpleOnStateChangeListener() {
-            override fun onPlayerStateChanged(playerState: Int) {
-                when (playerState) {
-                    VideoView.PLAYER_NORMAL -> {
-                    }
-                    VideoView.PLAYER_FULL_SCREEN -> {
-                    }
-                }
-            }
+    private val mOnStateChangeListener: DKVideoView.OnStateChangeListener =
+        object : DKVideoView.OnStateChangeListener {
 
-            override fun onPlayStateChanged(playState: Int) {
+            override fun onPlayerStateChanged(playState: Int) {
                 when (playState) {
-                    VideoView.STATE_IDLE -> {
+                    DKVideoView.STATE_IDLE -> {
                     }
-                    VideoView.STATE_PREPARING -> {
+                    DKVideoView.STATE_PREPARING -> {
                     }
-                    VideoView.STATE_PREPARED -> {
+                    DKVideoView.STATE_PREPARED -> {
                     }
-                    VideoView.STATE_PLAYING -> {
+                    DKVideoView.STATE_PLAYING -> {
                         //需在此时获取视频宽高
                         val videoSize = mVideoView!!.videoSize
                         L.d("视频宽：" + videoSize[0])
                         L.d("视频高：" + videoSize[1])
                     }
-                    VideoView.STATE_PAUSED -> {
+                    DKVideoView.STATE_PAUSED -> {
                     }
-                    VideoView.STATE_BUFFERING -> {
+                    DKVideoView.STATE_BUFFERING -> {
                     }
-                    VideoView.STATE_BUFFERED -> {
+                    DKVideoView.STATE_BUFFERED -> {
                     }
-                    VideoView.STATE_PLAYBACK_COMPLETED -> {
+                    DKVideoView.STATE_PLAYBACK_COMPLETED -> {
                     }
-                    VideoView.STATE_ERROR -> {
+                    DKVideoView.STATE_ERROR -> {
                     }
                 }
             }
@@ -198,25 +209,39 @@ class PlayerActivity : BaseActivity<VideoView>() {
     private var i = 0
     fun onButtonClick(view: View) {
         when (view.id) {
-            R.id.scale_default -> mVideoView!!.setScreenScaleType(VideoView.SCREEN_SCALE_DEFAULT)
-            R.id.scale_169 -> mVideoView!!.setScreenScaleType(VideoView.SCREEN_SCALE_16_9)
-            R.id.scale_43 -> mVideoView!!.setScreenScaleType(VideoView.SCREEN_SCALE_4_3)
-            R.id.scale_original -> mVideoView!!.setScreenScaleType(VideoView.SCREEN_SCALE_ORIGINAL)
-            R.id.scale_match_parent -> mVideoView!!.setScreenScaleType(VideoView.SCREEN_SCALE_MATCH_PARENT)
-            R.id.scale_center_crop -> mVideoView!!.setScreenScaleType(VideoView.SCREEN_SCALE_CENTER_CROP)
+            R.id.scale_default -> mVideoView!!.setScreenAspectRatioType(AspectRatioType.DEFAULT_SCALE)
+            R.id.scale_189 -> mVideoView!!.setScreenAspectRatioType(AspectRatioType.SCALE_18_9)
+            R.id.scale_169 -> mVideoView!!.setScreenAspectRatioType(AspectRatioType.SCALE_16_9)
+            R.id.scale_43 -> mVideoView!!.setScreenAspectRatioType(AspectRatioType.SCALE_4_3)
+            R.id.scale_original -> mVideoView!!.setScreenAspectRatioType(AspectRatioType.SCALE_ORIGINAL)
+            R.id.scale_match_parent -> mVideoView!!.setScreenAspectRatioType(AspectRatioType.MATCH_PARENT)
+            R.id.scale_center_crop -> mVideoView!!.setScreenAspectRatioType(AspectRatioType.CENTER_CROP)
             R.id.speed_0_5 -> mVideoView!!.speed = 0.5f
             R.id.speed_0_75 -> mVideoView!!.speed = 0.75f
             R.id.speed_1_0 -> mVideoView!!.speed = 1.0f
             R.id.speed_1_5 -> mVideoView!!.speed = 1.5f
             R.id.speed_2_0 -> mVideoView!!.speed = 2.0f
+            R.id.rotate90 -> controller.setRotation(90)
+            R.id.rotate180 -> controller.setRotation(180)
+            R.id.rotate270 -> controller.setRotation(270)
+            R.id.rotate60 -> controller.setRotation(60)
+            R.id.rotate0 -> controller.setRotation(0)
             R.id.screen_shot -> {
                 val imageView = findViewById<ImageView>(R.id.iv_screen_shot)
-                val bitmap = mVideoView!!.doScreenShot()
-                imageView.setImageBitmap(bitmap)
+                mVideoView!!.screenshot {
+                    imageView.setImageBitmap(it)
+                }
+
             }
             R.id.mirror_rotate -> {
                 mVideoView!!.setMirrorRotation(i % 2 == 0)
                 i++
+            }
+            R.id.surface_render->{
+                mVideoView!!.setRenderViewFactory(RenderFactory.surfaceViewRenderFactory())
+            }
+            R.id.texture_render->{
+                mVideoView!!.setRenderViewFactory(RenderFactory.textureViewRenderFactory())
             }
             R.id.btn_mute -> mVideoView!!.isMute = !mVideoView!!.isMute
         }
@@ -226,7 +251,7 @@ class PlayerActivity : BaseActivity<VideoView>() {
         super.onPause()
         //如果视频还在准备就 activity 就进入了后台，建议直接将 VideoView release
         //防止进入后台后视频还在播放
-        if (mVideoView!!.currentPlayState == VideoView.STATE_PREPARING) {
+        if (mVideoView!!.playerState == DKVideoView.STATE_PREPARING) {
             mVideoView!!.release()
         }
     }
@@ -236,7 +261,13 @@ class PlayerActivity : BaseActivity<VideoView>() {
             "https://cms-bucket.nosdn.127.net/eb411c2810f04ffa8aaafc42052b233820180418095416.jpeg"
 
         @JvmStatic
-        fun start(context: Context, url: String, title: String, isLive: Boolean, customRender: Boolean = false) {
+        fun start(
+            context: Context,
+            url: String,
+            title: String,
+            isLive: Boolean,
+            customRender: Boolean = false
+        ) {
             val intent = Intent(context, PlayerActivity::class.java)
             intent.putExtra(IntentKeys.URL, url)
             intent.putExtra(IntentKeys.IS_LIVE, isLive)

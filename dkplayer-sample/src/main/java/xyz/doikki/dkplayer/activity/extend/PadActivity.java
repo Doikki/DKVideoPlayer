@@ -22,7 +22,7 @@ public class PadActivity extends BaseActivity {
         super.initView();
         mVideoView = findViewById(R.id.video_view);
 
-        mVideoView.setUrl(DataUtil.SAMPLE_URL);
+        mVideoView.setDataSource(DataUtil.SAMPLE_URL);
 
         mController = new StandardVideoController(this);
         mController.addDefaultControlComponent("pad", false);
@@ -31,9 +31,9 @@ public class PadActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 if (mVideoView.isFullScreen()) {
-                    mVideoView.stopFullScreen();
+                    mVideoView.stopVideoViewFullScreen();
                 } else {
-                    mVideoView.startFullScreen();
+                    mVideoView.startVideoViewFullScreen();
                 }
             }
         });
@@ -41,7 +41,7 @@ public class PadActivity extends BaseActivity {
         mController.findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mVideoView.stopFullScreen();
+                mVideoView.stopVideoViewFullScreen();
             }
         });
 
@@ -59,7 +59,7 @@ public class PadActivity extends BaseActivity {
             return;
         }
         if (mVideoView.isFullScreen()) {
-            mVideoView.stopFullScreen();
+            mVideoView.stopVideoViewFullScreen();
             return;
         }
         finish();

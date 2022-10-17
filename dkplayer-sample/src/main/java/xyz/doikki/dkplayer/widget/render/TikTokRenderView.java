@@ -1,29 +1,28 @@
 package xyz.doikki.dkplayer.widget.render;
 
-import android.graphics.Bitmap;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 
-import xyz.doikki.videoplayer.player.AbstractPlayer;
-import xyz.doikki.videoplayer.player.VideoView;
-import xyz.doikki.videoplayer.render.IRenderView;
+import xyz.doikki.videoplayer.DKPlayer;
+import xyz.doikki.videoplayer.render.AspectRatioType;
+import xyz.doikki.videoplayer.render.Render;
 
 /**
  * TikTok专用RenderView，横屏视频默认显示，竖屏视频居中裁剪
  * 使用代理模式实现
  */
-public class TikTokRenderView implements IRenderView {
+public class TikTokRenderView implements Render {
 
-    private final IRenderView mProxyRenderView;
+    private final Render mProxyRenderView;
 
-    TikTokRenderView(@NonNull IRenderView renderView) {
+    TikTokRenderView(@NonNull Render renderView) {
         this.mProxyRenderView = renderView;
     }
 
     @Override
-    public void attachToPlayer(@NonNull AbstractPlayer player) {
-        mProxyRenderView.attachToPlayer(player);
+    public void attachPlayer(@NonNull DKPlayer player) {
+        mProxyRenderView.attachPlayer(player);
     }
 
     @Override
@@ -32,12 +31,17 @@ public class TikTokRenderView implements IRenderView {
             mProxyRenderView.setVideoSize(videoWidth, videoHeight);
             if (videoHeight > videoWidth) {
                 //竖屏视频，使用居中裁剪
-                mProxyRenderView.setScaleType(VideoView.SCREEN_SCALE_CENTER_CROP);
+                mProxyRenderView.setAspectRatioType(AspectRatioType.CENTER_CROP);
             } else {
                 //横屏视频，使用默认模式
-                mProxyRenderView.setScaleType(VideoView.SCREEN_SCALE_DEFAULT);
+                mProxyRenderView.setAspectRatioType(AspectRatioType.DEFAULT_SCALE);
             }
         }
+    }
+
+    @Override
+    public void setSurfaceListener(SurfaceListener listener) {
+        mProxyRenderView.setSurfaceListener(listener);
     }
 
     @Override
@@ -46,7 +50,7 @@ public class TikTokRenderView implements IRenderView {
     }
 
     @Override
-    public void setScaleType(int scaleType) {
+    public void setAspectRatioType(int aspectRatioType) {
         // 置空，不要让外部去设置ScaleType
     }
 
@@ -56,12 +60,13 @@ public class TikTokRenderView implements IRenderView {
     }
 
     @Override
-    public Bitmap doScreenShot() {
-        return mProxyRenderView.doScreenShot();
+    public void screenshot(boolean highQuality, @NonNull ScreenShotCallback callback) {
+        mProxyRenderView.screenshot(highQuality, callback);
     }
 
     @Override
     public void release() {
         mProxyRenderView.release();
     }
+
 }

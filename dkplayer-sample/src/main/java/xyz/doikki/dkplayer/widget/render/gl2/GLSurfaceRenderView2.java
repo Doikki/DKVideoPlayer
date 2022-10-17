@@ -1,7 +1,6 @@
 package xyz.doikki.dkplayer.widget.render.gl2;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 import android.view.View;
@@ -11,11 +10,11 @@ import androidx.annotation.NonNull;
 import xyz.doikki.dkplayer.widget.render.gl2.chooser.GLConfigChooser;
 import xyz.doikki.dkplayer.widget.render.gl2.contextfactory.GLContextFactory;
 import xyz.doikki.dkplayer.widget.render.gl2.filter.GlFilter;
-import xyz.doikki.videoplayer.player.AbstractPlayer;
-import xyz.doikki.videoplayer.render.IRenderView;
-import xyz.doikki.videoplayer.render.MeasureHelper;
+import xyz.doikki.videoplayer.DKPlayer;
+import xyz.doikki.videoplayer.render.Render;
+import xyz.doikki.videoplayer.render.RenderMeasure;
 
-public class GLSurfaceRenderView2 extends GLSurfaceView implements IRenderView {
+public class GLSurfaceRenderView2 extends GLSurfaceView implements Render {
 
     private final GLVideoRenderer renderer;
 
@@ -31,10 +30,10 @@ public class GLSurfaceRenderView2 extends GLSurfaceView implements IRenderView {
         setRenderer(renderer);
     }
 
-    private final MeasureHelper mMeasureHelper = new MeasureHelper();
+    private final RenderMeasure mMeasureHelper = new RenderMeasure();
 
     @Override
-    public void attachToPlayer(@NonNull AbstractPlayer player) {
+    public void attachPlayer(@NonNull DKPlayer player) {
         this.renderer.setPlayer(player);
     }
 
@@ -46,15 +45,16 @@ public class GLSurfaceRenderView2 extends GLSurfaceView implements IRenderView {
         }
     }
 
+
     @Override
     public void setVideoRotation(int degree) {
-        mMeasureHelper.setVideoRotation(degree);
+        mMeasureHelper.videoRotationDegree = degree;
         setRotation(degree);
     }
 
     @Override
-    public void setScaleType(int scaleType) {
-        mMeasureHelper.setScreenScale(scaleType);
+    public void setAspectRatioType(int aspectRatioType) {
+        mMeasureHelper.setAspectRatioType(aspectRatioType);
         requestLayout();
     }
 
@@ -64,8 +64,14 @@ public class GLSurfaceRenderView2 extends GLSurfaceView implements IRenderView {
     }
 
     @Override
-    public Bitmap doScreenShot() {
-        return null;
+    public void screenshot(boolean highQuality, @NonNull ScreenShotCallback callback) {
+        //todo glsurface 是可以截图的，待处理
+        callback.onScreenShotResult(null);
+    }
+
+    @Override
+    public void setSurfaceListener(SurfaceListener listener) {
+        //todo
     }
 
     @Override
@@ -79,8 +85,8 @@ public class GLSurfaceRenderView2 extends GLSurfaceView implements IRenderView {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int[] measuredSize = mMeasureHelper.doMeasure(widthMeasureSpec, heightMeasureSpec);
-        setMeasuredDimension(measuredSize[0], measuredSize[1]);
+        mMeasureHelper.doMeasure(widthMeasureSpec, heightMeasureSpec);
+        setMeasuredDimension(mMeasureHelper.getMeasuredWidth(), mMeasureHelper.getMeasuredHeight());
     }
 
     @Override

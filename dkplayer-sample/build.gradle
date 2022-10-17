@@ -19,6 +19,7 @@ android {
 
         ndk {
             //使用abiFilters筛选你需要的so
+            abiFilters "armeabi-v7a"
 //            abiFilters 'arm64-v8a'
         }
         multiDexEnabled true
@@ -68,6 +69,13 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions{
+        jvmTarget = '1.8'
+        freeCompilerArgs += [
+                '-Xjvm-default=all'
+        ]
     }
 }
 

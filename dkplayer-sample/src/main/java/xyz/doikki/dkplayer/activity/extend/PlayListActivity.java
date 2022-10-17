@@ -12,7 +12,7 @@ import xyz.doikki.videocontroller.component.GestureView;
 import xyz.doikki.videocontroller.component.PrepareView;
 import xyz.doikki.videocontroller.component.TitleView;
 import xyz.doikki.videocontroller.component.VodControlView;
-import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.DKVideoView;
 
 import java.util.List;
 
@@ -48,23 +48,23 @@ public class PlayListActivity extends BaseActivity {
 
         //加载第一条数据
         VideoBean videoBean = data.get(0);
-        mVideoView.setUrl(videoBean.getUrl());
+        mVideoView.setDataSource(videoBean.getUrl());
         mTitleView.setTitle(videoBean.getTitle());
         mVideoView.setVideoController(mController);
 
         //监听播放结束
-        mVideoView.addOnStateChangeListener(new VideoView.SimpleOnStateChangeListener() {
+        mVideoView.addOnStateChangeListener(new DKVideoView.OnStateChangeListener() {
             private int mCurrentVideoPosition;
             @Override
-            public void onPlayStateChanged(int playState) {
-                if (playState == VideoView.STATE_PLAYBACK_COMPLETED) {
+            public void onPlayerStateChanged(int playState) {
+                if (playState == DKVideoView.STATE_PLAYBACK_COMPLETED) {
                     if (data != null) {
                         mCurrentVideoPosition++;
                         if (mCurrentVideoPosition >= data.size()) return;
                         mVideoView.release();
                         //重新设置数据
                         VideoBean videoBean = data.get(mCurrentVideoPosition);
-                        mVideoView.setUrl(videoBean.getUrl());
+                        mVideoView.setDataSource(videoBean.getUrl());
                         mTitleView.setTitle(videoBean.getTitle());
                         mVideoView.setVideoController(mController);
                         //开始播放

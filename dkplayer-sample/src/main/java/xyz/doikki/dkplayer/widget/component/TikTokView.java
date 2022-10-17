@@ -7,7 +7,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.animation.Animation;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -15,17 +14,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import xyz.doikki.dkplayer.R;
-import xyz.doikki.videoplayer.controller.IControlComponent;
-import xyz.doikki.videoplayer.controller.ControlWrapper;
-import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videocontroller.component.BaseControlComponent;
+import xyz.doikki.videoplayer.DKVideoView;
 import xyz.doikki.videoplayer.util.L;
 
-public class TikTokView extends FrameLayout implements IControlComponent {
+public class TikTokView extends BaseControlComponent {
 
     private final ImageView thumb;
     private final ImageView mPlayBtn;
 
-    private ControlWrapper mControlWrapper;
     private final int mScaledTouchSlop;
     private int mStartX, mStartY;
 
@@ -48,7 +45,7 @@ public class TikTokView extends FrameLayout implements IControlComponent {
         setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mControlWrapper.togglePlay();
+                getMController().togglePlay();
             }
         });
         mScaledTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
@@ -78,16 +75,6 @@ public class TikTokView extends FrameLayout implements IControlComponent {
     }
 
     @Override
-    public void attach(@NonNull ControlWrapper controlWrapper) {
-        mControlWrapper = controlWrapper;
-    }
-
-    @Override
-    public View getView() {
-        return this;
-    }
-
-    @Override
     public void onVisibilityChanged(boolean isVisible, Animation anim) {
 
     }
@@ -95,24 +82,24 @@ public class TikTokView extends FrameLayout implements IControlComponent {
     @Override
     public void onPlayStateChanged(int playState) {
         switch (playState) {
-            case VideoView.STATE_IDLE:
+            case DKVideoView.STATE_IDLE:
                 L.e("STATE_IDLE " + hashCode());
                 thumb.setVisibility(VISIBLE);
                 break;
-            case VideoView.STATE_PLAYING:
+            case DKVideoView.STATE_PLAYING:
                 L.e("STATE_PLAYING " + hashCode());
                 thumb.setVisibility(GONE);
                 mPlayBtn.setVisibility(GONE);
                 break;
-            case VideoView.STATE_PAUSED:
+            case DKVideoView.STATE_PAUSED:
                 L.e("STATE_PAUSED " + hashCode());
                 thumb.setVisibility(GONE);
                 mPlayBtn.setVisibility(VISIBLE);
                 break;
-            case VideoView.STATE_PREPARED:
+            case DKVideoView.STATE_PREPARED:
                 L.e("STATE_PREPARED " + hashCode());
                 break;
-            case VideoView.STATE_ERROR:
+            case DKVideoView.STATE_ERROR:
                 L.e("STATE_ERROR " + hashCode());
                 Toast.makeText(getContext(), R.string.dkplayer_error_message, Toast.LENGTH_SHORT).show();
                 break;
@@ -120,12 +107,12 @@ public class TikTokView extends FrameLayout implements IControlComponent {
     }
 
     @Override
-    public void onPlayerStateChanged(int playerState) {
+    public void onScreenModeChanged(int screenMode) {
 
     }
 
     @Override
-    public void setProgress(int duration, int position) {
+    public void onProgressChanged(int duration, int position) {
 
     }
 

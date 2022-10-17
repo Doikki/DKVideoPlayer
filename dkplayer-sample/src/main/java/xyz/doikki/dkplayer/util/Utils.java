@@ -11,42 +11,22 @@ import android.widget.FrameLayout;
 
 import java.lang.reflect.Field;
 
-import xyz.doikki.videoplayer.controller.ControlWrapper;
-import xyz.doikki.videoplayer.player.BaseVideoView;
-import xyz.doikki.videoplayer.player.VideoView;
-import xyz.doikki.videoplayer.player.VideoViewConfig;
-import xyz.doikki.videoplayer.player.VideoViewManager;
+import xyz.doikki.videoplayer.DKVideoView;
+import xyz.doikki.videoplayer.controller.MediaController;
 
 public final class Utils {
 
     private Utils() {
     }
 
-
-    /**
-     * 获取当前的播放核心
-     */
-    public static Object getCurrentPlayerFactory() {
-        VideoViewConfig config = VideoViewManager.getConfig();
+    public static Object getCurrentPlayerFactoryInVideoView(MediaController controlWrapper) {
         Object playerFactory = null;
         try {
-            Field mPlayerFactoryField = config.getClass().getDeclaredField("mPlayerFactory");
-            mPlayerFactoryField.setAccessible(true);
-            playerFactory = mPlayerFactoryField.get(config);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return playerFactory;
-    }
-
-    public static Object getCurrentPlayerFactoryInVideoView(ControlWrapper controlWrapper) {
-        Object playerFactory = null;
-        try {
-            Field mPlayerControlField = controlWrapper.getClass().getDeclaredField("mPlayerControl");
+            Field mPlayerControlField = controlWrapper.getClass().getDeclaredField("mPlayer");
             mPlayerControlField.setAccessible(true);
             Object playerControl = mPlayerControlField.get(controlWrapper);
-            if (playerControl instanceof VideoView) {
-                playerFactory = getCurrentPlayerFactoryInVideoView((VideoView) playerControl);
+            if (playerControl instanceof DKVideoView) {
+                playerFactory = getCurrentPlayerFactoryInVideoView((DKVideoView) playerControl);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -54,10 +34,10 @@ public final class Utils {
         return playerFactory;
     }
 
-    public static Object getCurrentPlayerFactoryInVideoView(VideoView videoView) {
+    public static Object getCurrentPlayerFactoryInVideoView(DKVideoView videoView) {
         Object playerFactory = null;
         try {
-            Field mPlayerFactoryField = videoView.getClass().getSuperclass().getDeclaredField("mPlayerFactory");
+            Field mPlayerFactoryField = videoView.getClass().getDeclaredField("mPlayerFactory");
             mPlayerFactoryField.setAccessible(true);
             playerFactory = mPlayerFactoryField.get(videoView);
         } catch (Exception e) {
@@ -77,63 +57,6 @@ public final class Utils {
         }
     }
 
-    /**
-     * Returns a string containing player state debugging information.
-     */
-    public static String playState2str(int state) {
-        String playStateString;
-        switch (state) {
-            default:
-            case VideoView.STATE_IDLE:
-                playStateString = "idle";
-                break;
-            case VideoView.STATE_PREPARING:
-                playStateString = "preparing";
-                break;
-            case VideoView.STATE_PREPARED:
-                playStateString = "prepared";
-                break;
-            case VideoView.STATE_PLAYING:
-                playStateString = "playing";
-                break;
-            case VideoView.STATE_PAUSED:
-                playStateString = "pause";
-                break;
-            case VideoView.STATE_BUFFERING:
-                playStateString = "buffering";
-                break;
-            case VideoView.STATE_BUFFERED:
-                playStateString = "buffered";
-                break;
-            case VideoView.STATE_PLAYBACK_COMPLETED:
-                playStateString = "playback completed";
-                break;
-            case VideoView.STATE_ERROR:
-                playStateString = "error";
-                break;
-        }
-        return String.format("playState: %s", playStateString);
-    }
-
-    /**
-     * Returns a string containing player state debugging information.
-     */
-    public static String playerState2str(int state) {
-        String playerStateString;
-        switch (state) {
-            default:
-            case VideoView.PLAYER_NORMAL:
-                playerStateString = "normal";
-                break;
-            case VideoView.PLAYER_FULL_SCREEN:
-                playerStateString = "full screen";
-                break;
-            case VideoView.PLAYER_TINY_SCREEN:
-                playerStateString = "tiny screen";
-                break;
-        }
-        return String.format("playerState: %s", playerStateString);
-    }
 
     /**
      * Gets the corresponding path to a file from the given content:// URI

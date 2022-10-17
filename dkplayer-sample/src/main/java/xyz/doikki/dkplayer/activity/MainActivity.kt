@@ -17,17 +17,16 @@ import xyz.doikki.dkplayer.fragment.main.ListFragment
 import xyz.doikki.dkplayer.fragment.main.PipFragment
 import xyz.doikki.dkplayer.util.PIPManager
 import xyz.doikki.dkplayer.util.Tag
-import xyz.doikki.dkplayer.util.Utils
 import xyz.doikki.dkplayer.util.cache.ProxyVideoCacheManager
+import xyz.doikki.videoplayer.DKManager
+import xyz.doikki.videoplayer.DKPlayerFactory
+import xyz.doikki.videoplayer.DKVideoView
 import xyz.doikki.videoplayer.exo.ExoMediaPlayerFactory
 import xyz.doikki.videoplayer.ijk.IjkPlayerFactory
-import xyz.doikki.videoplayer.player.AndroidMediaPlayerFactory
-import xyz.doikki.videoplayer.player.PlayerFactory
-import xyz.doikki.videoplayer.player.VideoView
-import xyz.doikki.videoplayer.player.VideoViewManager
+import xyz.doikki.videoplayer.sys.SysDKPlayerFactory
 import java.io.*
 
-class MainActivity : BaseActivity<VideoView>(), NavigationBarView.OnItemSelectedListener {
+class MainActivity : BaseActivity<DKVideoView>(), NavigationBarView.OnItemSelectedListener {
 
     private val mFragments: MutableList<Fragment> = ArrayList()
     override fun getLayoutResId(): Int {
@@ -45,14 +44,14 @@ class MainActivity : BaseActivity<VideoView>(), NavigationBarView.OnItemSelected
             requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 10000)
         }
         //检测当前是用的哪个播放器
-        when (Utils.getCurrentPlayerFactory()) {
+        when (DKManager.playerFactory) {
             is ExoMediaPlayerFactory -> {
                 setTitle(resources.getString(R.string.app_name) + " (ExoPlayer)")
             }
             is IjkPlayerFactory -> {
                 setTitle(resources.getString(R.string.app_name) + " (IjkPlayer)")
             }
-            is AndroidMediaPlayerFactory -> {
+            is SysDKPlayerFactory -> {
                 setTitle(resources.getString(R.string.app_name) + " (MediaPlayer)")
             }
             else -> {
@@ -85,26 +84,23 @@ class MainActivity : BaseActivity<VideoView>(), NavigationBarView.OnItemSelected
         }
         if (itemId == R.id.ijk || itemId == R.id.exo || itemId == R.id.media) {
             //切换播放核心，不推荐这么做，我这么写只是为了方便测试
-            val config = VideoViewManager.getConfig()
             try {
-                val mPlayerFactoryField = config.javaClass.getDeclaredField("mPlayerFactory")
-                mPlayerFactoryField.isAccessible = true
-                var playerFactory: PlayerFactory<*>? = null
+                val playerFactory: DKPlayerFactory<*>
                 when (itemId) {
-                    R.id.ijk -> {
-                        playerFactory = IjkPlayerFactory.create()
-                        setTitle(resources.getString(R.string.app_name) + " (IjkPlayer)")
-                    }
                     R.id.exo -> {
                         playerFactory = ExoMediaPlayerFactory.create()
                         setTitle(resources.getString(R.string.app_name) + " (ExoPlayer)")
                     }
                     R.id.media -> {
-                        playerFactory = AndroidMediaPlayerFactory.create()
+                        playerFactory = DKPlayerFactory.systemMediaPlayerFactory()
                         setTitle(resources.getString(R.string.app_name) + " (MediaPlayer)")
                     }
+                    else -> {
+                        playerFactory = IjkPlayerFactory.create()
+                        setTitle(resources.getString(R.string.app_name) + " (IjkPlayer)")
+                    }
                 }
-                mPlayerFactoryField[config] = playerFactory
+                DKManager.playerFactory = playerFactory
             } catch (e: Exception) {
                 e.printStackTrace()
             }

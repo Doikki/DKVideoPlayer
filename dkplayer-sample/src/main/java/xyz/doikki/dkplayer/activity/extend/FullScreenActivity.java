@@ -15,7 +15,7 @@ import xyz.doikki.videocontroller.component.GestureView;
 import xyz.doikki.videocontroller.component.PrepareView;
 import xyz.doikki.videocontroller.component.TitleView;
 import xyz.doikki.videocontroller.component.VodControlView;
-import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.DKVideoView;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
 /**
@@ -23,13 +23,13 @@ import xyz.doikki.videoplayer.util.PlayerUtils;
  * Created by Doikki on 2017/4/21.
  */
 
-public class FullScreenActivity extends BaseActivity<VideoView> {
+public class FullScreenActivity extends BaseActivity<DKVideoView> {
 
     private StandardVideoController mController;
 
     @Override
     protected View getContentView() {
-        mVideoView = new VideoView(this);
+        mVideoView = new DKVideoView(this);
         adaptCutoutAboveAndroidP();
         return mVideoView;
     }
@@ -42,8 +42,8 @@ public class FullScreenActivity extends BaseActivity<VideoView> {
     @Override
     protected void initView() {
         super.initView();
-        mVideoView.startFullScreen();
-        mVideoView.setUrl(DataUtil.SAMPLE_URL);
+        mVideoView.startVideoViewFullScreen();
+        mVideoView.setDataSource(DataUtil.SAMPLE_URL);
         mController = new StandardVideoController(this);
         mController.addControlComponent(new CompleteView(this));
         mController.addControlComponent(new ErrorView(this));
@@ -69,7 +69,7 @@ public class FullScreenActivity extends BaseActivity<VideoView> {
         mController.addControlComponent(vodControlView);
         mController.addControlComponent(new GestureView(this));
         mVideoView.setVideoController(mController);
-        mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_16_9);
+        mVideoView.setScreenAspectRatioType(DKVideoView.SCREEN_ASPECT_RATIO_SCALE_16_9);
         mVideoView.start();
     }
 

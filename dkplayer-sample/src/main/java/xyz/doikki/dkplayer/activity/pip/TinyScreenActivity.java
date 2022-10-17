@@ -22,13 +22,13 @@ import xyz.doikki.videocontroller.component.ErrorView;
 import xyz.doikki.videocontroller.component.GestureView;
 import xyz.doikki.videocontroller.component.TitleView;
 import xyz.doikki.videocontroller.component.VodControlView;
-import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.DKVideoView;
 
 /**
  * 小窗播放
  * Created by Doikki on 2017/5/31.
  */
-public class TinyScreenActivity extends BaseActivity<VideoView> implements OnItemChildClickListener {
+public class TinyScreenActivity extends BaseActivity<DKVideoView> implements OnItemChildClickListener {
 
     private StandardVideoController mController;
     private List<VideoBean> mVideos;
@@ -48,11 +48,11 @@ public class TinyScreenActivity extends BaseActivity<VideoView> implements OnIte
 
     @Override
     protected void initView() {
-        mVideoView = new VideoView(this);
-        mVideoView.setOnStateChangeListener(new VideoView.SimpleOnStateChangeListener() {
+        mVideoView = new DKVideoView(this);
+        mVideoView.addOnStateChangeListener(new DKVideoView.OnStateChangeListener() {
             @Override
-            public void onPlayStateChanged(int playState) {
-                if (playState == VideoView.STATE_PLAYBACK_COMPLETED) {
+            public void onPlayerStateChanged(int playState) {
+                if (playState == DKVideoView.STATE_PLAYBACK_COMPLETED) {
                     if (mVideoView.isTinyScreen()) {
                         mVideoView.stopTinyScreen();
                         releaseVideoView();
@@ -100,7 +100,7 @@ public class TinyScreenActivity extends BaseActivity<VideoView> implements OnIte
                 if (position == mCurPos && !mVideoView.isFullScreen()) {
                     mVideoView.startTinyScreen();
                     mVideoView.setVideoController(null);
-                    mController.setPlayState(VideoView.STATE_IDLE);
+                    mController.setPlayerState(DKVideoView.STATE_IDLE);
                 }
             }
         });
@@ -123,13 +123,13 @@ public class TinyScreenActivity extends BaseActivity<VideoView> implements OnIte
             releaseVideoView();
         }
         VideoBean videoBean = mVideos.get(position);
-        mVideoView.setUrl(videoBean.getUrl());
+        mVideoView.setDataSource(videoBean.getUrl());
         mTitleView.setTitle(videoBean.getTitle());
         View itemView = mLinearLayoutManager.findViewByPosition(position);
         if (itemView == null) return;
         //注意：要先设置控制才能去设置控制器的状态。
         mVideoView.setVideoController(mController);
-        mController.setPlayState(mVideoView.getCurrentPlayState());
+        mController.setPlayerState(mVideoView.getPlayerState());
 
         VideoRecyclerViewAdapter.VideoHolder viewHolder = (VideoRecyclerViewAdapter.VideoHolder) itemView.getTag();
         //把列表中预置的PrepareView添加到控制器中，注意isDissociate此处只能为true。请点进去看isDissociate的解释
@@ -143,7 +143,7 @@ public class TinyScreenActivity extends BaseActivity<VideoView> implements OnIte
     private void releaseVideoView() {
         mVideoView.release();
         if (mVideoView.isFullScreen()) {
-            mVideoView.stopFullScreen();
+            mVideoView.stopVideoViewFullScreen();
         }
         if (getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);

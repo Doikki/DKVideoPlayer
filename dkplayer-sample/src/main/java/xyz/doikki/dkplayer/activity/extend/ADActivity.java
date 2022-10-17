@@ -9,14 +9,14 @@ import xyz.doikki.dkplayer.util.DataUtil;
 import xyz.doikki.dkplayer.util.cache.ProxyVideoCacheManager;
 import xyz.doikki.dkplayer.widget.component.AdControlView;
 import xyz.doikki.videocontroller.StandardVideoController;
-import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.DKVideoView;
 
 /**
  * 广告
  * Created by Doikki on 2017/4/7.
  */
 
-public class ADActivity extends BaseActivity<VideoView> {
+public class ADActivity extends BaseActivity<DKVideoView> {
 
     private static final String URL_AD = "https://gslb.miaopai.com/stream/IR3oMYDhrON5huCmf7sHCfnU5YKEkgO2.mp4";
 
@@ -53,14 +53,14 @@ public class ADActivity extends BaseActivity<VideoView> {
 
         HttpProxyCacheServer cacheServer = ProxyVideoCacheManager.getProxy(this);
         String proxyUrl = cacheServer.getProxyUrl(URL_AD);
-        mVideoView.setUrl(proxyUrl);
+        mVideoView.setDataSource(proxyUrl);
         mVideoView.setVideoController(mController);
 
         //监听播放结束
-        mVideoView.addOnStateChangeListener(new VideoView.SimpleOnStateChangeListener() {
+        mVideoView.addOnStateChangeListener(new DKVideoView.OnStateChangeListener() {
             @Override
-            public void onPlayStateChanged(int playState) {
-                if (playState == VideoView.STATE_PLAYBACK_COMPLETED) {
+            public void onPlayerStateChanged(int playState) {
+                if (playState == DKVideoView.STATE_PLAYBACK_COMPLETED) {
                     playVideo();
                 }
             }
@@ -77,7 +77,7 @@ public class ADActivity extends BaseActivity<VideoView> {
         mController.removeAllControlComponent();
         mController.addDefaultControlComponent("正片", false);
         //重新设置数据
-        mVideoView.setUrl(DataUtil.SAMPLE_URL);
+        mVideoView.setDataSource(DataUtil.SAMPLE_URL);
         //开始播放
         mVideoView.start();
     }

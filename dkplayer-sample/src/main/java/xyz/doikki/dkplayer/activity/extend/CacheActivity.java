@@ -6,9 +6,9 @@ import xyz.doikki.dkplayer.activity.BaseActivity;
 import xyz.doikki.dkplayer.util.DataUtil;
 import xyz.doikki.dkplayer.util.cache.ProxyVideoCacheManager;
 import xyz.doikki.videocontroller.StandardVideoController;
-import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.DKVideoView;
 
-public class CacheActivity extends BaseActivity<VideoView> {
+public class CacheActivity extends BaseActivity<DKVideoView> {
 
     @Override
     protected int getLayoutResId() {
@@ -26,7 +26,7 @@ public class CacheActivity extends BaseActivity<VideoView> {
         mVideoView = findViewById(R.id.video_view);
         HttpProxyCacheServer cacheServer = ProxyVideoCacheManager.getProxy(this);
         String proxyUrl = cacheServer.getProxyUrl(DataUtil.SAMPLE_URL);
-        mVideoView.setUrl(proxyUrl);
+        mVideoView.setDataSource(proxyUrl);
         StandardVideoController controller = new StandardVideoController(this);
         controller.addDefaultControlComponent(getString(R.string.str_cache), false);
         mVideoView.setVideoController(controller);

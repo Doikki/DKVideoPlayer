@@ -20,9 +20,10 @@ import androidx.core.content.ContextCompat;
 
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.widget.CenteredImageSpan;
-import xyz.doikki.videoplayer.BuildConfig;
-import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.DKVideoView;
+import xyz.doikki.videoplayer.controller.MediaController;
 import xyz.doikki.videoplayer.util.PlayerUtils;
+import xyz.doikki.videoplayer.BuildConfig;
 
 import master.flame.danmaku.controller.IDanmakuView;
 import master.flame.danmaku.danmaku.model.BaseDanmaku;
@@ -40,7 +41,7 @@ import master.flame.danmaku.ui.widget.DanmakuView;
  * @deprecated 推荐 {@link xyz.doikki.dkplayer.widget.component.MyDanmakuView}
  */
 @Deprecated
-public class DanmukuVideoView extends VideoView {
+public class DanmukuVideoView extends DKVideoView {
     private DanmakuView mDanmakuView;
     private DanmakuContext mContext;
     private BaseDanmakuParser mParser;
@@ -59,18 +60,19 @@ public class DanmukuVideoView extends VideoView {
     }
 
     @Override
-    protected void initPlayer() {
-        super.initPlayer();
+    protected void setupMediaPlayer() {
+        super.setupMediaPlayer();
         if (mDanmakuView == null) {
             initDanMuView();
         }
-        mPlayerContainer.removeView(mDanmakuView);
+        playerContainer.removeView(mDanmakuView);
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         layoutParams.topMargin = (int) PlayerUtils.getStatusBarHeight(getContext());
-        mPlayerContainer.addView(mDanmakuView, layoutParams);
+        playerContainer.addView(mDanmakuView, layoutParams);
         //将控制器提到最顶层，如果有的话
-        if (mVideoController != null) {
-            mVideoController.bringToFront();
+        MediaController controller = getVideoController();
+        if (controller != null) {
+            controller.bringToFront();
         }
     }
 

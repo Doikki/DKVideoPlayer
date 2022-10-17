@@ -26,7 +26,7 @@ import xyz.doikki.videocontroller.component.ErrorView;
 import xyz.doikki.videocontroller.component.GestureView;
 import xyz.doikki.videocontroller.component.TitleView;
 import xyz.doikki.videocontroller.component.VodControlView;
-import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.DKVideoView;
 
 /**
  * RecyclerView demo
@@ -38,7 +38,7 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
     protected RecyclerView mRecyclerView;
     protected LinearLayoutManager mLinearLayoutManager;
 
-    protected VideoView mVideoView;
+    protected DKVideoView mVideoView;
     protected StandardVideoController mController;
     protected ErrorView mErrorView;
     protected CompleteView mCompleteView;
@@ -99,12 +99,12 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
     }
 
     protected void initVideoView() {
-        mVideoView = new VideoView(getActivity());
-        mVideoView.setOnStateChangeListener(new VideoView.SimpleOnStateChangeListener() {
+        mVideoView = new DKVideoView(getActivity());
+        mVideoView.addOnStateChangeListener(new DKVideoView.OnStateChangeListener() {
             @Override
-            public void onPlayStateChanged(int playState) {
+            public void onPlayerStateChanged(int playState) {
                 //监听VideoViewManager释放，重置状态
-                if (playState == VideoView.STATE_IDLE) {
+                if (playState == DKVideoView.STATE_IDLE) {
                     Utils.removeViewFormParent(mVideoView);
                     mLastPos = mCurPos;
                     mCurPos = -1;
@@ -120,7 +120,7 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
         mController.addControlComponent(mTitleView);
         mController.addControlComponent(new VodControlView(getActivity()));
         mController.addControlComponent(new GestureView(getActivity()));
-        mController.setEnableOrientation(true);
+        mController.setEnableOrientationSensor(true);
         mVideoView.setVideoController(mController);
     }
 
@@ -192,7 +192,7 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
 //        String proxyUrl = ProxyVideoCacheManager.getProxy(getActivity()).getProxyUrl(videoBean.getUrl());
 //        mVideoView.setUrl(proxyUrl);
 
-        mVideoView.setUrl(videoBean.getUrl());
+        mVideoView.setDataSource(videoBean.getUrl());
         mTitleView.setTitle(videoBean.getTitle());
         View itemView = mLinearLayoutManager.findViewByPosition(position);
         if (itemView == null) return;
@@ -211,7 +211,7 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
     private void releaseVideoView() {
         mVideoView.release();
         if (mVideoView.isFullScreen()) {
-            mVideoView.stopFullScreen();
+            mVideoView.stopVideoViewFullScreen();
         }
         if(getActivity().getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
