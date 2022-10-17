@@ -1,203 +1,160 @@
-package xyz.doikki.videocontroller.component;
+package xyz.doikki.videocontroller.component
 
-import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.pm.ActivityInfo;
-import android.os.Bundle;
-import android.util.AttributeSet;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import xyz.doikki.videocontroller.R;
-import xyz.doikki.videoplayer.DKVideoView;
-import xyz.doikki.videoplayer.controller.component.ControlComponent;
-import xyz.doikki.videoplayer.util.PlayerUtils;
+import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.content.pm.ActivityInfo
+import android.util.AttributeSet
+import android.view.animation.Animation
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
+import xyz.doikki.videocontroller.R
+import xyz.doikki.videoplayer.DKVideoView
+import xyz.doikki.videoplayer.util.PlayerUtils
+import xyz.doikki.videoplayer.util.orDefault
 
 /**
  * 播放器顶部标题栏
  */
-public class TitleView extends BaseControlComponent implements ControlComponent {
+class TitleView @JvmOverloads constructor(
+    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+) : BaseControlComponent(context, attrs, defStyleAttr) {
 
-    private LinearLayout mTitleContainer;
-    private TextView mTitle;
-    private TextView mSysTime;//系统当前时间
+    private val mTitleContainer: LinearLayout
+    private val mTitle: TextView
+    private val mSysTime: TextView//系统当前时间
 
-    private BatteryReceiver mBatteryReceiver;
+    private lateinit var mBatteryReceiver: BatteryReceiver
 
-    private boolean mIsRegister;//是否注册BatteryReceiver
+    //是否注册BatteryReceiver
+    private var mBatteryReceiverRegistered = false
 
-    public TitleView(@NonNull Context context) {
-        super(context);
+    /**
+     * 是否启用电量检测功能
+     */
+    private var mBatteryEnabled: Boolean = true
+
+    fun setTitle(title: String?) {
+        mTitle.text = title
     }
 
-    public TitleView(@NonNull Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    public TitleView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-    }
-
-    @Override
-    protected void setupViews() {
-        setVisibility(GONE);
-        LayoutInflater.from(getContext()).inflate(R.layout.dkplayer_layout_title_view, this, true);
-        mTitleContainer = findViewById(R.id.title_container);
-        ImageView back = findViewById(R.id.back);
-        mTitle = findViewById(R.id.title);
-        mSysTime = findViewById(R.id.sys_time);
-        //电量
-        ImageView batteryLevel = findViewById(R.id.iv_battery);
-
-        if (isFocusUiMode()) {
-            //tv模式不要电量，不要返回按钮
-            back.setVisibility(View.GONE);
-            batteryLevel.setVisibility(View.GONE);
-
-            //因为返回按钮不可见，因此标题左侧设置多一个margin
-            ViewGroup.LayoutParams titleLp = mTitle.getLayoutParams();
-            if (titleLp instanceof MarginLayoutParams) {
-                MarginLayoutParams lp = (MarginLayoutParams) titleLp;
-                lp.setMargins(lp.leftMargin + getContext().getResources().getDimensionPixelSize(R.dimen.dkplayer_controller_icon_padding),
-                        lp.topMargin, lp.rightMargin, lp.bottomMargin);
-                mTitle.setLayoutParams(lp);
-            }
-        } else {
-            back.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Activity activity = PlayerUtils.scanForActivity(getContext());
-                    if (activity != null && mControlWrapper.isFullScreen()) {
-                        mControlWrapper.stopFullScreen();
-                    }
-                }
-            });
-            mBatteryReceiver = new BatteryReceiver(batteryLevel);
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        if (mBatteryEnabled && mBatteryReceiverRegistered) {
+            context.unregisterReceiver(mBatteryReceiver)
+            mBatteryReceiverRegistered = false
         }
     }
 
-    public void setTitle(String title) {
-        mTitle.setText(title);
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        if (mIsRegister && mBatteryReceiver != null) {
-            getContext().unregisterReceiver(mBatteryReceiver);
-            mIsRegister = false;
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        if (mBatteryEnabled && !mBatteryReceiverRegistered) {
+            context.registerReceiver(mBatteryReceiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+            mBatteryReceiverRegistered = true
         }
     }
 
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        if (!mIsRegister && mBatteryReceiver != null) {
-            getContext().registerReceiver(mBatteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-            mIsRegister = true;
-        }
-    }
-
-
-    @Override
-    public void onVisibilityChanged(boolean isVisible, Animation anim) {
+    override fun onVisibilityChanged(isVisible: Boolean, anim: Animation?) {
         //只在全屏时才有效
-        if (!mControlWrapper.isFullScreen()) return;
+        if (!mController?.isFullScreen.orDefault()) return
         if (isVisible) {
-            if (getVisibility() == GONE) {
-                mSysTime.setText(PlayerUtils.getCurrentSystemTime());
-                setVisibility(VISIBLE);
-                if (anim != null) {
-                    startAnimation(anim);
-                }
+            if (visibility == GONE) {
+                mSysTime.text = PlayerUtils.getCurrentSystemTime()
+                visibility = VISIBLE
+                anim?.let { startAnimation(it) }
             }
         } else {
-            if (getVisibility() == VISIBLE) {
-                setVisibility(GONE);
-                if (anim != null) {
-                    startAnimation(anim);
-                }
+            if (visibility == VISIBLE) {
+                visibility = GONE
+                anim?.let { startAnimation(it) }
             }
         }
     }
 
-    @Override
-    public void onPlayStateChanged(int playState) {
-        switch (playState) {
-            case DKVideoView.STATE_IDLE:
-            case DKVideoView.STATE_START_ABORT:
-            case DKVideoView.STATE_PREPARING:
-            case DKVideoView.STATE_PREPARED:
-            case DKVideoView.STATE_ERROR:
-            case DKVideoView.STATE_PLAYBACK_COMPLETED:
-                setVisibility(GONE);
-                break;
+    override fun onPlayStateChanged(playState: Int) {
+        when (playState) {
+            DKVideoView.STATE_IDLE, DKVideoView.STATE_START_ABORT,
+            DKVideoView.STATE_PREPARING, DKVideoView.STATE_PREPARED,
+            DKVideoView.STATE_ERROR, DKVideoView.STATE_PLAYBACK_COMPLETED -> visibility = GONE
         }
     }
 
-    @Override
-    public void onScreenModeChanged(int screenMode) {
+    @SuppressLint("SwitchIntDef")
+    override fun onScreenModeChanged(screenMode: Int) {
+        val controller = this.mController
         if (screenMode == DKVideoView.SCREEN_MODE_FULL) {
-            if (mControlWrapper.isShowing() && !mControlWrapper.isLocked()) {
-                setVisibility(VISIBLE);
-                mSysTime.setText(PlayerUtils.getCurrentSystemTime());
+            if (controller != null && controller.isShowing && !controller.isLocked) {
+                visibility = VISIBLE
+                mSysTime.text = PlayerUtils.getCurrentSystemTime()
             }
-            mTitle.setSelected(true);
+            mTitle.isSelected = true
         } else {
-            setVisibility(GONE);
-            mTitle.setSelected(false);
+            visibility = GONE
+            mTitle.isSelected = false
         }
-
-        Activity activity = PlayerUtils.scanForActivity(getContext());
-        if (activity != null && mControlWrapper.hasCutout()) {
-            int orientation = activity.getRequestedOrientation();
-            int cutoutHeight = mControlWrapper.getCutoutHeight();
-            if (orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-                mTitleContainer.setPadding(0, 0, 0, 0);
-            } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-                mTitleContainer.setPadding(cutoutHeight, 0, 0, 0);
-            } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
-                mTitleContainer.setPadding(0, 0, cutoutHeight, 0);
+        val activity = this.activity
+        if (activity != null && controller != null && controller.hasCutout()) {
+            val orientation = activity.requestedOrientation
+            val cutoutHeight = controller.cutoutHeight
+            when (orientation) {
+                ActivityInfo.SCREEN_ORIENTATION_PORTRAIT -> {
+                    mTitleContainer.setPadding(0, 0, 0, 0)
+                }
+                ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE -> {
+                    mTitleContainer.setPadding(cutoutHeight, 0, 0, 0)
+                }
+                ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE -> {
+                    mTitleContainer.setPadding(0, 0, cutoutHeight, 0)
+                }
             }
         }
     }
 
-    @Override
-    public void onLockStateChanged(boolean isLocked) {
+    override fun onLockStateChanged(isLocked: Boolean) {
         if (isLocked) {
-            setVisibility(GONE);
+            visibility = GONE
         } else {
-            setVisibility(VISIBLE);
-            mSysTime.setText(PlayerUtils.getCurrentSystemTime());
+            visibility = VISIBLE
+            mSysTime.text = PlayerUtils.getCurrentSystemTime()
         }
     }
 
-    private static class BatteryReceiver extends BroadcastReceiver {
-        private final ImageView pow;
-
-        public BatteryReceiver(ImageView pow) {
-            this.pow = pow;
+    private class BatteryReceiver(private val pow: ImageView) : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val extras = intent.extras ?: return
+            val current = extras.getInt("level") // 获得当前电量
+            val total = extras.getInt("scale") // 获得总电量
+            val percent = current * 100 / total
+            pow.drawable.level = percent
         }
+    }
 
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Bundle extras = intent.getExtras();
-            if (extras == null) return;
-            int current = extras.getInt("level");// 获得当前电量
-            int total = extras.getInt("scale");// 获得总电量
-            int percent = current * 100 / total;
-            pow.getDrawable().setLevel(percent);
+    init {
+        visibility = GONE
+        if (isTelevisionUiMode()) {
+            mBatteryEnabled = false
+            layoutInflater.inflate(R.layout.dkplayer_layout_title_view_tv, this)
+            //tv模式不要电量，不要返回按钮
+            findViewById<ImageView>(R.id.back)?.visibility = GONE
+            findViewById<ImageView>(R.id.iv_battery)?.visibility = GONE
+        } else {
+            mBatteryEnabled = true
+            layoutInflater.inflate(R.layout.dkplayer_layout_title_view, this)
+            findViewById<ImageView>(R.id.back).setOnClickListener {
+                val activity = activity
+                if (activity != null && mController?.isFullScreen.orDefault()) {
+                    mController?.stopFullScreen()
+                }
+            }
+            //电量
+            val batteryLevel = findViewById<ImageView>(R.id.iv_battery)
+            mBatteryReceiver = BatteryReceiver(batteryLevel)
         }
+        mTitleContainer = findViewById(R.id.title_container)
+        mTitle = findViewById(R.id.title)
+        mSysTime = findViewById(R.id.sys_time)
     }
 }

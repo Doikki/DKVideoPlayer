@@ -66,10 +66,11 @@
         android:id="@+id/bottom_progress"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="1px"
         android:layout_gravity="bottom"
         android:max="1000"
         android:progressDrawable="@drawable/dkplayer_layer_progress_bar"
+        android:alpha="0.5"
         android:visibility="gone"
         tools:visibility="visible"/>
 

@@ -17,14 +17,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
-import xyz.doikki.dkplayer.R;
-import xyz.doikki.dkplayer.widget.CenteredImageSpan;
-import xyz.doikki.videoplayer.BuildConfig;
-import xyz.doikki.videoplayer.DKVideoView;
-import xyz.doikki.videoplayer.controller.ControlWrapper;
-import xyz.doikki.videoplayer.controller.component.ControlComponent;
-import xyz.doikki.videoplayer.util.PlayerUtils;
-
 import master.flame.danmaku.controller.DrawHandler;
 import master.flame.danmaku.danmaku.model.BaseDanmaku;
 import master.flame.danmaku.danmaku.model.DanmakuTimer;
@@ -35,6 +27,13 @@ import master.flame.danmaku.danmaku.model.android.Danmakus;
 import master.flame.danmaku.danmaku.model.android.SpannedCacheStuffer;
 import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
 import master.flame.danmaku.ui.widget.DanmakuView;
+import xyz.doikki.dkplayer.R;
+import xyz.doikki.dkplayer.widget.CenteredImageSpan;
+import xyz.doikki.videoplayer.BuildConfig;
+import xyz.doikki.videoplayer.DKVideoView;
+import xyz.doikki.videoplayer.controller.MediaController;
+import xyz.doikki.videoplayer.controller.component.ControlComponent;
+import xyz.doikki.videoplayer.util.PlayerUtils;
 
 public class MyDanmakuView extends DanmakuView implements ControlComponent {
 
@@ -100,10 +99,6 @@ public class MyDanmakuView extends DanmakuView implements ControlComponent {
         });
         showFPS(BuildConfig.DEBUG);
         enableDanmakuDrawingCache(true);
-    }
-
-    @Override
-    public void attach(@NonNull ControlWrapper controlWrapper) {
     }
 
     @Override
@@ -222,6 +217,11 @@ public class MyDanmakuView extends DanmakuView implements ControlComponent {
         spannableStringBuilder.setSpan(span, 0, text.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
         spannableStringBuilder.append(" 这是一条自定义弹幕~");
         return spannableStringBuilder;
+    }
+
+    @Override
+    public void attachController(@NonNull MediaController controller) {
+
     }
 
     /**

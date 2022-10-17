@@ -56,7 +56,7 @@ object DKManager {
      */
     @JvmStatic
     @NewFunc
-    var isFocusUiMode = true
+    var isTelevisionUiMode = false
 
     /**
      * 是否启用了音频焦点处理；默认开启
@@ -78,7 +78,7 @@ object DKManager {
     var isAdaptCutout: Boolean = true
 
     /**
-     * [xyz.doikki.videoplayer.render.TextureViewRender] 渲染优化是否已开启；
+     * [xyz.doikki.videoplayer.render.TextureViewRender] 是否开启优化TextureView渲染；
      * 默认开启
      */
     @JvmStatic

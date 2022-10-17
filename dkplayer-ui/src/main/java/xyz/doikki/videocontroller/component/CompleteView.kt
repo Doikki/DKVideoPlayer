@@ -10,7 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import xyz.doikki.videocontroller.R
 import xyz.doikki.videoplayer.DKVideoView
-import xyz.doikki.videoplayer.util.layoutInflater
+import xyz.doikki.videoplayer.util.isVisible
 import xyz.doikki.videoplayer.util.orDefault
 
 /**
@@ -23,36 +23,7 @@ class CompleteView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
 ) : BaseControlComponent(context, attrs) {
 
-    private lateinit var mStopFullscreen: ImageView
-
-    override fun setupViews() {
-        visibility = GONE
-        layoutInflater.inflate(R.layout.dkplayer_layout_complete_view, this)
-        //在xml中去除了一个布局层级，因此xml中的背景色改为代码设置在当前布局中
-        setBackgroundColor(Color.parseColor("#33000000"))
-        val replyAct = findViewById<View>(R.id.replay_layout)
-        if (isFocusUiMode()) {
-            replyAct.isClickable = true
-            setViewInFocusMode(replyAct)
-        } else {
-            //防止touch模式下，事件穿透
-            isClickable = true
-        }
-        replyAct.setOnClickListener { //重新播放
-            mControlWrapper?.replay(true)
-        }
-        mStopFullscreen = findViewById(R.id.stop_fullscreen)
-        mStopFullscreen.setOnClickListener {
-            mControlWrapper?.let { controller ->
-                if (controller.isFullScreen) {
-                    val activity = activity
-                    if (activity != null && !activity.isFinishing) {
-                        controller.stopFullScreen()
-                    }
-                }
-            }
-        }
-    }
+    private val mStopFullscreen: ImageView
 
     /**
      * 设置播放结束按钮的文本（默认是“重新播放”）
@@ -67,8 +38,7 @@ class CompleteView @JvmOverloads constructor(
     override fun onPlayStateChanged(playState: Int) {
         if (playState == DKVideoView.STATE_PLAYBACK_COMPLETED) {
             visibility = VISIBLE
-            mStopFullscreen.visibility =
-                if (mControlWrapper?.isFullScreen.orDefault()) VISIBLE else GONE
+            mStopFullscreen.isVisible = mController?.isFullScreen.orDefault()
             bringToFront()
         } else {
             visibility = GONE
@@ -82,7 +52,7 @@ class CompleteView @JvmOverloads constructor(
         } else if (screenMode == DKVideoView.SCREEN_MODE_NORMAL) {
             mStopFullscreen.visibility = GONE
         }
-        mControlWrapper?.let { controller ->
+        mController?.let { controller ->
             val activity = activity
             if (activity != null && controller.hasCutout()) {
                 val orientation = activity.requestedOrientation
@@ -101,6 +71,35 @@ class CompleteView @JvmOverloads constructor(
                 }
             }
         }
+    }
 
+    init {
+        visibility = GONE
+        layoutInflater.inflate(R.layout.dkplayer_layout_complete_view, this)
+        //在xml中去除了一个布局层级，因此xml中的背景色改为代码设置在当前布局中
+        setBackgroundColor(Color.parseColor("#33000000"))
+        val replyAct = findViewById<View>(R.id.replay_layout)
+        if (isTelevisionUiMode()) {
+            replyAct.isClickable = true
+            setViewInFocusMode(replyAct)
+        } else {
+            //防止touch模式下，事件穿透
+            isClickable = true
+        }
+
+        replyAct.setOnClickListener { //重新播放
+            mController?.replay(true)
+        }
+        mStopFullscreen = findViewById(R.id.stop_fullscreen)
+        mStopFullscreen.setOnClickListener {
+            mController?.let { controller ->
+                if (controller.isFullScreen) {
+                    val activity = activity
+                    if (activity != null && !activity.isFinishing) {
+                        controller.stopFullScreen()
+                    }
+                }
+            }
+        }
     }
 }

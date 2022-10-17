@@ -1,73 +1,35 @@
-package xyz.doikki.videocontroller.component;
+package xyz.doikki.videocontroller.component
 
-import android.content.Context;
-import android.util.AttributeSet;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewConfiguration;
-
-import androidx.annotation.Nullable;
-
-import xyz.doikki.videocontroller.R;
-import xyz.doikki.videoplayer.DKVideoView;
+import android.content.Context
+import android.util.AttributeSet
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewConfiguration
+import xyz.doikki.videocontroller.R
+import xyz.doikki.videoplayer.DKVideoView
+import kotlin.math.abs
 
 /**
  * 播放出错提示界面
  * Created by Doikki on 2017/4/13.
  * update by luochao on022/9/28 调整基类接口变更引起的变动，去掉无用代码
  */
-public class ErrorView extends BaseControlComponent {
+class ErrorView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : BaseControlComponent(
+    context, attrs, defStyleAttr
+) {
+    private var mDownX = 0f
+    private var mDownY = 0f
 
-    private float mDownX;
-    private float mDownY;
-
-    public ErrorView(Context context) {
-        this(context, null);
-    }
-
-    public ErrorView(Context context, @Nullable AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
-
-    public ErrorView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-    }
-
-    @Override
-    protected void setupViews() {
-        setVisibility(GONE);
-        if (isInEditMode()) {
-            setVisibility(VISIBLE);
-        }
-        setBackgroundResource(R.color.dkplayer_control_component_container_color);
-        LayoutInflater.from(getContext()).inflate(R.layout.dkplayer_layout_error_view, this, true);
-
-        View statusBtn = findViewById(R.id.status_btn);
-        if (isFocusUiMode()) {
-            statusBtn.setFocusable(true);
-            statusBtn.setFocusableInTouchMode(true);
-        } else {
-            //设置当前容器能点击的原因是为了避免事件穿透
-            setClickable(true);
-        }
-        statusBtn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setVisibility(GONE);
-                mControlWrapper.replay(false);
-            }
-        });
-    }
-
-
-    @Override
-    public void onPlayStateChanged(int playState) {
+    override fun onPlayStateChanged(playState: Int) {
         if (playState == DKVideoView.STATE_ERROR) {
-            bringToFront();
-            setVisibility(VISIBLE);
+            bringToFront()
+            visibility = VISIBLE
         } else if (playState == DKVideoView.STATE_IDLE) {
-            setVisibility(GONE);
+            visibility = GONE
         }
     }
 
@@ -77,25 +39,45 @@ public class ErrorView extends BaseControlComponent {
      * @param ev
      * @return
      */
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        switch (ev.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                mDownX = ev.getX();
-                mDownY = ev.getY();
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        when (ev.action) {
+            MotionEvent.ACTION_DOWN -> {
+                mDownX = ev.x
+                mDownY = ev.y
                 // True if the child does not want the parent to intercept touch events.
-                getParent().requestDisallowInterceptTouchEvent(true);
-                break;
-            case MotionEvent.ACTION_MOVE:
-                float absDeltaX = Math.abs(ev.getX() - mDownX);
-                float absDeltaY = Math.abs(ev.getY() - mDownY);
-                if (absDeltaX > ViewConfiguration.get(getContext()).getScaledTouchSlop() ||
-                        absDeltaY > ViewConfiguration.get(getContext()).getScaledTouchSlop()) {
-                    getParent().requestDisallowInterceptTouchEvent(false);
+                parent.requestDisallowInterceptTouchEvent(true)
+            }
+            MotionEvent.ACTION_MOVE -> {
+                val absDeltaX = abs(ev.x - mDownX)
+                val absDeltaY = abs(ev.y - mDownY)
+                if (absDeltaX > ViewConfiguration.get(context).scaledTouchSlop ||
+                    absDeltaY > ViewConfiguration.get(context).scaledTouchSlop
+                ) {
+                    parent.requestDisallowInterceptTouchEvent(false)
                 }
-            case MotionEvent.ACTION_UP:
-                break;
+            }
         }
-        return super.dispatchTouchEvent(ev);
+        return super.dispatchTouchEvent(ev)
+    }
+
+    init {
+        visibility = GONE
+        if (isInEditMode) {
+            visibility = VISIBLE
+        }
+        setBackgroundResource(R.color.dkplayer_control_component_container_color)
+        layoutInflater.inflate(R.layout.dkplayer_layout_error_view, this)
+        val statusBtn = findViewById<View>(R.id.status_btn)
+        if (isTelevisionUiMode()) {
+            statusBtn.isFocusable = true
+            statusBtn.isFocusableInTouchMode = true
+        } else {
+            //设置当前容器能点击的原因是为了避免事件穿透
+            isClickable = true
+        }
+        statusBtn.setOnClickListener {
+            visibility = GONE
+            mController?.replay(false)
+        }
     }
 }

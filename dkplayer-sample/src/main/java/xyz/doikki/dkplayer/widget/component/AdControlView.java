@@ -4,8 +4,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.animation.Animation;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,18 +11,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import xyz.doikki.dkplayer.R;
+import xyz.doikki.videocontroller.component.BaseControlComponent;
 import xyz.doikki.videoplayer.DKVideoView;
-import xyz.doikki.videoplayer.controller.component.ControlComponent;
-import xyz.doikki.videoplayer.controller.ControlWrapper;
 
 
-public class AdControlView extends FrameLayout implements ControlComponent, View.OnClickListener {
+public class AdControlView extends BaseControlComponent implements View.OnClickListener {
 
     protected TextView mAdTime, mAdDetail;
     protected ImageView mBack, mVolume, mFullScreen, mPlayButton;
     protected AdControlListener mListener;
-
-    private ControlWrapper mControlWrapper;
 
     public AdControlView(@NonNull Context context) {
         super(context);
@@ -62,26 +57,12 @@ public class AdControlView extends FrameLayout implements ControlComponent, View
         });
     }
 
-    @Override
-    public void attach(@NonNull ControlWrapper controlWrapper) {
-        mControlWrapper = controlWrapper;
-    }
-
-    @Override
-    public View getView() {
-        return this;
-    }
-
-    @Override
-    public void onVisibilityChanged(boolean isVisible, Animation anim) {
-
-    }
 
     @Override
     public void onPlayStateChanged(int playState) {
         switch (playState) {
             case DKVideoView.STATE_PLAYING:
-                mControlWrapper.startUpdateProgress();
+                getMController().startUpdateProgress();
                 mPlayButton.setSelected(true);
                 break;
             case DKVideoView.STATE_PAUSED:
@@ -129,20 +110,21 @@ public class AdControlView extends FrameLayout implements ControlComponent, View
         } else if (id == R.id.ad_time) {
             if (mListener != null) mListener.onSkipAd();
         } else if (id == R.id.iv_play) {
-            mControlWrapper.togglePlay();
+            getMController().togglePlay();
         }
     }
 
     private void doMute() {
-        mControlWrapper.setMute(!mControlWrapper.isMute());
-        mVolume.setImageResource(mControlWrapper.isMute() ? R.drawable.dkplayer_ic_action_volume_up : R.drawable.dkplayer_ic_action_volume_off);
+
+        getPlayer().setMute(!getPlayer().isMute());
+        mVolume.setImageResource(getPlayer().isMute() ? R.drawable.dkplayer_ic_action_volume_up : R.drawable.dkplayer_ic_action_volume_off);
     }
 
     /**
      * 横竖屏切换
      */
     private void toggleFullScreen() {
-        mControlWrapper.toggleFullScreen();
+        getMController().toggleFullScreen();
     }
 
     public void setListener(AdControlListener listener) {

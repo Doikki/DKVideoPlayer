@@ -3,6 +3,7 @@ package xyz.doikki.videoplayer.controller
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.content.pm.ActivityInfo
 import android.util.AttributeSet
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
@@ -140,11 +141,7 @@ open class MediaController @JvmOverloads constructor(
     @JvmField
     protected var mActivity: Activity? = null
 
-    /**
-     * 此类过于臃肿，想改善这个类
-     */
-    var controlWrapper: ControlWrapper? = null
-        protected set
+    val playerControl: VideoViewControl? get() = mPlayer
 
     init {
         mOrientationSensorHelper = DeviceOrientationSensorHelper(
@@ -173,16 +170,17 @@ open class MediaController @JvmOverloads constructor(
 
     protected val isInCompleteState: Boolean get() = mPlayerState == DKVideoView.STATE_PLAYBACK_COMPLETED
 
+    protected val isInErrorState: Boolean get() = mPlayerState == DKVideoView.STATE_ERROR
+
     /**
      * 重要：此方法用于将[DKVideoView] 和控制器绑定
      */
     @CallSuper
     open fun setMediaPlayer(mediaPlayer: VideoViewControl) {
-        controlWrapper = ControlWrapper(mediaPlayer, this)
         mPlayer = mediaPlayer
         //绑定ControlComponent和Controller
         for ((component) in mControlComponents) {
-            component.attach(controlWrapper!!)
+            component.onPlayerAttached(mediaPlayer)
         }
     }
     /***********START 关键方法代码 */
@@ -213,9 +211,7 @@ open class MediaController @JvmOverloads constructor(
      */
     fun addControlComponent(component: ControlComponent, isDissociate: Boolean) {
         mControlComponents[component] = isDissociate
-        controlWrapper?.let {
-            component.attach(it)
-        }
+        component.attachController(this)
         val view = component.getView()
         if (view != null && !isDissociate) {
             addView(view, 0)
@@ -490,7 +486,7 @@ open class MediaController @JvmOverloads constructor(
     /**
      * 播放和暂停
      */
-    protected fun togglePlay() {
+    fun togglePlay() {
         invokeOnPlayerAttached {
             if (it.isPlaying) {
                 it.pause()
@@ -503,7 +499,7 @@ open class MediaController @JvmOverloads constructor(
     /**
      * @return true:调用了重播方法，false则表示未处理任何
      */
-    protected fun replay(resetPosition: Boolean = true): Boolean {
+    fun replay(resetPosition: Boolean = true): Boolean {
         return invokeOnPlayerAttached {
             it.replay(resetPosition)
             true
@@ -702,4 +698,25 @@ open class MediaController @JvmOverloads constructor(
         }
         return block.invoke(player)
     }
+
+//    /**
+//     * 横竖屏切换，根据适配宽高决定是否旋转屏幕
+//     */
+//    open fun toggleFullScreenByVideoSize(activity: Activity?) {
+//        if (activity == null || activity.isFinishing) return
+//        val size: IntArray = getVideoSize()
+//        val width = size[0]
+//        val height = size[1]
+//        if (isFullScreen) {
+//            stopVideoViewFullScreen()
+//            if (width > height) {
+//                activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+//            }
+//        } else {
+//            startVideoViewFullScreen()
+//            if (width > height) {
+//                activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+//            }
+//        }
+//    }
 }

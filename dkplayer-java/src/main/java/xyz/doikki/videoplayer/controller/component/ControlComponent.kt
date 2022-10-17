@@ -4,7 +4,8 @@ import android.view.View
 import android.view.animation.Animation
 import xyz.doikki.videoplayer.DKManager
 import xyz.doikki.videoplayer.DKVideoView.ScreenMode
-import xyz.doikki.videoplayer.controller.ControlWrapper
+import xyz.doikki.videoplayer.controller.MediaController
+import xyz.doikki.videoplayer.controller.VideoViewControl
 
 /**
  * 控制器中的控制组件
@@ -12,9 +13,14 @@ import xyz.doikki.videoplayer.controller.ControlWrapper
 interface ControlComponent {
 
     /**
-     * 将 ControlWrapper 传递到当前 ControlComponent 中
+     * 将 控制器 传递到当前 ControlComponent 中
      */
-    fun attach(controlHolder: ControlWrapper)
+    fun attachController(controller: MediaController)
+
+    /**
+     * 绑定了播放器:用于先绑定controller之后，再绑定的播放器情况
+     */
+    fun onPlayerAttached(player: VideoViewControl) {}
 
     /**
      * 如果 ControlComponent 是 View，返回当前控件（this）即可；如果不是，返回null
@@ -26,8 +32,8 @@ interface ControlComponent {
      *
      * @return
      */
-    fun isFocusUiMode(): Boolean {
-        return DKManager.isFocusUiMode
+    fun isTelevisionUiMode(): Boolean {
+        return DKManager.isTelevisionUiMode
     }
 
     /**

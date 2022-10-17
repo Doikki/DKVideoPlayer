@@ -7,7 +7,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.animation.Animation;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -15,17 +14,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import xyz.doikki.dkplayer.R;
+import xyz.doikki.videocontroller.component.BaseControlComponent;
 import xyz.doikki.videoplayer.DKVideoView;
-import xyz.doikki.videoplayer.controller.component.ControlComponent;
-import xyz.doikki.videoplayer.controller.ControlWrapper;
 import xyz.doikki.videoplayer.util.L;
 
-public class TikTokView extends FrameLayout implements ControlComponent {
+public class TikTokView extends BaseControlComponent {
 
     private final ImageView thumb;
     private final ImageView mPlayBtn;
 
-    private ControlWrapper mControlWrapper;
     private final int mScaledTouchSlop;
     private int mStartX, mStartY;
 
@@ -48,7 +45,7 @@ public class TikTokView extends FrameLayout implements ControlComponent {
         setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mControlWrapper.togglePlay();
+                getMController().togglePlay();
             }
         });
         mScaledTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
@@ -75,16 +72,6 @@ public class TikTokView extends FrameLayout implements ControlComponent {
                 break;
         }
         return false;
-    }
-
-    @Override
-    public void attach(@NonNull ControlWrapper controlWrapper) {
-        mControlWrapper = controlWrapper;
-    }
-
-    @Override
-    public View getView() {
-        return this;
     }
 
     @Override

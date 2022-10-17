@@ -673,7 +673,7 @@ open class DKVideoView @JvmOverloads constructor(
      * 获取缓冲速度
      */
     override fun getTcpSpeed(): Long {
-        return if (player != null) player!!.getTcpSpeed() else 0
+        return player?.getTcpSpeed().orDefault()
     }
 
     /**

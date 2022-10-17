@@ -8,7 +8,7 @@
     <item android:id="@android:id/secondaryProgress">
         <clip>
             <shape>
-                <solid android:color="@android:color/white" />
+                <solid android:color="@android:color/white" android:alpha="0.5"/>
             </shape>
         </clip>
     </item>

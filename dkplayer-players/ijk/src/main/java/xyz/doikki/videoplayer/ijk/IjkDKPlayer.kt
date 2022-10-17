@@ -14,6 +14,7 @@ import tv.danmaku.ijk.media.player.misc.ITrackInfo
 import xyz.doikki.videoplayer.AbstractDKPlayer
 import xyz.doikki.videoplayer.DKPlayer
 import xyz.doikki.videoplayer.internal.DKPlayerException
+import xyz.doikki.videoplayer.util.orDefault
 
 open class IjkDKPlayer(private val appContext: Context) : AbstractDKPlayer(),
     IMediaPlayer.OnErrorListener, IMediaPlayer.OnCompletionListener, IMediaPlayer.OnInfoListener,
@@ -186,7 +187,7 @@ open class IjkDKPlayer(private val appContext: Context) : AbstractDKPlayer(),
     }
 
     override fun getTcpSpeed(): Long {
-        return kernel!!.tcpSpeed
+        return kernel?.tcpSpeed.orDefault()
     }
 
     override fun onError(mp: IMediaPlayer, what: Int, extra: Int): Boolean {

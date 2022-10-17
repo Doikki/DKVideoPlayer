@@ -6,7 +6,6 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
@@ -15,13 +14,10 @@ import androidx.annotation.Nullable;
 
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.util.PIPManager;
+import xyz.doikki.videocontroller.component.BaseControlComponent;
 import xyz.doikki.videoplayer.DKVideoView;
-import xyz.doikki.videoplayer.controller.component.ControlComponent;
-import xyz.doikki.videoplayer.controller.ControlWrapper;
 
-public class PipControlView extends FrameLayout implements ControlComponent, View.OnClickListener {
-
-    private ControlWrapper mControlWrapper;
+public class PipControlView extends BaseControlComponent implements View.OnClickListener {
 
     private final ImageView mPlay;
     private final ImageView mClose;
@@ -56,7 +52,7 @@ public class PipControlView extends FrameLayout implements ControlComponent, Vie
             PIPManager.getInstance().stopFloatWindow();
             PIPManager.getInstance().reset();
         } else if (id == R.id.start_play) {
-            mControlWrapper.togglePlay();
+            getMController().togglePlay();
         } else if (id == R.id.btn_skip) {
             if (PIPManager.getInstance().getActClass() != null) {
                 Intent intent = new Intent(getContext(), PIPManager.getInstance().getActClass());
@@ -64,16 +60,6 @@ public class PipControlView extends FrameLayout implements ControlComponent, Vie
                 getContext().startActivity(intent);
             }
         }
-    }
-
-    @Override
-    public void attach(@NonNull ControlWrapper controlWrapper) {
-        mControlWrapper = controlWrapper;
-    }
-
-    @Override
-    public View getView() {
-        return this;
     }
 
     @Override
@@ -121,7 +107,7 @@ public class PipControlView extends FrameLayout implements ControlComponent, Vie
             case DKVideoView.STATE_BUFFERED:
                 mPlay.setVisibility(GONE);
                 mLoading.setVisibility(GONE);
-                mPlay.setSelected(mControlWrapper.isPlaying());
+                mPlay.setSelected(getPlayer().isPlaying());
                 break;
             case DKVideoView.STATE_PLAYBACK_COMPLETED:
                 bringToFront();

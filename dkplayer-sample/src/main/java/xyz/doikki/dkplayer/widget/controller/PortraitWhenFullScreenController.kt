@@ -21,7 +21,7 @@ class PortraitWhenFullScreenController @JvmOverloads constructor(
 
     init {
         val vodControlView = VodControlView(context)
-        vodControlView.showBottomProgress(false)
+        vodControlView.showBottomProgress = false
         mFullScreen = vodControlView.findViewById(R.id.fullscreen)
         mFullScreen.setOnClickListener { toggleFullScreen() }
         addControlComponent(vodControlView)

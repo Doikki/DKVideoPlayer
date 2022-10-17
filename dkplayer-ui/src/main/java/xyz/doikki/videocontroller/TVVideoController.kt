@@ -76,6 +76,8 @@ open class TVVideoController @JvmOverloads constructor(
                         togglePlay()
                     } else if (isInCompleteState) {
                         replay(resetPosition = true)
+                    } else if (isInErrorState) {
+                        replay(resetPosition = false)
                     }
                     show()
                 }

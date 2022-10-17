@@ -14,7 +14,8 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 
 import xyz.doikki.videoplayer.DKVideoView;
-import xyz.doikki.videoplayer.controller.ControlWrapper;
+import xyz.doikki.videoplayer.controller.MediaController;
+import xyz.doikki.videoplayer.controller.VideoViewControl;
 import xyz.doikki.videoplayer.controller.component.ControlComponent;
 import xyz.doikki.videoplayer.util.UtilsKt;
 
@@ -23,7 +24,7 @@ import xyz.doikki.videoplayer.util.UtilsKt;
  */
 public class DebugInfoView extends AppCompatTextView implements ControlComponent {
 
-    private ControlWrapper mControlWrapper;
+    private MediaController mController;
 
     public DebugInfoView(Context context) {
         super(context);
@@ -46,12 +47,6 @@ public class DebugInfoView extends AppCompatTextView implements ControlComponent
         setLayoutParams(lp);
     }
 
-
-    @Override
-    public void attach(@NonNull ControlWrapper holder) {
-        mControlWrapper = holder;
-    }
-
     @Override
     public View getView() {
         return this;
@@ -72,8 +67,11 @@ public class DebugInfoView extends AppCompatTextView implements ControlComponent
      * Returns the debugging information string to be shown by the target {@link TextView}.
      */
     protected String getDebugString(int playState) {
-        int[] videoSize = mControlWrapper.getPlayer().getVideoSize();
-        DKVideoView videoView = (DKVideoView) mControlWrapper.getPlayer();
+        VideoViewControl control = mController.getPlayerControl();
+        if (control == null)
+            return "";
+        int[] videoSize = control.getVideoSize();
+        DKVideoView videoView = (DKVideoView) mController.getPlayerControl();
         StringBuilder sb = new StringBuilder();
         sb.append("player:").append(videoView.getPlayerName()).append("   ")
                 .append("render:").append(videoView.getRenderName()).append("\n");
@@ -96,5 +94,10 @@ public class DebugInfoView extends AppCompatTextView implements ControlComponent
     @Override
     public void onLockStateChanged(boolean isLocked) {
 
+    }
+
+    @Override
+    public void attachController(@NonNull MediaController controller) {
+        this.mController = controller;
     }
 }

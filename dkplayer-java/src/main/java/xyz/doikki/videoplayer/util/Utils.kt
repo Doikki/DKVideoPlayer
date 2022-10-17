@@ -74,6 +74,13 @@ inline fun <V> MutableMap<*, V>.removeAllByValue(filter: (V) -> Boolean) {
     }
 }
 
+inline var View.isVisible: Boolean
+    get() = visibility == View.VISIBLE
+    set(value) {
+        visibility = if (value) View.VISIBLE else View.GONE
+    }
+
+
 /**
  * 从Parent中移除自己
  */

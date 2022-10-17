@@ -5,11 +5,12 @@ import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.util.AttributeSet
 import android.view.KeyEvent
-import android.view.View
-import android.widget.*
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ProgressBar
+import android.widget.TextView
 import xyz.doikki.videocontroller.R
 import xyz.doikki.videoplayer.DKVideoView
-import xyz.doikki.videoplayer.controller.ControlWrapper
 import xyz.doikki.videoplayer.controller.component.KeyControlComponent
 import xyz.doikki.videoplayer.util.PlayerUtils
 import xyz.doikki.videoplayer.util.layoutInflater
@@ -19,21 +20,12 @@ import xyz.doikki.videoplayer.util.layoutInflater
  */
 class GestureView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : FrameLayout(context, attrs, defStyleAttr), KeyControlComponent {
+) : BaseControlComponent(context, attrs, defStyleAttr), KeyControlComponent {
 
-    private var mControlWrapper: ControlWrapper? = null
     private val mIcon: ImageView
     private val mProgressPercent: ProgressBar
     private val mTextPercent: TextView
     private val mCenterContainer: LinearLayout
-
-    override fun attach(controlHolder: ControlWrapper) {
-        mControlWrapper = controlHolder
-    }
-
-    override fun getView(): View? {
-        return this
-    }
 
     override fun onStartLeftOrRightKeyPressedForSeeking(event: KeyEvent) {
         onStartSlide()
@@ -48,7 +40,7 @@ class GestureView @JvmOverloads constructor(
     }
 
     override fun onStartSlide() {
-        mControlWrapper?.hide()
+        mController?.hide()
         mCenterContainer.visibility = VISIBLE
         mCenterContainer.alpha = 1f
     }
