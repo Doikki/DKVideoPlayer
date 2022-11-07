@@ -163,7 +163,7 @@ class PlayerActivity : BaseActivity<DKVideoView>() {
 //            mVideoView.setMute(true)
 
             //从设置的position开始播放
-//            mVideoView.skipPositionWhenPlay(10000)
+//            mVideoView.seekTo(10000)
             mVideoView.start()
         }
 

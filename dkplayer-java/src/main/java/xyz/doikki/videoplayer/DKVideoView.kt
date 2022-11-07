@@ -13,7 +13,6 @@ import android.widget.FrameLayout
 import androidx.annotation.CallSuper
 import androidx.annotation.FloatRange
 import androidx.annotation.IntDef
-import xyz.doikki.videoplayer.DKPlayerConfig.playerFactory
 import xyz.doikki.videoplayer.controller.VideoController
 import xyz.doikki.videoplayer.controller.VideoViewControl
 import xyz.doikki.videoplayer.internal.DKVideoViewContainer
@@ -280,7 +279,7 @@ open class DKVideoView @JvmOverloads constructor(
         player = createMediaPlayer().also {
             it.setEventListener(this)
             it.init()
-            onMediaPlayerCreated(player)
+            onMediaPlayerCreated(it)
         }
         setupMediaPlayerOptions()
     }
