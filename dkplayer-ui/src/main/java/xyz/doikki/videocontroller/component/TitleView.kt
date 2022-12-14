@@ -12,7 +12,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import xyz.doikki.videocontroller.R
-import xyz.doikki.videoplayer.DKVideoView
+import xyz.doikki.videoplayer.VideoView
 import xyz.doikki.videoplayer.util.PlayerUtils
 import xyz.doikki.videoplayer.util.orDefault
 
@@ -76,16 +76,16 @@ class TitleView @JvmOverloads constructor(
 
     override fun onPlayStateChanged(playState: Int) {
         when (playState) {
-            DKVideoView.STATE_IDLE, DKVideoView.STATE_START_ABORT,
-            DKVideoView.STATE_PREPARING, DKVideoView.STATE_PREPARED,
-            DKVideoView.STATE_ERROR, DKVideoView.STATE_PLAYBACK_COMPLETED -> visibility = GONE
+            VideoView.STATE_IDLE, VideoView.STATE_START_ABORT,
+            VideoView.STATE_PREPARING, VideoView.STATE_PREPARED,
+            VideoView.STATE_ERROR, VideoView.STATE_PLAYBACK_COMPLETED -> visibility = GONE
         }
     }
 
     @SuppressLint("SwitchIntDef")
     override fun onScreenModeChanged(screenMode: Int) {
         val controller = this.controller
-        if (screenMode == DKVideoView.SCREEN_MODE_FULL) {
+        if (screenMode == VideoView.SCREEN_MODE_FULL) {
             if (controller != null && controller.isShowing && !controller.isLocked) {
                 visibility = VISIBLE
                 mSysTime.text = PlayerUtils.getCurrentSystemTime()

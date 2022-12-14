@@ -13,7 +13,7 @@ import java.util.List;
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.util.DataUtil;
 import xyz.doikki.videocontroller.StandardVideoController;
-import xyz.doikki.videoplayer.DKVideoView;
+import xyz.doikki.videoplayer.VideoView;
 
 /**
  * 多开
@@ -23,7 +23,7 @@ public class ParallelPlayActivity extends AppCompatActivity {
     private static final String VOD_URL_1 = "http://vfx.mtime.cn/Video/2019/03/18/mp4/190318231014076505.mp4";
     private static final String VOD_URL_2 = DataUtil.SAMPLE_URL;
 
-    private List<DKVideoView> mVideoViews = new ArrayList<>();
+    private List<VideoView> mVideoViews = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,7 +36,7 @@ public class ParallelPlayActivity extends AppCompatActivity {
         }
 
 
-        DKVideoView player1 = findViewById(R.id.player_1);
+        VideoView player1 = findViewById(R.id.player_1);
         player1.setDataSource(VOD_URL_1);
 
         StandardVideoController controller1 = new StandardVideoController(this);
@@ -45,7 +45,7 @@ public class ParallelPlayActivity extends AppCompatActivity {
         player1.setVideoController(controller1);
         mVideoViews.add(player1);
 
-        DKVideoView player2 = findViewById(R.id.player_2);
+        VideoView player2 = findViewById(R.id.player_2);
         player2.setDataSource(VOD_URL_2);
         StandardVideoController controller2 = new StandardVideoController(this);
         controller2.addDefaultControlComponent(getString(R.string.str_multi_player), false);
@@ -65,7 +65,7 @@ public class ParallelPlayActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        for (DKVideoView vv : mVideoViews) {
+        for (VideoView vv : mVideoViews) {
             vv.pause();
         }
     }
@@ -73,7 +73,7 @@ public class ParallelPlayActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        for (DKVideoView vv : mVideoViews) {
+        for (VideoView vv : mVideoViews) {
             vv.resume();
         }
     }
@@ -81,14 +81,14 @@ public class ParallelPlayActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        for (DKVideoView vv : mVideoViews) {
+        for (VideoView vv : mVideoViews) {
             vv.release();
         }
     }
 
     @Override
     public void onBackPressed() {
-        for (DKVideoView vv : mVideoViews) {
+        for (VideoView vv : mVideoViews) {
             if (vv.onBackPressed())
                 return;
         }

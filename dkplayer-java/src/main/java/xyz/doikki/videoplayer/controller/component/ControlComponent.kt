@@ -2,9 +2,8 @@ package xyz.doikki.videoplayer.controller.component
 
 import android.view.View
 import android.view.animation.Animation
-import xyz.doikki.videoplayer.DKManager
-import xyz.doikki.videoplayer.DKPlayerConfig
-import xyz.doikki.videoplayer.DKVideoView
+import xyz.doikki.videoplayer.GlobalConfig
+import xyz.doikki.videoplayer.VideoView
 import xyz.doikki.videoplayer.controller.VideoController
 import xyz.doikki.videoplayer.controller.VideoViewControl
 
@@ -35,15 +34,15 @@ interface ControlComponent {
      * @return
      */
     fun isTelevisionUiMode(): Boolean {
-        return DKPlayerConfig.isTelevisionUiMode
+        return GlobalConfig.isTelevisionUiMode
     }
 
     /**
-     * 播放器界面模式发生了变化；如果你只是单纯的想监听此状态，建议使用 [DKVideoView.addOnStateChangeListener]监听
+     * 播放器界面模式发生了变化；如果你只是单纯的想监听此状态，建议使用 [VideoView.addOnStateChangeListener]监听
      *
      * @param screenMode 播放器界面模式：竖屏、全屏、小窗口
      */
-    fun onScreenModeChanged(@DKVideoView.ScreenMode screenMode: Int) {}
+    fun onScreenModeChanged(@VideoView.ScreenMode screenMode: Int) {}
 
     /**
      * 回调控制器是否被锁定，锁定后会产生如下影响：
@@ -63,11 +62,11 @@ interface ControlComponent {
     fun onVisibilityChanged(isVisible: Boolean, anim: Animation?) {}
 
     /**
-     * 回调播放器的播放器状态变更；如果只是单纯的想监听状态变更，可以通过[DKVideoView.addOnStateChangeListener]方法增加监听
+     * 回调播放器的播放器状态变更；如果只是单纯的想监听状态变更，可以通过[VideoView.addOnStateChangeListener]方法增加监听
      *
      * @param playState 播放状态
      */
-    fun onPlayStateChanged(@DKVideoView.PlayerState playState: Int) {}
+    fun onPlayStateChanged(@VideoView.PlayerState playState: Int) {}
 
     /**
      * 回调播放进度，1秒回调一次

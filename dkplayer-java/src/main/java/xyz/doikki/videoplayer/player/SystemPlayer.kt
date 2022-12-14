@@ -1,4 +1,4 @@
-package xyz.doikki.videoplayer.sys
+package xyz.doikki.videoplayer.player
 
 import android.content.Context
 import android.content.res.AssetFileDescriptor
@@ -8,19 +8,17 @@ import android.net.Uri
 import android.os.Build
 import android.view.Surface
 import android.view.SurfaceHolder
-import xyz.doikki.videoplayer.AbstractDKPlayer
-import xyz.doikki.videoplayer.DKPlayer
-import xyz.doikki.videoplayer.util.orDefault
-import xyz.doikki.videoplayer.internal.DKPlayerException
-import xyz.doikki.videoplayer.util.tryIgnore
+import xyz.doikki.videoplayer.internal.PlayerException
 import xyz.doikki.videoplayer.util.L
+import xyz.doikki.videoplayer.util.orDefault
+import xyz.doikki.videoplayer.util.tryIgnore
 import kotlin.concurrent.thread
 
 /**
  * 基于系统[android.media.MediaPlayer]封装
  * 注意：不推荐，兼容性差，建议使用IJK或者Exo播放器
  */
-class SysDKPlayer(context: Context) : AbstractDKPlayer(),
+class SystemPlayer(context: Context) : AbstractPlayer(),
     MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnInfoListener,
     MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnPreparedListener,
     MediaPlayer.OnVideoSizeChangedListener {
@@ -243,7 +241,7 @@ class SysDKPlayer(context: Context) : AbstractDKPlayer(),
 
     override fun onError(mp: MediaPlayer, what: Int, extra: Int): Boolean {
         eventListener?.onError(
-            DKPlayerException(
+            PlayerException(
                 what,
                 extra
             )
@@ -257,7 +255,7 @@ class SysDKPlayer(context: Context) : AbstractDKPlayer(),
 
     override fun onInfo(mp: MediaPlayer, what: Int, extra: Int): Boolean {
         //解决MEDIA_INFO_VIDEO_RENDERING_START多次回调问题
-        if (what == DKPlayer.MEDIA_INFO_RENDERING_START) {
+        if (what == IPlayer.MEDIA_INFO_RENDERING_START) {
             if (isPreparing) {
                 eventListener?.onInfo(what, extra)
                 isPreparing = false
@@ -278,7 +276,7 @@ class SysDKPlayer(context: Context) : AbstractDKPlayer(),
         // 修复播放纯音频时状态出错问题
         eventListener?.let {
             if (!isVideo()) {
-                it.onInfo(DKPlayer.MEDIA_INFO_RENDERING_START, 0)
+                it.onInfo(IPlayer.MEDIA_INFO_RENDERING_START, 0)
             }
         }
     }

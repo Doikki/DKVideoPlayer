@@ -12,13 +12,13 @@ import xyz.doikki.dkplayer.widget.videoview.ExoVideoView;
 import xyz.doikki.videocontroller.StandardVideoController;
 import xyz.doikki.videoplayer.exo.ExoMediaPlayer;
 import xyz.doikki.videoplayer.exo.ExoMediaSourceHelper;
-import xyz.doikki.videoplayer.DKPlayer;
+import xyz.doikki.videoplayer.player.IPlayer;
 
 /**
  * 自定义MediaPlayer，有多种情形：
  * 第一：继承某个现成的MediaPlayer，对其功能进行扩展，此demo就演示了通过继承{@link ExoMediaPlayer}
  * 对其功能进行扩展。
- * 第二：通过继承{@link DKPlayer}扩展一些其他的播放器。
+ * 第二：通过继承{@link IPlayer}扩展一些其他的播放器。
  */
 public class CustomExoPlayerActivity extends BaseActivity<ExoVideoView> {
 

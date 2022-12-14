@@ -38,7 +38,7 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 import javax.microedition.khronos.opengles.GL10;
 
-import xyz.doikki.videoplayer.DKPlayer;
+import xyz.doikki.videoplayer.player.IPlayer;
 import xyz.doikki.videoplayer.render.Render;
 import xyz.doikki.videoplayer.render.RenderMeasure;
 
@@ -58,10 +58,10 @@ public final class GLSurfaceRenderView extends GLSurfaceView implements Render {
 
     private final RenderMeasure mMeasureHelper = new RenderMeasure();
 
-    private DKPlayer player;
+    private IPlayer player;
 
     @Override
-    public void attachPlayer(@NonNull DKPlayer player) {
+    public void attachPlayer(@NonNull IPlayer player) {
         this.player = player;
         setVideoRenderer(new BitmapOverlayVideoProcessor(getContext()), false);
     }

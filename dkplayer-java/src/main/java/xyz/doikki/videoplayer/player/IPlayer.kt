@@ -1,19 +1,20 @@
-package xyz.doikki.videoplayer
+package xyz.doikki.videoplayer.player
 
 import android.content.res.AssetFileDescriptor
 import android.view.Surface
 import android.view.SurfaceHolder
 import androidx.annotation.FloatRange
 import androidx.annotation.IntRange
+import xyz.doikki.videoplayer.util.PartialFunc
 
 /**
  * 抽象的播放器，继承此接口扩展自己的播放器
  * 备注：本类的职责应该完全定位在播放器的“能力”上，因此只考虑播放相关的逻辑（不包括UI层面）
  * Created by Doikki on 2017/12/21.
  * update by luochao on 2022/9/16. 调整部分代码及结构
- * @see AbstractDKPlayer
+ * @see AbstractPlayer
  */
-interface DKPlayer {
+interface IPlayer {
 
     companion object {
         /**

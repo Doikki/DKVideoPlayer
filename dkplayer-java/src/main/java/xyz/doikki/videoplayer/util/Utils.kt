@@ -11,7 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.StringRes
-import xyz.doikki.videoplayer.DKVideoView
+import xyz.doikki.videoplayer.VideoView
 
 /**
  * 等同于[trySilent]，只是本方法没有对结果进行装箱处理（即没有产生[Result]中间对象）
@@ -139,11 +139,11 @@ val View.canTakeFocus: Boolean
 /**
  * Returns a string containing player state debugging information.
  */
-fun screenMode2str(@DKVideoView.ScreenMode mode: Int): String {
+fun screenMode2str(@VideoView.ScreenMode mode: Int): String {
     val playerStateString: String = when (mode) {
-        DKVideoView.SCREEN_MODE_NORMAL -> "normal"
-        DKVideoView.SCREEN_MODE_FULL -> "full screen"
-        DKVideoView.SCREEN_MODE_TINY -> "tiny screen"
+        VideoView.SCREEN_MODE_NORMAL -> "normal"
+        VideoView.SCREEN_MODE_FULL -> "full screen"
+        VideoView.SCREEN_MODE_TINY -> "tiny screen"
         else -> "normal"
     }
     return String.format("screenMode: %s", playerStateString)
@@ -155,15 +155,15 @@ fun screenMode2str(@DKVideoView.ScreenMode mode: Int): String {
  */
 fun playState2str(state: Int): String {
     val playStateString: String = when (state) {
-        DKVideoView.STATE_IDLE -> "idle"
-        DKVideoView.STATE_PREPARING -> "preparing"
-        DKVideoView.STATE_PREPARED -> "prepared"
-        DKVideoView.STATE_PLAYING -> "playing"
-        DKVideoView.STATE_PAUSED -> "pause"
-        DKVideoView.STATE_BUFFERING -> "buffering"
-        DKVideoView.STATE_BUFFERED -> "buffered"
-        DKVideoView.STATE_PLAYBACK_COMPLETED -> "playback completed"
-        DKVideoView.STATE_ERROR -> "error"
+        VideoView.STATE_IDLE -> "idle"
+        VideoView.STATE_PREPARING -> "preparing"
+        VideoView.STATE_PREPARED -> "prepared"
+        VideoView.STATE_PLAYING -> "playing"
+        VideoView.STATE_PAUSED -> "pause"
+        VideoView.STATE_BUFFERING -> "buffering"
+        VideoView.STATE_BUFFERED -> "buffered"
+        VideoView.STATE_PLAYBACK_COMPLETED -> "playback completed"
+        VideoView.STATE_ERROR -> "error"
         else -> "idle"
     }
     return String.format("playState: %s", playStateString)

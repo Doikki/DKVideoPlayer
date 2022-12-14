@@ -11,16 +11,15 @@ import java.io.IOException;
 
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.activity.BaseActivity;
-import xyz.doikki.dkplayer.util.Utils;
 import xyz.doikki.videocontroller.StandardVideoController;
-import xyz.doikki.videoplayer.DKVideoView;
+import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.exo.ExoMediaPlayerFactory;
 
 /**
  * 播放raw/assets视频
  */
 
-public class PlayRawAssetsActivity extends BaseActivity<DKVideoView> {
+public class PlayRawAssetsActivity extends BaseActivity<VideoView> {
 
     @Override
     protected int getLayoutResId() {

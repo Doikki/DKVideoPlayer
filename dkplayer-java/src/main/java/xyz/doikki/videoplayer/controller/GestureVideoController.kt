@@ -8,7 +8,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnTouchListener
 import androidx.annotation.AttrRes
-import xyz.doikki.videoplayer.DKVideoView
+import xyz.doikki.videoplayer.VideoView
 import xyz.doikki.videoplayer.util.INVALIDATE_SEEK_POSITION
 import xyz.doikki.videoplayer.controller.component.GestureControlComponent
 import xyz.doikki.videoplayer.util.getActivityContext
@@ -71,11 +71,11 @@ abstract class GestureVideoController @JvmOverloads constructor(
         setOnTouchListener(this)
     }
 
-    override fun setScreenMode(@DKVideoView.ScreenMode screenMode: Int) {
+    override fun setScreenMode(@VideoView.ScreenMode screenMode: Int) {
         super.setScreenMode(screenMode)
-        if (screenMode == DKVideoView.SCREEN_MODE_NORMAL) {
+        if (screenMode == VideoView.SCREEN_MODE_NORMAL) {
             canSlide = gestureInPortraitEnabled
-        } else if (screenMode == DKVideoView.SCREEN_MODE_FULL) {
+        } else if (screenMode == VideoView.SCREEN_MODE_FULL) {
             canSlide = true
         }
     }

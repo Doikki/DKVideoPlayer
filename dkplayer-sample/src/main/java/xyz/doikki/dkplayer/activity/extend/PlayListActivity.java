@@ -12,7 +12,7 @@ import xyz.doikki.videocontroller.component.GestureView;
 import xyz.doikki.videocontroller.component.PrepareView;
 import xyz.doikki.videocontroller.component.TitleView;
 import xyz.doikki.videocontroller.component.VodControlView;
-import xyz.doikki.videoplayer.DKVideoView;
+import xyz.doikki.videoplayer.VideoView;
 
 import java.util.List;
 
@@ -53,11 +53,11 @@ public class PlayListActivity extends BaseActivity {
         mVideoView.setVideoController(mController);
 
         //监听播放结束
-        mVideoView.addOnStateChangeListener(new DKVideoView.OnStateChangeListener() {
+        mVideoView.addOnStateChangeListener(new VideoView.OnStateChangeListener() {
             private int mCurrentVideoPosition;
             @Override
             public void onPlayerStateChanged(int playState) {
-                if (playState == DKVideoView.STATE_PLAYBACK_COMPLETED) {
+                if (playState == VideoView.STATE_PLAYBACK_COMPLETED) {
                     if (data != null) {
                         mCurrentVideoPosition++;
                         if (mCurrentVideoPosition >= data.size()) return;

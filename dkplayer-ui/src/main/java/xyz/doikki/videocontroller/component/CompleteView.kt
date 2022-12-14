@@ -9,7 +9,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import xyz.doikki.videocontroller.R
-import xyz.doikki.videoplayer.DKVideoView
+import xyz.doikki.videoplayer.VideoView
 import xyz.doikki.videoplayer.util.isVisible
 import xyz.doikki.videoplayer.util.orDefault
 
@@ -36,7 +36,7 @@ class CompleteView @JvmOverloads constructor(
     }
 
     override fun onPlayStateChanged(playState: Int) {
-        if (playState == DKVideoView.STATE_PLAYBACK_COMPLETED) {
+        if (playState == VideoView.STATE_PLAYBACK_COMPLETED) {
             visibility = VISIBLE
             mStopFullscreen.isVisible = controller?.isFullScreen.orDefault()
             bringToFront()
@@ -47,9 +47,9 @@ class CompleteView @JvmOverloads constructor(
 
     @SuppressLint("SwitchIntDef")
     override fun onScreenModeChanged(screenMode: Int) {
-        if (screenMode == DKVideoView.SCREEN_MODE_FULL) {
+        if (screenMode == VideoView.SCREEN_MODE_FULL) {
             mStopFullscreen.visibility = VISIBLE
-        } else if (screenMode == DKVideoView.SCREEN_MODE_NORMAL) {
+        } else if (screenMode == VideoView.SCREEN_MODE_NORMAL) {
             mStopFullscreen.visibility = GONE
         }
         controller?.let { controller ->

@@ -1,14 +1,11 @@
 package xyz.doikki.dkplayer.app;
 
-import android.os.Build;
-
 import androidx.multidex.MultiDexApplication;
 
 import com.danikula.videocache.Logger;
 
 import xyz.doikki.videoplayer.BuildConfig;
-import xyz.doikki.videoplayer.DKManager;
-import xyz.doikki.videoplayer.DKPlayerConfig;
+import xyz.doikki.videoplayer.GlobalConfig;
 import xyz.doikki.videoplayer.ijk.IjkPlayerFactory;
 import xyz.doikki.videoplayer.render.RenderFactory;
 
@@ -26,10 +23,10 @@ public class MyApplication extends MultiDexApplication {
         super.onCreate();
         instance = this;
         //播放器配置，注意：此为全局配置，按需开启
-        DKPlayerConfig.setDebuggable(BuildConfig.DEBUG);
-        DKPlayerConfig.setRenderFactory(RenderFactory.textureViewRenderFactory());
+        GlobalConfig.setDebuggable(BuildConfig.DEBUG);
+        GlobalConfig.setRenderFactory(RenderFactory.textureViewRenderFactory());
 //        DKManager.setRenderFactory(RenderFactory.surfaceViewRenderFactory());
-        DKPlayerConfig.setPlayerFactory(IjkPlayerFactory.create());
+        GlobalConfig.setPlayerFactory(IjkPlayerFactory.create());
 
 //        DKManager.setConfig(VideoViewConfig.newBuilder()
 //                .setLogEnabled(BuildConfig.DEBUG) //调试的时候请打开日志，方便排错

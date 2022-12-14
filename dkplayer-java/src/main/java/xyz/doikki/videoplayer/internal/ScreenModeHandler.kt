@@ -28,26 +28,26 @@ class ScreenModeHandler {
      * / **
      * 小屏窗口大小
      */
-    private val mTinyScreenSize = intArrayOf(0, 0)
+    private val tinyScreenSize = intArrayOf(0, 0)
 
     /**
      * 推荐的小窗宽度
      */
     @Px
-    private var mPreferredTinyScreenWidth = 0
+    private var preferredTinyScreenWidth = 0
 
     /**
      * 推荐的小窗高度
      */
     @Px
-    private var mPreferredTinyScreenHeight = 0
+    private var preferredTinyScreenHeight = 0
 
     /**
      * 设置小屏的宽高
      */
     fun setTinyScreenSize(width: Int, height: Int) {
-        mTinyScreenSize[0] = width
-        mTinyScreenSize[1] = height
+        tinyScreenSize[0] = width
+        tinyScreenSize[1] = height
     }
 
     /**
@@ -125,10 +125,10 @@ class ScreenModeHandler {
      */
     @Px
     private fun getTinyScreenWidth(activity: Activity): Int {
-        val width = mTinyScreenSize[0]
+        val width = tinyScreenSize[0]
         if (width > 0) return width
         setupPreferredTinyScreenSize(activity)
-        return mPreferredTinyScreenWidth
+        return preferredTinyScreenWidth
     }
 
     /**
@@ -136,17 +136,17 @@ class ScreenModeHandler {
      */
     @Px
     private fun getTinyScreenHeight(activity: Activity): Int {
-        val height = mTinyScreenSize[1]
-        return if (height > 0) height else mPreferredTinyScreenHeight
+        val height = tinyScreenSize[1]
+        return if (height > 0) height else preferredTinyScreenHeight
     }
 
     /**
      * 初始化默认的小窗大小
      */
     private fun setupPreferredTinyScreenSize(activity: Activity) {
-        if (mPreferredTinyScreenWidth > 0) return
-        mPreferredTinyScreenWidth = activity.resources.displayMetrics.widthPixels / 2
-        mPreferredTinyScreenHeight = mPreferredTinyScreenWidth * 9 / 16
+        if (preferredTinyScreenWidth > 0) return
+        preferredTinyScreenWidth = activity.resources.displayMetrics.widthPixels / 2
+        preferredTinyScreenHeight = preferredTinyScreenWidth * 9 / 16
     }
 
 

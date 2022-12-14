@@ -11,12 +11,13 @@ import tv.danmaku.ijk.media.player.IMediaPlayer
 import tv.danmaku.ijk.media.player.IjkMediaPlayer
 import tv.danmaku.ijk.media.player.IjkMediaPlayer.OnNativeInvokeListener
 import tv.danmaku.ijk.media.player.misc.ITrackInfo
-import xyz.doikki.videoplayer.AbstractDKPlayer
-import xyz.doikki.videoplayer.DKPlayer
-import xyz.doikki.videoplayer.internal.DKPlayerException
+import xyz.doikki.videoplayer.player.AbstractPlayer
+import xyz.doikki.videoplayer.player.IPlayer
+import xyz.doikki.videoplayer.GlobalConfig
+import xyz.doikki.videoplayer.internal.PlayerException
 import xyz.doikki.videoplayer.util.orDefault
 
-open class IjkDKPlayer(private val appContext: Context) : AbstractDKPlayer(),
+open class IjkDKPlayer(private val appContext: Context) : AbstractPlayer(),
     IMediaPlayer.OnErrorListener, IMediaPlayer.OnCompletionListener, IMediaPlayer.OnInfoListener,
     IMediaPlayer.OnBufferingUpdateListener, IMediaPlayer.OnPreparedListener,
     IMediaPlayer.OnVideoSizeChangedListener, OnNativeInvokeListener {
@@ -28,6 +29,8 @@ open class IjkDKPlayer(private val appContext: Context) : AbstractDKPlayer(),
 
     private fun createKernel(): IjkMediaPlayer {
         return IjkMediaPlayer().also {
+            // native 日志
+            IjkMediaPlayer.native_setLogLevel(if (GlobalConfig.isDebuggable) IjkMediaPlayer.IJK_LOG_INFO else IjkMediaPlayer.IJK_LOG_SILENT)
             it.setOnErrorListener(this)
             it.setOnCompletionListener(this)
             it.setOnInfoListener(this)
@@ -39,8 +42,6 @@ open class IjkDKPlayer(private val appContext: Context) : AbstractDKPlayer(),
     }
 
     override fun init() {
-        //native日志 todo  java.lang.UnsatisfiedLinkError: No implementation found for void tv.danmaku.ijk.media.player.IjkMediaPlayer.native_setLogLevel(int)
-//        IjkMediaPlayer.native_setLogLevel(if (isDebuggable) IjkMediaPlayer.IJK_LOG_INFO else IjkMediaPlayer.IJK_LOG_SILENT)
         kernel = createKernel()
     }
 
@@ -192,7 +193,7 @@ open class IjkDKPlayer(private val appContext: Context) : AbstractDKPlayer(),
 
     override fun onError(mp: IMediaPlayer, what: Int, extra: Int): Boolean {
         eventListener!!.onError(
-            DKPlayerException(
+            PlayerException(
                 what,
                 extra
             )
@@ -217,7 +218,7 @@ open class IjkDKPlayer(private val appContext: Context) : AbstractDKPlayer(),
         eventListener!!.onPrepared()
         // 修复播放纯音频时状态出错问题
         if (!isVideo) {
-            eventListener!!.onInfo(DKPlayer.MEDIA_INFO_RENDERING_START, 0)
+            eventListener!!.onInfo(IPlayer.MEDIA_INFO_RENDERING_START, 0)
         }
     }
 

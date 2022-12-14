@@ -21,7 +21,7 @@ import xyz.doikki.dkplayer.util.cache.ProxyVideoCacheManager;
 import xyz.doikki.dkplayer.widget.VerticalViewPager;
 import xyz.doikki.dkplayer.widget.controller.TikTokController;
 import xyz.doikki.dkplayer.widget.render.TikTokRenderViewFactory;
-import xyz.doikki.videoplayer.DKVideoView;
+import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.util.L;
 
 
@@ -30,7 +30,7 @@ import xyz.doikki.videoplayer.util.L;
  * Created by Doikki on 2019/12/04.
  */
 
-public class TikTok3Activity extends BaseActivity<DKVideoView> {
+public class TikTok3Activity extends BaseActivity<VideoView> {
 
     /**
      * 当前播放位置
@@ -88,7 +88,7 @@ public class TikTok3Activity extends BaseActivity<DKVideoView> {
     }
 
     private void initVideoView() {
-        mVideoView = new DKVideoView(this);
+        mVideoView = new VideoView(this);
         mVideoView.setLooping(true);
         //以下只能二选一，看你的需求
         mVideoView.setRenderFactory(TikTokRenderViewFactory.create());

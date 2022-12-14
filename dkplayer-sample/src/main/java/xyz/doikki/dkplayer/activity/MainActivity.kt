@@ -18,16 +18,15 @@ import xyz.doikki.dkplayer.fragment.main.PipFragment
 import xyz.doikki.dkplayer.util.PIPManager
 import xyz.doikki.dkplayer.util.Tag
 import xyz.doikki.dkplayer.util.cache.ProxyVideoCacheManager
-import xyz.doikki.videoplayer.DKManager
-import xyz.doikki.videoplayer.DKPlayerConfig
-import xyz.doikki.videoplayer.DKPlayerFactory
-import xyz.doikki.videoplayer.DKVideoView
+import xyz.doikki.videoplayer.GlobalConfig
+import xyz.doikki.videoplayer.player.PlayerFactory
+import xyz.doikki.videoplayer.VideoView
 import xyz.doikki.videoplayer.exo.ExoMediaPlayerFactory
 import xyz.doikki.videoplayer.ijk.IjkPlayerFactory
-import xyz.doikki.videoplayer.sys.SysDKPlayerFactory
+import xyz.doikki.videoplayer.player.SystemPlayerFactory
 import java.io.*
 
-class MainActivity : BaseActivity<DKVideoView>(), NavigationBarView.OnItemSelectedListener {
+class MainActivity : BaseActivity<VideoView>(), NavigationBarView.OnItemSelectedListener {
 
     private val mFragments: MutableList<Fragment> = ArrayList()
     override fun getLayoutResId(): Int {
@@ -45,14 +44,14 @@ class MainActivity : BaseActivity<DKVideoView>(), NavigationBarView.OnItemSelect
             requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 10000)
         }
         //检测当前是用的哪个播放器
-        when (DKPlayerConfig.playerFactory) {
+        when (GlobalConfig.playerFactory) {
             is ExoMediaPlayerFactory -> {
                 setTitle(resources.getString(R.string.app_name) + " (ExoPlayer)")
             }
             is IjkPlayerFactory -> {
                 setTitle(resources.getString(R.string.app_name) + " (IjkPlayer)")
             }
-            is SysDKPlayerFactory -> {
+            is SystemPlayerFactory -> {
                 setTitle(resources.getString(R.string.app_name) + " (MediaPlayer)")
             }
             else -> {
@@ -86,14 +85,14 @@ class MainActivity : BaseActivity<DKVideoView>(), NavigationBarView.OnItemSelect
         if (itemId == R.id.ijk || itemId == R.id.exo || itemId == R.id.media) {
             //切换播放核心，不推荐这么做，我这么写只是为了方便测试
             try {
-                val playerFactory: DKPlayerFactory
+                val playerFactory: PlayerFactory
                 when (itemId) {
                     R.id.exo -> {
                         playerFactory = ExoMediaPlayerFactory.create()
                         setTitle(resources.getString(R.string.app_name) + " (ExoPlayer)")
                     }
                     R.id.media -> {
-                        playerFactory = DKPlayerFactory.systemMediaPlayerFactory()
+                        playerFactory = PlayerFactory.systemMediaPlayerFactory()
                         setTitle(resources.getString(R.string.app_name) + " (MediaPlayer)")
                     }
                     else -> {
@@ -101,7 +100,7 @@ class MainActivity : BaseActivity<DKVideoView>(), NavigationBarView.OnItemSelect
                         setTitle(resources.getString(R.string.app_name) + " (IjkPlayer)")
                     }
                 }
-                DKPlayerConfig.playerFactory = playerFactory
+                GlobalConfig.playerFactory = playerFactory
             } catch (e: Exception) {
                 e.printStackTrace()
             }

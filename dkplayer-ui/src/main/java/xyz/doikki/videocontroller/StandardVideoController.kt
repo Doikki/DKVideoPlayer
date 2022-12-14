@@ -11,11 +11,9 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import androidx.annotation.AttrRes
 import xyz.doikki.videocontroller.component.*
-import xyz.doikki.videoplayer.DKManager
-import xyz.doikki.videoplayer.DKPlayerConfig
-import xyz.doikki.videoplayer.DKVideoView
+import xyz.doikki.videoplayer.GlobalConfig
+import xyz.doikki.videoplayer.VideoView
 import xyz.doikki.videoplayer.controller.GestureVideoController
-import xyz.doikki.videoplayer.util.orDefault
 import xyz.doikki.videoplayer.util.toast
 import xyz.doikki.videoplayer.util.PlayerUtils
 
@@ -78,7 +76,7 @@ open class StandardVideoController @JvmOverloads constructor(
     }
 
     override fun abortPlay(): Boolean {
-        return (PlayerUtils.getNetworkType(context) == PlayerUtils.NETWORK_MOBILE && !DKPlayerConfig.isPlayOnMobileNetwork)
+        return (PlayerUtils.getNetworkType(context) == PlayerUtils.NETWORK_MOBILE && !GlobalConfig.isPlayOnMobileNetwork)
     }
 
     override fun onLockStateChanged(isLocked: Boolean) {
@@ -112,14 +110,14 @@ open class StandardVideoController @JvmOverloads constructor(
     override fun onScreenModeChanged(screenMode: Int) {
         super.onScreenModeChanged(screenMode)
         when (screenMode) {
-            DKVideoView.SCREEN_MODE_NORMAL -> {
+            VideoView.SCREEN_MODE_NORMAL -> {
                 layoutParams = LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
                 lockButton.visibility = GONE
             }
-            DKVideoView.SCREEN_MODE_FULL -> if (isShowing) {
+            VideoView.SCREEN_MODE_FULL -> if (isShowing) {
                 lockButton.visibility = VISIBLE
             } else {
                 lockButton.visibility = GONE
@@ -150,25 +148,25 @@ open class StandardVideoController @JvmOverloads constructor(
     override fun onPlayerStateChanged(playState: Int) {
         super.onPlayerStateChanged(playState)
         when (playState) {
-            DKVideoView.STATE_IDLE -> {
+            VideoView.STATE_IDLE -> {
                 lockButton.isSelected = false
                 loadingIndicator.visibility = GONE
             }
-            DKVideoView.STATE_PLAYING, DKVideoView.STATE_PAUSED, DKVideoView.STATE_PREPARED, DKVideoView.STATE_ERROR, DKVideoView.STATE_BUFFERED -> {
-                if (playState == DKVideoView.STATE_BUFFERED) {
+            VideoView.STATE_PLAYING, VideoView.STATE_PAUSED, VideoView.STATE_PREPARED, VideoView.STATE_ERROR, VideoView.STATE_BUFFERED -> {
+                if (playState == VideoView.STATE_BUFFERED) {
                     isBuffering = false
                 }
                 if (!isBuffering) {
                     loadingIndicator.visibility = GONE
                 }
             }
-            DKVideoView.STATE_PREPARING, DKVideoView.STATE_BUFFERING -> {
+            VideoView.STATE_PREPARING, VideoView.STATE_BUFFERING -> {
                 loadingIndicator.visibility = VISIBLE
-                if (playState == DKVideoView.STATE_BUFFERING) {
+                if (playState == VideoView.STATE_BUFFERING) {
                     isBuffering = true
                 }
             }
-            DKVideoView.STATE_PLAYBACK_COMPLETED -> {
+            VideoView.STATE_PLAYBACK_COMPLETED -> {
                 loadingIndicator.visibility = GONE
                 lockButton.visibility = GONE
                 lockButton.isSelected = false

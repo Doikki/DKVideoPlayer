@@ -20,7 +20,7 @@ import androidx.core.content.ContextCompat;
 
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.widget.CenteredImageSpan;
-import xyz.doikki.videoplayer.DKVideoView;
+import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.controller.VideoController;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 import xyz.doikki.videoplayer.BuildConfig;
@@ -41,7 +41,7 @@ import master.flame.danmaku.ui.widget.DanmakuView;
  * @deprecated 推荐 {@link xyz.doikki.dkplayer.widget.component.MyDanmakuView}
  */
 @Deprecated
-public class DanmukuVideoView extends DKVideoView {
+public class DanmukuVideoView extends VideoView {
     private DanmakuView mDanmakuView;
     private DanmakuContext mContext;
     private BaseDanmakuParser mParser;

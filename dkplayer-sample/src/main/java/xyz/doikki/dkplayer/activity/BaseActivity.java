@@ -14,15 +14,15 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 
 import xyz.doikki.dkplayer.R;
-import xyz.doikki.videoplayer.DKVideoView;
-import xyz.doikki.videoplayer.DKManager;
+import xyz.doikki.videoplayer.VideoView;
+import xyz.doikki.dkplayer.util.DKManager;
 
 /**
  * 页面以及播放器共有逻辑封装
  * @param <T>
  */
 @SuppressLint("Registered")
-public class BaseActivity<T extends DKVideoView> extends AppCompatActivity {
+public class BaseActivity<T extends VideoView> extends AppCompatActivity {
 
     protected T mVideoView;
 

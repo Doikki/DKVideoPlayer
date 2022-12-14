@@ -15,8 +15,9 @@ import androidx.annotation.FloatRange
 import androidx.annotation.IntDef
 import xyz.doikki.videoplayer.controller.VideoController
 import xyz.doikki.videoplayer.controller.VideoViewControl
-import xyz.doikki.videoplayer.internal.DKVideoViewContainer
 import xyz.doikki.videoplayer.internal.ScreenModeHandler
+import xyz.doikki.videoplayer.internal.VideoViewContainer
+import xyz.doikki.videoplayer.player.IPlayer
 import xyz.doikki.videoplayer.render.AspectRatioType
 import xyz.doikki.videoplayer.render.Render
 import xyz.doikki.videoplayer.render.Render.ScreenShotCallback
@@ -27,17 +28,17 @@ import xyz.doikki.videoplayer.util.tryIgnore
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
- * 播放器&播放视图  内部包含了对应的[DKPlayer] 和  [Render]，因此由本类提供这两者的功能能力
+ * 播放器&播放视图  内部包含了对应的[IPlayer] 和  [Render]，因此由本类提供这两者的功能能力
  *  本类的数据目前是在内部提供了一个容器，让容器去添加Render和Controller，这样便于界面切换
  *
  * Created by Doikki on 2017/4/7.
  * update by luochao on 2022/9/16
  */
-open class DKVideoView @JvmOverloads constructor(
+open class VideoView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : FrameLayout(context, attrs, defStyleAttr), VideoViewControl, DKPlayer.EventListener {
+) : FrameLayout(context, attrs, defStyleAttr), VideoViewControl, IPlayer.EventListener {
 
     /**
      * 播放器状态
@@ -100,23 +101,23 @@ open class DKVideoView @JvmOverloads constructor(
      * 真正承载播放器视图的容器
      */
     @JvmField
-    internal val playerContainer: DKVideoViewContainer
+    internal val playerContainer: VideoViewContainer
 
     /**
-     * 自定义播放器构建工厂，继承[DKPlayerFactory]实现自己的播放核心
+     * 自定义播放器构建工厂，继承[PlayerFactory]实现自己的播放核心
      */
-    var playerFactory = DKPlayerConfig.playerFactory
+    var playerFactory = GlobalConfig.playerFactory
 
     /**
      * 播放器内核
      */
-    protected var player: DKPlayer? = null
+    protected var player: IPlayer? = null
         private set
 
     /**
      * 自定义Render，继承[RenderFactory]实现自己的渲染逻辑
      */
-    var renderFactory: RenderFactory = DKPlayerConfig.renderFactory
+    var renderFactory: RenderFactory = GlobalConfig.renderFactory
         set(value) {
             field = value
             playerContainer.renderFactory = value
@@ -253,14 +254,14 @@ open class DKVideoView @JvmOverloads constructor(
     /**
      * 创建播放器
      */
-    protected open fun createMediaPlayer(): DKPlayer {
+    protected open fun createMediaPlayer(): IPlayer {
         return playerFactory.create(context)
     }
 
     /**
      * 初始化之前的配置项
      */
-    protected open fun onMediaPlayerCreated(mediaPlayer: DKPlayer?) {}
+    protected open fun onMediaPlayerCreated(mediaPlayer: IPlayer?) {}
 
     /**
      * 初始化之后的配置项
@@ -660,13 +661,13 @@ open class DKVideoView @JvmOverloads constructor(
      */
     override fun onInfo(what: Int, extra: Int) {
         when (what) {
-            DKPlayer.MEDIA_INFO_BUFFERING_START -> playerState = STATE_BUFFERING
-            DKPlayer.MEDIA_INFO_BUFFERING_END -> playerState = STATE_BUFFERED
-            DKPlayer.MEDIA_INFO_RENDERING_START -> {
+            IPlayer.MEDIA_INFO_BUFFERING_START -> playerState = STATE_BUFFERING
+            IPlayer.MEDIA_INFO_BUFFERING_END -> playerState = STATE_BUFFERED
+            IPlayer.MEDIA_INFO_RENDERING_START -> {
                 playerState = STATE_PLAYING
                 playerContainer.keepScreenOn = true
             }
-            DKPlayer.MEDIA_INFO_VIDEO_ROTATION_CHANGED -> setRotation(extra)
+            IPlayer.MEDIA_INFO_VIDEO_ROTATION_CHANGED -> setRotation(extra)
         }
     }
 
@@ -718,7 +719,7 @@ open class DKVideoView @JvmOverloads constructor(
 
     /**
      * 播放状态改变监听器
-     * todo 目前VideoView对外可访问的回调过少，[DKPlayer.EventListener]的回调太多对外不可见
+     * todo 目前VideoView对外可访问的回调过少，[IPlayer.EventListener]的回调太多对外不可见
      */
     interface OnStateChangeListener {
 
@@ -773,7 +774,7 @@ open class DKVideoView @JvmOverloads constructor(
         const val STATE_IDLE = 0
 
         /**
-         * 准备中：处于已设置了播放数据源，但是播放器还未回调[DKPlayer.EventListener.onPrepared]
+         * 准备中：处于已设置了播放数据源，但是播放器还未回调[IPlayer.EventListener.onPrepared]
          */
         const val STATE_PREPARING = 1
 
@@ -845,13 +846,13 @@ open class DKVideoView @JvmOverloads constructor(
         val ta = context.obtainStyledAttributes(attrs, R.styleable.DKVideoView)
         looping = ta.getBoolean(R.styleable.DKVideoView_looping, false)
         val screenAspectRatioType =
-            ta.getInt(R.styleable.DKVideoView_screenScaleType, DKPlayerConfig.screenAspectRatioType)
+            ta.getInt(R.styleable.DKVideoView_screenScaleType, GlobalConfig.screenAspectRatioType)
         val playerBackgroundColor =
             ta.getColor(R.styleable.DKVideoView_playerBackgroundColor, Color.BLACK)
         ta.recycle()
 
         //准备播放器容器
-        playerContainer = DKVideoViewContainer(context)
+        playerContainer = VideoViewContainer(context)
         setPlayerBackgroundColor(playerBackgroundColor)
         val params = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
         this.addView(playerContainer, params)

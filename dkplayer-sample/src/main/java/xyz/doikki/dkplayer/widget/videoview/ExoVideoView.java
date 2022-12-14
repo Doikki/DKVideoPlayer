@@ -15,12 +15,11 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import java.util.Map;
 
 import xyz.doikki.dkplayer.widget.player.CustomExoMediaPlayer;
-import xyz.doikki.videoplayer.DKPlayer;
-import xyz.doikki.videoplayer.DKPlayerFactory;
-import xyz.doikki.videoplayer.DKVideoView;
+import xyz.doikki.videoplayer.player.IPlayer;
+import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.exo.ExoMediaSourceHelper;
 
-public class ExoVideoView extends DKVideoView {
+public class ExoVideoView extends VideoView {
 
     private MediaSource mMediaSource;
 
@@ -55,7 +54,7 @@ public class ExoVideoView extends DKVideoView {
     }
 
     @Override
-    protected void onMediaPlayerCreated(DKPlayer mediaPlayer) {
+    protected void onMediaPlayerCreated(IPlayer mediaPlayer) {
         super.onMediaPlayerCreated(mediaPlayer);
         CustomExoMediaPlayer mp = (CustomExoMediaPlayer) mediaPlayer;
         mp.setLoadControl(mLoadControl);

@@ -24,7 +24,7 @@ import xyz.doikki.videocontroller.component.GestureView;
 import xyz.doikki.videocontroller.component.DeviceOrientationSensorMonitor;
 import xyz.doikki.videocontroller.component.TitleView;
 import xyz.doikki.videocontroller.component.VodControlView;
-import xyz.doikki.videoplayer.DKVideoView;
+import xyz.doikki.videoplayer.VideoView;
 
 /**
  * ListView demo，不推荐，建议使用{@link RecyclerViewFragment}
@@ -34,7 +34,7 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
     private List<VideoBean> mVideos = new ArrayList<>();
     private VideoListViewAdapter mAdapter;
 
-    private DKVideoView mVideoView;
+    private VideoView mVideoView;
     private StandardVideoController mController;
     private int mCurPosition = -1;
     private TitleView mTitleView;
@@ -47,11 +47,11 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
     @Override
     protected void initView() {
         super.initView();
-        mVideoView = new DKVideoView(getActivity());
-        mVideoView.addOnStateChangeListener(new DKVideoView.OnStateChangeListener() {
+        mVideoView = new VideoView(getActivity());
+        mVideoView.addOnStateChangeListener(new VideoView.OnStateChangeListener() {
             @Override
             public void onPlayerStateChanged(int playState) {
-                if (playState == DKVideoView.STATE_IDLE) {
+                if (playState == VideoView.STATE_IDLE) {
                     Utils.removeViewFormParent(mVideoView);
                     mCurPosition = -1;
                 }

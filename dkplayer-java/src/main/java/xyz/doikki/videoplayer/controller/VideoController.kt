@@ -10,7 +10,7 @@ import androidx.annotation.AttrRes
 import androidx.annotation.CallSuper
 import androidx.annotation.IntRange
 import xyz.doikki.videoplayer.*
-import xyz.doikki.videoplayer.DKVideoView.PlayerState
+import xyz.doikki.videoplayer.VideoView.PlayerState
 import xyz.doikki.videoplayer.controller.component.ControlComponent
 import xyz.doikki.videoplayer.util.*
 
@@ -37,7 +37,7 @@ open class VideoController @JvmOverloads constructor(
      * 当前播放器状态
      */
     @PlayerState
-    private var playerState = DKVideoView.STATE_IDLE
+    private var playerState = VideoView.STATE_IDLE
 
     /**
      * 显示动画
@@ -90,7 +90,7 @@ open class VideoController @JvmOverloads constructor(
     /**
      * 用户设置是否适配刘海屏
      */
-    override var adaptCutout = DKPlayerConfig.isAdaptCutout
+    override var adaptCutout = GlobalConfig.isAdaptCutout
 
     /**
      * 是否有刘海, null未知 true有 false没有
@@ -105,19 +105,19 @@ open class VideoController @JvmOverloads constructor(
      * @return
      */
     protected val isInPlaybackState: Boolean
-        get() = playerState != DKVideoView.STATE_ERROR
-                && playerState != DKVideoView.STATE_IDLE
-                && playerState != DKVideoView.STATE_PREPARING
-                && playerState != DKVideoView.STATE_PREPARED
-                && playerState != DKVideoView.STATE_START_ABORT
-                && playerState != DKVideoView.STATE_PLAYBACK_COMPLETED
+        get() = playerState != VideoView.STATE_ERROR
+                && playerState != VideoView.STATE_IDLE
+                && playerState != VideoView.STATE_PREPARING
+                && playerState != VideoView.STATE_PREPARED
+                && playerState != VideoView.STATE_START_ABORT
+                && playerState != VideoView.STATE_PLAYBACK_COMPLETED
 
-    protected val isInCompleteState: Boolean get() = playerState == DKVideoView.STATE_PLAYBACK_COMPLETED
+    protected val isInCompleteState: Boolean get() = playerState == VideoView.STATE_PLAYBACK_COMPLETED
 
-    protected val isInErrorState: Boolean get() = playerState == DKVideoView.STATE_ERROR
+    protected val isInErrorState: Boolean get() = playerState == VideoView.STATE_ERROR
 
     /**
-     * 重要：此方法用于将[DKVideoView] 和控制器绑定
+     * 重要：此方法用于将[VideoView] 和控制器绑定
      */
     @CallSuper
     open fun setMediaPlayer(mediaPlayer: VideoViewControl) {
@@ -230,16 +230,16 @@ open class VideoController @JvmOverloads constructor(
         }
 
     /**
-     * 设置当前[DKVideoView]界面模式：竖屏、全屏、小窗模式等
-     * 是当[DKVideoView]修改视图之后，调用此方法向控制器同步状态
+     * 设置当前[VideoView]界面模式：竖屏、全屏、小窗模式等
+     * 是当[VideoView]修改视图之后，调用此方法向控制器同步状态
      */
     @CallSuper
-    open fun setScreenMode(@DKVideoView.ScreenMode screenMode: Int) {
+    open fun setScreenMode(@VideoView.ScreenMode screenMode: Int) {
         notifyScreenModeChanged(screenMode)
     }
 
     /**
-     * call by [DKVideoView],设置播放器当前播放状态
+     * call by [VideoView],设置播放器当前播放状态
      */
     @SuppressLint("SwitchIntDef")
     @CallSuper
@@ -249,18 +249,18 @@ open class VideoController @JvmOverloads constructor(
             key.onPlayStateChanged(playState)
         }
         when (playState) {
-            DKVideoView.STATE_IDLE -> {
+            VideoView.STATE_IDLE -> {
                 isLocked = false
                 isShowing = false
                 //由于游离组件是独立于控制器存在的，
                 //所以在播放器release的时候需要移除
                 removeAllDissociateComponents()
             }
-            DKVideoView.STATE_PLAYBACK_COMPLETED -> {
+            VideoView.STATE_PLAYBACK_COMPLETED -> {
                 isLocked = false
                 isShowing = false
             }
-            DKVideoView.STATE_ERROR -> isShowing = false
+            VideoView.STATE_ERROR -> isShowing = false
         }
         onPlayerStateChanged(playState)
     }
@@ -420,7 +420,7 @@ open class VideoController @JvmOverloads constructor(
      *
      * @param screenMode
      */
-    private fun notifyScreenModeChanged(@DKVideoView.ScreenMode screenMode: Int) {
+    private fun notifyScreenModeChanged(@VideoView.ScreenMode screenMode: Int) {
         for ((component) in controlComponents) {
             component.onScreenModeChanged(screenMode)
         }
@@ -433,14 +433,14 @@ open class VideoController @JvmOverloads constructor(
      *
      * @param screenMode
      */
-    private fun setupCutoutOnScreenModeChanged(@DKVideoView.ScreenMode screenMode: Int) {
+    private fun setupCutoutOnScreenModeChanged(@VideoView.ScreenMode screenMode: Int) {
         when (screenMode) {
-            DKVideoView.SCREEN_MODE_NORMAL, DKVideoView.SCREEN_MODE_TINY -> {
+            VideoView.SCREEN_MODE_NORMAL, VideoView.SCREEN_MODE_TINY -> {
                 if (hasCutout == true) {
                     CutoutUtil.adaptCutoutAboveAndroidP(context, false)
                 }
             }
-            DKVideoView.SCREEN_MODE_FULL -> {
+            VideoView.SCREEN_MODE_FULL -> {
                 if (hasCutout == true) {
                     CutoutUtil.adaptCutoutAboveAndroidP(context, true)
                 }

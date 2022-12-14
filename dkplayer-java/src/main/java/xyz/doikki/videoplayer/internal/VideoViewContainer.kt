@@ -7,7 +7,9 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import xyz.doikki.videoplayer.*
+import xyz.doikki.videoplayer.player.IPlayer
+import xyz.doikki.videoplayer.GlobalConfig
+import xyz.doikki.videoplayer.VideoView
 import xyz.doikki.videoplayer.controller.VideoController
 import xyz.doikki.videoplayer.render.AspectRatioType
 import xyz.doikki.videoplayer.render.Render
@@ -18,14 +20,14 @@ import xyz.doikki.videoplayer.util.orDefault
 /**
  * 真正的容器：内部包含了Render
  */
-internal class DKVideoViewContainer @JvmOverloads constructor(
+internal class VideoViewContainer @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
 ) : FrameLayout(context, attrs) {
 
     /**
      * render是否可以重用
      */
-    private var renderReusable = DKPlayerConfig.isRenderReusable
+    private var renderReusable = GlobalConfig.isRenderReusable
 
     /**
      * 渲染视图
@@ -33,15 +35,15 @@ internal class DKVideoViewContainer @JvmOverloads constructor(
     private var render: Render? = null
 
     /**
-     * 自定义RenderView，继承[RenderFactory]实现自己的RenderView,设置为null则会使用[DKManager.renderFactory]
+     * 自定义RenderView，继承[RenderFactory]实现自己的RenderView,设置为null则会使用[GlobalConfig.renderFactory]
      */
-    var renderFactory = DKPlayerConfig.renderFactory
+    var renderFactory = GlobalConfig.renderFactory
         set(value) {
             if (field == value) {
                 // 当前工厂并没有发生任何变化，不作任何处理
                 return
             }
-            field = value.orDefault(DKPlayerConfig.renderFactory)
+            field = value.orDefault(GlobalConfig.renderFactory)
 
             // 如果之前已存在render，则将以前的render移除释放并重新创建
             if (render != null) {
@@ -53,7 +55,7 @@ internal class DKVideoViewContainer @JvmOverloads constructor(
      * 渲染视图纵横比
      */
     @AspectRatioType
-    private var mScreenAspectRatioType = DKVideoView.SCREEN_ASPECT_RATIO_DEFAULT
+    private var mScreenAspectRatioType = VideoView.SCREEN_ASPECT_RATIO_DEFAULT
 
     /**
      * 视频画面大小
@@ -66,7 +68,7 @@ internal class DKVideoViewContainer @JvmOverloads constructor(
      */
     val videoSize: IntArray = mVideoSize
 
-    private var attachedPlayer: DKPlayer? = null
+    private var attachedPlayer: IPlayer? = null
 
     /**
      * 设置控制器，传null表示移除控制器
@@ -90,7 +92,7 @@ internal class DKVideoViewContainer @JvmOverloads constructor(
     /**
      * 初始化视频渲染View
      */
-    fun attachPlayer(player: DKPlayer) {
+    fun attachPlayer(player: IPlayer) {
         if (render == null || !renderReusable) {
             setupRender()
         }
@@ -161,7 +163,7 @@ internal class DKVideoViewContainer @JvmOverloads constructor(
     }
 
     /**
-     * 视频大小发生变化：用于[DKVideoView]或者持有播放器[DKPlayer]的对象在[DKPlayer.EventListener.onVideoSizeChanged]回调时进行调用
+     * 视频大小发生变化：用于[VideoView]或者持有播放器[IPlayer]的对象在[IPlayer.EventListener.onVideoSizeChanged]回调时进行调用
      */
     fun onVideoSizeChanged(videoWidth: Int, videoHeight: Int) {
         mVideoSize[0] = videoWidth

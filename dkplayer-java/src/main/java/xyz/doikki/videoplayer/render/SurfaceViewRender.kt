@@ -6,12 +6,11 @@ import android.os.Build
 import android.os.Handler
 import android.os.HandlerThread
 import android.util.AttributeSet
-import android.util.Log
 import android.view.PixelCopy
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.View
-import xyz.doikki.videoplayer.DKPlayer
+import xyz.doikki.videoplayer.player.IPlayer
 import xyz.doikki.videoplayer.render.Render.Companion.createShotBitmap
 import xyz.doikki.videoplayer.render.Render.ScreenShotCallback
 import xyz.doikki.videoplayer.render.Render.SurfaceListener
@@ -22,58 +21,58 @@ class SurfaceViewRender @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyle: Int = 0
 ) : SurfaceView(context, attrs, defStyle), Render {
 
-    private val mProxy: RenderViewProxy = RenderViewProxy.new(this)
-    private var mSurfaceListener: SurfaceListener? = null
-    private var mSurfaceHolder: SurfaceHolder? = null
-    private var mPlayerRef: WeakReference<DKPlayer>? = null
-    private val player: DKPlayer? get() = mPlayerRef?.get()
-    private val mSHCallback: SurfaceHolder.Callback = object : SurfaceHolder.Callback {
+    private val proxy: RenderViewProxy = RenderViewProxy.new(this)
+    private var surfaceListener: SurfaceListener? = null
+    private var sh: SurfaceHolder? = null
+    private var playerRef: WeakReference<IPlayer>? = null
+    private val player: IPlayer? get() = playerRef?.get()
+    private val shCallback: SurfaceHolder.Callback = object : SurfaceHolder.Callback {
 
         override fun surfaceCreated(holder: SurfaceHolder) {
-            Log.d("SurfaceViewRender", "surfaceCreated($holder)")
-            mSurfaceHolder = holder
+            L.d("SurfaceViewRender surfaceCreated($holder)")
+            sh = holder
             player?.setDisplay(holder)
-            mSurfaceListener?.onSurfaceAvailable(holder.surface)
+            surfaceListener?.onSurfaceAvailable(holder.surface)
         }
 
         override fun surfaceChanged(holder: SurfaceHolder, format: Int, w: Int, h: Int) {
-            Log.d("SurfaceViewRender", "surfaceChanged($holder,$format,$w,$h)")
-            if (holder != mSurfaceHolder) {
-                mSurfaceHolder = holder
+            L.d("SurfaceViewRender surfaceChanged($holder,$format,$w,$h)")
+            if (holder != sh) {
+                sh = holder
                 player?.setDisplay(holder)
-                mSurfaceListener?.onSurfaceUpdated(holder.surface)
+                surfaceListener?.onSurfaceUpdated(holder.surface)
             } else {
-                mSurfaceListener?.onSurfaceSizeChanged(holder.surface, width, height)
+                surfaceListener?.onSurfaceSizeChanged(holder.surface, width, height)
             }
         }
 
         override fun surfaceDestroyed(holder: SurfaceHolder) {
-            Log.d("SurfaceViewRender", "surfaceDestroyed($holder)")
+            L.d("SurfaceViewRender surfaceDestroyed($holder)")
             // after we return from this we can't use the surface any more
-            mSurfaceHolder = null
+            sh = null
             player?.setDisplay(null)
-            mSurfaceListener?.onSurfaceDestroyed(holder.surface)
+            surfaceListener?.onSurfaceDestroyed(holder.surface)
         }
     }
 
-    override fun attachPlayer(player: DKPlayer) {
-        mPlayerRef = WeakReference(player)
+    override fun attachPlayer(player: IPlayer) {
+        playerRef = WeakReference(player)
         //当前SurfaceHolder不为空，则说明是重用render
-        mSurfaceHolder?.let {
+        sh?.let {
             player.setDisplay(it)
         }
     }
 
     override fun setVideoSize(videoWidth: Int, videoHeight: Int) {
-        mProxy.setVideoSize(videoWidth, videoHeight)
+        proxy.setVideoSize(videoWidth, videoHeight)
     }
 
     override fun setSurfaceListener(listener: SurfaceListener?) {
-        mSurfaceListener = listener
+        surfaceListener = listener
     }
 
     override fun setAspectRatioType(aspectRatioType: Int) {
-        mProxy.setAspectRatioType(aspectRatioType)
+        proxy.setAspectRatioType(aspectRatioType)
     }
 
     override fun screenshot(highQuality: Boolean, callback: ScreenShotCallback) {
@@ -104,13 +103,13 @@ class SurfaceViewRender @JvmOverloads constructor(
     override fun release() {}
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        mProxy.doMeasure(widthMeasureSpec, heightMeasureSpec)
-        setMeasuredDimension(mProxy.measuredWidth, mProxy.measuredHeight)
+        proxy.doMeasure(widthMeasureSpec, heightMeasureSpec)
+        setMeasuredDimension(proxy.measuredWidth, proxy.measuredHeight)
     }
 
     init {
         val surfaceHolder = holder
-        surfaceHolder.addCallback(mSHCallback)
+        surfaceHolder.addCallback(shCallback)
         surfaceHolder.setFormat(PixelFormat.RGBA_8888)
     }
 }

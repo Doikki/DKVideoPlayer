@@ -25,7 +25,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.util.DataUtil;
 import xyz.doikki.videocontroller.StandardVideoController;
-import xyz.doikki.videoplayer.DKVideoView;
+import xyz.doikki.videoplayer.VideoView;
 
 import java.util.ArrayList;
 
@@ -87,7 +87,7 @@ public class AndroidOPiPActivity extends AppCompatActivity {
      */
     private BroadcastReceiver mReceiver;
 
-    private DKVideoView mVideoView;
+    private VideoView mVideoView;
     private StandardVideoController mController;
     private int mWidthPixels;
 
@@ -104,19 +104,19 @@ public class AndroidOPiPActivity extends AppCompatActivity {
         mController.addDefaultControlComponent(getString(R.string.str_pip_android_o), false);
         mVideoView.setVideoController(mController);
         mVideoView.start();
-        mVideoView.addOnStateChangeListener(new DKVideoView.OnStateChangeListener() {
+        mVideoView.addOnStateChangeListener(new VideoView.OnStateChangeListener() {
             @Override
             public void onPlayerStateChanged(int playState) {
                 switch (playState) {
-                    case DKVideoView.STATE_PAUSED:
+                    case VideoView.STATE_PAUSED:
                         updatePictureInPictureActions(
                                 R.drawable.dkplayer_ic_action_play_arrow, "播放", CONTROL_TYPE_PLAY, REQUEST_PLAY);
                         break;
-                    case DKVideoView.STATE_PLAYING:
+                    case VideoView.STATE_PLAYING:
                         updatePictureInPictureActions(
                                 R.drawable.dkplayer_ic_action_pause, "暂停", CONTROL_TYPE_PAUSE, REQUEST_PAUSE);
                         break;
-                    case DKVideoView.STATE_PLAYBACK_COMPLETED:
+                    case VideoView.STATE_PLAYBACK_COMPLETED:
                         updatePictureInPictureActions(
                                 R.drawable.dkplayer_ic_action_replay, "重新播放", CONTROL_TYPE_REPLAY, REQUEST_REPLAY);
                         break;

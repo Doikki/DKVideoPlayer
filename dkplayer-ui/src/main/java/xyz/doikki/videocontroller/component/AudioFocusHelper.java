@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 
 import java.lang.ref.WeakReference;
 
-import xyz.doikki.videoplayer.DKVideoView;
+import xyz.doikki.videoplayer.VideoView;
 
 /**
  * 音频焦点 帮助类
@@ -20,7 +20,7 @@ public final class AudioFocusHelper implements AudioManager.OnAudioFocusChangeLi
 
     private final Handler mHandler = new Handler(Looper.getMainLooper());
 
-    private final WeakReference<DKVideoView> mWeakVideoView;
+    private final WeakReference<VideoView> mWeakVideoView;
 
     private final AudioManager mAudioManager;
 
@@ -28,7 +28,7 @@ public final class AudioFocusHelper implements AudioManager.OnAudioFocusChangeLi
     private boolean mPausedForLoss = false;
     private int mCurrentFocus = 0;
 
-    public AudioFocusHelper(@NonNull DKVideoView videoView) {
+    public AudioFocusHelper(@NonNull VideoView videoView) {
         mWeakVideoView = new WeakReference<>(videoView);
         mAudioManager = (AudioManager) videoView.getContext().getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
     }
@@ -56,7 +56,7 @@ public final class AudioFocusHelper implements AudioManager.OnAudioFocusChangeLi
     }
 
     private void handleAudioFocusChange(int focusChange) {
-        final DKVideoView videoView = mWeakVideoView.get();
+        final VideoView videoView = mWeakVideoView.get();
         if (videoView == null) {
             return;
         }

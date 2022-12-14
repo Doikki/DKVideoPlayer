@@ -1,13 +1,15 @@
 package xyz.doikki.videoplayer
 
+import xyz.doikki.videoplayer.player.PlayerFactory
 import xyz.doikki.videoplayer.render.AspectRatioType
 import xyz.doikki.videoplayer.render.RenderFactory
+import xyz.doikki.videoplayer.util.NewFunc
 
 /**
  * 播放器全局配置
  * Created by Doikki on 2022/10/17.
  */
-object DKPlayerConfig {
+object GlobalConfig {
 
     /**
      * 是否开启调试模式
@@ -20,7 +22,7 @@ object DKPlayerConfig {
      * 播放器内核工厂
      */
     @JvmStatic
-    var playerFactory: DKPlayerFactory = DKPlayerFactory.systemMediaPlayerFactory()
+    var playerFactory: PlayerFactory = PlayerFactory.systemMediaPlayerFactory()
 
     /**
      * Render工厂

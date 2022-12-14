@@ -6,8 +6,8 @@ import android.os.Build
 import android.view.Surface
 import android.view.View
 import androidx.annotation.IntRange
-import xyz.doikki.videoplayer.DKPlayer
-import xyz.doikki.videoplayer.PartialFunc
+import xyz.doikki.videoplayer.player.IPlayer
+import xyz.doikki.videoplayer.util.PartialFunc
 
 interface Render {
 
@@ -19,7 +19,7 @@ interface Render {
     /**
      * 关联播放器
      */
-    fun attachPlayer(player: DKPlayer)
+    fun attachPlayer(player: IPlayer)
 
     /**
      * 释放资源

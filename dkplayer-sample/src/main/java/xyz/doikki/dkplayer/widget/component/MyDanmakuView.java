@@ -30,7 +30,7 @@ import master.flame.danmaku.ui.widget.DanmakuView;
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.widget.CenteredImageSpan;
 import xyz.doikki.videoplayer.BuildConfig;
-import xyz.doikki.videoplayer.DKVideoView;
+import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.controller.VideoController;
 import xyz.doikki.videoplayer.controller.component.ControlComponent;
 import xyz.doikki.videoplayer.util.PlayerUtils;
@@ -114,26 +114,26 @@ public class MyDanmakuView extends DanmakuView implements ControlComponent {
     @Override
     public void onPlayStateChanged(int playState) {
         switch (playState) {
-            case DKVideoView.STATE_IDLE:
+            case VideoView.STATE_IDLE:
                 release();
                 break;
-            case DKVideoView.STATE_PREPARING:
+            case VideoView.STATE_PREPARING:
                 if (isPrepared()) {
                     restart();
                 }
                 prepare(mParser, mContext);
                 break;
-            case DKVideoView.STATE_PLAYING:
+            case VideoView.STATE_PLAYING:
                 if (isPrepared() && isPaused()) {
                     resume();
                 }
                 break;
-            case DKVideoView.STATE_PAUSED:
+            case VideoView.STATE_PAUSED:
                 if (isPrepared()) {
                     pause();
                 }
                 break;
-            case DKVideoView.STATE_PLAYBACK_COMPLETED:
+            case VideoView.STATE_PLAYBACK_COMPLETED:
                 clear();
                 clearDanmakusOnScreen();
                 break;

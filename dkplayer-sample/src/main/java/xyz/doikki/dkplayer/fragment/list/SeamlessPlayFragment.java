@@ -17,7 +17,7 @@ import xyz.doikki.dkplayer.bean.VideoBean;
 import xyz.doikki.dkplayer.util.IntentKeys;
 import xyz.doikki.dkplayer.util.Tag;
 import xyz.doikki.dkplayer.util.Utils;
-import xyz.doikki.videoplayer.DKVideoView;
+import xyz.doikki.videoplayer.VideoView;
 
 /**
  * 无缝播放
@@ -51,7 +51,7 @@ public class SeamlessPlayFragment extends RecyclerViewAutoPlayFragment {
                 //无需无缝播放，把相应数据传到详情页
                 mVideoView.release();
                 //需要把控制器还原
-                mController.setPlayerState(DKVideoView.STATE_IDLE);
+                mController.setPlayerState(VideoView.STATE_IDLE);
                 bundle.putBoolean(IntentKeys.SEAMLESS_PLAY, false);
                 bundle.putString(IntentKeys.URL, videoBean.getUrl());
                 bundle.putString(IntentKeys.TITLE, videoBean.getTitle());

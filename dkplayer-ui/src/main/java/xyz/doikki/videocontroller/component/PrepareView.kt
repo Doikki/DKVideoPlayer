@@ -7,8 +7,8 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.ProgressBar
 import xyz.doikki.videocontroller.R
-import xyz.doikki.videoplayer.DKPlayerConfig
-import xyz.doikki.videoplayer.DKVideoView
+import xyz.doikki.videoplayer.GlobalConfig
+import xyz.doikki.videoplayer.VideoView
 
 /**
  * 准备播放界面
@@ -34,16 +34,16 @@ class PrepareView @JvmOverloads constructor(
 
     override fun onPlayStateChanged(playState: Int) {
         when (playState) {
-            DKVideoView.STATE_PREPARING -> {
+            VideoView.STATE_PREPARING -> {
                 bringToFront()
                 visibility = VISIBLE
                 mStartPlay.visibility = GONE
                 mNetWarning.visibility = GONE
                 mLoading.visibility = VISIBLE
             }
-            DKVideoView.STATE_PLAYING, DKVideoView.STATE_PAUSED, DKVideoView.STATE_ERROR, DKVideoView.STATE_BUFFERING, DKVideoView.STATE_BUFFERED, DKVideoView.STATE_PLAYBACK_COMPLETED ->
+            VideoView.STATE_PLAYING, VideoView.STATE_PAUSED, VideoView.STATE_ERROR, VideoView.STATE_BUFFERING, VideoView.STATE_BUFFERED, VideoView.STATE_PLAYBACK_COMPLETED ->
                 visibility = GONE
-            DKVideoView.STATE_IDLE -> {
+            VideoView.STATE_IDLE -> {
                 visibility = VISIBLE
                 bringToFront()
                 mLoading.visibility = GONE
@@ -51,7 +51,7 @@ class PrepareView @JvmOverloads constructor(
                 mStartPlay.visibility = VISIBLE
                 mThumb.visibility = VISIBLE
             }
-            DKVideoView.STATE_START_ABORT -> {
+            VideoView.STATE_START_ABORT -> {
                 visibility = VISIBLE
                 mNetWarning.visibility = VISIBLE
                 mNetWarning.bringToFront()
@@ -72,7 +72,7 @@ class PrepareView @JvmOverloads constructor(
         }
         btnInWarning.setOnClickListener {
             mNetWarning.visibility = GONE
-            DKPlayerConfig.isPlayOnMobileNetwork = true
+            GlobalConfig.isPlayOnMobileNetwork = true
             controller?.playerControl?.start()
         }
     }

@@ -15,7 +15,7 @@ import androidx.annotation.Nullable;
 
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.videocontroller.component.BaseControlComponent;
-import xyz.doikki.videoplayer.DKVideoView;
+import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.util.L;
 
 public class TikTokView extends BaseControlComponent {
@@ -82,24 +82,24 @@ public class TikTokView extends BaseControlComponent {
     @Override
     public void onPlayStateChanged(int playState) {
         switch (playState) {
-            case DKVideoView.STATE_IDLE:
+            case VideoView.STATE_IDLE:
                 L.e("STATE_IDLE " + hashCode());
                 thumb.setVisibility(VISIBLE);
                 break;
-            case DKVideoView.STATE_PLAYING:
+            case VideoView.STATE_PLAYING:
                 L.e("STATE_PLAYING " + hashCode());
                 thumb.setVisibility(GONE);
                 mPlayBtn.setVisibility(GONE);
                 break;
-            case DKVideoView.STATE_PAUSED:
+            case VideoView.STATE_PAUSED:
                 L.e("STATE_PAUSED " + hashCode());
                 thumb.setVisibility(GONE);
                 mPlayBtn.setVisibility(VISIBLE);
                 break;
-            case DKVideoView.STATE_PREPARED:
+            case VideoView.STATE_PREPARED:
                 L.e("STATE_PREPARED " + hashCode());
                 break;
-            case DKVideoView.STATE_ERROR:
+            case VideoView.STATE_ERROR:
                 L.e("STATE_ERROR " + hashCode());
                 Toast.makeText(getContext(), R.string.dkplayer_error_message, Toast.LENGTH_SHORT).show();
                 break;

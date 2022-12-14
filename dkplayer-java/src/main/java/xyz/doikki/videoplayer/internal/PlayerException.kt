@@ -1,10 +1,9 @@
 package xyz.doikki.videoplayer.internal
 
-import android.media.MediaPlayer
 import android.annotation.SuppressLint
-import java.lang.RuntimeException
+import android.media.MediaPlayer
 
-class DKPlayerException : RuntimeException {
+class PlayerException : RuntimeException {
     var what = MediaPlayer.MEDIA_ERROR_UNKNOWN
         private set
     var extra = MediaPlayer.MEDIA_ERROR_UNKNOWN

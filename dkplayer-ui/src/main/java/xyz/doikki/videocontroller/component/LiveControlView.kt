@@ -9,7 +9,7 @@ import android.view.animation.Animation
 import android.widget.ImageView
 import android.widget.LinearLayout
 import xyz.doikki.videocontroller.R
-import xyz.doikki.videoplayer.DKVideoView
+import xyz.doikki.videoplayer.VideoView
 import xyz.doikki.videoplayer.util.PlayerUtils
 import xyz.doikki.videoplayer.util.orDefault
 
@@ -43,11 +43,11 @@ class LiveControlView @JvmOverloads constructor(
 
     override fun onPlayStateChanged(playState: Int) {
         when (playState) {
-            DKVideoView.STATE_IDLE, DKVideoView.STATE_START_ABORT, DKVideoView.STATE_PREPARING, DKVideoView.STATE_PREPARED, DKVideoView.STATE_ERROR, DKVideoView.STATE_PLAYBACK_COMPLETED -> visibility =
+            VideoView.STATE_IDLE, VideoView.STATE_START_ABORT, VideoView.STATE_PREPARING, VideoView.STATE_PREPARED, VideoView.STATE_ERROR, VideoView.STATE_PLAYBACK_COMPLETED -> visibility =
                 GONE
-            DKVideoView.STATE_PLAYING -> mPlayButton.isSelected = true
-            DKVideoView.STATE_PAUSED -> mPlayButton.isSelected = false
-            DKVideoView.STATE_BUFFERING, DKVideoView.STATE_BUFFERED -> mPlayButton.isSelected =
+            VideoView.STATE_PLAYING -> mPlayButton.isSelected = true
+            VideoView.STATE_PAUSED -> mPlayButton.isSelected = false
+            VideoView.STATE_BUFFERING, VideoView.STATE_BUFFERED -> mPlayButton.isSelected =
                 controller?.playerControl?.isPlaying.orDefault()
         }
     }
@@ -55,8 +55,8 @@ class LiveControlView @JvmOverloads constructor(
     @SuppressLint("SwitchIntDef")
     override fun onScreenModeChanged(screenMode: Int) {
         when (screenMode) {
-            DKVideoView.SCREEN_MODE_NORMAL -> mFullScreen.isSelected = false
-            DKVideoView.SCREEN_MODE_FULL -> mFullScreen.isSelected = true
+            VideoView.SCREEN_MODE_NORMAL -> mFullScreen.isSelected = false
+            VideoView.SCREEN_MODE_FULL -> mFullScreen.isSelected = true
         }
         val activity = PlayerUtils.scanForActivity(context)
         val controller = controller

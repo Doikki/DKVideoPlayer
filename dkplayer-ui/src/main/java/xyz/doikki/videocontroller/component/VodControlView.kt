@@ -13,7 +13,7 @@ import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.annotation.LayoutRes
 import xyz.doikki.videocontroller.R
-import xyz.doikki.videoplayer.DKVideoView
+import xyz.doikki.videoplayer.VideoView
 import xyz.doikki.videoplayer.util.PlayerUtils
 import xyz.doikki.videoplayer.util.orDefault
 
@@ -80,7 +80,7 @@ open class VodControlView @JvmOverloads constructor(
 
     override fun onPlayStateChanged(playState: Int) {
         when (playState) {
-            DKVideoView.STATE_IDLE, DKVideoView.STATE_PLAYBACK_COMPLETED -> {
+            VideoView.STATE_IDLE, VideoView.STATE_PLAYBACK_COMPLETED -> {
                 visibility = GONE
                 mBottomProgress?.let {
                     it.progress = 0
@@ -91,9 +91,9 @@ open class VodControlView @JvmOverloads constructor(
                     it.secondaryProgress = 0
                 }
             }
-            DKVideoView.STATE_START_ABORT, DKVideoView.STATE_PREPARING,
-            DKVideoView.STATE_PREPARED, DKVideoView.STATE_ERROR -> visibility = GONE
-            DKVideoView.STATE_PLAYING -> {
+            VideoView.STATE_START_ABORT, VideoView.STATE_PREPARING,
+            VideoView.STATE_PREPARED, VideoView.STATE_ERROR -> visibility = GONE
+            VideoView.STATE_PLAYING -> {
                 mPlayButton?.isSelected = true
                 if (showBottomProgress) {
                     if (controller?.isShowing.orDefault()) {
@@ -110,13 +110,13 @@ open class VodControlView @JvmOverloads constructor(
                 //开始刷新进度
                 controller?.startUpdateProgress()
             }
-            DKVideoView.STATE_PAUSED -> mPlayButton?.isSelected = false
-            DKVideoView.STATE_BUFFERING -> {
+            VideoView.STATE_PAUSED -> mPlayButton?.isSelected = false
+            VideoView.STATE_BUFFERING -> {
                 mPlayButton?.isSelected = player?.isPlaying.orDefault()
                 // 停止刷新进度
                 controller?.stopUpdateProgress()
             }
-            DKVideoView.STATE_BUFFERED -> {
+            VideoView.STATE_BUFFERED -> {
                 mPlayButton?.isSelected = player?.isPlaying.orDefault()
                 //开始刷新进度
                 controller?.startUpdateProgress()
@@ -127,8 +127,8 @@ open class VodControlView @JvmOverloads constructor(
     @SuppressLint("SwitchIntDef")
     override fun onScreenModeChanged(screenMode: Int) {
         when (screenMode) {
-            DKVideoView.SCREEN_MODE_NORMAL -> mFullScreen?.isSelected = false
-            DKVideoView.SCREEN_MODE_FULL -> mFullScreen?.isSelected = true
+            VideoView.SCREEN_MODE_NORMAL -> mFullScreen?.isSelected = false
+            VideoView.SCREEN_MODE_FULL -> mFullScreen?.isSelected = true
         }
         val activity = this.activity ?: return
         val controller = controller ?: return

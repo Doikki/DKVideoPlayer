@@ -121,26 +121,34 @@ class RenderMeasure {
         val preMeasuredWidth: Int
         val preMeasuredHeight: Int
         if (isWiderDisplay) { //通过控件能够分配的比例跟图像比例做了比较，因此不再需要判断测量Mode
-            if (aspectType == AspectRatioType.CENTER_CROP) { //特殊处理，限定高来计算宽
-                preMeasuredHeight = heightSpecSize
-                preMeasuredWidth = (preMeasuredHeight * displayAspectRatio).toInt()
-            } else if (aspectType == AspectRatioType.SCALE_ORIGINAL) {
-                preMeasuredWidth = Math.min(widthSpecSize, videoWidth)
-                preMeasuredHeight = (preMeasuredWidth / displayAspectRatio).toInt()
-            } else { //缩放模式
-                preMeasuredWidth = widthSpecSize
-                preMeasuredHeight = (preMeasuredWidth / displayAspectRatio).toInt()
+            when (aspectType) {
+                AspectRatioType.CENTER_CROP -> { //特殊处理，限定高来计算宽
+                    preMeasuredHeight = heightSpecSize
+                    preMeasuredWidth = (preMeasuredHeight * displayAspectRatio).toInt()
+                }
+                AspectRatioType.SCALE_ORIGINAL -> {
+                    preMeasuredWidth = Math.min(widthSpecSize, videoWidth)
+                    preMeasuredHeight = (preMeasuredWidth / displayAspectRatio).toInt()
+                }
+                else -> { //缩放模式
+                    preMeasuredWidth = widthSpecSize
+                    preMeasuredHeight = (preMeasuredWidth / displayAspectRatio).toInt()
+                }
             }
         } else {
-            if (aspectType == AspectRatioType.CENTER_CROP) {
-                preMeasuredWidth = widthSpecSize
-                preMeasuredHeight = (preMeasuredWidth / displayAspectRatio).toInt()
-            } else if (aspectType == AspectRatioType.SCALE_ORIGINAL) {
-                preMeasuredHeight = Math.min(heightSpecSize, videoHeight)
-                preMeasuredWidth = (preMeasuredHeight * displayAspectRatio).toInt()
-            } else { //缩放模式
-                preMeasuredHeight = heightSpecSize
-                preMeasuredWidth = (preMeasuredHeight * displayAspectRatio).toInt()
+            when (aspectType) {
+                AspectRatioType.CENTER_CROP -> {
+                    preMeasuredWidth = widthSpecSize
+                    preMeasuredHeight = (preMeasuredWidth / displayAspectRatio).toInt()
+                }
+                AspectRatioType.SCALE_ORIGINAL -> {
+                    preMeasuredHeight = Math.min(heightSpecSize, videoHeight)
+                    preMeasuredWidth = (preMeasuredHeight * displayAspectRatio).toInt()
+                }
+                else -> { //缩放模式
+                    preMeasuredHeight = heightSpecSize
+                    preMeasuredWidth = (preMeasuredHeight * displayAspectRatio).toInt()
+                }
             }
         }
         measuredWidth = preMeasuredWidth

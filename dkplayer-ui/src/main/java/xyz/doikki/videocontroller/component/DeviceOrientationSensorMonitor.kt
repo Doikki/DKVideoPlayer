@@ -1,7 +1,7 @@
 package xyz.doikki.videocontroller.component
 
 import android.content.Context
-import xyz.doikki.videoplayer.DKVideoView
+import xyz.doikki.videoplayer.VideoView
 import xyz.doikki.videoplayer.util.PlayerUtils
 
 /**
@@ -26,7 +26,7 @@ class DeviceOrientationSensorMonitor(context: Context) : BaseControlComponent(co
     override fun onPlayStateChanged(playState: Int) {
         super.onPlayStateChanged(playState)
         when(playState) {
-            DKVideoView.STATE_IDLE -> {
+            VideoView.STATE_IDLE -> {
                 orientationSensorHelper.disable()
             }
         }
@@ -36,18 +36,18 @@ class DeviceOrientationSensorMonitor(context: Context) : BaseControlComponent(co
         super.onScreenModeChanged(screenMode)
         //修改传感器
         when (screenMode) {
-            DKVideoView.SCREEN_MODE_NORMAL -> {
+            VideoView.SCREEN_MODE_NORMAL -> {
                 if (enableOrientationSensor) {
                     orientationSensorHelper.enable()
                 } else {
                     orientationSensorHelper.disable()
                 }
             }
-            DKVideoView.SCREEN_MODE_FULL -> {
+            VideoView.SCREEN_MODE_FULL -> {
                 //在全屏时强制监听设备方向
                 orientationSensorHelper.enable()
             }
-            DKVideoView.SCREEN_MODE_TINY -> orientationSensorHelper.disable()
+            VideoView.SCREEN_MODE_TINY -> orientationSensorHelper.disable()
         }
     }
 

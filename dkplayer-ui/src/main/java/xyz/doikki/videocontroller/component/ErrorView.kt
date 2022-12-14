@@ -6,7 +6,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
 import xyz.doikki.videocontroller.R
-import xyz.doikki.videoplayer.DKVideoView
+import xyz.doikki.videoplayer.VideoView
 import kotlin.math.abs
 
 /**
@@ -25,10 +25,10 @@ class ErrorView @JvmOverloads constructor(
     private var mDownY = 0f
 
     override fun onPlayStateChanged(playState: Int) {
-        if (playState == DKVideoView.STATE_ERROR) {
+        if (playState == VideoView.STATE_ERROR) {
             bringToFront()
             visibility = VISIBLE
-        } else if (playState == DKVideoView.STATE_IDLE) {
+        } else if (playState == VideoView.STATE_IDLE) {
             visibility = GONE
         }
     }

@@ -9,11 +9,6 @@ import android.view.View;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
 
-import java.lang.reflect.Field;
-
-import xyz.doikki.videoplayer.DKVideoView;
-import xyz.doikki.videoplayer.controller.VideoController;
-
 public final class Utils {
 
     private Utils() {

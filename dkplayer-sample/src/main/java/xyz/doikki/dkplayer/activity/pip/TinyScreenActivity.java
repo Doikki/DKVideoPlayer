@@ -22,13 +22,13 @@ import xyz.doikki.videocontroller.component.ErrorView;
 import xyz.doikki.videocontroller.component.GestureView;
 import xyz.doikki.videocontroller.component.TitleView;
 import xyz.doikki.videocontroller.component.VodControlView;
-import xyz.doikki.videoplayer.DKVideoView;
+import xyz.doikki.videoplayer.VideoView;
 
 /**
  * 小窗播放
  * Created by Doikki on 2017/5/31.
  */
-public class TinyScreenActivity extends BaseActivity<DKVideoView> implements OnItemChildClickListener {
+public class TinyScreenActivity extends BaseActivity<VideoView> implements OnItemChildClickListener {
 
     private StandardVideoController mController;
     private List<VideoBean> mVideos;
@@ -48,11 +48,11 @@ public class TinyScreenActivity extends BaseActivity<DKVideoView> implements OnI
 
     @Override
     protected void initView() {
-        mVideoView = new DKVideoView(this);
-        mVideoView.addOnStateChangeListener(new DKVideoView.OnStateChangeListener() {
+        mVideoView = new VideoView(this);
+        mVideoView.addOnStateChangeListener(new VideoView.OnStateChangeListener() {
             @Override
             public void onPlayerStateChanged(int playState) {
-                if (playState == DKVideoView.STATE_PLAYBACK_COMPLETED) {
+                if (playState == VideoView.STATE_PLAYBACK_COMPLETED) {
                     if (mVideoView.isTinyScreen()) {
                         mVideoView.stopTinyScreen();
                         releaseVideoView();
@@ -100,7 +100,7 @@ public class TinyScreenActivity extends BaseActivity<DKVideoView> implements OnI
                 if (position == mCurPos && !mVideoView.isFullScreen()) {
                     mVideoView.startTinyScreen();
                     mVideoView.setVideoController(null);
-                    mController.setPlayerState(DKVideoView.STATE_IDLE);
+                    mController.setPlayerState(VideoView.STATE_IDLE);
                 }
             }
         });

@@ -1,8 +1,11 @@
-package xyz.doikki.videoplayer
+package xyz.doikki.dkplayer.util
 
 import android.app.Application
 import android.content.Context
-import xyz.doikki.videoplayer.DKPlayerConfig.playerFactory
+import xyz.doikki.videoplayer.player.IPlayer
+import xyz.doikki.videoplayer.GlobalConfig.playerFactory
+import xyz.doikki.videoplayer.player.PlayerFactory
+import xyz.doikki.videoplayer.VideoView
 import xyz.doikki.videoplayer.util.L
 import xyz.doikki.videoplayer.util.orDefault
 
@@ -10,21 +13,18 @@ import xyz.doikki.videoplayer.util.orDefault
  * 视频播放器管理器，管理当前正在播放的VideoView
  * 你也可以用来保存常驻内存的VideoView，但是要注意通过Application Context创建，
  * 以免内存泄漏
- *
- * todo：考虑VideoView的共享模式（是让videoview基于application context避免内存混淆还是共享player和player的状态）
- * todo 和业务关联太强，移动到demo
  */
 object DKManager {
 
     /**
      * 用于共享的VideoView（无缝）
      */
-    private val mSharedVideoViews = LinkedHashMap<String, DKVideoView>()
+    private val mSharedVideoViews = LinkedHashMap<String, VideoView>()
 
     /**
      * 用于共享的Player（无缝）
      */
-    private val mSharedPlayers = LinkedHashMap<String, DKPlayer?>()
+    private val mSharedPlayers = LinkedHashMap<String, IPlayer?>()
 
     /**
      * 创建播放器
@@ -34,7 +34,7 @@ object DKManager {
      * @return
      */
     @JvmStatic
-    fun createMediaPlayer(context: Context, customFactory: DKPlayerFactory?): DKPlayer {
+    fun createMediaPlayer(context: Context, customFactory: PlayerFactory?): IPlayer {
         return customFactory.orDefault(playerFactory).create(context)
     }
 
@@ -49,8 +49,8 @@ object DKManager {
     fun getOrCreateSharedMediaPlayer(
         context: Context,
         tag: String,
-        customFactory: DKPlayerFactory?
-    ): DKPlayer? {
+        customFactory: PlayerFactory?
+    ): IPlayer? {
         return mSharedPlayers.getOrPut(tag) {
             createMediaPlayer(context, customFactory)
         }
@@ -71,7 +71,7 @@ object DKManager {
      * @param tag 相同tag的VideoView只会保存一个，如果tag相同则会release并移除前一个
      */
     @JvmStatic
-    fun add(videoView: DKVideoView, tag: String) {
+    fun add(videoView: VideoView, tag: String) {
         if (videoView.context !is Application) {
             L.w(
                 "The Context of this VideoView is not an Application Context," +
@@ -86,7 +86,7 @@ object DKManager {
         mSharedVideoViews[tag] = videoView
     }
 
-    fun get(tag: String): DKVideoView? {
+    fun get(tag: String): VideoView? {
         return mSharedVideoViews[tag]
     }
 

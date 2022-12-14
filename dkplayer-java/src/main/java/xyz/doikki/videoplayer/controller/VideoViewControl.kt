@@ -1,7 +1,7 @@
 package xyz.doikki.videoplayer.controller
 
 import androidx.annotation.IntRange
-import xyz.doikki.videoplayer.DKVideoView
+import xyz.doikki.videoplayer.VideoView
 import xyz.doikki.videoplayer.render.AspectRatioType
 import xyz.doikki.videoplayer.render.Render
 import xyz.doikki.videoplayer.render.Render.ScreenShotCallback
@@ -36,16 +36,16 @@ interface VideoViewControl : PlayerControl {
 
     /**
      * 开始全屏;
-     * 屏幕切换之后会回调[DKVideoView.OnStateChangeListener.onScreenModeChanged]
+     * 屏幕切换之后会回调[VideoView.OnStateChangeListener.onScreenModeChanged]
      *
      * @param isLandscapeReversed 是否是反向横屏
-     * @see DKVideoView.addOnStateChangeListener
+     * @see VideoView.addOnStateChangeListener
      */
     fun startFullScreen(isLandscapeReversed: Boolean): Boolean
 
     /**
      * 结束全屏
-     * 屏幕切换之后会回调[DKVideoView.OnStateChangeListener.onScreenModeChanged]
+     * 屏幕切换之后会回调[VideoView.OnStateChangeListener.onScreenModeChanged]
      */
     fun stopFullScreen(): Boolean
 
@@ -67,13 +67,13 @@ interface VideoViewControl : PlayerControl {
 
     /**
      * 开始小窗播放
-     * 屏幕切换之后会回调[DKVideoView.OnStateChangeListener.onScreenModeChanged]
+     * 屏幕切换之后会回调[VideoView.OnStateChangeListener.onScreenModeChanged]
      */
     fun startTinyScreen()
 
     /**
      * 结束小窗播放
-     * 屏幕切换之后会回调[DKVideoView.OnStateChangeListener.onScreenModeChanged]
+     * 屏幕切换之后会回调[VideoView.OnStateChangeListener.onScreenModeChanged]
      */
     fun stopTinyScreen()
     //**********[END]全屏、小窗口、自动横屏等 屏幕相关操作所需接口***********/

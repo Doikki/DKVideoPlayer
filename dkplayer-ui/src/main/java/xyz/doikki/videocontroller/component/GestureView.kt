@@ -10,7 +10,7 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import xyz.doikki.videocontroller.R
-import xyz.doikki.videoplayer.DKVideoView
+import xyz.doikki.videoplayer.VideoView
 import xyz.doikki.videoplayer.controller.component.KeyControlComponent
 import xyz.doikki.videoplayer.util.PlayerUtils
 
@@ -90,7 +90,7 @@ class GestureView @JvmOverloads constructor(
 
     override fun onPlayStateChanged(playState: Int) {
         visibility =
-            if (playState == DKVideoView.STATE_IDLE || playState == DKVideoView.STATE_START_ABORT || playState == DKVideoView.STATE_PREPARING || playState == DKVideoView.STATE_PREPARED || playState == DKVideoView.STATE_ERROR || playState == DKVideoView.STATE_PLAYBACK_COMPLETED) {
+            if (playState == VideoView.STATE_IDLE || playState == VideoView.STATE_START_ABORT || playState == VideoView.STATE_PREPARING || playState == VideoView.STATE_PREPARED || playState == VideoView.STATE_ERROR || playState == VideoView.STATE_PLAYBACK_COMPLETED) {
                 GONE
             } else {
                 VISIBLE
