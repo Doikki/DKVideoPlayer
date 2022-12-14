@@ -23,37 +23,37 @@ class TitleView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : BaseControlComponent(context, attrs, defStyleAttr) {
 
-    private val mTitleContainer: LinearLayout
-    private val mTitle: TextView
-    private val mSysTime: TextView//系统当前时间
+    private val titleContainer: LinearLayout
+    private val titleView: TextView
+    private val sysTime: TextView//系统当前时间
 
-    private lateinit var mBatteryReceiver: BatteryReceiver
+    private lateinit var batteryReceiver: BatteryReceiver
 
     //是否注册BatteryReceiver
-    private var mBatteryReceiverRegistered = false
+    private var batteryReceiverRegistered = false
 
     /**
      * 是否启用电量检测功能
      */
-    private var mBatteryEnabled: Boolean = true
+    private var batteryEnabled: Boolean = true
 
     fun setTitle(title: String?) {
-        mTitle.text = title
+        titleView.text = title
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        if (mBatteryEnabled && mBatteryReceiverRegistered) {
-            context.unregisterReceiver(mBatteryReceiver)
-            mBatteryReceiverRegistered = false
+        if (batteryEnabled && batteryReceiverRegistered) {
+            context.unregisterReceiver(batteryReceiver)
+            batteryReceiverRegistered = false
         }
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        if (mBatteryEnabled && !mBatteryReceiverRegistered) {
-            context.registerReceiver(mBatteryReceiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
-            mBatteryReceiverRegistered = true
+        if (batteryEnabled && !batteryReceiverRegistered) {
+            context.registerReceiver(batteryReceiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+            batteryReceiverRegistered = true
         }
     }
 
@@ -62,7 +62,7 @@ class TitleView @JvmOverloads constructor(
         if (!controller?.isFullScreen.orDefault()) return
         if (isVisible) {
             if (visibility == GONE) {
-                mSysTime.text = PlayerUtils.getCurrentSystemTime()
+                sysTime.text = PlayerUtils.getCurrentSystemTime()
                 visibility = VISIBLE
                 anim?.let { startAnimation(it) }
             }
@@ -88,12 +88,12 @@ class TitleView @JvmOverloads constructor(
         if (screenMode == VideoView.SCREEN_MODE_FULL) {
             if (controller != null && controller.isShowing && !controller.isLocked) {
                 visibility = VISIBLE
-                mSysTime.text = PlayerUtils.getCurrentSystemTime()
+                sysTime.text = PlayerUtils.getCurrentSystemTime()
             }
-            mTitle.isSelected = true
+            titleView.isSelected = true
         } else {
             visibility = GONE
-            mTitle.isSelected = false
+            titleView.isSelected = false
         }
         val activity = this.activity
         if (activity != null && controller != null && controller.hasCutout == true) {
@@ -101,13 +101,13 @@ class TitleView @JvmOverloads constructor(
             val cutoutHeight = controller.cutoutHeight
             when (orientation) {
                 ActivityInfo.SCREEN_ORIENTATION_PORTRAIT -> {
-                    mTitleContainer.setPadding(0, 0, 0, 0)
+                    titleContainer.setPadding(0, 0, 0, 0)
                 }
                 ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE -> {
-                    mTitleContainer.setPadding(cutoutHeight, 0, 0, 0)
+                    titleContainer.setPadding(cutoutHeight, 0, 0, 0)
                 }
                 ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE -> {
-                    mTitleContainer.setPadding(0, 0, cutoutHeight, 0)
+                    titleContainer.setPadding(0, 0, cutoutHeight, 0)
                 }
             }
         }
@@ -118,7 +118,7 @@ class TitleView @JvmOverloads constructor(
             visibility = GONE
         } else {
             visibility = VISIBLE
-            mSysTime.text = PlayerUtils.getCurrentSystemTime()
+            sysTime.text = PlayerUtils.getCurrentSystemTime()
         }
     }
 
@@ -135,13 +135,13 @@ class TitleView @JvmOverloads constructor(
     init {
         visibility = GONE
         if (isTelevisionUiMode()) {
-            mBatteryEnabled = false
+            batteryEnabled = false
             layoutInflater.inflate(R.layout.dkplayer_layout_title_view_tv, this)
             //tv模式不要电量，不要返回按钮
             findViewById<ImageView>(R.id.back)?.visibility = GONE
             findViewById<ImageView>(R.id.iv_battery)?.visibility = GONE
         } else {
-            mBatteryEnabled = true
+            batteryEnabled = true
             layoutInflater.inflate(R.layout.dkplayer_layout_title_view, this)
             findViewById<ImageView>(R.id.back).setOnClickListener {
                 val activity = activity
@@ -151,10 +151,10 @@ class TitleView @JvmOverloads constructor(
             }
             //电量
             val batteryLevel = findViewById<ImageView>(R.id.iv_battery)
-            mBatteryReceiver = BatteryReceiver(batteryLevel)
+            batteryReceiver = BatteryReceiver(batteryLevel)
         }
-        mTitleContainer = findViewById(R.id.title_container)
-        mTitle = findViewById(R.id.title)
-        mSysTime = findViewById(R.id.sys_time)
+        titleContainer = findViewById(R.id.title_container)
+        titleView = findViewById(R.id.title)
+        sysTime = findViewById(R.id.sys_time)
     }
 }

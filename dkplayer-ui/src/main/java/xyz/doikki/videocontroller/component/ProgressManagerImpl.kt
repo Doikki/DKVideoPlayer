@@ -6,7 +6,7 @@ import xyz.doikki.videoplayer.util.orDefault
 class ProgressManagerImpl : ProgressManager {
 
     //保存100条记录
-    private val mCache = LruCache<Int, Long?>(100)
+    private val cache = LruCache<Int, Long?>(100)
 
     private fun generateKey(url: String): Int {
         return url.hashCode()
@@ -19,19 +19,19 @@ class ProgressManagerImpl : ProgressManager {
             clear(url)
             return
         }
-        mCache.put(generateKey(url), progress)
+        cache.put(generateKey(url), progress)
     }
 
     override fun getSavedProgress(url: String): Long {
-        return if (url.isEmpty()) 0 else mCache[generateKey(url)].orDefault()
+        return if (url.isEmpty()) 0 else cache[generateKey(url)].orDefault()
     }
 
     override fun clear(url: String) {
-        mCache.remove(generateKey(url))
+        cache.remove(generateKey(url))
     }
 
     override fun clearAll() {
-        mCache.evictAll()
+        cache.evictAll()
     }
 
 

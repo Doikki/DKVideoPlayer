@@ -15,17 +15,17 @@ open class TVVideoController @JvmOverloads constructor(
     /**
      * 是否已经触发过pending seek的意图
      */
-    private var mHasDispatchPendingSeek: Boolean = false
+    private var hasDispatchPendingSeek: Boolean = false
 
     /**
      * 当前待seek的位置
      */
-    private var mCurrentPendingSeekPosition: Int = 0
+    private var currentPendingSeekPosition: Int = 0
 
     /**
      * 按键seek的系数，
      */
-    private var mKeySeekRatio: Float = 1f
+    private var keySeekRatio: Float = 1f
 
     private val seekCalculator: PendingSeekCalculator = DurationSamplingSeekCalculator()
 
@@ -44,7 +44,7 @@ open class TVVideoController @JvmOverloads constructor(
         require(ratio > 0) {
             "ratio must be greater than 0."
         }
-        mKeySeekRatio = ratio
+        keySeekRatio = ratio
     }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
@@ -113,7 +113,7 @@ open class TVVideoController @JvmOverloads constructor(
             }
             KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_DPAD_LEFT -> {//左右键，做seek行为
                 if (!canPressKeyToSeek()) {//不允许拖动
-                    if (mHasDispatchPendingSeek) {
+                    if (hasDispatchPendingSeek) {
                         cancelPendingSeekPosition(event)
                     }
                     return true
@@ -128,7 +128,7 @@ open class TVVideoController @JvmOverloads constructor(
                 //2、执行up（存在可能已经有seek动作，或者没有seek动作：即按下down之后，立马执行了up）
                 //3、第N次按下down（n >1 ）
 
-                if (event.action == KeyEvent.ACTION_UP && !mHasDispatchPendingSeek) {
+                if (event.action == KeyEvent.ACTION_UP && !hasDispatchPendingSeek) {
                     //按下down之后执行了up，相当于只按了一次方向键，
                     // 并且没有执行过pending行为（即单次按键的时候控制器还未显示，控制器已经显示的情况下单次按键是有效的行为），不做seek动作
                     return true
@@ -152,34 +152,34 @@ open class TVVideoController @JvmOverloads constructor(
             val currentPosition = player.currentPosition.toInt()
 
             if (event.action == KeyEvent.ACTION_DOWN) {
-                if (!mHasDispatchPendingSeek) {
-                    mHasDispatchPendingSeek = true
-                    mCurrentPendingSeekPosition = currentPosition
+                if (!hasDispatchPendingSeek) {
+                    hasDispatchPendingSeek = true
+                    currentPendingSeekPosition = currentPosition
                     controlComponents.loopKeyWhen<KeyControlComponent> {
                         it.onStartLeftOrRightKeyPressedForSeeking(event)
                     }
                     seekCalculator.prepareCalculate(event, currentPosition, duration, width)
                 }
 
-                val previousPosition = mCurrentPendingSeekPosition
+                val previousPosition = currentPendingSeekPosition
                 val incrementTimeMs =
                     seekCalculator.calculateIncrement(event, previousPosition, duration, width)
-                mCurrentPendingSeekPosition = (mCurrentPendingSeekPosition + incrementTimeMs)
+                currentPendingSeekPosition = (currentPendingSeekPosition + incrementTimeMs)
                     .coerceAtLeast(0)
                     .coerceAtMost(duration)
 
                 setPendingSeekPositionAndNotify(
-                    mCurrentPendingSeekPosition,
+                    currentPendingSeekPosition,
                     previousPosition,
                     duration
                 )
                 Log.d(
                     "TVController",
-                    "action=${event.action}  eventTime=${event.eventTime - event.downTime} increment=${incrementTimeMs} previousPosition=${previousPosition} newPosition=${mCurrentPendingSeekPosition}"
+                    "action=${event.action}  eventTime=${event.eventTime - event.downTime} increment=${incrementTimeMs} previousPosition=${previousPosition} newPosition=${currentPendingSeekPosition}"
                 )
             }
 
-            if (event.action == KeyEvent.ACTION_UP && mHasDispatchPendingSeek) {
+            if (event.action == KeyEvent.ACTION_UP && hasDispatchPendingSeek) {
                 Log.d(
                     "TVController",
                     "开始执行seek行为: pendingSeekPosition=${pendingSeekPosition}"
@@ -249,14 +249,14 @@ open class TVVideoController @JvmOverloads constructor(
 
     override fun handlePendingSeekPosition() {
         super.handlePendingSeekPosition()
-        mHasDispatchPendingSeek = false
-        mCurrentPendingSeekPosition = 0
+        hasDispatchPendingSeek = false
+        currentPendingSeekPosition = 0
     }
 
     override fun cancelPendingSeekPosition() {
         super.cancelPendingSeekPosition()
-        mHasDispatchPendingSeek = false
-        mCurrentPendingSeekPosition = 0
+        hasDispatchPendingSeek = false
+        currentPendingSeekPosition = 0
     }
 
     /**

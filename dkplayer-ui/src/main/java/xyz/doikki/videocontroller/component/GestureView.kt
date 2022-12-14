@@ -21,10 +21,10 @@ class GestureView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : BaseControlComponent(context, attrs, defStyleAttr), KeyControlComponent {
 
-    private val mIcon: ImageView
-    private val mProgressPercent: ProgressBar
-    private val mTextPercent: TextView
-    private val mCenterContainer: LinearLayout
+    private val icon: ImageView
+    private val progressPercent: ProgressBar
+    private val textPercent: TextView
+    private val centerContainer: LinearLayout
 
     override fun onStartLeftOrRightKeyPressedForSeeking(event: KeyEvent) {
         onStartSlide()
@@ -40,52 +40,52 @@ class GestureView @JvmOverloads constructor(
 
     override fun onStartSlide() {
         controller?.hide()
-        mCenterContainer.visibility = VISIBLE
-        mCenterContainer.alpha = 1f
+        centerContainer.visibility = VISIBLE
+        centerContainer.alpha = 1f
     }
 
     override fun onStopSlide() {
-        mCenterContainer.animate()
+        centerContainer.animate()
             .alpha(0f)
             .setDuration(300)
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
                     super.onAnimationEnd(animation)
-                    mCenterContainer.visibility = GONE
+                    centerContainer.visibility = GONE
                 }
             })
             .start()
     }
 
     override fun onPositionChange(slidePosition: Int, currentPosition: Int, duration: Int) {
-        mProgressPercent.visibility = GONE
+        progressPercent.visibility = GONE
         if (slidePosition > currentPosition) {
-            mIcon.setImageResource(R.drawable.dkplayer_ic_action_fast_forward)
+            icon.setImageResource(R.drawable.dkplayer_ic_action_fast_forward)
         } else if (slidePosition < currentPosition) {
-            mIcon.setImageResource(R.drawable.dkplayer_ic_action_fast_rewind)
+            icon.setImageResource(R.drawable.dkplayer_ic_action_fast_rewind)
         } else {
             //相等的情况不处理，避免最大最小位置图标错乱
         }
-        mTextPercent.text =
+        textPercent.text =
             "${PlayerUtils.stringForTime(slidePosition)}/${PlayerUtils.stringForTime(duration)}"
     }
 
     override fun onBrightnessChange(percent: Int) {
-        mProgressPercent.visibility = VISIBLE
-        mIcon.setImageResource(R.drawable.dkplayer_ic_action_brightness)
-        mTextPercent.text = "$percent%"
-        mProgressPercent.progress = percent
+        progressPercent.visibility = VISIBLE
+        icon.setImageResource(R.drawable.dkplayer_ic_action_brightness)
+        textPercent.text = "$percent%"
+        progressPercent.progress = percent
     }
 
     override fun onVolumeChange(percent: Int) {
-        mProgressPercent.visibility = VISIBLE
+        progressPercent.visibility = VISIBLE
         if (percent <= 0) {
-            mIcon.setImageResource(R.drawable.dkplayer_ic_action_volume_off)
+            icon.setImageResource(R.drawable.dkplayer_ic_action_volume_off)
         } else {
-            mIcon.setImageResource(R.drawable.dkplayer_ic_action_volume_up)
+            icon.setImageResource(R.drawable.dkplayer_ic_action_volume_up)
         }
-        mTextPercent.text = "$percent%"
-        mProgressPercent.progress = percent
+        textPercent.text = "$percent%"
+        progressPercent.progress = percent
     }
 
     override fun onPlayStateChanged(playState: Int) {
@@ -100,9 +100,9 @@ class GestureView @JvmOverloads constructor(
     init {
         visibility = GONE
         layoutInflater.inflate(R.layout.dkplayer_layout_gesture_control_view, this)
-        mIcon = findViewById(R.id.iv_icon)
-        mProgressPercent = findViewById(R.id.pro_percent)
-        mTextPercent = findViewById(R.id.tv_percent)
-        mCenterContainer = findViewById(R.id.center_container)
+        icon = findViewById(R.id.iv_icon)
+        progressPercent = findViewById(R.id.pro_percent)
+        textPercent = findViewById(R.id.tv_percent)
+        centerContainer = findViewById(R.id.center_container)
     }
 }

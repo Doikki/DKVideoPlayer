@@ -127,7 +127,7 @@ class RenderMeasure {
                     preMeasuredWidth = (preMeasuredHeight * displayAspectRatio).toInt()
                 }
                 AspectRatioType.SCALE_ORIGINAL -> {
-                    preMeasuredWidth = Math.min(widthSpecSize, videoWidth)
+                    preMeasuredWidth = widthSpecSize.coerceAtMost(videoWidth)
                     preMeasuredHeight = (preMeasuredWidth / displayAspectRatio).toInt()
                 }
                 else -> { //缩放模式
@@ -142,7 +142,7 @@ class RenderMeasure {
                     preMeasuredHeight = (preMeasuredWidth / displayAspectRatio).toInt()
                 }
                 AspectRatioType.SCALE_ORIGINAL -> {
-                    preMeasuredHeight = Math.min(heightSpecSize, videoHeight)
+                    preMeasuredHeight = heightSpecSize.coerceAtMost(videoHeight)
                     preMeasuredWidth = (preMeasuredHeight * displayAspectRatio).toInt()
                 }
                 else -> { //缩放模式

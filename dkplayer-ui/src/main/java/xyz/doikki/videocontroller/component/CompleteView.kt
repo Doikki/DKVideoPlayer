@@ -23,7 +23,7 @@ class CompleteView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
 ) : BaseControlComponent(context, attrs) {
 
-    private val mStopFullscreen: ImageView
+    private val stopFullscreen: ImageView
 
     /**
      * 设置播放结束按钮的文本（默认是“重新播放”）
@@ -38,7 +38,7 @@ class CompleteView @JvmOverloads constructor(
     override fun onPlayStateChanged(playState: Int) {
         if (playState == VideoView.STATE_PLAYBACK_COMPLETED) {
             visibility = VISIBLE
-            mStopFullscreen.isVisible = controller?.isFullScreen.orDefault()
+            stopFullscreen.isVisible = controller?.isFullScreen.orDefault()
             bringToFront()
         } else {
             visibility = GONE
@@ -48,16 +48,16 @@ class CompleteView @JvmOverloads constructor(
     @SuppressLint("SwitchIntDef")
     override fun onScreenModeChanged(screenMode: Int) {
         if (screenMode == VideoView.SCREEN_MODE_FULL) {
-            mStopFullscreen.visibility = VISIBLE
+            stopFullscreen.visibility = VISIBLE
         } else if (screenMode == VideoView.SCREEN_MODE_NORMAL) {
-            mStopFullscreen.visibility = GONE
+            stopFullscreen.visibility = GONE
         }
         controller?.let { controller ->
             val activity = activity
             if (activity != null && controller.hasCutout == true) {
                 val orientation = activity.requestedOrientation
                 val cutoutHeight = controller.cutoutHeight
-                val sflp = mStopFullscreen.layoutParams as LayoutParams
+                val sflp = stopFullscreen.layoutParams as LayoutParams
                 when (orientation) {
                     ActivityInfo.SCREEN_ORIENTATION_PORTRAIT -> {
                         sflp.setMargins(0, 0, 0, 0)
@@ -90,8 +90,8 @@ class CompleteView @JvmOverloads constructor(
         replyAct.setOnClickListener { //重新播放
             controller?.replay(true)
         }
-        mStopFullscreen = findViewById(R.id.stop_fullscreen)
-        mStopFullscreen.setOnClickListener {
+        stopFullscreen = findViewById(R.id.stop_fullscreen)
+        stopFullscreen.setOnClickListener {
             controller?.let { controller ->
                 if (controller.isFullScreen) {
                     val activity = activity

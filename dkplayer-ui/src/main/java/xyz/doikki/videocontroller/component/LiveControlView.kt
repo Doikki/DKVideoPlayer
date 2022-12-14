@@ -23,9 +23,9 @@ class LiveControlView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : BaseControlComponent(context, attrs, defStyleAttr), View.OnClickListener {
 
-    private val mFullScreen: ImageView
-    private val mBottomContainer: LinearLayout
-    private val mPlayButton: ImageView
+    private val fullScreen: ImageView
+    private val bottomContainer: LinearLayout
+    private val playButton: ImageView
 
     override fun onVisibilityChanged(isVisible: Boolean, anim: Animation?) {
         if (isVisible) {
@@ -45,9 +45,9 @@ class LiveControlView @JvmOverloads constructor(
         when (playState) {
             VideoView.STATE_IDLE, VideoView.STATE_START_ABORT, VideoView.STATE_PREPARING, VideoView.STATE_PREPARED, VideoView.STATE_ERROR, VideoView.STATE_PLAYBACK_COMPLETED -> visibility =
                 GONE
-            VideoView.STATE_PLAYING -> mPlayButton.isSelected = true
-            VideoView.STATE_PAUSED -> mPlayButton.isSelected = false
-            VideoView.STATE_BUFFERING, VideoView.STATE_BUFFERED -> mPlayButton.isSelected =
+            VideoView.STATE_PLAYING -> playButton.isSelected = true
+            VideoView.STATE_PAUSED -> playButton.isSelected = false
+            VideoView.STATE_BUFFERING, VideoView.STATE_BUFFERED -> playButton.isSelected =
                 controller?.playerControl?.isPlaying.orDefault()
         }
     }
@@ -55,8 +55,8 @@ class LiveControlView @JvmOverloads constructor(
     @SuppressLint("SwitchIntDef")
     override fun onScreenModeChanged(screenMode: Int) {
         when (screenMode) {
-            VideoView.SCREEN_MODE_NORMAL -> mFullScreen.isSelected = false
-            VideoView.SCREEN_MODE_FULL -> mFullScreen.isSelected = true
+            VideoView.SCREEN_MODE_NORMAL -> fullScreen.isSelected = false
+            VideoView.SCREEN_MODE_FULL -> fullScreen.isSelected = true
         }
         val activity = PlayerUtils.scanForActivity(context)
         val controller = controller
@@ -65,13 +65,13 @@ class LiveControlView @JvmOverloads constructor(
             val cutoutHeight = controller.cutoutHeight
             when (orientation) {
                 ActivityInfo.SCREEN_ORIENTATION_PORTRAIT -> {
-                    mBottomContainer.setPadding(0, 0, 0, 0)
+                    bottomContainer.setPadding(0, 0, 0, 0)
                 }
                 ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE -> {
-                    mBottomContainer.setPadding(cutoutHeight, 0, 0, 0)
+                    bottomContainer.setPadding(cutoutHeight, 0, 0, 0)
                 }
                 ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE -> {
-                    mBottomContainer.setPadding(0, 0, cutoutHeight, 0)
+                    bottomContainer.setPadding(0, 0, cutoutHeight, 0)
                 }
             }
         }
@@ -102,11 +102,11 @@ class LiveControlView @JvmOverloads constructor(
     init {
         visibility = GONE
         layoutInflater.inflate(R.layout.dkplayer_layout_live_control_view, this)
-        mFullScreen = findViewById(R.id.fullscreen)
-        mFullScreen.setOnClickListener(this)
-        mBottomContainer = findViewById(R.id.bottom_container)
-        mPlayButton = findViewById(R.id.iv_play)
-        mPlayButton.setOnClickListener(this)
+        fullScreen = findViewById(R.id.fullscreen)
+        fullScreen.setOnClickListener(this)
+        bottomContainer = findViewById(R.id.bottom_container)
+        playButton = findViewById(R.id.iv_play)
+        playButton.setOnClickListener(this)
         val refresh = findViewById<ImageView>(R.id.iv_refresh)
         refresh.setOnClickListener(this)
     }

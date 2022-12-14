@@ -21,8 +21,8 @@ class ErrorView @JvmOverloads constructor(
 ) : BaseControlComponent(
     context, attrs, defStyleAttr
 ) {
-    private var mDownX = 0f
-    private var mDownY = 0f
+    private var downX = 0f
+    private var downY = 0f
 
     override fun onPlayStateChanged(playState: Int) {
         if (playState == VideoView.STATE_ERROR) {
@@ -42,14 +42,14 @@ class ErrorView @JvmOverloads constructor(
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         when (ev.action) {
             MotionEvent.ACTION_DOWN -> {
-                mDownX = ev.x
-                mDownY = ev.y
+                downX = ev.x
+                downY = ev.y
                 // True if the child does not want the parent to intercept touch events.
                 parent.requestDisallowInterceptTouchEvent(true)
             }
             MotionEvent.ACTION_MOVE -> {
-                val absDeltaX = abs(ev.x - mDownX)
-                val absDeltaY = abs(ev.y - mDownY)
+                val absDeltaX = abs(ev.x - downX)
+                val absDeltaY = abs(ev.y - downY)
                 if (absDeltaX > ViewConfiguration.get(context).scaledTouchSlop ||
                     absDeltaY > ViewConfiguration.get(context).scaledTouchSlop
                 ) {
