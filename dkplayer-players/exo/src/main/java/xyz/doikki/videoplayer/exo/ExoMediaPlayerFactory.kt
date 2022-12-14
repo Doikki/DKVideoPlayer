@@ -1,17 +1,17 @@
-package xyz.doikki.videoplayer.exo;
+package xyz.doikki.videoplayer.exo
 
-import android.content.Context;
+import android.content.Context
+import xyz.doikki.videoplayer.player.PlayerFactory
 
-import xyz.doikki.videoplayer.player.PlayerFactory;
-
-public class ExoMediaPlayerFactory implements PlayerFactory {
-
-    public static ExoMediaPlayerFactory create() {
-        return new ExoMediaPlayerFactory();
+class ExoMediaPlayerFactory : PlayerFactory {
+    override fun create(context: Context): ExoMediaPlayer {
+        return ExoMediaPlayer(context)
     }
 
-    @Override
-    public ExoMediaPlayer create(Context context) {
-        return new ExoMediaPlayer(context);
+    companion object {
+        @JvmStatic
+        fun create(): ExoMediaPlayerFactory {
+            return ExoMediaPlayerFactory()
+        }
     }
 }

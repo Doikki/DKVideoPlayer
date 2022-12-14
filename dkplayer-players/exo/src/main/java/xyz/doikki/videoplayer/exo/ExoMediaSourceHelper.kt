@@ -1,124 +1,114 @@
-package xyz.doikki.videoplayer.exo;
+package xyz.doikki.videoplayer.exo
 
-import android.content.Context;
-import android.net.Uri;
-import android.text.TextUtils;
+import android.content.Context
+import android.net.Uri
+import android.text.TextUtils
+import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.database.StandaloneDatabaseProvider
+import com.google.android.exoplayer2.ext.rtmp.RtmpDataSource
+import com.google.android.exoplayer2.source.MediaSource
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.source.dash.DashMediaSource
+import com.google.android.exoplayer2.source.hls.HlsMediaSource
+import com.google.android.exoplayer2.source.rtsp.RtspMediaSource
+import com.google.android.exoplayer2.upstream.DataSource
+import com.google.android.exoplayer2.upstream.DefaultDataSource
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
+import com.google.android.exoplayer2.upstream.HttpDataSource
+import com.google.android.exoplayer2.upstream.cache.Cache
+import com.google.android.exoplayer2.upstream.cache.CacheDataSource
+import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
+import com.google.android.exoplayer2.upstream.cache.SimpleCache
+import com.google.android.exoplayer2.util.Util
+import java.io.File
+import java.util.*
 
-import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.database.StandaloneDatabaseProvider;
-import com.google.android.exoplayer2.ext.rtmp.RtmpDataSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.ProgressiveMediaSource;
-import com.google.android.exoplayer2.source.dash.DashMediaSource;
-import com.google.android.exoplayer2.source.hls.HlsMediaSource;
-import com.google.android.exoplayer2.source.rtsp.RtspMediaSource;
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultDataSource;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
-import com.google.android.exoplayer2.upstream.HttpDataSource;
-import com.google.android.exoplayer2.upstream.cache.Cache;
-import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
-import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
-import com.google.android.exoplayer2.upstream.cache.SimpleCache;
-import com.google.android.exoplayer2.util.Util;
+class ExoMediaSourceHelper private constructor(context: Context) {
+    private val mUserAgent: String
+    private val mAppContext: Context
+    private var mHttpDataSourceFactory: HttpDataSource.Factory? = null
+    private var mCache: Cache? = null
 
-import java.io.File;
-import java.lang.reflect.Field;
-import java.util.Map;
-
-public final class ExoMediaSourceHelper {
-
-    private static volatile ExoMediaSourceHelper sInstance;
-
-    private final String mUserAgent;
-    private final Context mAppContext;
-    private HttpDataSource.Factory mHttpDataSourceFactory;
-    private Cache mCache;
-
-    private ExoMediaSourceHelper(Context context) {
-        mAppContext = context.getApplicationContext();
-        mUserAgent = Util.getUserAgent(mAppContext, mAppContext.getApplicationInfo().name);
+    init {
+        mAppContext = context.applicationContext
+        mUserAgent = Util.getUserAgent(mAppContext, mAppContext.applicationInfo.name)
     }
 
-    public static ExoMediaSourceHelper getInstance(Context context) {
-        if (sInstance == null) {
-            synchronized (ExoMediaSourceHelper.class) {
-                if (sInstance == null) {
-                    sInstance = new ExoMediaSourceHelper(context);
-                }
-            }
+    fun getMediaSource(uri: String): MediaSource {
+        return getMediaSource(uri, null, false)
+    }
+
+    fun getMediaSource(uri: String, headers: MutableMap<String, String>?): MediaSource {
+        return getMediaSource(uri, headers, false)
+    }
+
+    fun getMediaSource(uri: String, isCache: Boolean): MediaSource {
+        return getMediaSource(uri, null, isCache)
+    }
+
+    fun getMediaSource(
+        uri: String,
+        headers: MutableMap<String, String>?,
+        isCache: Boolean
+    ): MediaSource {
+        val contentUri = Uri.parse(uri)
+        if ("rtmp" == contentUri.scheme) {
+            return ProgressiveMediaSource.Factory(RtmpDataSource.Factory())
+                .createMediaSource(MediaItem.fromUri(contentUri))
+        } else if ("rtsp" == contentUri.scheme) {
+            return RtspMediaSource.Factory().createMediaSource(MediaItem.fromUri(contentUri))
         }
-        return sInstance;
-    }
-
-    public MediaSource getMediaSource(String uri) {
-        return getMediaSource(uri, null, false);
-    }
-
-    public MediaSource getMediaSource(String uri, Map<String, String> headers) {
-        return getMediaSource(uri, headers, false);
-    }
-
-    public MediaSource getMediaSource(String uri, boolean isCache) {
-        return getMediaSource(uri, null, isCache);
-    }
-
-    public MediaSource getMediaSource(String uri, Map<String, String> headers, boolean isCache) {
-        Uri contentUri = Uri.parse(uri);
-        if ("rtmp".equals(contentUri.getScheme())) {
-            return new ProgressiveMediaSource.Factory(new RtmpDataSource.Factory())
-                    .createMediaSource(MediaItem.fromUri(contentUri));
-        } else if ("rtsp".equals(contentUri.getScheme())) {
-            return new RtspMediaSource.Factory().createMediaSource(MediaItem.fromUri(contentUri));
-        }
-        int contentType = inferContentType(uri);
-        DataSource.Factory factory;
-        if (isCache) {
-            factory = getCacheDataSourceFactory();
+        val contentType = inferContentType(uri)
+        val factory: DataSource.Factory = if (isCache) {
+            cacheDataSourceFactory
         } else {
-            factory = getDataSourceFactory();
+            dataSourceFactory
         }
         if (mHttpDataSourceFactory != null) {
-            setHeaders(headers);
+            setHeaders(headers)
         }
-        switch (contentType) {
-            case C.CONTENT_TYPE_DASH:
-                return new DashMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
-            case C.CONTENT_TYPE_HLS:
-                return new HlsMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
-            default:
-            case C.CONTENT_TYPE_OTHER:
-                return new ProgressiveMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
+        return when (contentType) {
+            C.CONTENT_TYPE_DASH -> DashMediaSource.Factory(factory)
+                .createMediaSource(MediaItem.fromUri(contentUri))
+            C.CONTENT_TYPE_HLS -> HlsMediaSource.Factory(factory)
+                .createMediaSource(MediaItem.fromUri(contentUri))
+            C.CONTENT_TYPE_OTHER -> ProgressiveMediaSource.Factory(factory)
+                .createMediaSource(MediaItem.fromUri(contentUri))
+            else -> ProgressiveMediaSource.Factory(factory)
+                .createMediaSource(MediaItem.fromUri(contentUri))
         }
     }
 
-    private int inferContentType(String fileName) {
-        fileName = fileName.toLowerCase();
-        if (fileName.contains(".mpd")) {
-            return C.CONTENT_TYPE_DASH;
+    private fun inferContentType(fileName: String): Int {
+        var fileName = fileName
+        fileName = fileName.lowercase(Locale.getDefault())
+        return if (fileName.contains(".mpd")) {
+            C.CONTENT_TYPE_DASH
         } else if (fileName.contains(".m3u8")) {
-            return C.CONTENT_TYPE_HLS;
+            C.CONTENT_TYPE_HLS
         } else {
-            return C.CONTENT_TYPE_OTHER;
+            C.CONTENT_TYPE_OTHER
         }
     }
 
-    private DataSource.Factory getCacheDataSourceFactory() {
-        if (mCache == null) {
-            mCache = newCache();
+    private val cacheDataSourceFactory: DataSource.Factory
+        private get() {
+            if (mCache == null) {
+                mCache = newCache()
+            }
+            return CacheDataSource.Factory()
+                .setCache(mCache!!)
+                .setUpstreamDataSourceFactory(dataSourceFactory)
+                .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
         }
-        return new CacheDataSource.Factory()
-                .setCache(mCache)
-                .setUpstreamDataSourceFactory(getDataSourceFactory())
-                .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR);
-    }
 
-    private Cache newCache() {
-        return new SimpleCache(
-                new File(mAppContext.getExternalCacheDir(), "exo-video-cache"),//缓存目录
-                new LeastRecentlyUsedCacheEvictor(512 * 1024 * 1024),//缓存大小，默认512M，使用LRU算法实现
-                new StandaloneDatabaseProvider(mAppContext));
+    private fun newCache(): Cache {
+        return SimpleCache(
+            File(mAppContext.externalCacheDir, "exo-video-cache"),  //缓存目录
+            LeastRecentlyUsedCacheEvictor(512 * 1024 * 1024),  //缓存大小，默认512M，使用LRU算法实现
+            StandaloneDatabaseProvider(mAppContext)
+        )
     }
 
     /**
@@ -126,44 +116,61 @@ public final class ExoMediaSourceHelper {
      *
      * @return A new DataSource factory.
      */
-    private DataSource.Factory getDataSourceFactory() {
-        return new DefaultDataSource.Factory(mAppContext, getHttpDataSourceFactory());
-    }
+    private val dataSourceFactory: DataSource.Factory
+        private get() = DefaultDataSource.Factory(mAppContext, httpDataSourceFactory)
 
     /**
      * Returns a new HttpDataSource factory.
      *
      * @return A new HttpDataSource factory.
      */
-    private DataSource.Factory getHttpDataSourceFactory() {
-        if (mHttpDataSourceFactory == null) {
-            mHttpDataSourceFactory = new DefaultHttpDataSource.Factory()
+    private val httpDataSourceFactory: DataSource.Factory
+        private get() {
+            if (mHttpDataSourceFactory == null) {
+                mHttpDataSourceFactory = DefaultHttpDataSource.Factory()
                     .setUserAgent(mUserAgent)
-                    .setAllowCrossProtocolRedirects(true);
+                    .setAllowCrossProtocolRedirects(true)
+            }
+            return mHttpDataSourceFactory!!
         }
-        return mHttpDataSourceFactory;
-    }
 
-    private void setHeaders(Map<String, String> headers) {
-        if (headers != null && headers.size() > 0) {
+    private fun setHeaders(headers: MutableMap<String, String>?) {
+        if (headers != null && headers.size > 0) {
             //如果发现用户通过header传递了UA，则强行将HttpDataSourceFactory里面的userAgent字段替换成用户的
             if (headers.containsKey("User-Agent")) {
-                String value = headers.remove("User-Agent");
+                val value = headers.remove("User-Agent")
                 if (!TextUtils.isEmpty(value)) {
                     try {
-                        Field userAgentField = mHttpDataSourceFactory.getClass().getDeclaredField("userAgent");
-                        userAgentField.setAccessible(true);
-                        userAgentField.set(mHttpDataSourceFactory, value);
-                    } catch (Exception e) {
+                        val userAgentField =
+                            mHttpDataSourceFactory!!.javaClass.getDeclaredField("userAgent")
+                        userAgentField.isAccessible = true
+                        userAgentField[mHttpDataSourceFactory] = value
+                    } catch (e: Exception) {
                         //ignore
                     }
                 }
             }
-            mHttpDataSourceFactory.setDefaultRequestProperties(headers);
+            mHttpDataSourceFactory!!.setDefaultRequestProperties(headers)
         }
     }
 
-    public void setCache(Cache cache) {
-        this.mCache = cache;
+    fun setCache(cache: Cache?) {
+        mCache = cache
+    }
+
+    companion object {
+        @Volatile
+        private var sInstance: ExoMediaSourceHelper? = null
+        @JvmStatic
+        fun getInstance(context: Context): ExoMediaSourceHelper {
+            if (sInstance == null) {
+                synchronized(ExoMediaSourceHelper::class.java) {
+                    if (sInstance == null) {
+                        sInstance = ExoMediaSourceHelper(context)
+                    }
+                }
+            }
+            return sInstance!!
+        }
     }
 }

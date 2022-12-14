@@ -40,7 +40,6 @@ interface IPlayer {
 
     /**
      * 初始化播放器实例
-     * todo 该方法放在这里不合理，是否是为了懒加载实现？ 是否需要考虑播放器的重用
      */
     fun init()
 
@@ -59,7 +58,7 @@ interface IPlayer {
      * @param path    播放地址
      * @param headers 播放地址请求头
      */
-    fun setDataSource(path: String, headers: Map<String, String>?)
+    fun setDataSource(path: String, headers: MutableMap<String, String>?)
 
     /**
      * 用于播放raw和asset里面的视频文件

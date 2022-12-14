@@ -18,6 +18,7 @@ import xyz.doikki.videoplayer.controller.VideoViewControl
 import xyz.doikki.videoplayer.internal.ScreenModeHandler
 import xyz.doikki.videoplayer.internal.VideoViewContainer
 import xyz.doikki.videoplayer.player.IPlayer
+import xyz.doikki.videoplayer.player.PlayerFactory
 import xyz.doikki.videoplayer.render.AspectRatioType
 import xyz.doikki.videoplayer.render.Render
 import xyz.doikki.videoplayer.render.Render.ScreenShotCallback
@@ -151,7 +152,7 @@ open class VideoView @JvmOverloads constructor(
     /**
      * 当前视频地址的请求头
      */
-    private var headers: Map<String, String>? = null
+    private var headers: MutableMap<String, String>? = null
 
     private var assetFileDescriptor: AssetFileDescriptor? = null
 
@@ -195,7 +196,7 @@ open class VideoView @JvmOverloads constructor(
     /**
      * 设置播放路径，带请求头
      */
-    open fun setDataSource(path: String, headers: Map<String, String>? = null) {
+    open fun setDataSource(path: String, headers: MutableMap<String, String>? = null) {
         assetFileDescriptor = null
         url = path
         this.headers = headers
@@ -843,12 +844,12 @@ open class VideoView @JvmOverloads constructor(
     init {
 
         //读取xml中的配置，并综合全局配置
-        val ta = context.obtainStyledAttributes(attrs, R.styleable.DKVideoView)
-        looping = ta.getBoolean(R.styleable.DKVideoView_looping, false)
+        val ta = context.obtainStyledAttributes(attrs, R.styleable.VideoView)
+        looping = ta.getBoolean(R.styleable.VideoView_looping, false)
         val screenAspectRatioType =
-            ta.getInt(R.styleable.DKVideoView_screenScaleType, GlobalConfig.screenAspectRatioType)
+            ta.getInt(R.styleable.VideoView_screenScaleType, GlobalConfig.screenAspectRatioType)
         val playerBackgroundColor =
-            ta.getColor(R.styleable.DKVideoView_playerBackgroundColor, Color.BLACK)
+            ta.getColor(R.styleable.VideoView_playerBackgroundColor, Color.BLACK)
         ta.recycle()
 
         //准备播放器容器

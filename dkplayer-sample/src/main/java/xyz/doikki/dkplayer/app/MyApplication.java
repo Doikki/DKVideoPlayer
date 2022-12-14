@@ -6,7 +6,7 @@ import com.danikula.videocache.Logger;
 
 import xyz.doikki.videoplayer.BuildConfig;
 import xyz.doikki.videoplayer.GlobalConfig;
-import xyz.doikki.videoplayer.ijk.IjkPlayerFactory;
+import xyz.doikki.videoplayer.exo.ExoMediaPlayerFactory;
 import xyz.doikki.videoplayer.render.RenderFactory;
 
 /**
@@ -25,8 +25,10 @@ public class MyApplication extends MultiDexApplication {
         //播放器配置，注意：此为全局配置，按需开启
         GlobalConfig.setDebuggable(BuildConfig.DEBUG);
         GlobalConfig.setRenderFactory(RenderFactory.textureViewRenderFactory());
-//        DKManager.setRenderFactory(RenderFactory.surfaceViewRenderFactory());
-        GlobalConfig.setPlayerFactory(IjkPlayerFactory.create());
+//        GlobalConfig.setRenderFactory(RenderFactory.surfaceViewRenderFactory());
+//        GlobalConfig.setPlayerFactory(IjkPlayerFactory.create());
+//        /** 软解，支持格式较多，可通过自编译so扩展格式，结合 {@link xyz.doikki.dkplayer.widget.videoview.IjkVideoView} 使用更佳 */
+        GlobalConfig.setPlayerFactory(ExoMediaPlayerFactory.create());
 
 //        DKManager.setConfig(VideoViewConfig.newBuilder()
 //                .setLogEnabled(BuildConfig.DEBUG) //调试的时候请打开日志，方便排错

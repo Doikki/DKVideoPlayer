@@ -1,88 +1,72 @@
-package xyz.doikki.videoplayer.ijk;
+package xyz.doikki.videoplayer.ijk
 
-import android.content.Context;
-import android.content.res.AssetFileDescriptor;
-import android.net.Uri;
+import android.content.Context
+import android.content.res.AssetFileDescriptor
+import android.net.Uri
+import tv.danmaku.ijk.media.player.misc.IMediaDataSource
+import java.io.ByteArrayOutputStream
+import java.io.FileNotFoundException
+import java.io.IOException
+import java.io.InputStream
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-
-import tv.danmaku.ijk.media.player.misc.IMediaDataSource;
-
-public class RawDataSourceProvider implements IMediaDataSource {
-    private AssetFileDescriptor mDescriptor;
-
-    private byte[] mMediaBytes;
-
-    public RawDataSourceProvider(AssetFileDescriptor descriptor) {
-        this.mDescriptor = descriptor;
-    }
-
-    @Override
-    public int readAt(long position, byte[] buffer, int offset, int size) {
-        if (position + 1 >= mMediaBytes.length) {
-            return -1;
+class RawDataSourceProvider(private var mDescriptor: AssetFileDescriptor?) : IMediaDataSource {
+    private var mediaBytes: ByteArray? = null
+    override fun readAt(position: Long, buffer: ByteArray, offset: Int, size: Int): Int {
+        if (position + 1 >= mediaBytes!!.size) {
+            return -1
         }
-
-        int length;
-        if (position + size < mMediaBytes.length) {
-            length = size;
+        var length: Int
+        if (position + size < mediaBytes!!.size) {
+            length = size
         } else {
-            length = (int) (mMediaBytes.length - position);
-            if (length > buffer.length)
-                length = buffer.length;
-
-            length--;
+            length = (mediaBytes!!.size - position).toInt()
+            if (length > buffer.size) length = buffer.size
+            length--
         }
-        System.arraycopy(mMediaBytes, (int) position, buffer, offset, length);
-
-        return length;
+        System.arraycopy(mediaBytes!!, position.toInt(), buffer, offset, length)
+        return length
     }
 
-    @Override
-    public long getSize() throws IOException {
-        long length = mDescriptor.getLength();
-        if (mMediaBytes == null) {
-            InputStream inputStream = mDescriptor.createInputStream();
-            mMediaBytes = readBytes(inputStream);
+    @Throws(IOException::class)
+    override fun getSize(): Long {
+        val length = mDescriptor!!.length
+        if (mediaBytes == null) {
+            val inputStream: InputStream = mDescriptor!!.createInputStream()
+            mediaBytes = readBytes(inputStream)
         }
-
-
-        return length;
+        return length
     }
 
-    @Override
-    public void close() throws IOException {
-        if (mDescriptor != null)
-            mDescriptor.close();
-
-        mDescriptor = null;
-        mMediaBytes = null;
+    @Throws(IOException::class)
+    override fun close() {
+        if (mDescriptor != null) mDescriptor!!.close()
+        mDescriptor = null
+        mediaBytes = null
     }
 
-    private byte[] readBytes(InputStream inputStream) throws IOException {
-        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
-
-        int bufferSize = 1024;
-        byte[] buffer = new byte[bufferSize];
-
-        int len;
-        while ((len = inputStream.read(buffer)) != -1) {
-            byteBuffer.write(buffer, 0, len);
+    @Throws(IOException::class)
+    private fun readBytes(inputStream: InputStream): ByteArray {
+        val byteBuffer = ByteArrayOutputStream()
+        val bufferSize = 1024
+        val buffer = ByteArray(bufferSize)
+        var len: Int
+        while (inputStream.read(buffer).also { len = it } != -1) {
+            byteBuffer.write(buffer, 0, len)
         }
-
-        return byteBuffer.toByteArray();
+        return byteBuffer.toByteArray()
     }
 
-    public static RawDataSourceProvider create(Context context, Uri uri) {
-        try {
-            AssetFileDescriptor fileDescriptor = context.getContentResolver().openAssetFileDescriptor(uri, "r");
-            return new RawDataSourceProvider(fileDescriptor);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+    companion object {
+        fun create(context: Context, uri: Uri?): RawDataSourceProvider? {
+            try {
+                val fileDescriptor = context.contentResolver.openAssetFileDescriptor(
+                    uri!!, "r"
+                )
+                return RawDataSourceProvider(fileDescriptor)
+            } catch (e: FileNotFoundException) {
+                e.printStackTrace()
+            }
+            return null
         }
-        return null;
     }
 }

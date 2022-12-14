@@ -19,10 +19,10 @@ import xyz.doikki.dkplayer.util.PIPManager
 import xyz.doikki.dkplayer.util.Tag
 import xyz.doikki.dkplayer.util.cache.ProxyVideoCacheManager
 import xyz.doikki.videoplayer.GlobalConfig
-import xyz.doikki.videoplayer.player.PlayerFactory
 import xyz.doikki.videoplayer.VideoView
 import xyz.doikki.videoplayer.exo.ExoMediaPlayerFactory
 import xyz.doikki.videoplayer.ijk.IjkPlayerFactory
+import xyz.doikki.videoplayer.player.PlayerFactory
 import xyz.doikki.videoplayer.player.SystemPlayerFactory
 import java.io.*
 
@@ -183,14 +183,14 @@ class MainActivity : BaseActivity<VideoView>(), NavigationBarView.OnItemSelected
             if (inputStream != null) {
                 try {
                     inputStream.close()
-                } catch (e: IOException) {
+                } catch (ignore: IOException) {
                 }
             }
             if (out != null) {
                 try {
                     out.flush()
                     out.close()
-                } catch (e: IOException) {
+                } catch (ignore: IOException) {
                 }
             }
         }

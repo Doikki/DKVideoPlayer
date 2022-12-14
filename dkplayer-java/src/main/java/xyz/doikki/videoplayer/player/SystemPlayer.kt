@@ -62,7 +62,7 @@ class SystemPlayer(context: Context) : AbstractPlayer(),
         eventListener?.onError(e)
     }
 
-    override fun setDataSource(path: String, headers: Map<String, String>?) {
+    override fun setDataSource(path: String, headers: MutableMap<String, String>?) {
         try {
             logOnKernelInvalidate()
             kernel!!.setDataSource(appContext, Uri.parse(path), headers)

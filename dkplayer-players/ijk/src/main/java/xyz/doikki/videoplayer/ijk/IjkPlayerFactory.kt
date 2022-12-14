@@ -1,17 +1,17 @@
-package xyz.doikki.videoplayer.ijk;
+package xyz.doikki.videoplayer.ijk
 
-import android.content.Context;
+import android.content.Context
+import xyz.doikki.videoplayer.player.PlayerFactory
 
-import xyz.doikki.videoplayer.player.PlayerFactory;
-
-public class IjkPlayerFactory implements PlayerFactory {
-
-    public static IjkPlayerFactory create() {
-        return new IjkPlayerFactory();
+class IjkPlayerFactory : PlayerFactory {
+    override fun create(context: Context): IjkPlayer {
+        return IjkPlayer(context)
     }
 
-    @Override
-    public IjkDKPlayer create(Context context) {
-        return new IjkDKPlayer(context);
+    companion object {
+        @JvmStatic
+        fun create(): IjkPlayerFactory {
+            return IjkPlayerFactory()
+        }
     }
 }

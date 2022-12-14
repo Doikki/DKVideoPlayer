@@ -15,67 +15,56 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.util.Clock
 import com.google.android.exoplayer2.util.EventLogger
 import com.google.android.exoplayer2.video.VideoSize
-import xyz.doikki.videoplayer.player.AbstractPlayer
-import xyz.doikki.videoplayer.player.IPlayer
 import xyz.doikki.videoplayer.GlobalConfig
 import xyz.doikki.videoplayer.internal.PlayerException
+import xyz.doikki.videoplayer.player.AbstractPlayer
+import xyz.doikki.videoplayer.player.IPlayer
+import xyz.doikki.videoplayer.util.orDefault
 
 open class ExoMediaPlayer(context: Context) : AbstractPlayer(), Player.Listener {
-    protected var mAppContext: Context
-    protected var mInternalPlayer: ExoPlayer? = null
+
     @JvmField
-    protected var mMediaSource: MediaSource? = null
-    protected var mMediaSourceHelper: ExoMediaSourceHelper
-    private var mSpeedPlaybackParameters: PlaybackParameters? = null
-    private var mIsPreparing = false
-    private var mLoadControl: LoadControl? = null
-    private var mRenderersFactory: RenderersFactory? = null
-    private var mTrackSelector: TrackSelector? = null
+    protected var appContext: Context
+
+    @JvmField
+    protected var internalPlayer: ExoPlayer? = null
+
+    @JvmField
+    protected var mediaSource: MediaSource? = null
+
+    @JvmField
+    protected var mediaSourceHelper: ExoMediaSourceHelper
+    private var speedPlaybackParameters: PlaybackParameters? = null
+    private var isPreparing = false
+    var loadControl: LoadControl? = null
+    var renderersFactory: RenderersFactory? = null
+    var trackSelector: TrackSelector? = null
+
     override fun init() {
-        mInternalPlayer = ExoPlayer.Builder(
-            mAppContext,
-            (if (mRenderersFactory == null) DefaultRenderersFactory(mAppContext).also {
-                mRenderersFactory = it
-            } else mRenderersFactory)!!,
-            DefaultMediaSourceFactory(mAppContext),
-            (if (mTrackSelector == null) DefaultTrackSelector(mAppContext).also {
-                mTrackSelector = it
-            } else mTrackSelector)!!,
-            (if (mLoadControl == null) DefaultLoadControl().also {
-                mLoadControl = it
-            } else mLoadControl)!!,
-            DefaultBandwidthMeter.getSingletonInstance(mAppContext),
-            DefaultAnalyticsCollector(Clock.DEFAULT))
+        internalPlayer = ExoPlayer.Builder(
+            appContext,
+            renderersFactory ?: DefaultRenderersFactory(appContext).also { renderersFactory = it },
+            DefaultMediaSourceFactory(appContext),
+            trackSelector ?: DefaultTrackSelector(appContext).also { trackSelector = it },
+            loadControl ?: DefaultLoadControl().also { loadControl = it },
+            DefaultBandwidthMeter.getSingletonInstance(appContext),
+            DefaultAnalyticsCollector(Clock.DEFAULT)
+        )
             .build()
         //准备好就开始播放
-        mInternalPlayer!!.playWhenReady = true
+        internalPlayer!!.playWhenReady = true
 
         //播放器日志
-        if (GlobalConfig.isDebuggable && mTrackSelector is MappingTrackSelector) {
-            mInternalPlayer!!.addAnalyticsListener(
-                EventLogger(
-                    mTrackSelector as MappingTrackSelector?,
-                    "ExoPlayer"
-                )
+        if (GlobalConfig.isDebuggable && trackSelector is MappingTrackSelector) {
+            internalPlayer!!.addAnalyticsListener(
+                EventLogger(trackSelector as MappingTrackSelector?, "ExoPlayer")
             )
         }
-        mInternalPlayer!!.addListener(this)
+        internalPlayer!!.addListener(this)
     }
 
-    fun setTrackSelector(trackSelector: TrackSelector?) {
-        mTrackSelector = trackSelector
-    }
-
-    fun setRenderersFactory(renderersFactory: RenderersFactory?) {
-        mRenderersFactory = renderersFactory
-    }
-
-    fun setLoadControl(loadControl: LoadControl?) {
-        mLoadControl = loadControl
-    }
-
-    override fun setDataSource(path: String, headers: Map<String, String>?) {
-        mMediaSource = mMediaSourceHelper.getMediaSource(path, headers)
+    override fun setDataSource(path: String, headers: MutableMap<String, String>?) {
+        mediaSource = mediaSourceHelper.getMediaSource(path, headers)
     }
 
     override fun setDataSource(fd: AssetFileDescriptor) {
@@ -83,108 +72,96 @@ open class ExoMediaPlayer(context: Context) : AbstractPlayer(), Player.Listener 
     }
 
     override fun start() {
-        if (mInternalPlayer == null) return
-        mInternalPlayer!!.playWhenReady = true
+        internalPlayer?.playWhenReady = true
     }
 
     override fun pause() {
-        if (mInternalPlayer == null) return
-        mInternalPlayer!!.playWhenReady = false
+        internalPlayer?.playWhenReady = false
     }
 
     override fun stop() {
-        if (mInternalPlayer == null) return
-        mInternalPlayer!!.stop()
+        internalPlayer?.stop()
     }
 
     override fun prepareAsync() {
-        if (mInternalPlayer == null) return
-        if (mMediaSource == null) return
-        if (mSpeedPlaybackParameters != null) {
-            mInternalPlayer!!.playbackParameters = mSpeedPlaybackParameters!!
+        val internalPlayer = internalPlayer ?: return
+        val mediaSource = mediaSource ?: return
+        speedPlaybackParameters?.let {
+            internalPlayer.playbackParameters = it
         }
-        mIsPreparing = true
-        mInternalPlayer!!.setMediaSource(mMediaSource!!)
-        mInternalPlayer!!.prepare()
+        isPreparing = true
+        internalPlayer.setMediaSource(mediaSource)
+        internalPlayer.prepare()
     }
 
     override fun reset() {
-        if (mInternalPlayer != null) {
-            mInternalPlayer!!.stop()
-            mInternalPlayer!!.clearMediaItems()
-            mInternalPlayer!!.setVideoSurface(null)
-            mIsPreparing = false
+        internalPlayer?.let {
+            it.stop()
+            it.clearMediaItems()
+            it.setVideoSurface(null)
+            isPreparing = false
         }
     }
 
     override fun isPlaying(): Boolean {
-        if (mInternalPlayer == null) return false
-        val state = mInternalPlayer!!.playbackState
-        return when (state) {
-            Player.STATE_BUFFERING, Player.STATE_READY -> mInternalPlayer!!.playWhenReady
+        return when (internalPlayer?.playbackState) {
+            Player.STATE_BUFFERING, Player.STATE_READY -> internalPlayer?.playWhenReady.orDefault()
             Player.STATE_IDLE, Player.STATE_ENDED -> false
             else -> false
         }
     }
 
     override fun seekTo(msec: Long) {
-        if (mInternalPlayer == null) return
-        mInternalPlayer!!.seekTo(msec)
+        internalPlayer?.seekTo(msec)
     }
 
     override fun release() {
-        if (mInternalPlayer != null) {
-            mInternalPlayer!!.removeListener(this)
-            mInternalPlayer!!.release()
-            mInternalPlayer = null
+        internalPlayer?.let {
+            it.removeListener(this)
+            it.release()
         }
-        mIsPreparing = false
-        mSpeedPlaybackParameters = null
+        internalPlayer = null
+        isPreparing = false
+        speedPlaybackParameters = null
     }
 
     override fun getCurrentPosition(): Long {
-        return if (mInternalPlayer == null) 0 else mInternalPlayer!!.currentPosition
+        return internalPlayer?.currentPosition.orDefault()
     }
 
     override fun getDuration(): Long {
-        return if (mInternalPlayer == null) 0 else mInternalPlayer!!.duration
+        return internalPlayer?.duration.orDefault()
     }
 
     override fun getBufferedPercentage(): Int {
-        return if (mInternalPlayer == null) 0 else mInternalPlayer!!.bufferedPercentage
+        return internalPlayer?.bufferedPercentage.orDefault()
     }
 
     override fun setSurface(surface: Surface?) {
-        if (mInternalPlayer != null) {
-            mInternalPlayer!!.setVideoSurface(surface)
-        }
+        internalPlayer?.setVideoSurface(surface)
     }
 
     override fun setDisplay(holder: SurfaceHolder?) {
-        if (holder == null) setSurface(null) else setSurface(holder.surface)
+        internalPlayer?.setVideoSurfaceHolder(holder)
     }
 
     override fun setVolume(leftVolume: Float, rightVolume: Float) {
-        if (mInternalPlayer != null) mInternalPlayer!!.volume = (leftVolume + rightVolume) / 2
+        internalPlayer?.volume = (leftVolume + rightVolume) / 2
     }
 
     override fun setLooping(isLooping: Boolean) {
-        if (mInternalPlayer != null) mInternalPlayer!!.repeatMode =
+        internalPlayer?.repeatMode =
             if (isLooping) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_OFF
     }
 
     override fun setSpeed(speed: Float) {
         val playbackParameters = PlaybackParameters(speed)
-        mSpeedPlaybackParameters = playbackParameters
-        if (mInternalPlayer != null) {
-            mInternalPlayer!!.playbackParameters = playbackParameters
-        }
+        speedPlaybackParameters = playbackParameters
+        internalPlayer?.playbackParameters = playbackParameters
     }
 
     override fun getSpeed(): Float {
-        return if (mSpeedPlaybackParameters != null) {
-            mSpeedPlaybackParameters!!.speed
-        } else 1f
+        return speedPlaybackParameters?.speed.orDefault(1f)
     }
 
     override fun getTcpSpeed(): Long {
@@ -193,53 +170,46 @@ open class ExoMediaPlayer(context: Context) : AbstractPlayer(), Player.Listener 
     }
 
     override fun onPlaybackStateChanged(playbackState: Int) {
-        if (eventListener == null) return
-        if (mIsPreparing) {
-            if (playbackState == Player.STATE_READY) {
-                eventListener!!.onPrepared()
-                eventListener!!.onInfo(IPlayer.MEDIA_INFO_RENDERING_START, 0)
-                mIsPreparing = false
+        eventListener?.let {
+            if (isPreparing) {
+                if (playbackState == Player.STATE_READY) {
+                    it.onPrepared()
+                    it.onInfo(IPlayer.MEDIA_INFO_RENDERING_START, 0)
+                    isPreparing = false
+                }
+                return
             }
-            return
-        }
-        when (playbackState) {
-            Player.STATE_BUFFERING -> eventListener!!.onInfo(
-                IPlayer.MEDIA_INFO_BUFFERING_START,
-                getBufferedPercentage()
-            )
-            Player.STATE_READY -> eventListener!!.onInfo(
-                IPlayer.MEDIA_INFO_BUFFERING_END,
-                getBufferedPercentage()
-            )
-            Player.STATE_ENDED -> eventListener!!.onCompletion()
-            Player.STATE_IDLE -> {}
+            when (playbackState) {
+                Player.STATE_BUFFERING -> it.onInfo(
+                    IPlayer.MEDIA_INFO_BUFFERING_START,
+                    getBufferedPercentage()
+                )
+                Player.STATE_READY -> it.onInfo(
+                    IPlayer.MEDIA_INFO_BUFFERING_END,
+                    getBufferedPercentage()
+                )
+                Player.STATE_ENDED -> it.onCompletion()
+                Player.STATE_IDLE -> {}
+            }
         }
     }
 
     override fun onPlayerError(error: PlaybackException) {
-        if (eventListener != null) {
-            eventListener!!.onError(
-                PlayerException(
-                    error
-                )
+        eventListener?.onError(PlayerException(error))
+    }
+
+    override fun onVideoSizeChanged(videoSize: VideoSize) {
+        eventListener?.onVideoSizeChanged(videoSize.width, videoSize.height)
+        if (videoSize.unappliedRotationDegrees > 0) {
+            eventListener?.onInfo(
+                IPlayer.MEDIA_INFO_VIDEO_ROTATION_CHANGED,
+                videoSize.unappliedRotationDegrees
             )
         }
     }
 
-    override fun onVideoSizeChanged(videoSize: VideoSize) {
-        if (eventListener != null) {
-            eventListener!!.onVideoSizeChanged(videoSize.width, videoSize.height)
-            if (videoSize.unappliedRotationDegrees > 0) {
-                eventListener!!.onInfo(
-                    IPlayer.MEDIA_INFO_VIDEO_ROTATION_CHANGED,
-                    videoSize.unappliedRotationDegrees
-                )
-            }
-        }
-    }
-
     init {
-        mAppContext = context.applicationContext
-        mMediaSourceHelper = ExoMediaSourceHelper.getInstance(context)
+        appContext = context.applicationContext
+        mediaSourceHelper = ExoMediaSourceHelper.getInstance(context)
     }
 }

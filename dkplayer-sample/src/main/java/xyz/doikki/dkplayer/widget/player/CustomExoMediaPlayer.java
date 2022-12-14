@@ -19,7 +19,7 @@ public class CustomExoMediaPlayer extends ExoMediaPlayer {
     }
 
     public void setDataSource(MediaSource dataSource) {
-        mMediaSource = dataSource;
+        mediaSource = dataSource;
     }
 
     @Override

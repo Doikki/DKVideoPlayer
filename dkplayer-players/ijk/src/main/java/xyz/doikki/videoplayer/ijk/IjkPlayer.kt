@@ -11,13 +11,13 @@ import tv.danmaku.ijk.media.player.IMediaPlayer
 import tv.danmaku.ijk.media.player.IjkMediaPlayer
 import tv.danmaku.ijk.media.player.IjkMediaPlayer.OnNativeInvokeListener
 import tv.danmaku.ijk.media.player.misc.ITrackInfo
-import xyz.doikki.videoplayer.player.AbstractPlayer
-import xyz.doikki.videoplayer.player.IPlayer
 import xyz.doikki.videoplayer.GlobalConfig
 import xyz.doikki.videoplayer.internal.PlayerException
+import xyz.doikki.videoplayer.player.AbstractPlayer
+import xyz.doikki.videoplayer.player.IPlayer
 import xyz.doikki.videoplayer.util.orDefault
 
-open class IjkDKPlayer(private val appContext: Context) : AbstractPlayer(),
+open class IjkPlayer(private val appContext: Context) : AbstractPlayer(),
     IMediaPlayer.OnErrorListener, IMediaPlayer.OnCompletionListener, IMediaPlayer.OnInfoListener,
     IMediaPlayer.OnBufferingUpdateListener, IMediaPlayer.OnPreparedListener,
     IMediaPlayer.OnVideoSizeChangedListener, OnNativeInvokeListener {
@@ -45,12 +45,12 @@ open class IjkDKPlayer(private val appContext: Context) : AbstractPlayer(),
         kernel = createKernel()
     }
 
-    override fun setDataSource(path: String, headers: Map<String, String>?) {
+    override fun setDataSource(path: String, headers: MutableMap<String, String>?) {
         try {
             val uri = Uri.parse(path)
             if (ContentResolver.SCHEME_ANDROID_RESOURCE == uri.scheme) {
                 val rawDataSourceProvider = RawDataSourceProvider.create(appContext, uri)
-                kernel!!.setDataSource(rawDataSourceProvider)
+                kernel?.setDataSource(rawDataSourceProvider)
             } else {
                 if (headers != null && headers.containsKey("User-Agent")) {
                     //处理UA问题
@@ -61,102 +61,99 @@ open class IjkDKPlayer(private val appContext: Context) : AbstractPlayer(),
                     //                    if (TextUtils.isEmpty(userAgent)) {
 //                        userAgent = "";
 //                    }
-                    kernel!!.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "user_agent", userAgent)
-                    kernel!!.setDataSource(appContext, uri, clonedHeaders)
+                    kernel?.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "user_agent", userAgent)
+                    kernel?.setDataSource(appContext, uri, clonedHeaders)
                 } else {
                     //不包含UA，直接设置
-                    kernel!!.setDataSource(appContext, uri, headers)
+                    kernel?.setDataSource(appContext, uri, headers)
                 }
             }
         } catch (e: Throwable) {
-            eventListener!!.onError(e)
+            eventListener?.onError(e)
         }
     }
 
     override fun setDataSource(fd: AssetFileDescriptor) {
         try {
-            kernel!!.setDataSource(RawDataSourceProvider(fd))
+            kernel?.setDataSource(RawDataSourceProvider(fd))
         } catch (e: Exception) {
-            eventListener!!.onError(e)
+            eventListener?.onError(e)
         }
     }
 
     override fun pause() {
         try {
-            kernel!!.pause()
+            kernel?.pause()
         } catch (e: IllegalStateException) {
-            eventListener!!.onError(e)
+            eventListener?.onError(e)
         }
     }
 
     override fun start() {
         try {
-            kernel!!.start()
+            kernel?.start()
         } catch (e: IllegalStateException) {
-            eventListener!!.onError(e)
+            eventListener?.onError(e)
         }
     }
 
     override fun stop() {
         try {
-            kernel!!.stop()
+            kernel?.stop()
         } catch (e: IllegalStateException) {
-            eventListener!!.onError(e)
+            eventListener?.onError(e)
         }
     }
 
     override fun prepareAsync() {
         try {
-            kernel!!.prepareAsync()
+            kernel?.prepareAsync()
         } catch (e: IllegalStateException) {
-            eventListener!!.onError(e)
+            eventListener?.onError(e)
         }
     }
 
     override fun reset() {
-        kernel!!.reset()
-        kernel!!.setOnVideoSizeChangedListener(this)
+        kernel?.reset()
+        kernel?.setOnVideoSizeChangedListener(this)
     }
 
     override fun isPlaying(): Boolean {
-        return kernel!!.isPlaying
+        return kernel?.isPlaying ?: false
     }
 
     override fun seekTo(msec: Long) {
         try {
-            kernel!!.seekTo(msec.toInt().toLong())
+            kernel?.seekTo(msec)
         } catch (e: IllegalStateException) {
-            eventListener!!.onError(e)
+            eventListener?.onError(e)
         }
     }
 
     override fun release() {
-        kernel!!.setOnErrorListener(null)
-        kernel!!.setOnCompletionListener(null)
-        kernel!!.setOnInfoListener(null)
-        kernel!!.setOnBufferingUpdateListener(null)
-        kernel!!.setOnPreparedListener(null)
-        kernel!!.setOnVideoSizeChangedListener(null)
-
-        val temp = kernel!!
-        object : Thread() {
-            override fun run() {
-                try {
-                    temp.release()
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
+        val temp = kernel ?: return
+        temp.setOnErrorListener(null)
+        temp.setOnCompletionListener(null)
+        temp.setOnInfoListener(null)
+        temp.setOnBufferingUpdateListener(null)
+        temp.setOnPreparedListener(null)
+        temp.setOnVideoSizeChangedListener(null)
+        Thread {
+            try {
+                temp.release()
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }.start()
         kernel = null
     }
 
     override fun getCurrentPosition(): Long {
-        return kernel!!.currentPosition
+        return kernel?.currentPosition.orDefault()
     }
 
     override fun getDuration(): Long {
-        return kernel!!.duration
+        return kernel?.duration.orDefault()
     }
 
     override fun getBufferedPercentage(): Int {
@@ -164,27 +161,27 @@ open class IjkDKPlayer(private val appContext: Context) : AbstractPlayer(),
     }
 
     override fun setSurface(surface: Surface?) {
-        kernel!!.setSurface(surface)
+        kernel?.setSurface(surface)
     }
 
     override fun setDisplay(holder: SurfaceHolder?) {
-        kernel!!.setDisplay(holder)
+        kernel?.setDisplay(holder)
     }
 
     override fun setVolume(leftVolume: Float, rightVolume: Float) {
-        kernel!!.setVolume(leftVolume, rightVolume)
+        kernel?.setVolume(leftVolume, rightVolume)
     }
 
     override fun setLooping(isLooping: Boolean) {
-        kernel!!.isLooping = isLooping
+        kernel?.isLooping = isLooping
     }
 
     override fun setSpeed(speed: Float) {
-        kernel!!.setSpeed(speed)
+        kernel?.setSpeed(speed)
     }
 
     override fun getSpeed(): Float {
-        return kernel!!.getSpeed(0f)
+        return kernel?.getSpeed(0f).orDefault()
     }
 
     override fun getTcpSpeed(): Long {
@@ -192,7 +189,7 @@ open class IjkDKPlayer(private val appContext: Context) : AbstractPlayer(),
     }
 
     override fun onError(mp: IMediaPlayer, what: Int, extra: Int): Boolean {
-        eventListener!!.onError(
+        eventListener?.onError(
             PlayerException(
                 what,
                 extra
@@ -202,11 +199,11 @@ open class IjkDKPlayer(private val appContext: Context) : AbstractPlayer(),
     }
 
     override fun onCompletion(mp: IMediaPlayer) {
-        eventListener!!.onCompletion()
+        eventListener?.onCompletion()
     }
 
     override fun onInfo(mp: IMediaPlayer, what: Int, extra: Int): Boolean {
-        eventListener!!.onInfo(what, extra)
+        eventListener?.onInfo(what, extra)
         return true
     }
 
@@ -215,16 +212,16 @@ open class IjkDKPlayer(private val appContext: Context) : AbstractPlayer(),
     }
 
     override fun onPrepared(mp: IMediaPlayer) {
-        eventListener!!.onPrepared()
+        eventListener?.onPrepared()
         // 修复播放纯音频时状态出错问题
         if (!isVideo) {
-            eventListener!!.onInfo(IPlayer.MEDIA_INFO_RENDERING_START, 0)
+            eventListener?.onInfo(IPlayer.MEDIA_INFO_RENDERING_START, 0)
         }
     }
 
     private val isVideo: Boolean
         get() {
-            val trackInfo = kernel!!.trackInfo ?: return false
+            val trackInfo = kernel?.trackInfo ?: return false
             for (info in trackInfo) {
                 if (info.trackType == ITrackInfo.MEDIA_TRACK_TYPE_VIDEO) {
                     return true
@@ -243,7 +240,7 @@ open class IjkDKPlayer(private val appContext: Context) : AbstractPlayer(),
         val videoWidth = mp.videoWidth
         val videoHeight = mp.videoHeight
         if (videoWidth != 0 && videoHeight != 0) {
-            eventListener!!.onVideoSizeChanged(videoWidth, videoHeight)
+            eventListener?.onVideoSizeChanged(videoWidth, videoHeight)
         }
     }
 
