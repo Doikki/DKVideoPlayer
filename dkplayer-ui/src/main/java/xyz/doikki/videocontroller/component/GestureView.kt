@@ -57,7 +57,7 @@ class GestureView @JvmOverloads constructor(
             .start()
     }
 
-    override fun onPositionChange(slidePosition: Int, currentPosition: Int, duration: Int) {
+    override fun onPositionChange(slidePosition: Long, currentPosition: Long, duration: Long) {
         progressPercent.visibility = GONE
         if (slidePosition > currentPosition) {
             icon.setImageResource(R.drawable.dkplayer_ic_action_fast_forward)

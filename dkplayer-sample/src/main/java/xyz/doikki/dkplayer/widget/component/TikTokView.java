@@ -116,7 +116,7 @@ public class TikTokView extends BaseControlComponent {
     }
 
     @Override
-    public void onProgressChanged(int duration, int position) {
+    public void onProgressChanged(long duration, long position) {
 
     }
 

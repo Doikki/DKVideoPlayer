@@ -202,7 +202,7 @@ open class VodControlView @JvmOverloads constructor(
     }
 
 
-    override fun onProgressChanged(duration: Int, position: Int) {
+    override fun onProgressChanged(duration: Long, position: Long) {
         if (trackingTouch) {
             return
         }
@@ -236,7 +236,7 @@ open class VodControlView @JvmOverloads constructor(
         controller?.playerControl?.let { player ->
             val duration = player.duration
             val newPosition = duration * progress / videoProgress?.max.orDefault(100)
-            currTime?.text = PlayerUtils.stringForTime(newPosition.toInt())
+            currTime?.text = PlayerUtils.stringForTime(newPosition)
         }
     }
 

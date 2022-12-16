@@ -92,7 +92,7 @@ public class AdControlView extends BaseControlComponent implements View.OnClickL
     }
 
     @Override
-    public void onProgressChanged(int duration, int position) {
+    public void onProgressChanged(long duration, long position) {
         if (mAdTime != null)
             mAdTime.setText(String.format("%s | 跳过", (duration - position) / 1000));
     }

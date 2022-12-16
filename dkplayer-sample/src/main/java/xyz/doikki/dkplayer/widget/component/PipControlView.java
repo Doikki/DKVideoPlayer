@@ -125,7 +125,7 @@ public class PipControlView extends BaseControlComponent implements View.OnClick
     }
 
     @Override
-    public void onProgressChanged(int duration, int position) {
+    public void onProgressChanged(long duration, long position) {
 
     }
 

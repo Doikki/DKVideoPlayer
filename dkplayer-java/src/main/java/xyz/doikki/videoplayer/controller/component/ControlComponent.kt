@@ -74,5 +74,5 @@ interface ControlComponent {
      * @param duration 视频总时长
      * @param position 播放进度
      */
-    fun onProgressChanged(duration: Int, position: Int) {}
+    fun onProgressChanged(duration: Long, position: Long) {}
 }

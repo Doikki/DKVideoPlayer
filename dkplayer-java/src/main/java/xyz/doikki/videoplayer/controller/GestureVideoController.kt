@@ -57,7 +57,7 @@ abstract class GestureVideoController @JvmOverloads constructor(
     private var canSlide = false
 
     //待处理的seek position：通常由于手势滑动或者按键引起的位置变动
-    protected var pendingSeekPosition: Int = INVALIDATE_SEEK_POSITION
+    protected var pendingSeekPosition: Long = INVALIDATE_SEEK_POSITION
 
     private var streamVolume = 0
     private var brightness = 0f
@@ -176,9 +176,9 @@ abstract class GestureVideoController @JvmOverloads constructor(
     protected fun slideToChangePosition(deltaX: Float) {
         invokeOnPlayerAttached {
             val width = measuredWidth
-            val duration = it.duration.toInt()
-            val currentPosition = it.currentPosition.toInt()
-            var position = (-deltaX / width * 120000 + currentPosition).toInt()
+            val duration = it.duration
+            val currentPosition = it.currentPosition
+            var position = (-deltaX / width * 120000 + currentPosition).toLong()
             if (position > duration) position = duration
             if (position < 0) position = 0
             setPendingSeekPositionAndNotify(position, currentPosition, duration)
@@ -241,9 +241,9 @@ abstract class GestureVideoController @JvmOverloads constructor(
     }
 
     protected fun setPendingSeekPositionAndNotify(
-        position: Int,
-        currentPosition: Int,
-        duration: Int
+        position: Long,
+        currentPosition: Long,
+        duration: Long
     ) {
         for ((component) in controlComponents) {
             if (component is GestureControlComponent) {

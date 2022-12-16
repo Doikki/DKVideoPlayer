@@ -97,7 +97,7 @@ public class DebugInfoView extends AppCompatTextView implements ControlComponent
     }
 
     @Override
-    public void onProgressChanged(int duration, int position) {
+    public void onProgressChanged(long duration, long position) {
 
     }
 

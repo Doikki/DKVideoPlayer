@@ -127,7 +127,7 @@ inline fun View.toast(@StringRes messageId: Int, length: Int = Toast.LENGTH_SHOR
  */
 val KeyEvent.isUniqueDown: Boolean get() = action == KeyEvent.ACTION_DOWN && repeatCount == 0
 
-const val INVALIDATE_SEEK_POSITION = -1
+const val INVALIDATE_SEEK_POSITION = -1L
 
 /**
  * 能否获取焦点

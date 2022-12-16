@@ -20,7 +20,7 @@ open class TVVideoController @JvmOverloads constructor(
     /**
      * 当前待seek的位置
      */
-    private var currentPendingSeekPosition: Int = 0
+    private var currentPendingSeekPosition: Long = 0
 
     /**
      * 按键seek的系数，
@@ -148,8 +148,8 @@ open class TVVideoController @JvmOverloads constructor(
      */
     private fun handlePendingKeySeek(event: KeyEvent) {
         invokeOnPlayerAttached { player ->
-            val duration = player.duration.toInt()
-            val currentPosition = player.currentPosition.toInt()
+            val duration = player.duration
+            val currentPosition = player.currentPosition
 
             if (event.action == KeyEvent.ACTION_DOWN) {
                 if (!hasDispatchPendingSeek) {
@@ -279,8 +279,8 @@ open class TVVideoController @JvmOverloads constructor(
          */
         abstract fun prepareCalculate(
             event: KeyEvent,
-            currentPosition: Int,
-            duration: Int,
+            currentPosition: Long,
+            duration: Long,
             viewWidth: Int
         )
 
@@ -289,8 +289,8 @@ open class TVVideoController @JvmOverloads constructor(
          */
         abstract fun calculateIncrement(
             event: KeyEvent,
-            currentPosition: Int,
-            duration: Int,
+            currentPosition: Long,
+            duration: Long,
             viewWidth: Int
         ): Int
 
@@ -309,12 +309,12 @@ open class TVVideoController @JvmOverloads constructor(
         /**
          * 最大的时间增量：默认为时长的百分之一，最小1000
          */
-        private var maxIncrementTimeMs: Int = 0
+        private var maxIncrementTimeMs: Long = 0
 
         /**
          * 最小时间增量:最小1000
          */
-        private var minIncrementTimeMs: Int = 0
+        private var minIncrementTimeMs: Long = 0
 
         /**
          * 最少seek多少次seek完整个时长，默认500次，一次事件大概需要50毫秒，所以大致需要25s事件，也就是说一个很长的视频，最快25s seek完，但是由于是采用不断加速的形式，因此实际时间远大于25s
@@ -334,18 +334,18 @@ open class TVVideoController @JvmOverloads constructor(
 
         override fun prepareCalculate(
             event: KeyEvent,
-            currentPosition: Int,
-            duration: Int,
+            currentPosition: Long,
+            duration: Long,
             viewWidth: Int
         ) {
             maxIncrementTimeMs = duration / leastSeekCount
-            minIncrementTimeMs = (maxIncrementTimeMs / maxIncrementFactor).toInt()
+            minIncrementTimeMs = (maxIncrementTimeMs / maxIncrementFactor).toLong()
         }
 
         override fun calculateIncrement(
             event: KeyEvent,
-            currentPosition: Int,
-            duration: Int,
+            currentPosition: Long,
+            duration: Long,
             viewWidth: Int
         ): Int {
             //方向系数

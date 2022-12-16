@@ -44,7 +44,7 @@ public class PlayerMonitor implements ControlComponent {
     }
 
     @Override
-    public void onProgressChanged(int duration, int position) {
+    public void onProgressChanged(long duration, long position) {
         L.d("setProgress: duration: " + duration + " position: " + position + " buffered percent: " + mControlWrapper.getPlayerControl().getBufferedPercentage());
         L.d("network speed: " + mControlWrapper.getPlayerControl().getTcpSpeed());
     }

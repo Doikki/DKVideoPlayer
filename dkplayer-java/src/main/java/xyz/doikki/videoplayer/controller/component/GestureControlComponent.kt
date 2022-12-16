@@ -21,7 +21,7 @@ interface GestureControlComponent : ControlComponent {
      * @param currentPosition 当前播放进度
      * @param duration 视频总长度
      */
-    fun onPositionChange(slidePosition: Int, currentPosition: Int, duration: Int)
+    fun onPositionChange(slidePosition: Long, currentPosition: Long, duration: Long)
 
     /**
      * 滑动调整亮度

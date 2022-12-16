@@ -79,9 +79,9 @@ open class VideoController @JvmOverloads constructor(
      */
     private val progressUpdateRunnable = object : Runnable {
         override fun run() {
-            val pos = updateProgress()
             val player = player ?: return
             if (player.isPlaying) {
+                val pos = updateProgress()
                 postDelayed(this, ((1000 - pos % 1000) / player.speed).toLong())
             } else {
                 progressRefreshing = false
@@ -415,10 +415,10 @@ open class VideoController @JvmOverloads constructor(
      * 更新当前播放进度
      * @return 当前播放位置
      */
-    private fun updateProgress(): Int {
+    private fun updateProgress(): Long {
         val player = player ?: return 0
-        val position = player.currentPosition.toInt()
-        val duration = player.duration.toInt()
+        val position = player.currentPosition
+        val duration = player.duration
         for ((component) in controlComponents) {
             component.onProgressChanged(duration, position)
         }
@@ -485,7 +485,7 @@ open class VideoController @JvmOverloads constructor(
      * @param duration 视频总时长
      * @param position 视频当前播放位置
      */
-    protected open fun onProgressChanged(duration: Int, position: Int) {}
+    protected open fun onProgressChanged(duration: Long, position: Long) {}
 
     /**
      * 用于子类重写

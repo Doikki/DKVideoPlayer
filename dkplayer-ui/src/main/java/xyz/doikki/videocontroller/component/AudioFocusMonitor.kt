@@ -20,7 +20,6 @@ class AudioFocusMonitor : ControlComponent {
     }
 
     override fun onPlayerAttached(player: VideoViewControl) {
-        super.onPlayerAttached(player)
         audioFocusHelper = AudioFocusHelper(player as VideoView)
     }
 
