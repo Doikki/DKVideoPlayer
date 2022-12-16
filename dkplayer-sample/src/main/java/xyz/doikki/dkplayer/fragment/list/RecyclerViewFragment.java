@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import xyz.doikki.dkplayer.R;
@@ -103,7 +104,7 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
         mVideoView = new VideoView(getActivity());
         mVideoView.addOnStateChangeListener(new VideoView.OnStateChangeListener() {
             @Override
-            public void onPlayerStateChanged(int playState) {
+            public void onPlayerStateChanged(int playState, @NonNull HashMap<String, Object> extras) {
                 //监听VideoViewManager释放，重置状态
                 if (playState == VideoView.STATE_IDLE) {
                     Utils.removeViewFormParent(mVideoView);

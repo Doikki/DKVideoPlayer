@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.HashMap;
 import java.util.List;
 
 import xyz.doikki.dkplayer.R;
@@ -51,7 +52,7 @@ public class TinyScreenActivity extends BaseActivity<VideoView> implements OnIte
         mVideoView = new VideoView(this);
         mVideoView.addOnStateChangeListener(new VideoView.OnStateChangeListener() {
             @Override
-            public void onPlayerStateChanged(int playState) {
+            public void onPlayerStateChanged(int playState, @NonNull HashMap<String, Object> extras) {
                 if (playState == VideoView.STATE_PLAYBACK_COMPLETED) {
                     if (mVideoView.isTinyScreen()) {
                         mVideoView.stopTinyScreen();

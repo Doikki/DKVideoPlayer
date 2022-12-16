@@ -5,6 +5,10 @@ import android.view.animation.Animation;
 
 import androidx.annotation.NonNull;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+
 import xyz.doikki.videoplayer.controller.VideoController;
 import xyz.doikki.videoplayer.controller.component.ControlComponent;
 import xyz.doikki.videoplayer.util.L;
@@ -30,7 +34,7 @@ public class PlayerMonitor implements ControlComponent {
     }
 
     @Override
-    public void onPlayStateChanged(int playState) {
+    public void onPlayStateChanged(int playState, @NotNull HashMap<String, Object> extras) {
         L.d("onPlayStateChanged: " + UtilsKt.playState2str(playState));
     }
 

@@ -3,6 +3,10 @@ package xyz.doikki.dkplayer.activity.extend;
 import android.os.Handler;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+
+import java.util.HashMap;
+
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.activity.BaseActivity;
 import xyz.doikki.dkplayer.util.DataUtil;
@@ -43,7 +47,7 @@ public class DanmakuActivity extends BaseActivity<VideoView> {
 
         mVideoView.addOnStateChangeListener(new VideoView.OnStateChangeListener() {
             @Override
-            public void onPlayerStateChanged(int playState) {
+            public void onPlayerStateChanged(int playState, @NonNull HashMap<String, Object> extras) {
                 if (playState == VideoView.STATE_PREPARED) {
                     simulateDanmu();
                 } else if (playState == VideoView.STATE_PLAYBACK_COMPLETED) {

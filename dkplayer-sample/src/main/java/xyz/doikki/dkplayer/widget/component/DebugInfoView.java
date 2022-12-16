@@ -13,6 +13,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+
 import xyz.doikki.videoplayer.VideoView;
 import xyz.doikki.videoplayer.controller.VideoController;
 import xyz.doikki.videoplayer.controller.VideoViewControl;
@@ -58,26 +62,32 @@ public class DebugInfoView extends AppCompatTextView implements ControlComponent
     }
 
     @Override
-    public void onPlayStateChanged(int playState) {
-        setText(getDebugString(playState));
+    public void onPlayStateChanged(int playState, @NotNull HashMap<String, Object> extras) {
+        setText(getDebugString(playState, extras));
         bringToFront();
     }
 
     /**
      * Returns the debugging information string to be shown by the target {@link TextView}.
      */
-    protected String getDebugString(int playState) {
+    protected String getDebugString(int playState, @NotNull HashMap<String, Object> extras) {
         VideoViewControl control = mController.getPlayerControl();
-        if (control == null)
-            return "";
-        int[] videoSize = control.getVideoSize();
+        if (control == null) return "";
         VideoView videoView = (VideoView) mController.getPlayerControl();
         StringBuilder sb = new StringBuilder();
-        sb.append("player:").append(videoView.getPlayerFactory().getClass().getSimpleName()).append("   ")
-                .append("render:").append(videoView.getRenderFactory().getClass().getSimpleName()).append("\n");
-        sb.append(UtilsKt.playState2str(playState)).append("  ")
-                .append("video width:").append(videoSize[0])
-                .append(",height:").append(videoSize[1]);
+        sb.append("player:")
+                .append(videoView.getPlayerFactory().getClass().getSimpleName())
+                .append("   ").append("render:")
+                .append(videoView.getRenderFactory().getClass().getSimpleName())
+                .append("\n")
+                .append(UtilsKt.playState2str(playState)).append("  ");
+
+        Object obj = extras.get(VideoView.EXT_VIDEO_SIZE);
+        if (obj instanceof int[]) {
+            int[] videoSize = (int[]) obj;
+            sb.append("video width:").append(videoSize[0]).append(",height:").append(videoSize[1]);
+        }
+
         return sb.toString();
     }
 

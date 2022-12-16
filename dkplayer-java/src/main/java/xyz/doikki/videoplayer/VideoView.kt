@@ -190,6 +190,8 @@ open class VideoView : FrameLayout, VideoViewControl, IPlayer.EventListener {
     private val preferredActivity: Activity?
         get() = (videoController?.context ?: context).getActivityContext()
 
+    private val extras = hashMapOf<String, Any>()
+
     /**
      * 设置[playerContainer]的背景色
      */
@@ -211,6 +213,7 @@ open class VideoView : FrameLayout, VideoViewControl, IPlayer.EventListener {
         assetFileDescriptor = null
         url = path
         this.headers = headers
+        extras[EXT_DATA_SOURCE] = path
     }
 
     /**
@@ -219,6 +222,7 @@ open class VideoView : FrameLayout, VideoViewControl, IPlayer.EventListener {
     open fun setDataSource(fd: AssetFileDescriptor) {
         url = null
         assetFileDescriptor = fd
+        extras[EXT_DATA_SOURCE] = fd
     }
 
     /**
@@ -423,6 +427,7 @@ open class VideoView : FrameLayout, VideoViewControl, IPlayer.EventListener {
             pendingPosition = 0
             //切换转态
             playerState = STATE_IDLE
+            extras.clear()
         }
     }
 
@@ -537,12 +542,6 @@ open class VideoView : FrameLayout, VideoViewControl, IPlayer.EventListener {
     override fun setRotation(degree: Int) {
         playerContainer.setVideoRotation(degree)
     }
-
-    /**
-     * 获取视频宽高,其中width: mVideoSize[0], height: mVideoSize[1]
-     */
-    override val videoSize: IntArray
-        get() = playerContainer.videoSize
 
     /**
      * 获取缓冲速度
@@ -698,6 +697,7 @@ open class VideoView : FrameLayout, VideoViewControl, IPlayer.EventListener {
      */
     override fun onError(e: Throwable) {
         playerContainer.keepScreenOn = false
+        extras[EXT_ERROR_INFO] = e
         playerState = STATE_ERROR
     }
 
@@ -714,6 +714,7 @@ open class VideoView : FrameLayout, VideoViewControl, IPlayer.EventListener {
      * 视频宽高回调
      */
     override fun onVideoSizeChanged(width: Int, height: Int) {
+        extras[EXT_VIDEO_SIZE] = intArrayOf(width, height)
         playerContainer.onVideoSizeChanged(width, height)
     }
 
@@ -721,9 +722,9 @@ open class VideoView : FrameLayout, VideoViewControl, IPlayer.EventListener {
      * 通知播放器状态发生变化
      */
     private fun notifyPlayerStateChanged() {
-        videoController?.setPlayerState(playerState)
+        videoController?.setPlayerState(playerState, extras)
         stateChangedListeners.forEach {
-            it.onPlayerStateChanged(playerState)
+            it.onPlayerStateChanged(playerState, extras)
         }
     }
 
@@ -741,19 +742,23 @@ open class VideoView : FrameLayout, VideoViewControl, IPlayer.EventListener {
 
     /**
      * 播放状态改变监听器
-     * todo 目前VideoView对外可访问的回调过少，[IPlayer.EventListener]的回调太多对外不可见
      */
     interface OnStateChangeListener {
 
+        /**
+         * 屏幕状态改变
+         */
         fun onScreenModeChanged(@ScreenMode screenMode: Int) {}
 
         /**
          * 播放器播放状态发生了变化
-         *
-         * @param playState
-         * todo 增加一个参数
+         * @param playState 播放状态，具体参考[PlayerState]定义。
+         * @param extras 其他信息：
+         * 播放地址（通过[EXT_DATA_SOURCE]访问，类型[String]或者[AssetFileDescriptor]），
+         * 视频宽高（通过[EXT_VIDEO_SIZE]访问，类型[IntArray]），
+         * 错误信息（通过[EXT_ERROR_INFO]访问，类型[Throwable]）。
          */
-        fun onPlayerStateChanged(@PlayerState playState: Int) {}
+        fun onPlayerStateChanged(@PlayerState playState: Int, extras: HashMap<String, Any>) {}
     }
 
     /**
@@ -860,5 +865,21 @@ open class VideoView : FrameLayout, VideoViewControl, IPlayer.EventListener {
          * 小窗模式
          */
         const val SCREEN_MODE_TINY = 12
+
+        /**
+         * 存储数据源
+         */
+        const val EXT_DATA_SOURCE = "_DATA_SOURCE"
+
+        /**
+         * 错误信息
+         */
+        const val EXT_ERROR_INFO = "_ERROR_INFO"
+
+        /**
+         * 视频宽高
+         */
+        const val EXT_VIDEO_SIZE = "_VIDEO_SIZE"
+
     }
 }

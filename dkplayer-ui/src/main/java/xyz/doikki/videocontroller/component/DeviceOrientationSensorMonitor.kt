@@ -23,8 +23,7 @@ class DeviceOrientationSensorMonitor(context: Context) : BaseControlComponent(co
     var enableOrientationSensor = true
 
 
-    override fun onPlayStateChanged(playState: Int) {
-        super.onPlayStateChanged(playState)
+    override fun onPlayStateChanged(playState: Int, extras: HashMap<String, Any>) {
         when(playState) {
             VideoView.STATE_IDLE -> {
                 orientationSensorHelper.disable()

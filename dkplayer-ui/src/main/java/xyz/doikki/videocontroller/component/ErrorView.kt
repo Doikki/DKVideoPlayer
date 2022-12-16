@@ -24,7 +24,7 @@ class ErrorView @JvmOverloads constructor(
     private var downX = 0f
     private var downY = 0f
 
-    override fun onPlayStateChanged(playState: Int) {
+    override fun onPlayStateChanged(playState: Int, extras: HashMap<String, Any>) {
         if (playState == VideoView.STATE_ERROR) {
             bringToFront()
             visibility = VISIBLE

@@ -179,7 +179,7 @@ class PlayerActivity : BaseActivity<VideoView>() {
     private val mOnStateChangeListener: VideoView.OnStateChangeListener =
         object : VideoView.OnStateChangeListener {
 
-            override fun onPlayerStateChanged(playState: Int) {
+            override fun onPlayerStateChanged(playState: Int, extras: HashMap<String, Any>) {
                 when (playState) {
                     VideoView.STATE_IDLE -> {
                     }
@@ -190,9 +190,11 @@ class PlayerActivity : BaseActivity<VideoView>() {
                     }
                     VideoView.STATE_PLAYING -> {
                         //需在此时获取视频宽高
-                        val videoSize = mVideoView!!.videoSize
-                        L.d("视频宽：" + videoSize[0])
-                        L.d("视频高：" + videoSize[1])
+                        val videoSize = extras[VideoView.EXT_VIDEO_SIZE] as? IntArray
+                        videoSize?.let {
+                            L.d("视频宽：" + it[0])
+                            L.d("视频高：" + it[1])
+                        }
                     }
                     VideoView.STATE_PAUSED -> {
                     }
@@ -203,6 +205,7 @@ class PlayerActivity : BaseActivity<VideoView>() {
                     VideoView.STATE_PLAYBACK_COMPLETED -> {
                     }
                     VideoView.STATE_ERROR -> {
+                        (extras[VideoView.EXT_ERROR_INFO] as? Throwable)?.printStackTrace()
                     }
                 }
             }

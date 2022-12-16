@@ -18,16 +18,18 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.util.DataUtil;
 import xyz.doikki.videocontroller.StandardVideoController;
 import xyz.doikki.videoplayer.VideoView;
-
-import java.util.ArrayList;
 
 /**
  * Android O PiP demo
@@ -106,7 +108,7 @@ public class AndroidOPiPActivity extends AppCompatActivity {
         mVideoView.start();
         mVideoView.addOnStateChangeListener(new VideoView.OnStateChangeListener() {
             @Override
-            public void onPlayerStateChanged(int playState) {
+            public void onPlayerStateChanged(int playState, @NonNull HashMap<String, Object> extras) {
                 switch (playState) {
                     case VideoView.STATE_PAUSED:
                         updatePictureInPictureActions(

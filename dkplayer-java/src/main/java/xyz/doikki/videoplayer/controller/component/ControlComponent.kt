@@ -66,7 +66,7 @@ interface ControlComponent {
      *
      * @param playState 播放状态
      */
-    fun onPlayStateChanged(@VideoView.PlayerState playState: Int) {}
+    fun onPlayStateChanged(@VideoView.PlayerState playState: Int, extras: HashMap<String, Any>) {}
 
     /**
      * 回调播放进度，1秒回调一次

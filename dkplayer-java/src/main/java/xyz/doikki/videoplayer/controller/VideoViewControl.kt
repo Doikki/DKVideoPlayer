@@ -115,13 +115,6 @@ interface VideoViewControl : PlayerControl {
     fun setRotation(@IntRange(from = 0, to = 360) degree: Int)
 
     /**
-     * 获取图像宽高
-     *
-     * @return 0-width 1-height
-     */
-    val videoSize: IntArray
-    /*以下方法还未梳理*/
-    /**
      * 获取缓冲网速：只有IJK播放器支持
      *
      * @return

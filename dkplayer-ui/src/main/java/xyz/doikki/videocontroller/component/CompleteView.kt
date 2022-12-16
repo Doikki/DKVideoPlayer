@@ -35,7 +35,7 @@ class CompleteView @JvmOverloads constructor(
         tv.text = message
     }
 
-    override fun onPlayStateChanged(playState: Int) {
+    override fun onPlayStateChanged(playState: Int, extras: HashMap<String, Any>) {
         if (playState == VideoView.STATE_PLAYBACK_COMPLETED) {
             visibility = VISIBLE
             stopFullscreen.isVisible = controller?.isFullScreen.orDefault()

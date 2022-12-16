@@ -88,7 +88,7 @@ class GestureView @JvmOverloads constructor(
         progressPercent.progress = percent
     }
 
-    override fun onPlayStateChanged(playState: Int) {
+    override fun onPlayStateChanged(playState: Int, extras: HashMap<String, Any>) {
         visibility =
             if (playState == VideoView.STATE_IDLE || playState == VideoView.STATE_START_ABORT || playState == VideoView.STATE_PREPARING || playState == VideoView.STATE_PREPARED || playState == VideoView.STATE_ERROR || playState == VideoView.STATE_PLAYBACK_COMPLETED) {
                 GONE

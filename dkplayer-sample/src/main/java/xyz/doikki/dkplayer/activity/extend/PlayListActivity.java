@@ -1,5 +1,10 @@
 package xyz.doikki.dkplayer.activity.extend;
 
+import androidx.annotation.NonNull;
+
+import java.util.HashMap;
+import java.util.List;
+
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.activity.BaseActivity;
 import xyz.doikki.dkplayer.bean.VideoBean;
@@ -13,8 +18,6 @@ import xyz.doikki.videocontroller.component.PrepareView;
 import xyz.doikki.videocontroller.component.TitleView;
 import xyz.doikki.videocontroller.component.VodControlView;
 import xyz.doikki.videoplayer.VideoView;
-
-import java.util.List;
 
 /**
  * 连续播放一个列表
@@ -56,7 +59,7 @@ public class PlayListActivity extends BaseActivity {
         mVideoView.addOnStateChangeListener(new VideoView.OnStateChangeListener() {
             private int mCurrentVideoPosition;
             @Override
-            public void onPlayerStateChanged(int playState) {
+            public void onPlayerStateChanged(int playState, @NonNull HashMap<String, Object> extras) {
                 if (playState == VideoView.STATE_PLAYBACK_COMPLETED) {
                     if (data != null) {
                         mCurrentVideoPosition++;

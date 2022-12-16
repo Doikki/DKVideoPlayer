@@ -41,7 +41,7 @@ class LiveControlView @JvmOverloads constructor(
         }
     }
 
-    override fun onPlayStateChanged(playState: Int) {
+    override fun onPlayStateChanged(playState: Int, extras: HashMap<String, Any>) {
         when (playState) {
             VideoView.STATE_IDLE, VideoView.STATE_START_ABORT, VideoView.STATE_PREPARING, VideoView.STATE_PREPARED, VideoView.STATE_ERROR, VideoView.STATE_PLAYBACK_COMPLETED -> visibility =
                 GONE

@@ -24,8 +24,7 @@ class AudioFocusMonitor : ControlComponent {
         audioFocusHelper = AudioFocusHelper(player as VideoView)
     }
 
-    override fun onPlayStateChanged(playState: Int) {
-        super.onPlayStateChanged(playState)
+    override fun onPlayStateChanged(playState: Int, extras: HashMap<String, Any>) {
         val player = controller?.playerControl ?: return
         if (player.isMute) return
         audioFocusHelper?.let {

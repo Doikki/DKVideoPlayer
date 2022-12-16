@@ -37,7 +37,9 @@ open class VideoController @JvmOverloads constructor(
      * 当前播放器状态
      */
     @PlayerState
-    private var playerState = VideoView.STATE_IDLE
+    private var playState = VideoView.STATE_IDLE
+
+    private var extras: HashMap<String, Any>? = null
 
     /**
      * 显示动画
@@ -105,16 +107,16 @@ open class VideoController @JvmOverloads constructor(
      * @return
      */
     protected val isInPlaybackState: Boolean
-        get() = playerState != VideoView.STATE_ERROR
-                && playerState != VideoView.STATE_IDLE
-                && playerState != VideoView.STATE_PREPARING
-                && playerState != VideoView.STATE_PREPARED
-                && playerState != VideoView.STATE_START_ABORT
-                && playerState != VideoView.STATE_PLAYBACK_COMPLETED
+        get() = playState != VideoView.STATE_ERROR
+                && playState != VideoView.STATE_IDLE
+                && playState != VideoView.STATE_PREPARING
+                && playState != VideoView.STATE_PREPARED
+                && playState != VideoView.STATE_START_ABORT
+                && playState != VideoView.STATE_PLAYBACK_COMPLETED
 
-    protected val isInCompleteState: Boolean get() = playerState == VideoView.STATE_PLAYBACK_COMPLETED
+    protected val isInCompleteState: Boolean get() = playState == VideoView.STATE_PLAYBACK_COMPLETED
 
-    protected val isInErrorState: Boolean get() = playerState == VideoView.STATE_ERROR
+    protected val isInErrorState: Boolean get() = playState == VideoView.STATE_ERROR
 
     /**
      * 重要：此方法用于将[VideoView] 和控制器绑定
@@ -238,15 +240,24 @@ open class VideoController @JvmOverloads constructor(
         notifyScreenModeChanged(screenMode)
     }
 
+
+    /**
+     * 外部调用，还原控制器状态
+     */
+    fun setPlayerState(@PlayerState playState: Int) {
+        setPlayerState(playState, extras ?: hashMapOf())
+    }
+
     /**
      * call by [VideoView],设置播放器当前播放状态
      */
     @SuppressLint("SwitchIntDef")
     @CallSuper
-    fun setPlayerState(@PlayerState playState: Int) {
-        playerState = playState
+    internal fun setPlayerState(@PlayerState playState: Int, extras: HashMap<String, Any>) {
+        this.playState = playState
+        this.extras = extras
         for ((key) in controlComponents) {
-            key.onPlayStateChanged(playState)
+            key.onPlayStateChanged(playState, extras)
         }
         when (playState) {
             VideoView.STATE_IDLE -> {
@@ -527,7 +538,8 @@ open class VideoController @JvmOverloads constructor(
     protected inline fun <R> invokeOnPlayerAttached(
         block: (VideoViewControl) -> R
     ): R {
-        val player = player ?: throw RuntimeException("Set current VideoController to VideoView first.")
+        val player =
+            player ?: throw RuntimeException("Set current VideoController to VideoView first.")
         return block.invoke(player)
     }
 

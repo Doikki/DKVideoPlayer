@@ -1,5 +1,9 @@
 package xyz.doikki.dkplayer.fragment.list;
 
+import androidx.annotation.NonNull;
+
+import java.util.HashMap;
+
 import xyz.doikki.dkplayer.util.Utils;
 import xyz.doikki.dkplayer.widget.controller.PortraitWhenFullScreenController;
 import xyz.doikki.videocontroller.component.CompleteView;
@@ -19,7 +23,7 @@ public class RecyclerViewPortraitFragment extends RecyclerViewAutoPlayFragment {
         mVideoView = new VideoView(getActivity());
         mVideoView.addOnStateChangeListener(new VideoView.OnStateChangeListener() {
             @Override
-            public void onPlayerStateChanged(int playState) {
+            public void onPlayerStateChanged(int playState, @NonNull HashMap<String, Object> extras) {
                 if (playState == VideoView.STATE_IDLE) {
                     Utils.removeViewFormParent(mVideoView);
                     mLastPos = mCurPos;

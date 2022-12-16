@@ -32,7 +32,7 @@ class PrepareView @JvmOverloads constructor(
         setOnClickListener { controller?.playerControl?.start() }
     }
 
-    override fun onPlayStateChanged(playState: Int) {
+    override fun onPlayStateChanged(playState: Int, extras: HashMap<String, Any>) {
         when (playState) {
             VideoView.STATE_PREPARING -> {
                 bringToFront()

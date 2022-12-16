@@ -10,6 +10,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.videocontroller.component.BaseControlComponent;
 import xyz.doikki.videoplayer.VideoView;
@@ -59,7 +63,7 @@ public class AdControlView extends BaseControlComponent implements View.OnClickL
 
 
     @Override
-    public void onPlayStateChanged(int playState) {
+    public void onPlayStateChanged(int playState, @NotNull HashMap<String, Object> extras) {
         switch (playState) {
             case VideoView.STATE_PLAYING:
                 getController().startUpdateProgress();

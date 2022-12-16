@@ -2,7 +2,12 @@ package xyz.doikki.dkplayer.activity.extend;
 
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.danikula.videocache.HttpProxyCacheServer;
+
+import java.util.HashMap;
+
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.activity.BaseActivity;
 import xyz.doikki.dkplayer.util.DataUtil;
@@ -59,7 +64,7 @@ public class ADActivity extends BaseActivity<VideoView> {
         //监听播放结束
         mVideoView.addOnStateChangeListener(new VideoView.OnStateChangeListener() {
             @Override
-            public void onPlayerStateChanged(int playState) {
+            public void onPlayerStateChanged(int playState, @NonNull HashMap<String, Object> extras) {
                 if (playState == VideoView.STATE_PLAYBACK_COMPLETED) {
                     playVideo();
                 }

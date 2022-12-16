@@ -6,7 +6,10 @@ import android.widget.AbsListView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import xyz.doikki.dkplayer.R;
@@ -50,7 +53,7 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
         mVideoView = new VideoView(getActivity());
         mVideoView.addOnStateChangeListener(new VideoView.OnStateChangeListener() {
             @Override
-            public void onPlayerStateChanged(int playState) {
+            public void onPlayerStateChanged(int playState, @NonNull HashMap<String, Object> extras) {
                 if (playState == VideoView.STATE_IDLE) {
                     Utils.removeViewFormParent(mVideoView);
                     mCurPosition = -1;

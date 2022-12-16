@@ -12,6 +12,10 @@ import android.widget.ProgressBar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.util.PIPManager;
 import xyz.doikki.videocontroller.component.BaseControlComponent;
@@ -77,7 +81,7 @@ public class PipControlView extends BaseControlComponent implements View.OnClick
     }
 
     @Override
-    public void onPlayStateChanged(int playState) {
+    public void onPlayStateChanged(int playState, @NotNull HashMap<String, Object> extras) {
         switch (playState) {
             case VideoView.STATE_IDLE:
             case VideoView.STATE_PAUSED:

@@ -17,6 +17,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+
 import master.flame.danmaku.controller.DrawHandler;
 import master.flame.danmaku.danmaku.model.BaseDanmaku;
 import master.flame.danmaku.danmaku.model.DanmakuTimer;
@@ -112,7 +116,7 @@ public class MyDanmakuView extends DanmakuView implements ControlComponent {
     }
 
     @Override
-    public void onPlayStateChanged(int playState) {
+    public void onPlayStateChanged(int playState, @NotNull HashMap<String, Object> extras) {
         switch (playState) {
             case VideoView.STATE_IDLE:
                 release();
