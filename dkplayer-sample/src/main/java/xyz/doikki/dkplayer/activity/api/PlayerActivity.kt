@@ -143,7 +143,7 @@ class PlayerActivity : BaseActivity<VideoView>() {
                         GlWatermarkFilter(
                             BitmapFactory.decodeResource(
                                 resources,
-                                R.mipmap.ic_launcher
+                                R.drawable.ic_watermark
                             )
                         ),
                         GlSepiaFilter(),
@@ -241,12 +241,12 @@ class PlayerActivity : BaseActivity<VideoView>() {
                 mVideoView!!.setMirrorRotation(i % 2 == 0)
                 i++
             }
-            R.id.surface_render->{
-                mVideoView!!.renderFactory = RenderFactory.surfaceViewRenderFactory()
-            }
-            R.id.texture_render->{
-                mVideoView!!.renderFactory = RenderFactory.textureViewRenderFactory()
-            }
+//            R.id.surface_render->{
+//                mVideoView!!.renderFactory = RenderFactory.surfaceViewRenderFactory()
+//            }
+//            R.id.texture_render->{
+//                mVideoView!!.renderFactory = RenderFactory.textureViewRenderFactory()
+//            }
             R.id.btn_mute -> mVideoView!!.isMute = !mVideoView!!.isMute
         }
     }

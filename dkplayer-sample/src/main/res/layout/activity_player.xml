@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".activity.api.PlayerActivityJava">
+    tools:context=".activity.api.PlayerActivity">
 
     <xyz.doikki.videoplayer.VideoView
         android:id="@+id/player"
@@ -214,28 +214,28 @@
                     android:onClick="onButtonClick"
                     android:text="静音" />
             </LinearLayout>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="更改render：" />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="更改render：" />-->
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content">-->
 
-                <Button
-                    android:id="@+id/surface_render"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="onButtonClick"
-                    android:text="SurfaceView" />
+<!--                <Button-->
+<!--                    android:id="@+id/surface_render"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:onClick="onButtonClick"-->
+<!--                    android:text="SurfaceView" />-->
 
-                <Button
-                    android:id="@+id/texture_render"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="onButtonClick"
-                    android:text="TextureView" />
-            </LinearLayout>
+<!--                <Button-->
+<!--                    android:id="@+id/texture_render"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:onClick="onButtonClick"-->
+<!--                    android:text="TextureView" />-->
+<!--            </LinearLayout>-->
 
             <ImageView
                 android:id="@+id/iv_screen_shot"
