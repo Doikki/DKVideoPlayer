@@ -92,7 +92,7 @@ class MainActivity : BaseActivity<VideoView>(), NavigationBarView.OnItemSelected
                         setTitle(resources.getString(R.string.app_name) + " (ExoPlayer)")
                     }
                     R.id.media -> {
-                        playerFactory = PlayerFactory.systemMediaPlayerFactory()
+                        playerFactory = SystemPlayerFactory.create()
                         setTitle(resources.getString(R.string.app_name) + " (MediaPlayer)")
                     }
                     else -> {

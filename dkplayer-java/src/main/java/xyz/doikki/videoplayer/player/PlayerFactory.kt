@@ -18,22 +18,7 @@ fun interface PlayerFactory {
     /**
      * @param context 注意内存泄露：内部尽可能使用context.getApplicationContext();
      * 绝大部分情况下，player的创建通过ApplicationContext创建不会有问题
-     * @return
      */
     fun create(context: Context): IPlayer
-
-    companion object {
-
-        /**
-         * 创建[SystemPlayer]的工厂类，不推荐，系统的MediaPlayer兼容性较差，建议使用IjkPlayer或者ExoPlayer
-         * 兼容性较差：比如某些盒子上不能配合texture使用
-         */
-        @JvmStatic
-        fun systemMediaPlayerFactory(): PlayerFactory {
-            return PlayerFactory {
-                SystemPlayer(it)
-            }
-        }
-    }
 
 }

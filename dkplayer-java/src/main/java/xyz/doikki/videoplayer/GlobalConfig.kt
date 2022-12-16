@@ -1,6 +1,7 @@
 package xyz.doikki.videoplayer
 
 import xyz.doikki.videoplayer.player.PlayerFactory
+import xyz.doikki.videoplayer.player.SystemPlayerFactory
 import xyz.doikki.videoplayer.render.AspectRatioType
 import xyz.doikki.videoplayer.render.RenderFactory
 import xyz.doikki.videoplayer.util.NewFunc
@@ -22,7 +23,7 @@ object GlobalConfig {
      * 播放器内核工厂
      */
     @JvmStatic
-    var playerFactory: PlayerFactory = PlayerFactory.systemMediaPlayerFactory()
+    var playerFactory: PlayerFactory = SystemPlayerFactory.create()
 
     /**
      * Render工厂
