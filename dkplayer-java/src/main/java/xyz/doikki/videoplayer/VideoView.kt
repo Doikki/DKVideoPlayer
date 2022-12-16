@@ -30,16 +30,36 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * 播放器&播放视图  内部包含了对应的[IPlayer] 和  [Render]，因此由本类提供这两者的功能能力
- *  本类的数据目前是在内部提供了一个容器，让容器去添加Render和Controller，这样便于界面切换
+ * 本类的数据目前是在内部提供了一个容器，让容器去添加Render和Controller，这样便于界面切换
  *
  * Created by Doikki on 2017/4/7.
  * update by luochao on 2022/9/16
  */
-open class VideoView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : FrameLayout(context, attrs, defStyleAttr), VideoViewControl, IPlayer.EventListener {
+open class VideoView : FrameLayout, VideoViewControl, IPlayer.EventListener {
+
+    constructor(context: Context) : this(context, null)
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
+        //读取xml中的配置，并综合全局配置
+        val ta = context.obtainStyledAttributes(attrs, R.styleable.VideoView)
+        looping = ta.getBoolean(R.styleable.VideoView_looping, false)
+        val screenAspectRatioType =
+            ta.getInt(R.styleable.VideoView_screenScaleType, GlobalConfig.screenAspectRatioType)
+        val playerBackgroundColor =
+            ta.getColor(R.styleable.VideoView_playerBackgroundColor, Color.BLACK)
+        ta.recycle()
+
+        //准备播放器容器
+        playerContainer = VideoViewContainer(context)
+        setPlayerBackgroundColor(playerBackgroundColor)
+        val params = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+        this.addView(playerContainer, params)
+        playerContainer.setScreenAspectRatioType(screenAspectRatioType)
+    }
 
     /**
      * 播放器状态
@@ -167,7 +187,8 @@ open class VideoView @JvmOverloads constructor(
     /**
      * 获取Activity，优先通过Controller去获取Activity
      */
-    private val preferredActivity: Activity? get() = (videoController?.context ?: context).getActivityContext()
+    private val preferredActivity: Activity?
+        get() = (videoController?.context ?: context).getActivityContext()
 
     /**
      * 设置[playerContainer]的背景色
@@ -175,16 +196,6 @@ open class VideoView @JvmOverloads constructor(
     fun setPlayerBackgroundColor(color: Int) {
         playerContainer.setBackgroundColor(color)
     }
-
-    /**
-     * 设置控制器，传null表示移除控制器
-     */
-    var videoController: VideoController? = null
-        set(value) {
-            field = value
-            value?.setMediaPlayer(this)
-            playerContainer.videoController = value
-        }
 
     /**
      * 设置播放路径
@@ -209,6 +220,16 @@ open class VideoView @JvmOverloads constructor(
         url = null
         assetFileDescriptor = fd
     }
+
+    /**
+     * 设置控制器，传null表示移除控制器
+     */
+    var videoController: VideoController? = null
+        set(value) {
+            field = value
+            value?.setMediaPlayer(this)
+            playerContainer.videoController = value
+        }
 
     // ---------- 播放流程 START ---------- //
 
@@ -839,24 +860,5 @@ open class VideoView @JvmOverloads constructor(
          * 小窗模式
          */
         const val SCREEN_MODE_TINY = 12
-    }
-
-    init {
-
-        //读取xml中的配置，并综合全局配置
-        val ta = context.obtainStyledAttributes(attrs, R.styleable.VideoView)
-        looping = ta.getBoolean(R.styleable.VideoView_looping, false)
-        val screenAspectRatioType =
-            ta.getInt(R.styleable.VideoView_screenScaleType, GlobalConfig.screenAspectRatioType)
-        val playerBackgroundColor =
-            ta.getColor(R.styleable.VideoView_playerBackgroundColor, Color.BLACK)
-        ta.recycle()
-
-        //准备播放器容器
-        playerContainer = VideoViewContainer(context)
-        setPlayerBackgroundColor(playerBackgroundColor)
-        val params = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
-        this.addView(playerContainer, params)
-        playerContainer.setScreenAspectRatioType(screenAspectRatioType)
     }
 }
