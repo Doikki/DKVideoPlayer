@@ -40,10 +40,11 @@ public class TikTokAdapter extends RecyclerView.Adapter<TikTokAdapter.VideoHolde
     public void onBindViewHolder(final VideoHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder: " + position);
         TiktokBean item = videos.get(position);
-        Glide.with(holder.thumb.getContext())
+        holder.mThumb.setScaleType(item.videoWidth > item.videoHeight ? ImageView.ScaleType.FIT_CENTER : ImageView.ScaleType.CENTER_CROP);
+        Glide.with(holder.mThumb.getContext())
                 .load(item.coverImgUrl)
                 .placeholder(android.R.color.white)
-                .into(holder.thumb);
+                .into(holder.mThumb);
         holder.mPosition = position;
         PreloadManager.getInstance(holder.itemView.getContext()).addPreloadTask(item.videoDownloadUrl, position);
     }
@@ -62,7 +63,7 @@ public class TikTokAdapter extends RecyclerView.Adapter<TikTokAdapter.VideoHolde
 
     public static class VideoHolder extends RecyclerView.ViewHolder {
 
-        private ImageView thumb;
+        private ImageView mThumb;
         public TikTokView mTikTokView;
         public int mPosition;
         public FrameLayout mPlayerContainer;
@@ -70,7 +71,7 @@ public class TikTokAdapter extends RecyclerView.Adapter<TikTokAdapter.VideoHolde
         VideoHolder(View itemView) {
             super(itemView);
             mTikTokView = itemView.findViewById(R.id.tiktok_View);
-            thumb = mTikTokView.findViewById(R.id.iv_thumb);
+            mThumb = mTikTokView.findViewById(R.id.iv_thumb);
             mPlayerContainer = itemView.findViewById(R.id.container);
             itemView.setTag(this);
         }

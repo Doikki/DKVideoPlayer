@@ -13,13 +13,14 @@ import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 
 import com.bumptech.glide.Glide;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.bean.TiktokBean;
 import xyz.doikki.dkplayer.util.cache.PreloadManager;
 import xyz.doikki.dkplayer.widget.component.TikTokView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Tiktok2Adapter extends PagerAdapter {
 
@@ -68,6 +69,7 @@ public class Tiktok2Adapter extends PagerAdapter {
         TiktokBean item = mVideoBeans.get(position);
         //开始预加载
         PreloadManager.getInstance(context).addPreloadTask(item.videoDownloadUrl, position);
+        viewHolder.mThumb.setScaleType(item.videoWidth > item.videoHeight ? ImageView.ScaleType.FIT_CENTER : ImageView.ScaleType.CENTER_CROP);
         Glide.with(context)
                 .load(item.coverImgUrl)
                 .placeholder(android.R.color.white)

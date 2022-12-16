@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.bean.TiktokBean;
 import xyz.doikki.dkplayer.util.cache.PreloadManager;
@@ -43,6 +44,7 @@ public class Tiktok3Adapter extends RecyclerView.Adapter<Tiktok3Adapter.ViewHold
         TiktokBean item = mVideoBeans.get(position);
         //开始预加载
         PreloadManager.getInstance(context).addPreloadTask(item.videoDownloadUrl, position);
+        holder.mThumb.setScaleType(item.videoWidth > item.videoHeight ? ImageView.ScaleType.FIT_CENTER : ImageView.ScaleType.CENTER_CROP);
         Glide.with(context)
                 .load(item.coverImgUrl)
                 .placeholder(android.R.color.white)
