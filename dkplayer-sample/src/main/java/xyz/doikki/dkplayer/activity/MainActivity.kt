@@ -15,6 +15,7 @@ import xyz.doikki.dkplayer.fragment.main.ApiFragment
 import xyz.doikki.dkplayer.fragment.main.ExtensionFragment
 import xyz.doikki.dkplayer.fragment.main.ListFragment
 import xyz.doikki.dkplayer.fragment.main.PipFragment
+import xyz.doikki.dkplayer.util.ALLMManager
 import xyz.doikki.dkplayer.util.PIPManager
 import xyz.doikki.dkplayer.util.Tag
 import xyz.doikki.dkplayer.util.Utils
@@ -82,6 +83,8 @@ class MainActivity : BaseActivity<VideoView>(), NavigationBarView.OnItemSelected
                 Toast.makeText(this, "清除缓存成功", Toast.LENGTH_SHORT).show()
             }
             R.id.cpu_info -> CpuInfoActivity.start(this)
+            R.id.allm_on -> ALLMManager.openALLM()
+            R.id.allm_off -> ALLMManager.closeALLM()
         }
         if (itemId == R.id.ijk || itemId == R.id.exo || itemId == R.id.media) {
             //切换播放核心，不推荐这么做，我这么写只是为了方便测试

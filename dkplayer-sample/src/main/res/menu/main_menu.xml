@@ -17,4 +17,14 @@
                 android:title="MediaPlayer"/>
         </menu>
     </item>
+    <item android:id="@+id/allm"
+        android:title="ALLM">
+        <menu>
+            <item android:id="@+id/allm_on"
+                android:title="ON"/>
+            <item android:id="@+id/allm_off"
+                android:title="OFF"/>
+        </menu>
+    </item>
+
 </menu>
