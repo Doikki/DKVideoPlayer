@@ -6,10 +6,16 @@ import android.graphics.Color;
 import android.media.MediaCodecInfo;
 import android.media.MediaCodecList;
 import android.os.Build;
+import android.util.Log;
 import android.util.TypedValue;
+import android.view.Display;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import androidx.annotation.RequiresApi;
 
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
@@ -22,7 +28,11 @@ import java.io.IOException;
  */
 public class CpuInfoActivity extends BaseActivity {
 
+    private static final String TAG = "CpuInfoActivity";
     private TextView mCpuInfo;
+    private Window window;
+    private Display display;
+    private WindowManager windowManager;
 
     public static void start(Context context) {
         context.startActivity(new Intent(context, CpuInfoActivity.class));
@@ -39,11 +49,14 @@ public class CpuInfoActivity extends BaseActivity {
         return scrollView;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.R)
     @Override
     protected void initView() {
         super.initView();
         StringBuilder sb = new StringBuilder();
         sb.append("\n\n");
+        windowManager = (WindowManager)this.getSystemService(WindowManager.class);
+        display = windowManager.getDefaultDisplay();
 
         sb.append("===================\n");
         sb.append(Build.MANUFACTURER).append(" ").append(Build.MODEL).append("\n");
@@ -90,6 +103,11 @@ public class CpuInfoActivity extends BaseActivity {
         }
 
         mCpuInfo.setText(sb.toString());
+        window = getWindow();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            Log.d(TAG,"ymh---,setPreferMinimalPostProcessing");
+            Log.d(TAG,"ymh---,isMinimalPostProcessingSupported:  "+ display.isMinimalPostProcessingSupported());
+            window.setPreferMinimalPostProcessing(true);
+        }
     }
-
 }
