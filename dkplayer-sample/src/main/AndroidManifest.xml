@@ -18,16 +18,20 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="LockedOrientationActivity">
-
-        <!--允许绘制到oppo、vivo刘海屏机型的刘海区域 -->
+        <activity
+            android:name=".PersonalActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <!-- 允许绘制到oppo、vivo刘海屏机型的刘海区域 -->
         <meta-data
             android:name="android.max_aspect"
-            android:value="2.8" />
-        <!-- 允许绘制到华为刘海屏机型的刘海区域 -->
+            android:value="2.8" /> <!-- 允许绘制到华为刘海屏机型的刘海区域 -->
         <meta-data
             android:name="android.notch_support"
-            android:value="true" />
-        <!-- 允许绘制到小米刘海屏机型的刘海区域 -->
+            android:value="true" /> <!-- 允许绘制到小米刘海屏机型的刘海区域 -->
         <meta-data
             android:name="notch.config"
             android:value="landscape" />
@@ -55,7 +59,9 @@
             android:windowSoftInputMode="stateHidden">
             <intent-filter tools:ignore="AppLinkUrlError">
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="video/*" />
             </intent-filter>
         </activity>
@@ -138,6 +144,11 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".activity.CpuInfoActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".activity.PersonalActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />

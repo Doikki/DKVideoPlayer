@@ -82,6 +82,7 @@ class MainActivity : BaseActivity<VideoView>(), NavigationBarView.OnItemSelected
             R.id.clear_cache -> if (ProxyVideoCacheManager.clearAllCache(this)) {
                 Toast.makeText(this, "清除缓存成功", Toast.LENGTH_SHORT).show()
             }
+            R.id.personal -> PersonalActivity.startPersonalActivity(this);
             R.id.cpu_info -> CpuInfoActivity.start(this)
             R.id.allm_on -> ALLMManager.openALLM()
             R.id.allm_off -> ALLMManager.closeALLM()
